@@ -118,6 +118,7 @@
 
     services.github-runner = {
       enable = true;
+      useSops = false; # Disabled: github.yaml permissions prevent flake evaluation
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos";
       extraLabels = [

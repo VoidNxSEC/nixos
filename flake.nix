@@ -22,28 +22,14 @@
     }@inputs:
     let
       system = "x86_64-linux";
+
+      # Import overlays from organized modules
+      overlays = import ./overlays;
+
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        #overlays = [
-          # Fix for mercantile test failures in nixpkgs
-        #(final: prev: {
-        #python3 = prev.python3.override {
-        #packageOverrides = pyfinal: pyprev: {
-        #mercantile = pyprev.mercantile.overridePythonAttrs (old: {
-        #doCheck = false;
-        #});
-        #};
-        #};
-        #python313 = prev.python313.override {
-        #packageOverrides = pyfinal: pyprev: {
-        #mercantile = pyprev.mercantile.overridePythonAttrs (old: {
-        #doCheck = false;
-        #});
-        #};
-        #};
-        #})
-        #];
+        overlays = overlays;
       };
 
       # coleção de shells (definido abaixo em lib/shells.nix)
@@ -75,27 +61,10 @@
           specialArgs = { inherit inputs; };
           modules = [
             # Apply overlays to NixOS configuration
-            #{
-            #nixpkgs.overlays = [
-            #(final: prev: {
-            #python3 = prev.python3.override {
-            #packageOverrides = pyfinal: pyprev: {
-            #mercantile = pyprev.mercantile.overridePythonAttrs (old: {
-            #doCheck = false;
-            #});
-            #};
-            #};
-            #python313 = prev.python313.override {
-            #packageOverrides = pyfinal: pyprev: {
-            #mercantile = pyprev.mercantile.overridePythonAttrs (old: {
-            #doCheck = false;
-            #});
-            #};
-            #};
-            #})
-            #];
-            #nixpkgs.config.allowUnfree = true;
-            #}
+            {
+              nixpkgs.overlays = overlays;
+              nixpkgs.config.allowUnfree = true;
+            }
 
             ./hosts/kernelcore/hardware-configuration.nix
             ./hosts/kernelcore/configuration.nix

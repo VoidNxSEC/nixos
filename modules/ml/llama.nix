@@ -55,7 +55,7 @@ in
 
     n_gpu_layers = lib.mkOption {
       type = lib.types.int;
-      default = 35;
+      default = 22;
       description = ''
         Number of model layers to offload to GPU.
         Set to 0 to use CPU only.

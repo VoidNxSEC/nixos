@@ -138,7 +138,6 @@ with lib;
               443
               22
               8888
-              53
             ]; # ← nginx, ssh, jupyter
           };
 
