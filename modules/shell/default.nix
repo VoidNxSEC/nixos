@@ -16,6 +16,7 @@
   imports = [
     ./gpu-flags.nix
     ./aliases/docker-build.nix
+    ./aliases/gcloud-k8s.nix
   ];
 
   # ============================================================

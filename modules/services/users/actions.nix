@@ -122,14 +122,17 @@ in
 
           ${
             if cfg.useSops then
+              let
+                tokenPath = config.sops.secrets."github/runner/token".path;
+              in
               ''
                 # Read token from SOPS secret
-                if [ ! -f "${config.sops.secrets."github/runner/token".path}" ]; then
-                  echo "ERROR: SOPS secret not found at ${config.sops.secrets."github/runner/token".path}"
+                if [ ! -f "${tokenPath}" ]; then
+                  echo "ERROR: SOPS secret not found at ${tokenPath}"
                   echo "Please ensure secrets/github.yaml is encrypted and contains github.runner.token"
                   exit 1
                 fi
-                RUNNER_TOKEN=$(cat "${config.sops.secrets."github/runner/token".path}")
+                RUNNER_TOKEN=$(cat "${tokenPath}")
               ''
             else
               ''

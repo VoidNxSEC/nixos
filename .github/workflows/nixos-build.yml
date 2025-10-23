@@ -24,6 +24,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          pushFilter: '(-source$|-env$)'
+
       - name: Check flake syntax
         run: nix flake check --show-trace
 
@@ -44,6 +51,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          pushFilter: '(-source$|-env$)'
 
       - name: Build ${{ matrix.target }}
         id: build
@@ -85,6 +99,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Test dev shells
         run: |
@@ -155,6 +175,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
       - name: Build system configuration
         run: |
           echo "Building final system configuration..."
@@ -191,3 +217,15 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### System Info" >> $GITHUB_STEP_SUMMARY
           nix eval .#nixosConfigurations.kernelcore.config.system.nixos.version --raw >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on failure
+        if: ${{ failure() || needs.build.result == 'failure' || needs.test-modules.result == 'failure' || needs.security.result == 'failure' }}
+        run: |
+          echo "::error::CI/CD Pipeline failed! Check the logs above for details."
+          echo "### ❌ Pipeline Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "One or more jobs failed. Please review the logs." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Build: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests: ${{ needs.test-modules.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Security: ${{ needs.security.result }}" >> $GITHUB_STEP_SUMMARY

@@ -106,6 +106,11 @@
 
     containers = {
       docker.enable = true;
+      podman = {
+        enable = false; # Set to true to use Podman instead of/alongside Docker
+        dockerCompat = false; # Enable Docker CLI compatibility (creates docker -> podman alias)
+        enableNvidia = true; # NVIDIA GPU support for containers
+      };
       nixos.enable = true;
     };
 
@@ -118,13 +123,27 @@
 
     services.github-runner = {
       enable = true;
-      useSops = false; # Disabled: github.yaml permissions prevent flake evaluation
+      useSops = true; # SOPS fixed: now safe to enable
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos";
       extraLabels = [
         "nixos"
         "nix"
       ];
+    };
+
+    services.gitlab-runner = {
+      enable = false; # Set to true to enable GitLab CI/CD runner
+      useSops = false; # Enable when you have secrets/gitlab.yaml configured
+      runnerName = "nixos-gitlab-runner";
+      url = "https://gitlab.com"; # Or your self-hosted GitLab instance
+      executor = "shell"; # Options: shell, docker, docker+machine, kubernetes
+      tags = [
+        "nixos"
+        "nix"
+        "linux"
+      ];
+      concurrent = 4;
     };
 
     # MEDIUM PRIORITY: Standardized secrets management

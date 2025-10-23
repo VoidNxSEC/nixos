@@ -75,6 +75,7 @@
             ./modules/services/users/default.nix
             ./modules/services/users/claude-code.nix
             ./modules/services/users/actions.nix
+            ./modules/services/users/gitlab-runner.nix
 
             # Applications
             ./modules/applications/firefox-privacy.nix
@@ -109,6 +110,7 @@
 
             # Containers
             ./modules/containers/docker.nix
+            ./modules/containers/podman.nix
             ./modules/containers/nixos-containers.nix
 
             # Virtualization
