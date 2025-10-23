@@ -41,13 +41,20 @@ in
       default = "nordlynx";
       description = "VPN protocol to use";
     };
+
+    # NOVO: opção para controlar DNS da VPN
+    overrideDNS = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Override system DNS with NordVPN DNS servers (may conflict with systemd-resolved)";
+    };
   };
 
   config = mkIf cfg.enable {
-    # WireGuard kernel module for NordLynx
+    # WireGuard kernel module para NordLynx
     boot.kernelModules = [ "wireguard" ];
 
-    # Install NordVPN and related tools
+    # Instalar NordVPN e ferramentas relacionadas
     environment.systemPackages = with pkgs; [
       wireguard-tools
       openresolv
@@ -55,7 +62,7 @@ in
       jq
     ];
 
-    # Create NordVPN configuration directory
+    # Criar diretórios de configuração do NordVPN
     systemd.tmpfiles.rules = [
       "d /etc/nordvpn 0750 root root -"
       "d /var/lib/nordvpn 0750 root root -"
@@ -67,32 +74,32 @@ in
       mode = "0750";
       text = ''
         #!/usr/bin/env bash
-        # NordVPN API Helper for NordLynx configuration
+        # NordVPN API Helper para configuração NordLynx
 
         API_BASE="https://api.nordvpn.com/v1"
         CRED_FILE="${cfg.credentialsFile}"
 
-        # Get recommended server for country
+        # Obter servidor recomendado por país
         get_recommended_server() {
           local country="$1"
           ${pkgs.curl}/bin/curl -s "''${API_BASE}/servers/recommendations?filters\\[country_id\\]=$(get_country_id $country)&filters\\[servers_technologies\\]\\[identifier\\]=wireguard_udp&limit=1" | \
             ${pkgs.jq}/bin/jq -r '.[0].hostname'
         }
 
-        # Get country ID from name
+        # Obter ID do país pelo nome
         get_country_id() {
           local country="$1"
           ${pkgs.curl}/bin/curl -s "''${API_BASE}/servers/countries" | \
             ${pkgs.jq}/bin/jq -r ".[] | select(.name==\"$country\") | .id"
         }
 
-        # Get server info
+        # Obter informações do servidor
         get_server_info() {
           local hostname="$1"
           ${pkgs.curl}/bin/curl -s "''${API_BASE}/servers?filters\\[hostname\\]=$hostname"
         }
 
-        # Main command dispatcher
+        # Dispatcher de comandos principal
         case "$1" in
           recommend)
             get_recommended_server "${cfg.preferredCountry}"
@@ -108,33 +115,33 @@ in
       '';
     };
 
-    # WireGuard NordLynx configuration template
+    # Configuração WireGuard NordLynx
     networking.wg-quick.interfaces = mkIf (cfg.protocol == "nordlynx") {
       wgnord = {
         autostart = cfg.autoConnect;
 
-        # Address assigned by NordVPN (user must obtain from NordVPN account)
+        # Endereço atribuído pelo NordVPN (usuário deve obter da conta NordVPN)
         address = [ "10.5.0.2/16" ];
 
-        # Private key (stored in SOPS secrets)
+        # Chave privada (armazenada em secrets SOPS)
         privateKeyFile = "${cfg.credentialsFile}/private-key";
 
-        # DNS servers
-        dns = [
+        # Servidores DNS - APENAS se usuário quiser sobrescrever DNS do sistema
+        dns = mkIf cfg.overrideDNS [
           "103.86.96.100"
           "103.86.99.100"
         ];
 
         peers = [
           {
-            # Public key from NordVPN server (must be updated per server)
-            # User needs to get this from NordVPN API or account
+            # Chave pública do servidor NordVPN (deve ser atualizada por servidor)
+            # Usuário precisa obter da API NordVPN ou conta
             publicKey = "SERVER_PUBLIC_KEY_HERE";
 
-            # NordVPN server endpoint
+            # Endpoint do servidor NordVPN
             endpoint = "xx.nordvpn.com:51820";
 
-            # Route all traffic through VPN
+            # Rotear todo tráfego através da VPN
             allowedIPs = [
               "0.0.0.0/0"
               "::/0"
@@ -147,76 +154,156 @@ in
       };
     };
 
-    # Firewall rules for VPN
+    # Regras de firewall para VPN
     networking.firewall = {
-      # Allow WireGuard
+      # Permitir WireGuard
       allowedUDPPorts = [ 51820 ];
 
-      # Prevent leaks - only allow traffic through VPN interface when connected
+      # Kill switch: prevenir vazamentos - apenas permitir tráfego pela interface VPN quando conectado
       extraCommands = mkIf cfg.autoConnect ''
-        # Kill switch: drop non-VPN traffic when VPN is supposed to be active
-        iptables -I OUTPUT ! -o wgnord -m mark ! --mark $(wg show wgnord fwmark) -m addrtype ! --dst-type LOCAL -j REJECT
+        # Kill switch: drop non-VPN traffic quando VPN deveria estar ativa
+        iptables -I OUTPUT ! -o wgnord -m mark ! --mark $(wg show wgnord fwmark 2>/dev/null || echo 0) -m addrtype ! --dst-type LOCAL -j REJECT 2>/dev/null || true
+      '';
+
+      extraStopCommands = ''
+        # Limpar regras do kill switch ao parar
+        iptables -D OUTPUT ! -o wgnord -m mark ! --mark $(wg show wgnord fwmark 2>/dev/null || echo 0) -m addrtype ! --dst-type LOCAL -j REJECT 2>/dev/null || true
       '';
     };
 
-    # NordVPN connection management service
+    # Serviço de gerenciamento de conexão NordVPN
     systemd.services.nordvpn-manager = {
       description = "NordVPN Connection Manager";
-      after = [ "network-online.target" ];
+
+      # Ordenação de inicialização
+      after = [
+        "network-online.target"
+        "systemd-resolved.service"
+      ];
+      wants = [ "network-online.target" ];
+
       wantedBy = mkIf cfg.autoConnect [ "multi-user.target" ];
 
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
+
         ExecStart = pkgs.writeShellScript "nordvpn-connect" ''
-          #!/bin/sh
-          # Get recommended server
-          SERVER=$(/etc/nordvpn/api-helper.sh recommend)
+          #!/usr/bin/env bash
+          set -euo pipefail
 
-          echo "Connecting to NordVPN server: $SERVER"
-          logger -t nordvpn "Connecting to $SERVER"
+          # Obter servidor recomendado
+          echo "Fetching recommended NordVPN server..."
+          SERVER=$(/etc/nordvpn/api-helper.sh recommend 2>/dev/null || echo "")
 
-          # Start WireGuard interface
-          ${pkgs.wireguard-tools}/bin/wg-quick up wgnord || true
+          if [ -n "$SERVER" ]; then
+            echo "Connecting to NordVPN server: $SERVER"
+            logger -t nordvpn "Connecting to $SERVER"
+          else
+            echo "Using configured server from wg-quick"
+            logger -t nordvpn "Using pre-configured server"
+          fi
+
+          # Iniciar interface WireGuard
+          ${pkgs.wireguard-tools}/bin/wg-quick up wgnord || {
+            echo "Failed to start VPN interface"
+            logger -t nordvpn "Failed to start wgnord interface"
+            exit 1
+          }
+
+          # Aguardar interface estar UP
+          sleep 2
+
+          # Verificar se interface está ativa
+          if ${pkgs.wireguard-tools}/bin/wg show wgnord > /dev/null 2>&1; then
+            echo "✅ VPN connected successfully"
+            logger -t nordvpn "VPN connection established"
+          else
+            echo "❌ VPN connection failed"
+            logger -t nordvpn "VPN connection failed"
+            exit 1
+          fi
         '';
 
-        ExecStop = "${pkgs.wireguard-tools}/bin/wg-quick down wgnord || true";
+        ExecStop = pkgs.writeShellScript "nordvpn-disconnect" ''
+          #!/usr/bin/env bash
+          ${pkgs.wireguard-tools}/bin/wg-quick down wgnord 2>/dev/null || true
+          logger -t nordvpn "VPN disconnected"
+        '';
+
         Restart = "on-failure";
         RestartSec = 30;
       };
     };
 
-    # GNOME Shell extension integration (optional UI)
-    # This allows monitoring VPN status from GNOME top bar
+    # Aliases de shell para gerenciamento da VPN
     environment.shellAliases = {
       vpn-connect = "sudo systemctl start nordvpn-manager";
       vpn-disconnect = "sudo systemctl stop nordvpn-manager";
+      vpn-restart = "sudo systemctl restart nordvpn-manager";
       vpn-status = "${pkgs.wireguard-tools}/bin/wg show wgnord";
       vpn-logs = "journalctl -u nordvpn-manager -f";
+      vpn-check = "/etc/nordvpn/check-connection.sh";
     };
 
-    # VPN status monitoring script
+    # Script de verificação de status da VPN
     environment.etc."nordvpn/check-connection.sh" = {
       mode = "0755";
       text = ''
         #!/usr/bin/env bash
-        # Check if VPN is connected and working
+        # Verificar se VPN está conectada e funcionando
 
+        echo "==================================="
+        echo "   NordVPN STATUS CHECK"
+        echo "==================================="
+        echo ""
+
+        # 1. Verificar se interface existe
         if ${pkgs.wireguard-tools}/bin/wg show wgnord 2>/dev/null | grep -q "interface: wgnord"; then
-          echo "VPN Connected"
+          echo "✅ VPN Interface: Connected"
 
-          # Check public IP
-          PUBLIC_IP=$(${pkgs.curl}/bin/curl -s --max-time 5 https://api.ipify.org)
-          echo "Public IP: $PUBLIC_IP"
+          # Mostrar estatísticas
+          echo ""
+          echo "Interface Statistics:"
+          ${pkgs.wireguard-tools}/bin/wg show wgnord
+          echo ""
 
-          # Verify it's a NordVPN IP
-          ${pkgs.curl}/bin/curl -s "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data" | \
-            ${pkgs.jq}/bin/jq -r '.status'
+          # 2. Verificar IP público
+          echo "Checking public IP..."
+          PUBLIC_IP=$(${pkgs.curl}/bin/curl -s --max-time 5 https://api.ipify.org 2>/dev/null || echo "Unable to fetch")
+          echo "📍 Public IP: $PUBLIC_IP"
+          echo ""
+
+          # 3. Verificar se é IP da NordVPN
+          echo "Verifying NordVPN connection..."
+          NORD_CHECK=$(${pkgs.curl}/bin/curl -s --max-time 5 "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data" 2>/dev/null | \
+            ${pkgs.jq}/bin/jq -r '.status' 2>/dev/null || echo "unknown")
+
+          if [ "$NORD_CHECK" = "Protected" ]; then
+            echo "✅ NordVPN Status: Protected"
+          else
+            echo "⚠️  NordVPN Status: $NORD_CHECK"
+          fi
+
         else
-          echo "VPN Disconnected"
+          echo "❌ VPN Interface: Disconnected"
+          echo ""
+          echo "To connect: vpn-connect"
           exit 1
         fi
+
+        echo ""
+        echo "==================================="
       '';
     };
+
+    # Aviso sobre configuração DNS
+    warnings = mkIf (cfg.overrideDNS && config.kernelcore.network.dns-resolver.enable or false) [
+      ''
+        NordVPN está configurado para sobrescrever DNS do sistema (overrideDNS=true).
+        Isso pode conflitar com systemd-resolved.
+        Considere desabilitar overrideDNS e deixar systemd-resolved gerenciar DNS.
+      ''
+    ];
   };
 }

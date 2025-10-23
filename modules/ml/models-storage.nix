@@ -22,19 +22,28 @@ in
   };
 
   config = mkIf cfg.enable {
+    # User creation moved to modules/system/ml-gpu-users.nix for centralized management
+    # Enable it in configuration.nix: kernelcore.system.ml-gpu-users.enable = true;
+
     # Create standardized directory structure for ML models
     systemd.tmpfiles.rules = [
       # Base directories
       "d ${cfg.baseDirectory} 0755 root root -"
 
       # Llama.cpp models (GGUF format)
-      "d ${cfg.baseDirectory}/llamacpp 0755 root root -"
+      "d ${cfg.baseDirectory}/llamacpp 0755 llamacpp llamacpp -"
+      "d ${cfg.baseDirectory}/llamacpp/models 0775 llamacpp llamacpp -"
       "L+ /var/lib/llamacpp - - - - ${cfg.baseDirectory}/llamacpp"
+      # Recursively fix permissions for llamacpp directories
+      "Z ${cfg.baseDirectory}/llamacpp 0775 llamacpp llamacpp -"
 
       # Ollama models
-      "d ${cfg.baseDirectory}/ollama 0755 root root -"
-      "d ${cfg.baseDirectory}/ollama/models 0755 root root -"
-      "L+ /var/lib/ollama - - - - ${cfg.baseDirectory}/ollama"
+      # Note: /var/lib/ollama is managed by systemd StateDirectory
+      # We create the models directory separately and configure via OLLAMA_MODELS
+      "d ${cfg.baseDirectory}/ollama 0755 ollama ollama -"
+      "d ${cfg.baseDirectory}/ollama/models 0775 ollama ollama -"
+      # Recursively fix permissions for ollama directories
+      "Z ${cfg.baseDirectory}/ollama 0775 ollama ollama -"
 
       # Hugging Face cache
       "d ${cfg.baseDirectory}/huggingface 0755 root root -"
@@ -75,7 +84,7 @@ in
     environment.shellAliases = {
       ml-models = "cd ${cfg.baseDirectory}";
       ml-ls = "${pkgs.eza}/bin/eza -la --tree --level=2 ${cfg.baseDirectory}";
-      ml-du = "${pkgs.du}/bin/du -sh ${cfg.baseDirectory}/*";
+      ml-du = "${pkgs.coreutils}/bin/du -sh ${cfg.baseDirectory}/*";
       ml-clean-cache = "rm -rf ${cfg.baseDirectory}/cache/*";
     };
 

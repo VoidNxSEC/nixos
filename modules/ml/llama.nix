@@ -2,201 +2,205 @@
   config,
   lib,
   pkgs,
+  utils,
   ...
 }:
 
-with lib;
-
 let
   cfg = config.services.llamacpp;
-
 in
 {
   options.services.llamacpp = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Enable llamacpp service";
+    enable = lib.mkEnableOption "LLaMA C++ server with CUDA support";
+
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = pkgs.llama-cpp.override {
+        cudaSupport = true;
+        cudaPackages = pkgs.cudaPackages;
+      };
+      defaultText = lib.literalExpression ''
+        pkgs.llama-cpp.override {
+          cudaSupport = true;
+          cudaPackages = pkgs.cudaPackages;
+        }
+      '';
+      description = "The llama-cpp package to use.";
     };
 
-    package = mkOption {
-      type = types.package;
-      default = pkgs.llama-cpp;
-      description = "The llamacpp package to use";
+    model = lib.mkOption {
+      type = lib.types.path;
+      example = "/var/lib/llama-cpp/models/mistral-7b.gguf";
+      description = "Path to the model file.";
     };
 
-    model = mkOption {
-      type = types.str;
-      description = "Path to the model file";
-    };
-
-    port = mkOption {
-      type = types.port;
-      default = 8080;
-      description = "Port to listen on";
-    };
-
-    host = mkOption {
-      type = types.str;
+    host = lib.mkOption {
+      type = lib.types.str;
       default = "127.0.0.1";
-      description = "Host to bind to";
+      example = "0.0.0.0";
+      description = "IP address the LLaMA C++ server listens on.";
     };
 
-    n_threads = mkOption {
-      type = types.int;
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8080;
+      description = "Listen port for LLaMA C++ server.";
+    };
+
+    n_threads = lib.mkOption {
+      type = lib.types.int;
       default = 8;
-      description = "Number of threads to use";
+      description = "Number of threads to use for generation.";
     };
 
-    n_gpu_layers = mkOption {
-      type = types.int;
-      default = 0;
-      description = "Number of layers to offload to GPU";
+    n_gpu_layers = lib.mkOption {
+      type = lib.types.int;
+      default = 35;
+      description = ''
+        Number of model layers to offload to GPU.
+        Set to 0 to use CPU only.
+        Recommended values: 22-35 for 6GB GPU, 35+ for larger GPUs.
+      '';
     };
 
-    n_batch = mkOption {
-      type = types.int;
-      default = 512;
-      description = "Batch size for processing";
-    };
-
-    n_ctx = mkOption {
-      type = types.int;
-      default = 2048;
-      description = "Context size";
-    };
-
-    n_predict = mkOption {
-      type = types.int;
-      default = 128;
-      description = "Number of tokens to predict";
-    };
-
-    temp = mkOption {
-      type = types.float;
-      default = 0.8;
-      description = "Temperature for sampling";
-    };
-
-    top_p = mkOption {
-      type = types.float;
-      default = 0.9;
-      description = "Top-p sampling parameter";
-    };
-
-    repeat_penalty = mkOption {
-      type = types.float;
-      default = 1.1;
-      description = "Penalty for repeated tokens";
-    };
-
-    numa = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Enable NUMA support";
-    };
-
-    mmap = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Use memory mapping";
-    };
-
-    mlock = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Lock memory pages";
-    };
-
-    verbose = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Enable verbose output";
-    };
-
-    log_disable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Disable logging";
-    };
-
-    embedding = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Enable embedding mode";
-    };
-
-    lora_adapter = mkOption {
-      type = types.str;
-      default = "";
-      description = "LoRA adapter path";
-    };
-
-    n_ubatch = mkOption {
-      type = types.int;
-      default = 512;
-      description = "Un-batched processing size";
-    };
-
-    n_parallel = mkOption {
-      type = types.int;
+    n_parallel = lib.mkOption {
+      type = lib.types.int;
       default = 1;
-      description = "Number of parallel requests";
+      description = "Number of parallel sequences to process.";
     };
 
-    rope_freq_base = mkOption {
-      type = types.float;
-      default = 10000.0;
-      description = "RoPE frequency base";
+    n_ctx = lib.mkOption {
+      type = lib.types.int;
+      default = 2048;
+      description = "Context window size (in tokens).";
     };
 
-    rope_freq_scale = mkOption {
-      type = types.float;
-      default = 1.0;
-      description = "RoPE frequency scale";
+    n_batch = lib.mkOption {
+      type = lib.types.int;
+      default = 512;
+      description = "Batch size for prompt processing.";
+    };
+
+    extraFlags = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      example = [
+        "--temp"
+        "0.8"
+        "--top-p"
+        "0.9"
+        "--repeat-penalty"
+        "1.1"
+      ];
+      description = ''
+        Extra flags passed to llama-server.
+        Common options include --temp, --top-p, --repeat-penalty, etc.
+        Basic options like --threads, --gpu-layers, --ctx-size are configured via dedicated options.
+      '';
+    };
+
+    openFirewall = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Whether to open the firewall for LLaMA C++ server.
+        This adds {option}`port` to [](#opt-networking.firewall.allowedTCPPorts).
+      '';
     };
   };
 
-  config = mkIf cfg.enable {
-    environment.systemPackages = [ cfg.package ];
-
+  config = lib.mkIf cfg.enable {
     systemd.services.llamacpp = {
-      description = "Llama.cpp server";
+      description = "LLaMA C++ server with CUDA support";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
+      environment = {
+        CUDA_VISIBLE_DEVICES = "1";
+        GGML_CUDA_NO_PEER_COPY = "1";
+        CUDA_LAUNCH_BLOCKING = "1";
+      };
+
       serviceConfig = {
-        ExecStart = "${cfg.package}/bin/llama-server ${
-          builtins.concatStringsSep " " (
-            [
-              "--host ${cfg.host}"
-              "--port ${toString cfg.port}"
-              "--model ${cfg.model}"
-              "--threads ${toString cfg.n_threads}"
-              "--gpu-layers ${toString cfg.n_gpu_layers}"
-              "--batch-size ${toString cfg.n_batch}"
-              "--ctx-size ${toString cfg.n_ctx}"
-              "--predict ${toString cfg.n_predict}"
-              "--temp ${toString cfg.temp}"
-              "--top-p ${toString cfg.top_p}"
-              "--repeat-penalty ${toString cfg.repeat_penalty}"
-              "--rope-freq-base ${toString cfg.rope_freq_base}"
-              "--rope-freq-scale ${toString cfg.rope_freq_scale}"
-              "--parallel ${toString cfg.n_parallel}"
-              "--ubatch-size ${toString cfg.n_ubatch}"
-            ]
-            ++ lib.optionals cfg.numa [ "--numa distribute" ]
-            ++ lib.optionals (!cfg.mmap) [ "--no-mmap" ]
-            ++ lib.optionals cfg.mlock [ "--mlock" ]
-            ++ lib.optionals cfg.verbose [ "--log-verbose" ]
-            ++ lib.optionals cfg.log_disable [ "--log-disable" ]
-            ++ lib.optionals cfg.embedding [ "--embeddings" ]
-            ++ lib.optionals (cfg.lora_adapter != "") [ "--lora ${cfg.lora_adapter}" ]
-          )
-        }";
+        Type = "idle";
+        ExecStart = lib.concatStringsSep " " (
+          [
+            "${lib.getExe' cfg.package "llama-server"}"
+            "--log-disable"
+            "--host ${cfg.host}"
+            "--port ${toString cfg.port}"
+            "--model ${cfg.model}"
+            "--threads ${toString cfg.n_threads}"
+            "--gpu-layers ${toString cfg.n_gpu_layers}"
+            "--parallel ${toString cfg.n_parallel}"
+            "--ctx-size ${toString cfg.n_ctx}"
+            "--batch-size ${toString cfg.n_batch}"
+          ]
+          ++ cfg.extraFlags
+        );
         Restart = "always";
         RestartSec = 10;
+
+        # Use declaratively created user instead of DynamicUser
+        DynamicUser = lib.mkForce false;
+        User = "llamacpp";
+        Group = "llamacpp";
+
+        # Graceful shutdown for GPU memory release
+        TimeoutStopSec = "30s";
+        KillMode = "mixed";
+        KillSignal = "SIGTERM";
+
+        # GPU device access
+        DeviceAllow = [
+          "/dev/nvidia0 rw"
+          "/dev/nvidiactl rw"
+          "/dev/nvidia-uvm rw"
+        ];
+
+        # for GPU acceleration
+        PrivateDevices = false;
+
+        # hardening
+        CapabilityBoundingSet = "";
+        RestrictAddressFamilies = [
+          "AF_INET"
+          "AF_INET6"
+          "AF_UNIX"
+        ];
+        NoNewPrivileges = true;
+        PrivateMounts = true;
+        PrivateTmp = true;
+        PrivateUsers = true;
+        ProtectClock = true;
+        ProtectControlGroups = true;
+        ProtectHome = true;
+        ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
+        ProtectSystem = "strict";
+        MemoryDenyWriteExecute = true;
+        LockPersonality = true;
+        RemoveIPC = true;
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+        SystemCallArchitectures = "native";
+        SystemCallFilter = [
+          "@system-service"
+          "~@privileged"
+        ];
+        SystemCallErrorNumber = "EPERM";
+        ProtectProc = "invisible";
+        ProtectHostname = true;
+        ProcSubset = "pid";
       };
     };
+
+    networking.firewall = lib.mkIf cfg.openFirewall {
+      allowedTCPPorts = [ cfg.port ];
+    };
   };
+
+  meta.maintainers = with lib.maintainers; [ ];
 }

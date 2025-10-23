@@ -23,16 +23,13 @@ with lib;
         default = ''
           # AIDE configuration for NixOS
 
-          @@define DBDIR /var/lib/aide
-          @@define LOGDIR /var/log/aide
-
           # Database locations
-          database=file:@@{DBDIR}/aide.db
-          database_out=file:@@{DBDIR}/aide.db.new
-          database_new=file:@@{DBDIR}/aide.db.new
+          database_in=/var/lib/aide/aide.db
+          database_out=/var/lib/aide/aide.db.new
+          database_new=/var/lib/aide/aide.db.new
 
           # Report settings
-          report_url=file:@@{LOGDIR}/aide.log
+          report_url=/var/log/aide/aide.log
           report_url=stdout
 
           # Verbose level (0-255)

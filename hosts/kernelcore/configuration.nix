@@ -18,13 +18,36 @@
       hardening.enable = true;
       sandbox-fallback = true;
       audit.enable = true;
+
+      # HIGH PRIORITY SECURITY ENHANCEMENTS
+      # File integrity monitoring - detects unauthorized file modifications
+      aide.enable = false;
+
+      # Antivirus scanning for malware detection
+      clamav.enable = true;
+
+      # Enhanced SSH security hardening
+      ssh.enable = true;
+
+      # Kernel security hardening (sysctl, module blacklist)
+      kernel.enable = true;
+
+      # PAM (Pluggable Authentication Modules) hardening
+      pam.enable = true;
+
+      # Install security audit and monitoring tools
+      packages.enable = true;
     };
 
     network = {
       dns-resolver = {
         enable = true;
-        enableDNSSEC = true;
-        enableDNSCrypt = false; # Set to true for encrypted DNS queries
+        # DNSSEC desabilitado temporariamente - muitos domínios não têm DNSSEC configurado
+        # Causa "DNSSEC validation failed: no-signature" em domínios populares (anthropic.com, npmjs.org, etc)
+        # Para reabilitar: descomente a linha abaixo e faça rebuild
+        # enableDNSSEC = true;
+        enableDNSSEC = false;
+        enableDNSCrypt = false; # OPÇÃO A: DNS sem criptografia (mais simples)
         preferredServers = [
           "1.1.1.1" # Cloudflare Primary
           "1.0.0.1" # Cloudflare Secondary
@@ -34,6 +57,12 @@
           "8.8.4.4" # Google Secondary
         ];
         cacheTTL = 3600;
+      };
+
+      vpn.nordvpn = {
+        enable = false; # Habilite se quiser usar VPN
+        autoConnect = false;
+        overrideDNS = false; # IMPORTANTE: deixar systemd-resolved gerenciar DNS
       };
     };
 
@@ -54,8 +83,24 @@
           python.enable = true;
           rust.enable = true;
           nodejs.enable = true;
+          nix.enable = true; # ADDED: Nix kernel for Jupyter notebooks
         };
         extensions.enable = true;
+      };
+
+      # MEDIUM PRIORITY: CI/CD and code quality tools
+      cicd = {
+        enable = true;
+        platforms = {
+          github = true; # GitHub CLI and tools
+          gitlab = true; # GitLab CLI and tools
+          gitea = true; # Gitea CLI (local git server integration)
+        };
+        pre-commit = {
+          enable = true;
+          formatCode = true; # Auto-format code before commits
+          runTests = false; # Set to true when you have automated tests
+        };
       };
     };
 
@@ -80,6 +125,22 @@
         "nix"
       ];
     };
+
+    # MEDIUM PRIORITY: Standardized secrets management
+    secrets.sops = {
+      enable = true;
+      secretsPath = "/etc/nixos/secrets";
+      ageKeyFile = "/var/lib/sops-nix/key.txt";
+    };
+
+    # MEDIUM PRIORITY: Standardized ML model storage
+    ml.models-storage = {
+      enable = true;
+      baseDirectory = "/var/lib/ml-models";
+    };
+
+    # Centralized ML/GPU user and group management
+    system.ml-gpu-users.enable = true;
   };
 
   services = {
@@ -110,12 +171,12 @@
 
     llamacpp = {
       enable = true;
-      model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
+      model = "/var/lib/llamacpp/models/KoboldAI_LLaMA2-13B-Erebus-v3-GGUF_llama2-13b-erebus-v3.Q4_K_M.gguf";
       port = 8080;
       n_threads = 16;
-      n_gpu_layers = 35;
+      n_gpu_layers = 22; # Otimizado para GPU de 6GB
       n_parallel = 4;
-      n_ctx = 4096;
+      n_ctx = 2048; # Reduzido de 4096 para 2048 para reduzir VRAM do KV cache (~880MB)
     };
 
     ollama = {

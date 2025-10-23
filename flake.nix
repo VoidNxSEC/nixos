@@ -84,6 +84,7 @@
             ./modules/system/nix.nix
             ./modules/system/services.nix
             ./modules/system/aliases.nix
+            ./modules/system/ml-gpu-users.nix
 
             # Hardware
             #./modules/hardware/intel.nix

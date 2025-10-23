@@ -162,6 +162,8 @@ with lib;
             htop
             iftop
             tcpdump # ← debug de rede
+            gemini-cli
+            google-cloud-sdk
           ];
 
           nixpkgs.config.allowUnfree = true;
@@ -182,7 +184,7 @@ with lib;
       iptables
       iproute2
       tcpdump
-      wireshark # pra quando as coisas ficarem loucas
+      wireshark
     ];
   };
 }
