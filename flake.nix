@@ -107,6 +107,7 @@
 
             # Network
             ./modules/network/dns-resolver.nix
+            ./modules/network/dns/default.nix
             ./modules/network/vpn/nordvpn.nix
 
             # Shell
