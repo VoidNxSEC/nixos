@@ -116,7 +116,7 @@ in
       wantedBy = [ "multi-user.target" ];
 
       environment = {
-        CUDA_VISIBLE_DEVICES = "1";
+        CUDA_VISIBLE_DEVICES = "0";
         GGML_CUDA_NO_PEER_COPY = "1";
         CUDA_LAUNCH_BLOCKING = "1";
       };
