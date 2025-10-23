@@ -125,7 +125,7 @@
       enable = true;
       useSops = true; # SOPS fixed: now safe to enable
       runnerName = "nixos-self-hosted";
-      repoUrl = "https://github.com/VoidNxSEC/nixos";
+      repoUrl = "https://github.com/VoidNxSEC"; # Organization-level runner
       extraLabels = [
         "nixos"
         "nix"

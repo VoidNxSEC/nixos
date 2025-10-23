@@ -95,6 +95,9 @@ in
         Restart = "always";
         RestartSec = "10s";
 
+        # Increase timeout for downloading runner binary
+        TimeoutStartSec = "10min";
+
         # Load non-sensitive environment variables
         EnvironmentFile = [
           "/etc/github-runner.env"
@@ -108,9 +111,22 @@ in
         # Download and extract runner if not present
         if [ ! -x /var/lib/actions-runner/run.sh ]; then
           echo "Downloading GitHub Actions runner v${runnerVersion}..."
+          echo "Download URL: ${runnerUrl}"
           mkdir -p /var/lib/actions-runner
-          ${pkgs.curl}/bin/curl -fsSLo /tmp/${runnerArchive} "${runnerUrl}"
-          ${pkgs.gnutar}/bin/tar xzf /tmp/${runnerArchive} -C /var/lib/actions-runner
+
+          # Download with progress and better error handling
+          if ! ${pkgs.curl}/bin/curl -fL --progress-bar -o /tmp/${runnerArchive} "${runnerUrl}"; then
+            echo "ERROR: Failed to download runner from ${runnerUrl}"
+            exit 1
+          fi
+
+          echo "Extracting runner..."
+          if ! ${pkgs.gnutar}/bin/tar xzf /tmp/${runnerArchive} -C /var/lib/actions-runner; then
+            echo "ERROR: Failed to extract runner archive"
+            rm -f /tmp/${runnerArchive}
+            exit 1
+          fi
+
           rm /tmp/${runnerArchive}
           chown -R actions:actions /var/lib/actions-runner
           echo "Runner extracted successfully"
