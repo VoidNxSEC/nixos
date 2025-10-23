@@ -163,8 +163,8 @@ with lib;
             htop
             iftop
             tcpdump # ← debug de rede
-            gemini-cli
-            google-cloud-sdk
+            #gemini-cli
+            #google-cloud-sdk
           ];
 
           nixpkgs.config.allowUnfree = true;

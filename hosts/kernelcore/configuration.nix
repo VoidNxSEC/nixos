@@ -217,7 +217,7 @@
     };
 
     etcd = {
-      enable = true;
+      enable = false;
       name = "etc";
     };
 

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -23,16 +28,19 @@ let
   };
 
   # Generate configuration file
-  configFile = pkgs.writeText "dns-proxy-config.json" (builtins.toJSON {
-    listen_addr = cfg.listenAddress;
-    upstreams = cfg.upstreams;
-    cache_size = cfg.cacheSize;
-    cache_ttl = cfg.cacheTTL;
-    timeout = cfg.timeout;
-    enable_stats = cfg.enableStats;
-  });
+  configFile = pkgs.writeText "dns-proxy-config.json" (
+    builtins.toJSON {
+      listen_addr = cfg.listenAddress;
+      upstreams = cfg.upstreams;
+      cache_size = cfg.cacheSize;
+      cache_ttl = cfg.cacheTTL;
+      timeout = cfg.timeout;
+      enable_stats = cfg.enableStats;
+    }
+  );
 
-in {
+in
+{
   options.kernelcore.network.dns-proxy = {
     enable = mkEnableOption "DNS proxy with caching for improved resolution";
 
@@ -45,11 +53,11 @@ in {
     upstreams = mkOption {
       type = types.listOf types.str;
       default = [
-        "1.1.1.1:53"      # Cloudflare primary
-        "1.0.0.1:53"      # Cloudflare secondary
-        "8.8.8.8:53"      # Google primary
-        "8.8.4.4:53"      # Google secondary
-        "9.9.9.9:53"      # Quad9
+        "1.1.1.1:53" # Cloudflare primary
+        "1.0.0.1:53" # Cloudflare secondary
+        "8.8.8.8:53" # Google primary
+        "8.8.4.4:53" # Google secondary
+        "9.9.9.9:53" # Quad9
       ];
       description = "List of upstream DNS servers (with fallback)";
     };
@@ -111,7 +119,10 @@ in {
         ProtectKernelTunables = true;
         ProtectKernelModules = true;
         ProtectControlGroups = true;
-        RestrictAddressFamilies = [ "AF_INET" "AF_INET6" ];
+        RestrictAddressFamilies = [
+          "AF_INET"
+          "AF_INET6"
+        ];
         RestrictNamespaces = true;
         LockPersonality = true;
         MemoryDenyWriteExecute = true;
