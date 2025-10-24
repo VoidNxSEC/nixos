@@ -7,7 +7,16 @@
       "Read(//nix/store/**)",
       "Read(//var/lib/ml-models/llamacpp/models/**)",
       "Bash(mv:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(dig:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker inspect:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker start:*)",
+      "Bash(docker restart:*)",
+      "Bash(curl:*)",
+      "Bash(docker exec:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []
