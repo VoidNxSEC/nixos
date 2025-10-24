@@ -46,7 +46,7 @@
         # Causa "DNSSEC validation failed: no-signature" em domínios populares (anthropic.com, npmjs.org, etc)
         # Para reabilitar: descomente a linha abaixo e faça rebuild
         # enableDNSSEC = true;
-        enableDNSSEC = false;
+        enableDNSSEC = true;
         enableDNSCrypt = false; # OPÇÃO A: DNS sem criptografia (mais simples)
         preferredServers = [
           "1.1.1.1" # Cloudflare Primary
@@ -133,7 +133,7 @@
     };
 
     services.gitlab-runner = {
-      enable = false; # Set to true to enable GitLab CI/CD runner
+      enable = true; # Set to true to enable GitLab CI/CD runner
       useSops = false; # Enable when you have secrets/gitlab.yaml configured
       runnerName = "nixos-gitlab-runner";
       url = "https://gitlab.com"; # Or your self-hosted GitLab instance
@@ -191,12 +191,12 @@
 
     llamacpp = {
       enable = true;
-      model = "/var/lib/llamacpp/models/KoboldAI_LLaMA2-13B-Erebus-v3-GGUF_llama2-13b-erebus-v3.Q4_K_M.gguf";
+      model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
       port = 8080;
-      n_threads = 16;
-      n_gpu_layers = 22; # Otimizado para GPU de 6GB
+      n_threads = 40;
+      n_gpu_layers = 32; # Otimizado para GPU de 6GB
       n_parallel = 4;
-      n_ctx = 2048; # Reduzido de 4096 para 2048 para reduzir VRAM do KV cache (~880MB)
+      n_ctx = 4096; # Reduzido de 4096 para 2048 para reduzir VRAM do KV cache (~880MB)
     };
 
     ollama = {

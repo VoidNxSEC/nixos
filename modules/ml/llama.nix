@@ -30,7 +30,7 @@ in
 
     model = lib.mkOption {
       type = lib.types.path;
-      example = "/var/lib/llama-cpp/models/mistral-7b.gguf";
+      example = "/var/lib/llama-cpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
       description = "Path to the model file.";
     };
 
@@ -49,7 +49,7 @@ in
 
     n_threads = lib.mkOption {
       type = lib.types.int;
-      default = 8;
+      default = 6;
       description = "Number of threads to use for generation.";
     };
 
@@ -71,13 +71,13 @@ in
 
     n_ctx = lib.mkOption {
       type = lib.types.int;
-      default = 2048;
+      default = 4096;
       description = "Context window size (in tokens).";
     };
 
     n_batch = lib.mkOption {
       type = lib.types.int;
-      default = 512;
+      default = 2048;
       description = "Batch size for prompt processing.";
     };
 
@@ -86,7 +86,7 @@ in
       default = [ ];
       example = [
         "--temp"
-        "0.8"
+        "1.2"
         "--top-p"
         "0.9"
         "--repeat-penalty"
@@ -116,7 +116,7 @@ in
       wantedBy = [ "multi-user.target" ];
 
       environment = {
-        CUDA_VISIBLE_DEVICES = "0";
+        CUDA_VISIBLE_DEVICES = "-0";
         GGML_CUDA_NO_PEER_COPY = "1";
         CUDA_LAUNCH_BLOCKING = "1";
       };
