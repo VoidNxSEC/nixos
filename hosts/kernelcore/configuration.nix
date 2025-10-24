@@ -46,7 +46,7 @@
         # Causa "DNSSEC validation failed: no-signature" em domínios populares (anthropic.com, npmjs.org, etc)
         # Para reabilitar: descomente a linha abaixo e faça rebuild
         # enableDNSSEC = true;
-        enableDNSSEC = true;
+        enableDNSSEC = false; # Necessario mais desenvolvimento e estrategia para implementar o dnsec.
         enableDNSCrypt = false; # OPÇÃO A: DNS sem criptografia (mais simples)
         preferredServers = [
           "1.1.1.1" # Cloudflare Primary
@@ -59,7 +59,7 @@
         cacheTTL = 3600;
       };
 
-      vpn.nordvpn = {
+      vpn.nordvpn = { # Não entrega muito
         enable = false; # Habilite se quiser usar VPN
         autoConnect = false;
         overrideDNS = false; # IMPORTANTE: deixar systemd-resolved gerenciar DNS
@@ -133,7 +133,7 @@
     };
 
     services.gitlab-runner = {
-      enable = true; # Set to true to enable GitLab CI/CD runner
+      enable = false; # Set to true to enable GitLab CI/CD runner
       useSops = false; # Enable when you have secrets/gitlab.yaml configured
       runnerName = "nixos-gitlab-runner";
       url = "https://gitlab.com"; # Or your self-hosted GitLab instance
@@ -195,7 +195,7 @@
       port = 8080;
       n_threads = 40;
       n_gpu_layers = 32; # Otimizado para GPU de 6GB
-      n_parallel = 4;
+      n_parallel = 1;
       n_ctx = 4096; # Reduzido de 4096 para 2048 para reduzir VRAM do KV cache (~880MB)
     };
 

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nix flake check:*)",
+      "Bash(journalctl:*)",
+      "Bash(nmcli device:*)",
+      "Read(//nix/store/**)",
+      "Read(//var/lib/ml-models/llamacpp/models/**)",
+      "Bash(mv:*)",
+      "Bash(mkdir:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
