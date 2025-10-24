@@ -59,7 +59,8 @@
         cacheTTL = 3600;
       };
 
-      vpn.nordvpn = { # Não entrega muito
+      vpn.nordvpn = {
+        # Não entrega muito
         enable = false; # Habilite se quiser usar VPN
         autoConnect = false;
         overrideDNS = false; # IMPORTANTE: deixar systemd-resolved gerenciar DNS
