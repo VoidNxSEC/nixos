@@ -16,7 +16,19 @@
       "Bash(docker restart:*)",
       "Bash(curl:*)",
       "Bash(docker exec:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Read(//home/kernelcore/Dev/Docker.Base/**)",
+      "Bash(sudo lynis audit:*)",
+      "Bash(resolvectl status:*)",
+      "Bash(cat:*)",
+      "Bash(netstat:*)",
+      "Read(//home/kernelcore/**)",
+      "Read(//var/lib/clamav/**)",
+      "Read(///**)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose stop:*)",
+      "Bash(docker-compose rm:*)",
+      "Bash(docker-compose up:*)"
     ],
     "deny": [],
     "ask": []

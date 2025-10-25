@@ -21,7 +21,7 @@
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
       # File integrity monitoring - detects unauthorized file modifications
-      aide.enable = false;
+      aide.enable = true;
 
       # Antivirus scanning for malware detection
       clamav.enable = true;
@@ -98,8 +98,8 @@
           gitea = true; # Gitea CLI (local git server integration)
         };
         pre-commit = {
-          enable = true;
-          formatCode = true; # Auto-format code before commits
+          enable = false;
+          formatCode = false; # Auto-format code before commits
           runTests = false; # Set to true when you have automated tests
         };
       };
@@ -126,10 +126,11 @@
       enable = true;
       useSops = true; # SOPS fixed: now safe to enable
       runnerName = "nixos-self-hosted";
-      repoUrl = "https://github.com/VoidNxSEC"; # Organization-level runner
+      repoUrl = "https://github.com/marcosfpina"; # Organization-level runner
       extraLabels = [
         "nixos"
         "nix"
+        "linux"
       ];
     };
 
@@ -203,7 +204,11 @@
     ollama = {
       enable = true;
       host = "127.0.0.1"; # Security: Bind to localhost only
+      port = 11434; # Default port - Docker ollama uses 11435
       acceleration = "cuda";
+      # NOTE: Systemd ollama service uses port 11434
+      # Docker ollama in ~/Dev/Docker.Base/sql/docker-compose.yml uses host port 11435
+      # To run ollama manually: OLLAMA_HOST=127.0.0.1:11435 ollama serve
     };
 
     gitea = {
@@ -211,8 +216,12 @@
       settings = {
         server = {
           DOMAIN = "git.voidnxlabs";
-          ROOT_URL = "http://git.voidnxlabs:3000/";
-          HTTP_PORT = 3000;
+          ROOT_URL = "https://git.voidnxlabs:3443/";
+          HTTP_PORT = 3000; # HTTP redirect port
+          PROTOCOL = "https";
+          HTTPS_PORT = 3443;
+          CERT_FILE = "/var/lib/gitea/custom/https/localhost.crt";
+          KEY_FILE = "/var/lib/gitea/custom/https/localhost.key";
         };
         service = {
           DISABLE_REGISTRATION = false;
@@ -253,6 +262,13 @@
     libinput.enable = true;
     printing.enable = true;
   };
+
+  # Copy SSL certificates to Gitea directory
+  systemd.tmpfiles.rules = [
+    "d /var/lib/gitea/custom/https 0750 gitea gitea -"
+    "L+ /var/lib/gitea/custom/https/localhost.crt - - - - /home/kernelcore/localhost.crt"
+    "L+ /var/lib/gitea/custom/https/localhost.key - - - - /home/kernelcore/localhost.key"
+  ];
 
   nixpkgs.config.allowUnfreePredicate =
     pkg:

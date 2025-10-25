@@ -32,7 +32,7 @@ with lib;
         # Authentication
         PermitRootLogin = "no";
         PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
+        KbdInteractiveAuthentication = mkDefault false;
         PubkeyAuthentication = true;
         PermitEmptyPasswords = false;
         UsePAM = true;

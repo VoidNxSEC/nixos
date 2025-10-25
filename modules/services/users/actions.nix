@@ -102,6 +102,11 @@ in
         EnvironmentFile = [
           "/etc/github-runner.env"
         ];
+
+        # Fix: Add gzip to PATH for tar extraction
+        Environment = [
+          "PATH=${pkgs.gzip}/bin:${pkgs.gnutar}/bin:${pkgs.curl}/bin:${pkgs.coreutils}/bin:${pkgs.bash}/bin"
+        ];
       };
 
       # Download, extract, and configure runner

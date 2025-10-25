@@ -6,6 +6,8 @@
   ...
 }:
 
+with lib;
+
 {
   nix.settings = {
     # Security: Enable sandbox for build isolation (overrides all other configs)
@@ -95,7 +97,7 @@
     settings = {
       PermitRootLogin = "no";
       PasswordAuthentication = false;
-      KbdInteractiveAuthentication = false;
+      KbdInteractiveAuthentication = mkForce true;
       PubkeyAuthentication = true;
       X11Forwarding = false;
       PermitEmptyPasswords = false;
@@ -321,10 +323,9 @@
     "p8023"
     "llc"
     "p8022"
-
-    # "bluetooth"
-    # "btusb"
-    # "uvcvideo"
+    "bluetooth"
+    "btusb"
+    "uvcvideo"
   ];
 
   boot.kernelParams = [

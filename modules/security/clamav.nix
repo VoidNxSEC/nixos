@@ -24,9 +24,37 @@ with lib;
       updater.frequency = 24;
     };
 
-    # ClamAV log directory
+    # ClamAV directories
     systemd.tmpfiles.rules = [
       "d /var/log/clamav 0755 clamav clamav -"
+      "d /var/lib/clamav 0755 clamav clamav -"
+    ];
+
+    # Allow users in wheel group to run freshclam and clamscan
+    security.sudo.extraRules = [
+      {
+        groups = [ "wheel" ];
+        commands = [
+          {
+            command = "${pkgs.clamav}/bin/freshclam";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.clamav}/bin/clamscan";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
+
+    # Wrapper scripts for user-friendly ClamAV access
+    environment.systemPackages = with pkgs; [
+      clamav
+      (pkgs.writeScriptBin "freshclam-update" ''
+        #!${pkgs.bash}/bin/bash
+        # Wrapper for freshclam with sudo
+        exec ${pkgs.sudo}/bin/sudo ${pkgs.clamav}/bin/freshclam "$@"
+      '')
     ];
 
     # ClamAV scan service

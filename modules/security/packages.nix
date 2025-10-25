@@ -17,11 +17,30 @@ with lib;
     # 🔧 Security & Audit Tools
     ##########################################################################
 
+    # Allow wheel group users to run Lynis audits without password
+    security.sudo.extraRules = [
+      {
+        groups = [ "wheel" ];
+        commands = [
+          {
+            command = "${pkgs.lynis}/bin/lynis";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
+
     environment.systemPackages = with pkgs; [
       # Security auditing
       lynis
       vulnix
       aide
+      # Lynis wrapper for easier read-only audits
+      (pkgs.writeScriptBin "lynis-audit" ''
+        #!${pkgs.bash}/bin/bash
+        # Run Lynis audit with sudo (read-only system scan)
+        exec ${pkgs.sudo}/bin/sudo ${pkgs.lynis}/bin/lynis audit system "$@"
+      '')
 
       # VPN & Authentication
       wgnord

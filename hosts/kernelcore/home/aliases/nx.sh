@@ -129,8 +129,16 @@ alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
 # List all containers including stopped
 alias dpsa='docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
 
-# Docker stats for running containers
-alias dstats='docker stats --no-stream'
+# Docker stats for running containers with exposed links
+dstats() {
+    echo "📊 Docker Container Stats"
+    echo "================================"
+    docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
+    echo ""
+    echo "🔗 Exposed Services & Links"
+    echo "================================"
+    docker ps --format "table {{.Names}}\t{{.Ports}}" | grep -E "^(NAMES|.*0\.0\.0\.0)" | sed 's/0.0.0.0://g' | sed 's/->/\t→\t/g'
+}
 
 # Remove all stopped containers
 alias dclean='docker container prune -f'
