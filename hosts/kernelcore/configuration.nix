@@ -134,6 +134,11 @@
       ];
     };
 
+    services.gpu-orchestration = {
+      enable = true;
+      defaultMode = "docker"; # Docker containers get GPU priority by default
+    };
+
     services.gitlab-runner = {
       enable = false; # Set to true to enable GitLab CI/CD runner
       useSops = false; # Enable when you have secrets/gitlab.yaml configured
@@ -196,9 +201,10 @@
       model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
       port = 8080;
       n_threads = 40;
-      n_gpu_layers = 32; # Otimizado para GPU de 6GB
+      n_gpu_layers = 24; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
       n_parallel = 1;
-      n_ctx = 4096; # Reduzido de 4096 para 2048 para reduzir VRAM do KV cache (~880MB)
+      n_ctx = 2048; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
+      # Total VRAM usage: ~2.9GB (allows coexistence with other GPU services)
     };
 
     ollama = {
@@ -206,6 +212,10 @@
       host = "127.0.0.1"; # Security: Bind to localhost only
       port = 11434; # Default port - Docker ollama uses 11435
       acceleration = "cuda";
+      # GPU memory management: unload models after 5 minutes of inactivity
+      environmentVariables = {
+        OLLAMA_KEEP_ALIVE = "5m"; # Unload models after 5min idle to free VRAM
+      };
       # NOTE: Systemd ollama service uses port 11434
       # Docker ollama in ~/Dev/Docker.Base/sql/docker-compose.yml uses host port 11435
       # To run ollama manually: OLLAMA_HOST=127.0.0.1:11435 ollama serve

@@ -28,7 +28,10 @@
       "Bash(docker-compose logs:*)",
       "Bash(docker-compose stop:*)",
       "Bash(docker-compose rm:*)",
-      "Bash(docker-compose up:*)"
+      "Bash(docker-compose up:*)",
+      "Bash(git -C /etc/nixos status --short)",
+      "Bash(git -C /etc/nixos add modules/services/gpu-orchestration.nix)",
+      "Bash(git -C /etc/nixos add hosts/kernelcore/home/aliases/gpu-management.sh)"
     ],
     "deny": [],
     "ask": []

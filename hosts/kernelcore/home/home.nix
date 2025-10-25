@@ -375,6 +375,11 @@
                   source ~/.config/NixHM/aliases/gpu.sh
                 fi
 
+                # GPU Management (orchestration)
+                if [ -f ~/.config/NixHM/aliases/gpu-management.sh ]; then
+                  source ~/.config/NixHM/aliases/gpu-management.sh
+                fi
+
                 # GCloud aliases
                 if [ -f ~/.config/NixHM/aliases/gcloud.sh ]; then
                   source ~/.config/NixHM/aliases/gcloud.sh
@@ -711,6 +716,9 @@
 
     # GPU aliases (source file)
     ".config/NixHM/aliases/gpu.sh".source = ./aliases/gpu.sh;
+
+    # GPU Management aliases (GPU orchestration)
+    ".config/NixHM/aliases/gpu-management.sh".source = ./aliases/gpu-management.sh;
 
     # GCloud aliases (source file)
     ".config/NixHM/aliases/gcloud.sh".source = ./aliases/gcloud.sh;

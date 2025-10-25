@@ -76,6 +76,7 @@
             ./modules/services/users/claude-code.nix
             ./modules/services/users/actions.nix
             ./modules/services/users/gitlab-runner.nix
+            ./modules/services/gpu-orchestration.nix
 
             # Applications
             ./modules/applications/firefox-privacy.nix
