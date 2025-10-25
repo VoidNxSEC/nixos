@@ -21,7 +21,7 @@
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
       # File integrity monitoring - detects unauthorized file modifications
-      aide.enable = true;
+      aide.enable = false;
 
       # Antivirus scanning for malware detection
       clamav.enable = true;
