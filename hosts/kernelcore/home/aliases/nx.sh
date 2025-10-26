@@ -357,7 +357,7 @@ killbyname() {
 # Start development environment for common stacks
 dev-env() {
     local env_type="${1:-generic}"
-    
+
     case "$env_type" in
         node)
             nix-shell -p nodejs nodePackages.npm nodePackages.typescript
@@ -389,7 +389,7 @@ dcomp() {
         echo "Example: dcomp ~/services/docker-compose.yml up -d"
         return 1
     fi
-    
+
     local compose_file="$1"
     shift
     docker compose -f "$compose_file" "$@"
@@ -420,29 +420,29 @@ nixinfo() {
 # Backup NixOS configuration
 nix-backup() {
     local backup_dir="${1:-$HOME/nixos-backup-$(date +%Y%m%d-%H%M%S)}"
-    
+
     echo "Creating backup in: $backup_dir"
     mkdir -p "$backup_dir"
-    
+
     # Copy NixOS configuration
     sudo cp -r /etc/nixos "$backup_dir/"
-    
+
     # Copy home-manager config if it exists
     if [ -d "$HOME/.config/home-manager" ]; then
         cp -r "$HOME/.config/home-manager" "$backup_dir/"
     fi
-    
+
     # Copy nixpkgs config if it exists
     if [ -d "$HOME/.config/nixpkgs" ]; then
         cp -r "$HOME/.config/nixpkgs" "$backup_dir/"
     fi
-    
+
     # List installed packages
     nix-env -q > "$backup_dir/user-packages.txt"
-    
+
     # List generations
     sudo nix-env --list-generations --profile /nix/var/nix/profiles/system > "$backup_dir/system-generations.txt"
-    
+
     echo "✓ Backup complete: $backup_dir"
 }
 
@@ -450,7 +450,7 @@ nix-backup() {
 nix-test-config() {
     echo "🧪 Testing NixOS configuration..."
     sudo nixos-rebuild build
-    
+
     if [ $? -eq 0 ]; then
         echo "✓ Configuration builds successfully!"
         echo ""
@@ -537,7 +537,7 @@ export -f nixinfo
 export -f nix-backup
 export -f nix-test-config
 export -f nix-help
-
+export -f dstats
 # ============================================================
 # ✓ INITIALIZATION
 # ============================================================

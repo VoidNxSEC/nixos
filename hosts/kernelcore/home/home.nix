@@ -247,7 +247,7 @@
         ga = "git add";
         gaa = "git add --all";
         gc = "git commit -m";
-        gp = "git push origin main";
+        gp = "git push -u origin main";
         gl = "git log --oneline --graph --decorate --all -10";
         gd = "git diff";
         gco = "git checkout";
@@ -273,8 +273,8 @@
         dots = "cd ~/.config/NixHM";
         neo = "cd ~/.config/nvim";
         dev = "cd ~/Dev";
-        dock = "cd ~/Dev/Docker.Base";
-        ml-clusters = "cd ~/Dev/Docker.Base/ml-clusters/";
+        dock = "cd ~/Dev/docker-hub/";
+        ml-clusters = "cd ~/Dev/docker-hub//ml-clusters/";
 
 
         # Fun stuff
@@ -770,9 +770,9 @@
     TERMINAL = "gnome-terminal";
 
     # Python/Pipx
-    PIPX_HOME = "${config.home.homeDirectory}/.local/share/pipx";
-    PIPX_BIN_DIR = "${config.home.homeDirectory}/.local/bin";
-    PIPX_MAN_DIR = "${config.home.homeDirectory}/.local/share/man";
+    #PIPX_HOME = "${config.home.homeDirectory}/.local/share/pipx";
+    #PIPX_BIN_DIR = "${config.home.homeDirectory}/.local/bin";
+    #PIPX_MAN_DIR = "${config.home.homeDirectory}/.local/share/man";
 
     # Development
     GOPATH = "${config.home.homeDirectory}/go";
