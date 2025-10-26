@@ -149,7 +149,6 @@
       vivaldi
       chromium
 
-
       # ─────────────────────────────────────────────────────
       # Communication Channels
       # ─────────────────────────────────────────────────────
@@ -277,7 +276,6 @@
         dev = "cd ~/Dev";
         dock = "cd ~/Dev/docker-hub/";
         ml-clusters = "cd ~/Dev/docker-hub//ml-clusters/";
-
 
         # Fun stuff
         weather = "curl wttr.in";

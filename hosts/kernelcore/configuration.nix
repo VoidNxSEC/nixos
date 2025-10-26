@@ -165,7 +165,7 @@
       ageKeyFile = "/var/lib/sops-nix/key.txt";
     };
 
-    secrets.api-keys.enable = true;  # Load decrypted API keys
+    secrets.api-keys.enable = true; # Load decrypted API keys
 
     # MEDIUM PRIORITY: Standardized ML model storage
     ml.models-storage = {
@@ -268,7 +268,6 @@
       name = "etc";
     };
 
-
     #chromiumOrg = {
     #enable = true;
     # opcional: use ungoogled-chromium
@@ -322,22 +321,22 @@
     #};
 
     # extensões via policy (forcelist / allowlist / blocklist)
-      #extensions = {
-      #force = [
-        #{ id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # uBlock Origin
-        #{ id = "aapocclcgogkmnckokdopfmhonfmgoek"; } # Google Docs Offline
-        #];
-      #allowlist = [ ];
-      #blocklist = [ "cfhdojbkjhnklbpkdaibdccddilifddb" ]; # ex: bloquear Adblock
-      #};
+    #extensions = {
+    #force = [
+    #{ id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # uBlock Origin
+    #{ id = "aapocclcgogkmnckokdopfmhonfmgoek"; } # Google Docs Offline
+    #];
+    #allowlist = [ ];
+    #blocklist = [ "cfhdojbkjhnklbpkdaibdccddilifddb" ]; # ex: bloquear Adblock
+    #};
 
     # onde escrever as policies (padrão Chromium)
-      #policiesPath = "/etc/chromium/policies/managed";
-      #policyFileName = "policies.json";
+    #policiesPath = "/etc/chromium/policies/managed";
+    #policyFileName = "policies.json";
 
     # substitui o binário no PATH por um wrapper com flags/ENV
-      #replaceSystemChromium = true;
-      #};
+    #replaceSystemChromium = true;
+    #};
 
     pulseaudio.enable = false;
     pipewire = {
@@ -421,7 +420,6 @@
       kubernetes
       kubernetes-polaris
       kubernetes-helm
-
 
       gnome-secrets
 
