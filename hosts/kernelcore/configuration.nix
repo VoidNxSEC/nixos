@@ -72,6 +72,8 @@
       cudaSupport = true;
     };
 
+    hardware.wifi-optimization.enable = true;
+
     development = {
       rust.enable = true;
       go.enable = true;
@@ -98,8 +100,8 @@
           gitea = true; # Gitea CLI (local git server integration)
         };
         pre-commit = {
-          enable = false;
-          formatCode = false; # Auto-format code before commits
+          enable = true;
+          formatCode = true; # Auto-format code before commits
           runTests = false; # Set to true when you have automated tests
         };
       };
@@ -123,8 +125,11 @@
     };
 
     services.github-runner = {
-      enable = true;
-      useSops = true; # SOPS fixed: now safe to enable
+      # OPTIONAL: Enable self-hosted GitHub Actions runner when needed
+      # Requires secrets/github.yaml to be configured with registration token
+      # Default: use GitHub-hosted runners (more reliable, no local resource usage)
+      enable = false; # Set to true to enable self-hosted runner
+      useSops = true; # SOPS fixed: now safe to enable when needed
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/marcosfpina"; # Organization-level runner
       extraLabels = [
@@ -159,6 +164,8 @@
       secretsPath = "/etc/nixos/secrets";
       ageKeyFile = "/var/lib/sops-nix/key.txt";
     };
+
+    secrets.api-keys.enable = true;  # Load decrypted API keys
 
     # MEDIUM PRIORITY: Standardized ML model storage
     ml.models-storage = {
@@ -262,75 +269,75 @@
     };
 
 
-   chromiumOrg = {
-    enable = true;
+    #chromiumOrg = {
+    #enable = true;
     # opcional: use ungoogled-chromium
     # package = pkgs.ungoogled-chromium;
 
     # flags extra
-    extraArgs = [
-      "--force-dark-mode"
-      "--disable-print-preview"
-    ];
+    #extraArgs = [
+    #"--force-dark-mode"
+    # "--disable-print-preview"
+    #];
 
     # variáveis de ambiente
-    env = {
-      HTTP_PROXY = "http://proxy.local:3128";
-      HTTPS_PROXY = "http://proxy.local:3128";
-    };
+    #env = {
+    #HTTP_PROXY = "http://proxy.local:3128";
+    #HTTPS_PROXY = "http://proxy.local:3128";
+    #};
 
     # regras de organização (mapeadas para policies)
-    rules = {
-      homepage = "https://intranet.sua-orga";
-      homepageIsNewTabPage = false;
-      restoreOnStartup = 4; # abrir URLs específicas
-      startupUrls = [ "https://intranet.sua-orga" "https://docs.sua-orga" ];
+    #rules = {
+    #homepage = "https://intranet.sua-orga";
+    #homepageIsNewTabPage = false;
+    #restoreOnStartup = 4; # abrir URLs específicas
+    #startupUrls = [ "https://intranet.sua-orga" "https://docs.sua-orga" ];
 
-      defaultSearch = {
-        name = "Brave";
-        searchUrl = "https://search.brave.com/search?q={searchTerms}";
-        suggestUrl = "https://search.brave.com/api/suggest?q={searchTerms}";
-        iconUrl = "https://brave.com/static-assets/images/press/brave-icon.png";
-      };
+    #defaultSearch = {
+    # name = "Brave";
+    #searchUrl = "https://search.brave.com/search?q={searchTerms}";
+    #suggestUrl = "https://search.brave.com/api/suggest?q={searchTerms}";
+    #iconUrl = "https://brave.com/static-assets/images/press/brave-icon.png";
+    #};
 
-      safeBrowsing = 1; # 0=off, 1=padrão, 2=avançado
-      passwordManagerEnabled = false;
-      incognitoModeAvailability = 1; # 0=habilitado, 1=desabilitado, 2=forçado
-      browserSignin = 0; # 0=desabilitado, 1=habilitado, 2=forçado
-      syncDisabled = true;
+    #safeBrowsing = 1; # 0=off, 1=padrão, 2=avançado
+    #passwordManagerEnabled = false;
+    #incognitoModeAvailability = 1; # 0=habilitado, 1=desabilitado, 2=forçado
+    #browserSignin = 0; # 0=desabilitado, 1=habilitado, 2=forçado
+    #syncDisabled = true;
 
-      urlBlocklist = [ "*://*.rede-social.com/*" ];
-      urlAllowlist = [ "https://docs.sua-orga/*" "https://intranet.sua-orga/*" ];
+    #urlBlocklist = [ "*://*.rede-social.com/*" ];
+    #urlAllowlist = [ "https://docs.sua-orga/*" "https://intranet.sua-orga/*" ];
 
-      downloadDirectory = "/var/lib/chromium-downloads";
-      promptForDownload = false;
+    #downloadDirectory = "/var/lib/chromium-downloads";
+    #promptForDownload = false;
 
-      showHomeButton = true;
-      defaultBrowserSettingEnabled = false;
+    #showHomeButton = true;
+    #defaultBrowserSettingEnabled = false;
 
-      proxyMode = "fixed_servers";
-      proxyServer = "http=proxy.local:3128;https=proxy.local:3128";
+    #proxyMode = "fixed_servers";
+    #proxyServer = "http=proxy.local:3128;https=proxy.local:3128";
 
-      printingEnabled = true;
-    };
+    #printingEnabled = true;
+    #};
 
     # extensões via policy (forcelist / allowlist / blocklist)
-    extensions = {
-      force = [
-        { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # uBlock Origin
-        { id = "aapocclcgogkmnckokdopfmhonfmgoek"; } # Google Docs Offline
-      ];
-      allowlist = [ ];
-      blocklist = [ "cfhdojbkjhnklbpkdaibdccddilifddb" ]; # ex: bloquear Adblock
-    };
+      #extensions = {
+      #force = [
+        #{ id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # uBlock Origin
+        #{ id = "aapocclcgogkmnckokdopfmhonfmgoek"; } # Google Docs Offline
+        #];
+      #allowlist = [ ];
+      #blocklist = [ "cfhdojbkjhnklbpkdaibdccddilifddb" ]; # ex: bloquear Adblock
+      #};
 
     # onde escrever as policies (padrão Chromium)
-    policiesPath = "/etc/chromium/policies/managed";
-    policyFileName = "policies.json";
+      #policiesPath = "/etc/chromium/policies/managed";
+      #policyFileName = "policies.json";
 
     # substitui o binário no PATH por um wrapper com flags/ENV
-    replaceSystemChromium = true;
-  };
+      #replaceSystemChromium = true;
+      #};
 
     pulseaudio.enable = false;
     pipewire = {
@@ -415,8 +422,15 @@
       kubernetes-polaris
       kubernetes-helm
 
+
+      gnome-secrets
+
       libreoffice
       onlyoffice-desktopeditors
+
+      certbot
+
+      python313Packages.groq
 
       codex
       claude-code
@@ -483,6 +497,13 @@
     docker
     gnumake
     ollama
+    libfido2
+    python313Packages.pyudev
+    libudev0-shim
+    libusb1
+    trezord
+    #trezorctl
+    trezor-udev-rules
   ];
 
   system.stateVersion = "25.05";
