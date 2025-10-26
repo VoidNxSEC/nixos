@@ -68,7 +68,6 @@
       # Package Managers & Python
       # ─────────────────────────────────────────────────────
       uv
-      pipx
       python313Packages.python
       python313Packages.torchWithCuda
 
@@ -147,6 +146,7 @@
       # Browser Fleet
       # ─────────────────────────────────────────────────────
       brave
+      ladybird
 
       # ─────────────────────────────────────────────────────
       # Communication Channels
@@ -257,7 +257,7 @@
         rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#kernelcore --show-trace";
         build = "home-manager switch --flake ~/.config/NixHM#kernelcore";
         upgrade = "nix flake update ~/.config/home-manager && home-manager switch --flake ~/.config/NixHM#kernelcore";
-        clean = "nix-collect-garbage -d && nix-store --gc";
+        clean = "sudo nix-collect-garbage -d && sudo nix-store --gc";
         cleanold = "sudo nix-collect-garbage --delete-older-than 7d";
 
         # Docker shortcuts
@@ -270,12 +270,12 @@
         shred = "shred -vfz -n 3";
 
         # Quick access
-        config = "cd ~/.config";
         dots = "cd ~/.config/NixHM";
-        base = "cd ~/Base";
         neo = "cd ~/.config/nvim";
-        dev = "cd ~/dev";
-        prod = "cd /home/kernelcore/.config/crynxlab";
+        dev = "cd ~/Dev";
+        dock = "cd ~/Dev/Docker.Base";
+        ml-clusters = "cd ~/Dev/Docker.Base/ml-clusters/";
+
 
         # Fun stuff
         weather = "curl wttr.in";

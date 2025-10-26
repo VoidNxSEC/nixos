@@ -31,7 +31,8 @@
       "Bash(docker-compose up:*)",
       "Bash(git -C /etc/nixos status --short)",
       "Bash(git -C /etc/nixos add modules/services/gpu-orchestration.nix)",
-      "Bash(git -C /etc/nixos add hosts/kernelcore/home/aliases/gpu-management.sh)"
+      "Bash(git -C /etc/nixos add hosts/kernelcore/home/aliases/gpu-management.sh)",
+      "Bash(docker network inspect:*)"
     ],
     "deny": [],
     "ask": []

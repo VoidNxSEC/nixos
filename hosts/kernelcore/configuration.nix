@@ -345,8 +345,13 @@
       kubernetes-helm
 
       libreoffice
+      onlyoffice-desktopeditors
 
+      codex
       claude-code
+
+      python313Packages.openai
+
       alacritty
       xclip
 
