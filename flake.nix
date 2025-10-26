@@ -84,6 +84,9 @@
             ./modules/applications/vscodium-secure.nix
             ./modules/applications/vscode-secure.nix
 
+            ./modules/browsers/chromium.nix
+
+
             # Programs
             #./modules/programs/default.nix
 
