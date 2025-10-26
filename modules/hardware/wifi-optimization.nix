@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -53,16 +58,16 @@ with lib;
 
     # Optimize DNS resolution for lower latency
     networking.networkmanager.insertNameservers = [
-      "1.1.1.1"      # Cloudflare primary
-      "1.0.0.1"      # Cloudflare secondary
-      "8.8.8.8"      # Google primary
-      "8.8.4.4"      # Google secondary
+      "1.1.1.1" # Cloudflare primary
+      "1.0.0.1" # Cloudflare secondary
+      "8.8.8.8" # Google primary
+      "8.8.4.4" # Google secondary
     ];
 
     # systemd-resolved optimizations
     services.resolved = {
       enable = true;
-      dnssec = "false";  # DNSSEC can add latency
+      dnssec = "false"; # DNSSEC can add latency
 
       # DNS-over-TLS for privacy without sacrificing too much performance
       dnsovertls = "opportunistic";
@@ -116,9 +121,9 @@ with lib;
 
     # Install WiFi debugging/monitoring tools
     environment.systemPackages = with pkgs; [
-      iw                # WiFi configuration utility
-      wirelesstools     # iwconfig, iwlist, etc.
-      wavemon           # WiFi monitoring tool
+      iw # WiFi configuration utility
+      wirelesstools # iwconfig, iwlist, etc.
+      wavemon # WiFi monitoring tool
     ];
 
     # Systemd service to monitor and log WiFi signal quality

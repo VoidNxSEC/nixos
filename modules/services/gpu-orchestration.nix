@@ -13,7 +13,11 @@ with lib;
       enable = mkEnableOption "Enable GPU resource orchestration for managing VRAM allocation";
 
       defaultMode = mkOption {
-        type = types.enum [ "local" "docker" "auto" ];
+        type = types.enum [
+          "local"
+          "docker"
+          "auto"
+        ];
         default = "docker";
         description = ''
           Default GPU allocation mode:
@@ -37,13 +41,20 @@ with lib;
 
     systemd.targets.gpu-local-mode = {
       description = "GPU Local Mode - Systemd services active";
-      wants = [ "llamacpp.service" "ollama.service" ];
+      wants = [
+        "llamacpp.service"
+        "ollama.service"
+      ];
       conflicts = [ "gpu-docker-mode.target" ];
     };
 
     systemd.targets.gpu-docker-mode = {
       description = "GPU Docker Mode - Docker containers get GPU priority";
-      conflicts = [ "gpu-local-mode.target" "llamacpp.service" "ollama.service" ];
+      conflicts = [
+        "gpu-local-mode.target"
+        "llamacpp.service"
+        "ollama.service"
+      ];
     };
 
     # ═══════════════════════════════════════════════════════════

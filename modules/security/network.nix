@@ -38,6 +38,9 @@
     # Trusted interfaces (Docker bridges)
     # docker0: default bridge
     # br-+: custom Docker Compose networks
-    trustedInterfaces = [ "docker0" "br-+" ];
+    trustedInterfaces = [
+      "docker0"
+      "br-+"
+    ];
   };
 }
