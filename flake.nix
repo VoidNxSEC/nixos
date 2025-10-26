@@ -86,7 +86,6 @@
 
             ./modules/browsers/chromium.nix
 
-
             # Programs
             #./modules/programs/default.nix
 
