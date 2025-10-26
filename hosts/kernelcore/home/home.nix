@@ -55,7 +55,7 @@
 
       caddy
       python313Packages.meson
-
+      kitty
       vim
       neovim
       vscode
@@ -146,7 +146,9 @@
       # Browser Fleet
       # ─────────────────────────────────────────────────────
       brave
-      ladybird
+      vivaldi
+      chromium
+
 
       # ─────────────────────────────────────────────────────
       # Communication Channels

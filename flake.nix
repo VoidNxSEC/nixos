@@ -106,6 +106,7 @@
             #./modules/hardware/intel.nix
             ./modules/hardware/nvidia.nix
             ./modules/hardware/trezor.nix
+            ./modules/hardware/wifi-optimization.nix
 
             # Development
             ./modules/development/environments.nix
@@ -134,6 +135,7 @@
 
             # Secrets
             ./modules/secrets/sops-config.nix
+            ./modules/secrets/api-keys.nix
             sops-nix.nixosModules.sops
             {
               # SOPS-nix configuration to use SSH host key
