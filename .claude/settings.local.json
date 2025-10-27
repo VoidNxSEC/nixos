@@ -51,7 +51,11 @@
       "Bash(source /etc/load-api-keys.sh)",
       "Bash(nixfmt:*)",
       "Bash(chmod:*)",
-      "Bash(nix config:*)"
+      "Bash(nix config:*)",
+      "Bash(git push:*)",
+      "Read(//tmp/**)",
+      "Bash(git config:*)",
+      "Read(//etc/nixos-config-hooks/**)"
     ],
     "deny": [],
     "ask": []
