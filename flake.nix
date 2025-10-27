@@ -69,6 +69,8 @@
             ./hosts/kernelcore/hardware-configuration.nix
             ./hosts/kernelcore/configuration.nix
 
+            ./laptop-offload-client.nix
+
             # Services
             ./modules/services/default.nix
             #./modules/services/scripts.nix
@@ -135,6 +137,7 @@
             # Secrets
             ./modules/secrets/sops-config.nix
             ./modules/secrets/api-keys.nix
+
             sops-nix.nixosModules.sops
             {
               # SOPS-nix configuration to use SSH host key

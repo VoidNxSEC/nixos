@@ -35,8 +35,8 @@ with lib;
         })
 
         {
-          max-jobs = "auto";
-          cores = 0;
+          max-jobs = mkDefault "auto";
+          cores = mkDefault 0;
 
           trusted-users = [
             "root"

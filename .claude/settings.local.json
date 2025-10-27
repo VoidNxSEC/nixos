@@ -48,7 +48,10 @@
       "Bash(git -C /etc/nixos add SECRETS.md SETUP-SOPS-FINAL.md scripts/)",
       "Bash(SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops updatekeys:*)",
       "Bash(sudo ls:*)",
-      "Bash(source /etc/load-api-keys.sh)"
+      "Bash(source /etc/load-api-keys.sh)",
+      "Bash(nixfmt:*)",
+      "Bash(chmod:*)",
+      "Bash(nix config:*)"
     ],
     "deny": [],
     "ask": []
