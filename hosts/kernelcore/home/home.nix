@@ -174,6 +174,7 @@
       docker-buildx
       bun
       rustup
+      wrangler
 
       # ─────────────────────────────────────────────────────
       # Machine Learning
@@ -365,54 +366,6 @@
                 backup() {
                   cp "$1" "$1.backup-$(date +%Y%m%d-%H%M%S)"
                 }
-
-                # ====================================================
-                # LOAD DOMAIN-SPECIFIC ALIASES
-                # ====================================================
-
-                # GPU aliases
-                if [ -f ~/.config/NixHM/aliases/gpu.sh ]; then
-                  source ~/.config/NixHM/aliases/gpu.sh
-                fi
-
-                # GPU Management (orchestration)
-                if [ -f ~/.config/NixHM/aliases/gpu-management.sh ]; then
-                  source ~/.config/NixHM/aliases/gpu-management.sh
-                fi
-
-                # GCloud aliases
-                if [ -f ~/.config/NixHM/aliases/gcloud.sh ]; then
-                  source ~/.config/NixHM/aliases/gcloud.sh
-                fi
-
-                # AI-Docker Inference aliases
-                if [ -f ~/.config/NixHM/aliases/multimodal.sh ]; then
-                  source ~/.config/NixHM/aliases/multimodal.sh
-                fi
-
-        	# Nix Aliases
-        	if [ -f ~/.config/NixHM/aliases/nx.sh ]; then
-                  source ~/.config/NixHM/aliases/nx.sh
-                fi
-
-        	# GPU-docker-core Aliases
-        	if [ -f ~/.config/NixHM/aliases/gpu-docker-core.sh ]; then
-                  source ~/.config/NixHM/aliases/gpu-docker-core.sh
-                fi
-
-        	# AI-ML-Stack Aliases
-        	if [ -f ~/.config/NixHM/aliases/ai-ml-stack.sh ]; then
-                  source ~/.config/NixHM/aliases/ai-ml-stack.sh
-                fi
-
-        	# Ai-Compose-Stack Docker Aliases
-        	if [ -f ~/.config/NixHM/aliases/ai-compose-stack.sh ]; then
-                  source ~/.config/NixHM/aliases/ai-compose-stack.sh
-                fi
-
-        	if [ -f ~/.config/NixHM/aliases/litellm_runtime_manager.sh ]; then
-                  source ~/.config/NixHM/aliases/litellm_runtime_manager.sh
-                fi
 
                 # Welcome message
                 #echo "⚡ Welcome back, $(whoami)! Ready to hack? 🚀"
@@ -714,31 +667,6 @@
       Categories=System;Monitor;
     '';
 
-    # GPU aliases (source file)
-    ".config/NixHM/aliases/gpu.sh".source = ./aliases/gpu.sh;
-
-    # GPU Management aliases (GPU orchestration)
-    ".config/NixHM/aliases/gpu-management.sh".source = ./aliases/gpu-management.sh;
-
-    # GCloud aliases (source file)
-    ".config/NixHM/aliases/gcloud.sh".source = ./aliases/gcloud.sh;
-
-    # Local AI inference (source file)
-    ".config/NixHM/aliases/multimodal.sh".source = ./aliases/multimodal.sh;
-
-    # Local AI inference (source file)
-    ".config/NixHM/aliases/gpu-docker-core.sh".source = ./aliases/gpu-docker-core.sh;
-
-    # Local AI inference (source file)
-    ".config/NixHM/aliases/ai-ml-stack.sh".source = ./aliases/ai-ml-stack.sh;
-
-    # Local AI inference (source file)
-    ".config/NixHM/aliases/nx.sh".source = ./aliases/nx.sh;
-
-    # Docker Aliases (source file)
-    ".config/NixHM/aliases/ai-compose-stack.sh".source = ./aliases/ai-compose-stack.sh;
-
-    ".config/NixHM/aliases/litellm_runtime_manager.sh".source = ./aliases/litellm_runtime_manager.sh;
 
     # Starship prompt config (optional alternative to bash prompt)
     ".config/starship.toml".text = ''

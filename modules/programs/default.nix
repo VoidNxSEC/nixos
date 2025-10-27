@@ -1,0 +1,7 @@
+{ ... }:
+
+{
+
+  sway.xwayland.enable = true;
+
+}
