@@ -2,7 +2,12 @@
 # Módulo declarativo para configurar laptop como cliente de build remoto
 # Este módulo é uma alternativa ao laptop-offload-client.nix (que fica na raiz)
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 

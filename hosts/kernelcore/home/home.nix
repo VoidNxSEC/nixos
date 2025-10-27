@@ -667,7 +667,6 @@
       Categories=System;Monitor;
     '';
 
-
     # Starship prompt config (optional alternative to bash prompt)
     ".config/starship.toml".text = ''
       format = """
