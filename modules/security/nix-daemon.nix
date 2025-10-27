@@ -33,8 +33,8 @@ with lib;
       trusted-users = [ "@wheel" ];
       allowed-users = [ "@users" ];
       build-users-group = "nixbld";
-      max-jobs = "auto";
-      cores = 0;
+      max-jobs = mkDefault "auto";
+      cores = mkDefault 0;
 
       # Binary cache security
       require-sigs = true;

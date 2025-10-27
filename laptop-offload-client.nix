@@ -21,12 +21,12 @@ in
   # ===== REMOTE BUILDERS CONFIGURATION =====
   nix.settings = {
     # Enable distributed builds
-    builders = [
+    builders = lib.mkForce [
       "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1 nixos-test,benchmark,big-parallel"
     ];
 
     # Use remote builders for supported systems
-    builders-use-substituters = true;
+    builders-use-substitutes = true;
 
     # Binary cache configuration (desktop-first)
     substituters = [
@@ -40,7 +40,7 @@ in
     ];
 
     # Optimize for offload usage
-    max-jobs = 0; # Disable local builds for offloadable packages
+    max-jobs = lib.mkForce 0; # Disable local builds for offloadable packages
 
     # Build optimization
     connect-timeout = 5;
