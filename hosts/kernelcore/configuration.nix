@@ -414,7 +414,6 @@
       starship
       terraform
 
-
       awscli2
 
       gemini-cli
