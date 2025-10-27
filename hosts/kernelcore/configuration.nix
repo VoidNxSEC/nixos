@@ -500,7 +500,6 @@
     libudev0-shim
     libusb1
     trezord
-    #trezorctl
     trezor-udev-rules
   ];
 
