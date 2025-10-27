@@ -23,13 +23,16 @@ in
 
   config = mkIf cfg.enable {
     # Add trezor package for trezorctl and dependencies
-    environment.systemPackages = with pkgs; [
-      trezor-suite
-      trezor_agent
-    ] ++ optionals cfg.enableSSHAgent [
-      libagent
-      pinentry
-    ];
+    environment.systemPackages =
+      with pkgs;
+      [
+        trezor-suite
+        trezor_agent
+      ]
+      ++ optionals cfg.enableSSHAgent [
+        libagent
+        pinentry
+      ];
 
     # Trezor udev rules
     services.udev.packages = with pkgs; [
