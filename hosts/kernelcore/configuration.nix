@@ -59,6 +59,12 @@
         cacheTTL = 3600;
       };
 
+      bridge = {
+        enable = true; # Ensure br0 exists via NetworkManager; uplink auto-detected if unset
+        # uplinkInterface = ""; # set explicitly if auto-detect picks wrong device
+        ipv6.enable = false;
+      };
+
       vpn.nordvpn = {
         # Não entrega muito
         enable = false; # Habilite se quiser usar VPN
@@ -122,6 +128,35 @@
       virt-manager = true;
       libvirtdGroup = [ "kernelcore" ];
       virtiofs.enable = true;
+      # Centralized VM registry (managed by modules/virtualization/vms.nix)
+      vmBaseDir = "/srv/vms/images";
+      sourceImageDir = "/var/lib/vm-images";
+      vms = {
+        wazuh = {
+          enable = true;
+          # Resolve under sourceImageDir unless absolute
+          sourceImage = "wazuh-4.14.0.qcow2";
+          # Final image location (symlink created if missing)
+          imageFile = null; # defaults to vmBaseDir/wazuh.qcow2
+          memoryMiB = 4096;
+          vcpus = 2;
+          network = "bridge"; # bridged for direct LAN/NAS access
+          bridgeName = "br0";
+          sharedDirs = [
+            {
+              path = "/srv/vms/shared";
+              tag = "hostshare";
+              driver = "virtiofs";
+              readonly = false;
+              create = true;
+            }
+          ];
+          autostart = false;
+          extraVirtInstallArgs = [
+            "--graphics vnc,listen=0.0.0.0"
+          ];
+        };
+      };
     };
 
     services.github-runner = {
@@ -400,7 +435,6 @@
       "nvidia"
       "docker"
       "render"
-      "qemu-libvirtd"
       "libvirtd"
     ];
     hashedPasswordFile = "/etc/nixos/sec/user-password";

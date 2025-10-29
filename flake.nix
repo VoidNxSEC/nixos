@@ -102,6 +102,7 @@
             ./modules/system/services.nix
             ./modules/system/aliases.nix
             ./modules/system/ml-gpu-users.nix
+            ./modules/system/binary-cache.nix
 
             # Hardware
             #./modules/hardware/intel.nix
@@ -121,12 +122,14 @@
 
             # Virtualization
             ./modules/virtualization/vms.nix
+            ./modules/virtualization/vmctl.nix
 
             ./modules/secrets/sops-config.nix
 
             # Network
             ./modules/network/dns-resolver.nix
             ./modules/network/dns/default.nix
+            ./modules/network/bridge.nix
             ./modules/network/vpn/nordvpn.nix
 
             # Shell
