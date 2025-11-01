@@ -140,7 +140,7 @@
           imageFile = null; # defaults to vmBaseDir/wazuh.qcow2
           memoryMiB = 4096;
           vcpus = 2;
-          network = "bridge"; # bridged for direct LAN/NAS access
+          network = "nat"; # NAT networking via libvirt default network
           bridgeName = "br0";
           sharedDirs = [
             {
@@ -153,7 +153,7 @@
           ];
           autostart = false;
           extraVirtInstallArgs = [
-            "--graphics vnc,listen=0.0.0.0"
+            "--graphics type=vnc,listen=0.0.0.0"
           ];
         };
       };
@@ -436,6 +436,7 @@
       "docker"
       "render"
       "libvirtd"
+      "kvm"
     ];
     hashedPasswordFile = "/etc/nixos/sec/user-password";
     packages = with pkgs; [

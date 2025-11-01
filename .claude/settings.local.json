@@ -68,7 +68,15 @@
       "Bash(git -C /etc/nixos add:*)",
       "Bash(git -C /etc/nixos push)",
       "Bash(git -C /etc/nixos diff .claude/settings.local.json)",
-      "Bash(git -C /etc/nixos commit -m \"Update Claude Code approved commands\")"
+      "Bash(git -C /etc/nixos commit -m \"Update Claude Code approved commands\")",
+      "Bash(git -C /etc/nixos push --no-verify)",
+      "Bash(virsh net-list:*)",
+      "Bash(virsh iface-list:*)",
+      "Bash(ip link:*)",
+      "Read(//etc/**)",
+      "Bash(sudo virsh net-define:*)",
+      "Bash(sudo virsh net-start:*)",
+      "Bash(sudo virsh net-autostart:*)"
     ],
     "deny": [],
     "ask": []
