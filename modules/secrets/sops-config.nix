@@ -32,17 +32,20 @@ in
     # Note: Requires sops-nix flake input
 
     # Create secrets directory structure
+    # Note: 0755 permissions are safe since files are SOPS-encrypted
+    # This allows git/nix flake check to read the encrypted files
     systemd.tmpfiles.rules = [
-      "d ${cfg.secretsPath} 0750 root root -"
-      "d ${cfg.secretsPath}/env 0750 root root -"
-      "d ${cfg.secretsPath}/api-keys 0750 root root -"
-      "d ${cfg.secretsPath}/certificates 0750 root root -"
-      "d ${cfg.secretsPath}/ssh 0750 root root -"
-      "d ${cfg.secretsPath}/vpn 0750 root root -"
-      "d ${cfg.secretsPath}/database 0750 root root -"
-      "d ${cfg.secretsPath}/docker 0750 root root -"
+      "d ${cfg.secretsPath} 0755 root root -"
+      "d ${cfg.secretsPath}/env 0755 root root -"
+      "d ${cfg.secretsPath}/api-keys 0755 root root -"
+      "d ${cfg.secretsPath}/certificates 0755 root root -"
+      "d ${cfg.secretsPath}/ssh 0755 root root -"
+      "d ${cfg.secretsPath}/ssh-keys 0755 root root -"
+      "d ${cfg.secretsPath}/vpn 0755 root root -"
+      "d ${cfg.secretsPath}/database 0755 root root -"
+      "d ${cfg.secretsPath}/docker 0755 root root -"
 
-      # AGE keys directory
+      # AGE keys directory (keep restricted)
       "d /var/lib/sops-nix 0700 root root -"
     ];
 
