@@ -166,7 +166,7 @@
       enable = false; # Set to true to enable self-hosted runner
       useSops = true; # SOPS fixed: now safe to enable when needed
       runnerName = "nixos-self-hosted";
-      repoUrl = "https://github.com/marcosfpina"; # Organization-level runner
+      repoUrl = "https://github.com/voidnxSEC"; # Organization-level runner
       extraLabels = [
         "nixos"
         "nix"
@@ -243,9 +243,9 @@
       model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
       port = 8080;
       n_threads = 40;
-      n_gpu_layers = 24; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
+      n_gpu_layers = 32; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
       n_parallel = 1;
-      n_ctx = 2048; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
+      n_ctx = 4096; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
       # Total VRAM usage: ~2.9GB (allows coexistence with other GPU services)
     };
 
