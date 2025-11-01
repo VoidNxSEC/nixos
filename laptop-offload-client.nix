@@ -11,7 +11,7 @@
 let
   # CONFIGURE THESE VALUES FOR YOUR SETUP
   desktopIP = "192.168.15.6"; # Desktop server IP
-  laptopIP = "192.168.15.XXX"; # Your laptop IP (replace XXX)
+  laptopIP = "192.168.15.8"; # Your laptop IP (replace XXX)
 
   # SSH key path for builder authentication
   builderKeyPath = "/etc/nix/builder_key";
@@ -93,12 +93,12 @@ in
       StrictHostKeyChecking no
       UserKnownHostsFile /dev/null
       LogLevel ERROR
-      
+
       # Optimize for build transfers
       Compression yes
       ServerAliveInterval 60
       ServerAliveCountMax 3
-      
+
       # Connection multiplexing for speed
       ControlMaster auto
       ControlPath ~/.ssh/nix-builder-%h-%p-%r
@@ -142,7 +142,7 @@ in
       fi
 
       if mountpoint -q /var/lib/nix-offload-remote; then
-        echo "✅ /var/lib/nix-offload-remote mounted" 
+        echo "✅ /var/lib/nix-offload-remote mounted"
         echo "   Size: $(df -h /var/lib/nix-offload-remote | tail -1 | awk '{print $2}')"
       else
         echo "❌ /var/lib/nix-offload-remote not mounted"

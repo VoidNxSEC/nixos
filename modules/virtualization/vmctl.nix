@@ -138,6 +138,7 @@ in
                         if [ "$NET" = "bridge" ]; then NETARG="--network bridge=$BR"; fi
                         if [ -n "$MAC" ]; then NETARG="$NETARG,mac=$MAC"; fi
                         FS_ARGS=()
+                        EXTRA_ARGS=()
                         ${pkgs.jq}/bin/jq -c '.sharedDirs[]? // empty' <<<"$JSON" | while read -r SHARE; do
                           SH_PATH=$(${pkgs.jq}/bin/jq -r '.path' <<<"$SHARE")
                           SH_TAG=$(${pkgs.jq}/bin/jq -r '.tag' <<<"$SHARE")
@@ -149,10 +150,13 @@ in
                             FS_ARGS+=("--filesystem" "type=mount,source=$SH_PATH,target=$SH_TAG,accessmode=passthrough''${SH_RO:+,readonly=on}")
                           fi
                         done
+                        ${pkgs.jq}/bin/jq -r '.extraVirtInstallArgs[]? // empty' <<<"$JSON" | while read -r ARG; do
+                          EXTRA_ARGS+=("$ARG")
+                        done
                         if ! ${pkgs.libvirt}/bin/virsh dominfo "$NAME" >/dev/null 2>&1; then
                           [ -e "$IMG" ] || { echo "image missing: $IMG" >&2; return 1; }
                           echo "[vmctl] defining $NAME"
-                          ${pkgs.virt-manager}/bin/virt-install --name "$NAME" --memory "$MEM" --vcpus "$VCPUS" --disk path="$IMG",format=qcow2,bus=virtio "$NETARG" --os-variant detect=on,require=off --import --noautoconsole "''${FS_ARGS[@]}" || true
+                          ${pkgs.virt-manager}/bin/virt-install --name "$NAME" --memory "$MEM" --vcpus "$VCPUS" --disk path="$IMG",format=qcow2,bus=virtio "$NETARG" --os-variant detect=on,require=off --import --noautoconsole "''${FS_ARGS[@]}" "''${EXTRA_ARGS[@]}" || true
                         fi
                         AUT=$(${pkgs.jq}/bin/jq -r '.autostart' <<<"$JSON")
                         if [ "$AUT" = "true" ]; then ${pkgs.libvirt}/bin/virsh autostart "$NAME" >/dev/null 2>&1 || true; fi
