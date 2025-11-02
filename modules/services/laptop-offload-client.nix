@@ -10,7 +10,7 @@
 
 let
   # CONFIGURE THESE VALUES FOR YOUR SETUP
-  desktopIP = "192.168.15.6"; # Desktop server IP
+  desktopIP = "192.168.15.7"; # Desktop server IP
   laptopIP = "192.168.15.8"; # Your laptop IP (replace XXX)
 
   # SSH key path for builder authentication
