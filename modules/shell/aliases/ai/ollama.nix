@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 # ============================================================
 # AI/ML Stack Aliases
@@ -25,6 +30,7 @@
     "gpu-logs" = "docker compose -f ~/Documents/nx/docker/docker-compose.gpu.yml logs -f";
 
     # Jupyter
-    "jupyter-gpu" = "docker run --rm -it --gpus all -p 8888:8888 -v $(pwd):/workspace jupyter/tensorflow-notebook";
+    "jupyter-gpu" =
+      "docker run --rm -it --gpus all -p 8888:8888 -v $(pwd):/workspace jupyter/tensorflow-notebook";
   };
 }
