@@ -15,8 +15,7 @@
 {
   imports = [
     ./gpu-flags.nix
-    ./aliases/docker-build.nix
-    ./aliases/gcloud-k8s.nix
+    ./aliases
   ];
 
   # ============================================================
@@ -175,7 +174,7 @@
           shell-help          - Show this help
           shell-info          - Show environment info
 
-        For detailed Docker commands, see: /etc/nixos/modules/shell/aliases/docker-build.nix
+        For detailed Docker commands, see: /etc/nixos/modules/shell/aliases/README.md
         EOF
               }
 
@@ -244,7 +243,13 @@
         ├── default.nix                 # Este arquivo (orquestrador)
         ├── gpu-flags.nix               # Flags GPU testadas
         ├── aliases/
-        │   └── docker-build.nix        # Aliases Docker
+        │   ├── default.nix             # Agregador de aliases
+        │   ├── docker/                 # Docker aliases
+        │   ├── kubernetes/             # Kubernetes aliases
+        │   ├── gcloud/                 # GCloud aliases
+        │   ├── ai/                     # AI/ML aliases
+        │   ├── nix/                    # Nix system aliases
+        │   └── system/                 # System utilities
         └── scripts/
             └── python/
                 ├── gpu_monitor.py      # Monitor GPU
@@ -305,8 +310,9 @@
         ## Customização
 
         Para adicionar novos aliases, edite:
-        - `aliases/docker-build.nix` para Docker
-        - `default.nix` para aliases gerais
+        - `aliases/docker/` para Docker
+        - `aliases/kubernetes/` para Kubernetes
+        - `aliases/*/default.nix` para aliases gerais de cada categoria
 
         Para adicionar scripts Python:
         1. Adicione em `scripts/python/`

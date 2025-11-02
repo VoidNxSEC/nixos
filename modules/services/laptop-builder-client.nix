@@ -18,7 +18,7 @@ with lib;
 
       desktopIP = mkOption {
         type = types.str;
-        default = "192.168.15.6";
+        default = "192.168.15.7";
         description = "IP address of the desktop build server";
       };
 
