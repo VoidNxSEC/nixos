@@ -69,9 +69,8 @@
             ./hosts/kernelcore/hardware-configuration.nix
             ./hosts/kernelcore/configuration.nix
 
-            ./laptop-offload-client.nix
-
             # Services
+            ./modules/services/laptop-offload-client.nix
             ./modules/services/default.nix
             #./modules/services/scripts.nix
             ./modules/services/users/default.nix
@@ -80,13 +79,8 @@
             ./modules/services/users/gitlab-runner.nix
             ./modules/services/gpu-orchestration.nix
 
-            # Applications
-            ./modules/applications/firefox-privacy.nix
-            ./modules/applications/brave-secure.nix
-            ./modules/applications/vscodium-secure.nix
-            ./modules/applications/vscode-secure.nix
-
-            ./modules/browsers/chromium.nix
+            # Applications (browsers and editors)
+            ./modules/applications
 
             # Programs
             #./modules/programs/default.nix
@@ -104,25 +98,19 @@
             ./modules/system/ml-gpu-users.nix
             ./modules/system/binary-cache.nix
 
-            # Hardware
-            #./modules/hardware/intel.nix
-            ./modules/hardware/nvidia.nix
-            ./modules/hardware/trezor.nix
-            ./modules/hardware/wifi-optimization.nix
+            # Hardware (GPU, Trezor, WiFi)
+            ./modules/hardware
 
             # Development
             ./modules/development/environments.nix
             ./modules/development/jupyter.nix
             ./modules/development/cicd.nix
 
-            # Containers
-            ./modules/containers/docker.nix
-            ./modules/containers/podman.nix
-            ./modules/containers/nixos-containers.nix
+            # Containers (Docker, Podman, NixOS containers)
+            ./modules/containers
 
-            # Virtualization
-            ./modules/virtualization/vms.nix
-            ./modules/virtualization/vmctl.nix
+            # Virtualization (VMs, vmctl)
+            ./modules/virtualization
 
             ./modules/secrets/sops-config.nix
 
@@ -132,10 +120,10 @@
             ./modules/network/bridge.nix
             ./modules/network/vpn/nordvpn.nix
 
-            # Shell
+            # Shell (includes professional alias structure)
             ./modules/shell/default.nix
             ./modules/shell/gpu-flags.nix
-            ./modules/shell/aliases/docker-build.nix
+            ./modules/shell/aliases
 
             # Secrets
             ./modules/secrets/sops-config.nix
@@ -160,18 +148,7 @@
             }
 
             # Security modules LAST (highest priority to override other configs)
-            ./modules/security/boot.nix
-            ./modules/security/compiler-hardening.nix
-            ./modules/security/hardening.nix
-            ./modules/security/network.nix
-            ./modules/security/aide.nix
-            ./modules/security/pam.nix
-            ./modules/security/ssh.nix
-            ./modules/security/clamav.nix
-            ./modules/security/nix-daemon.nix
-            ./modules/security/kernel.nix
-            ./modules/security/packages.nix
-            ./modules/security/audit.nix
+            ./modules/security
 
             ./sec/hardening.nix # Final override
           ];
