@@ -71,7 +71,7 @@
 
             # Services
             ./modules/services/offload-server.nix
-            ./modules/services/laptop-offload-client.nix
+            # ./modules/services/laptop-offload-client.nix # DISABLED: Causes remote build failures when desktop offline
             ./modules/services/default.nix
             #./modules/services/scripts.nix
             ./modules/services/users/default.nix
