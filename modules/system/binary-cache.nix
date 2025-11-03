@@ -23,6 +23,11 @@ with lib;
         default = 40;
         description = "Priority of the local cache (lower = higher priority)";
       };
+      requireConnectivity = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Only enable cache if server is reachable (useful for optional LAN cache)";
+      };
     };
 
     remote = {
@@ -65,6 +70,12 @@ with lib;
         ])
         (mkIf config.kernelcore.system.binary-cache.remote.enable config.kernelcore.system.binary-cache.remote.substituers)
       ];
+
+      # Optimization: Make cache failures non-blocking
+      connect-timeout = mkDefault 2; # Reduced from 5 to 2 seconds
+      http-connections = mkDefault 25; # Limit parallel connections to avoid overwhelming cache
+      fallback = mkDefault true; # Always allow fallback to next cache
+      narinfo-cache-negative-ttl = mkDefault 3600; # Cache negative lookups for 1h
     };
 
     # Optional: Set up local cache server using nix-serve
@@ -75,5 +86,53 @@ with lib;
       secretKeyFile = "/var/cache-priv-key.pem";
       # To generate key: nix-store --generate-binary-cache-key cache-name /var/cache-priv-key.pem /var/cache-pub-key.pem
     };
+
+    # Diagnostic script for cache status
+    environment.systemPackages = mkIf config.kernelcore.system.binary-cache.enable [
+      (pkgs.writeShellScriptBin "cache-status" ''
+        echo "🗄️  Binary Cache Status"
+        echo "======================="
+        echo
+
+        ${optionalString config.kernelcore.system.binary-cache.local.enable ''
+          echo "📡 Local Cache: ${config.kernelcore.system.binary-cache.local.url}"
+
+          # Extract host and port from URL
+          CACHE_URL="${config.kernelcore.system.binary-cache.local.url}"
+          CACHE_HOST=$(echo "$CACHE_URL" | sed -E 's|^https?://([^:/]+).*|\1|')
+          CACHE_PORT=$(echo "$CACHE_URL" | sed -E 's|^https?://[^:]+:([0-9]+).*|\1|')
+
+          # Test connectivity
+          if timeout 2 bash -c "echo > /dev/tcp/$CACHE_HOST/$CACHE_PORT" 2>/dev/null; then
+            echo "  ✅ Server reachable"
+
+            # Test HTTP
+            if curl -sf --max-time 2 "$CACHE_URL/nix-cache-info" >/dev/null 2>&1; then
+              echo "  ✅ HTTP responding"
+              echo "  Priority: ${toString config.kernelcore.system.binary-cache.local.priority}"
+            else
+              echo "  ⚠️  HTTP error (may be overloaded)"
+            fi
+          else
+            echo "  ❌ Server unreachable"
+            echo "  💡 Nix will fallback to public caches"
+          fi
+          echo
+        ''}
+
+        echo "⚙️  Nix Configuration:"
+        echo "  Connect timeout: $(nix show-config | grep '^connect-timeout' | awk '{print $3}')s"
+        echo "  Fallback enabled: $(nix show-config | grep '^fallback' | awk '{print $3}')"
+        echo "  HTTP connections: $(nix show-config | grep '^http-connections' | awk '{print $3}')"
+        echo
+
+        echo "📋 Active Substituters:"
+        nix show-config | grep '^substituters' | cut -d= -f2- | tr ' ' '\n' | grep -v '^$' | nl
+        echo
+
+        echo "💡 To test cache performance:"
+        echo "  nix-build '<nixpkgs>' -A hello --option substitute true --option max-jobs 0"
+      '')
+    ];
   };
 }
