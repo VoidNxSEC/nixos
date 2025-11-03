@@ -111,14 +111,10 @@ with lib;
         require-sigs = true;
 
         substituters =
-          primaryCacheList
-          ++ defaultSubstituters
-          ++ config.kernelcore.security.nix.extraSubstituters;
+          primaryCacheList ++ defaultSubstituters ++ config.kernelcore.security.nix.extraSubstituters;
 
         trusted-public-keys =
-          primaryCacheKeys
-          ++ defaultTrustedKeys
-          ++ config.kernelcore.security.nix.extraTrustedKeys;
+          primaryCacheKeys ++ defaultTrustedKeys ++ config.kernelcore.security.nix.extraTrustedKeys;
 
         # Allowed URIs for fetchers
         allowed-uris = [
@@ -132,7 +128,8 @@ with lib;
           "https://developer.downloads.nvidia.com/"
           "https://cuda-maintainers.cachix.org"
           "https://nix-community.cachix.org"
-        ] ++ sanitizeUris (primaryCacheList ++ config.kernelcore.security.nix.extraSubstituters);
+        ]
+        ++ sanitizeUris (primaryCacheList ++ config.kernelcore.security.nix.extraSubstituters);
 
         # Store optimization
         auto-optimise-store = true;
