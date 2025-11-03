@@ -108,13 +108,12 @@ in
       wants = [ "network-online.target" ];
       wantedBy = cfg.wantedBy;
 
-      environment =
-        {
-          CODEX_AGENT_USER = cfg.userName;
-          CODEX_AGENT_HOME = cfg.homeDirectory;
-          CODEX_AGENT_WORKDIR = cfg.workDirectory;
-        }
-        // cfg.extraEnvironment;
+      environment = {
+        CODEX_AGENT_USER = cfg.userName;
+        CODEX_AGENT_HOME = cfg.homeDirectory;
+        CODEX_AGENT_WORKDIR = cfg.workDirectory;
+      }
+      // cfg.extraEnvironment;
 
       path = with pkgs; [
         codex
@@ -124,21 +123,20 @@ in
         findutils
       ];
 
-      serviceConfig =
-        {
-          Type = "simple";
-          User = cfg.userName;
-          Group = cfg.userName;
-          WorkingDirectory = cfg.workDirectory;
-          ExecStart = runScript;
-          Restart = "on-failure";
-          RestartSec = 5;
-          StandardOutput = "journal";
-          StandardError = "journal";
-        }
-        // optionalAttrs (cfg.environmentFile != null) {
-          EnvironmentFile = cfg.environmentFile;
-        };
+      serviceConfig = {
+        Type = "simple";
+        User = cfg.userName;
+        Group = cfg.userName;
+        WorkingDirectory = cfg.workDirectory;
+        ExecStart = runScript;
+        Restart = "on-failure";
+        RestartSec = 5;
+        StandardOutput = "journal";
+        StandardError = "journal";
+      }
+      // optionalAttrs (cfg.environmentFile != null) {
+        EnvironmentFile = cfg.environmentFile;
+      };
     };
   };
 }

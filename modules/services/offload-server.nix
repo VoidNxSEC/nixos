@@ -63,7 +63,7 @@ with lib;
       ];
     };
 
-    users.groups.${config.services.offload-server.builderUser} = {};
+    users.groups.${config.services.offload-server.builderUser} = { };
 
     # ===== SSH SERVER CONFIGURATION =====
     services.openssh = {
@@ -123,7 +123,8 @@ with lib;
       allowedTCPPorts = [
         22 # SSH
         config.services.offload-server.cachePort # nix-serve
-      ] ++ (optionals config.services.offload-server.enableNFS [
+      ]
+      ++ (optionals config.services.offload-server.enableNFS [
         2049 # NFS
         111 # RPC portmapper
       ]);
@@ -152,9 +153,9 @@ with lib;
           echo "❌ sshd: Inactive"
 
         ${optionalString config.services.offload-server.enableNFS ''
-        systemctl is-active --quiet nfs-server && \
-          echo "✅ NFS: Running" || \
-          echo "❌ NFS: Inactive"
+          systemctl is-active --quiet nfs-server && \
+            echo "✅ NFS: Running" || \
+            echo "❌ NFS: Inactive"
         ''}
 
         # Check cache key
@@ -162,7 +163,9 @@ with lib;
         echo "🔑 Cache Configuration:"
         if [ -f "${config.services.offload-server.cacheKeyPath}" ]; then
           echo "✅ Cache signing key: Present"
-          PUB_KEY_PATH="${builtins.replaceStrings ["-priv-"] ["-pub-"] config.services.offload-server.cacheKeyPath}"
+          PUB_KEY_PATH="${
+            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.services.offload-server.cacheKeyPath
+          }"
           if [ -f "$PUB_KEY_PATH" ]; then
             echo "   Public key: $PUB_KEY_PATH"
             echo "   Key content: $(cat $PUB_KEY_PATH)"
@@ -171,7 +174,9 @@ with lib;
           echo "❌ Cache signing key: Missing"
           echo "   Run: sudo nix-store --generate-binary-cache-key cache.local \\"
           echo "        ${config.services.offload-server.cacheKeyPath} \\"
-          echo "        ${builtins.replaceStrings ["-priv-"] ["-pub-"] config.services.offload-server.cacheKeyPath}"
+          echo "        ${
+            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.services.offload-server.cacheKeyPath
+          }"
         fi
 
         # Network info
@@ -249,15 +254,15 @@ with lib;
         echo
 
         ${optionalString config.services.offload-server.enableNFS ''
-        # Test NFS
-        echo "4. Testing NFS exports..."
-        if showmount -e localhost >/dev/null 2>&1; then
-          echo "   ✅ NFS exports available:"
-          showmount -e localhost | tail -n +2 | sed 's/^/      /'
-        else
-          echo "   ❌ NFS exports failed"
-        fi
-        echo
+          # Test NFS
+          echo "4. Testing NFS exports..."
+          if showmount -e localhost >/dev/null 2>&1; then
+            echo "   ✅ NFS exports available:"
+            showmount -e localhost | tail -n +2 | sed 's/^/      /'
+          else
+            echo "   ❌ NFS exports failed"
+          fi
+          echo
         ''}
 
         echo "✅ Server tests complete!"
@@ -275,7 +280,9 @@ with lib;
 
       (writeShellScriptBin "offload-generate-cache-keys" ''
         PRIV_KEY="${config.services.offload-server.cacheKeyPath}"
-        PUB_KEY="${builtins.replaceStrings ["-priv-"] ["-pub-"] config.services.offload-server.cacheKeyPath}"
+        PUB_KEY="${
+          builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.services.offload-server.cacheKeyPath
+        }"
 
         if [ -f "$PRIV_KEY" ] && [ -f "$PUB_KEY" ]; then
           echo "⚠️  Cache keys already exist!"
