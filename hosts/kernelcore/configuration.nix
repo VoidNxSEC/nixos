@@ -406,6 +406,7 @@
 
       codex
       claude-code
+      qwen-code
 
       python313Packages.openai
 
@@ -475,6 +476,7 @@
     libusb1
     trezord
     trezor-udev-rules
+    rust-analyzer
   ];
 
   system.stateVersion = "25.05";
