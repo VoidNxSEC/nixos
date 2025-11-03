@@ -124,13 +124,11 @@
       mpv
       vlc
       gimp
-      obs-studio
       imagemagick
 
       # Music
       reaper
       ardour
-      steam
 
       # Secrets
       proton-pass
