@@ -246,7 +246,7 @@ with lib;
       # ──────────────────────────────────────────────────────
       dejavu_fonts
       noto-fonts
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       font-awesome # Icon fonts
       (nerdfonts.override {
         fonts = [
