@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 # ============================================================
 # i3 Window Manager - Lightweight Desktop
@@ -69,24 +74,24 @@ with lib;
       # i3 Window Manager
       windowManager.i3 = {
         enable = true;
-        package = pkgs.i3;  # Use i3-gaps if you want gaps between windows
+        package = pkgs.i3; # Use i3-gaps if you want gaps between windows
 
         extraPackages = with pkgs; [
           # Core i3 tools
-          dmenu           # Basic launcher
-          i3status        # Default status bar
-          i3lock          # Screen locker
-          i3blocks        # Alternative status bar
+          dmenu # Basic launcher
+          i3status # Default status bar
+          i3lock # Screen locker
+          i3blocks # Alternative status bar
 
           # Better alternatives
-          rofi            # Modern launcher (better than dmenu)
-          polybar         # Modern status bar (optional)
+          rofi # Modern launcher (better than dmenu)
+          polybar # Modern status bar (optional)
 
           # Utilities
-          xdotool         # X11 automation
-          xorg.xev        # Key event viewer
-          xorg.xprop      # Window properties
-          xorg.xwininfo   # Window info
+          xdotool # X11 automation
+          xorg.xev # Key event viewer
+          xorg.xprop # Window properties
+          xorg.xwininfo # Window info
         ];
       };
 
@@ -104,7 +109,7 @@ with lib;
     sound.enable = true;
     hardware.pulseaudio = {
       enable = true;
-      package = pkgs.pulseaudioFull;  # Bluetooth support
+      package = pkgs.pulseaudioFull; # Bluetooth support
     };
 
     # Alternative: PipeWire (modern, better for pro audio)
@@ -124,7 +129,7 @@ with lib;
       shadow = true;
       fadeDelta = 4;
       vSync = true;
-      backend = "glx";  # GPU-accelerated
+      backend = "glx"; # GPU-accelerated
 
       settings = {
         # Transparency
@@ -151,22 +156,22 @@ with lib;
       # ──────────────────────────────────────────────────────
       # Terminal
       # ──────────────────────────────────────────────────────
-      alacritty       # GPU-accelerated, fast
+      alacritty # GPU-accelerated, fast
       # kitty         # Alternative: feature-rich
       # st            # Alternative: minimal (suckless)
 
       # ──────────────────────────────────────────────────────
       # Launcher
       # ──────────────────────────────────────────────────────
-      rofi            # Modern, customizable
-      rofi-calc       # Calculator plugin
-      rofi-emoji      # Emoji picker
+      rofi # Modern, customizable
+      rofi-calc # Calculator plugin
+      rofi-emoji # Emoji picker
 
       # ──────────────────────────────────────────────────────
       # File Manager
       # ──────────────────────────────────────────────────────
-      pcmanfm         # Lightweight GUI
-      lxappearance    # GTK theme switcher
+      pcmanfm # Lightweight GUI
+      lxappearance # GTK theme switcher
       # thunar        # Alternative: XFCE file manager
 
       # ──────────────────────────────────────────────────────
@@ -177,21 +182,21 @@ with lib;
       # ──────────────────────────────────────────────────────
       # Image Viewer
       # ──────────────────────────────────────────────────────
-      feh             # Minimal, fast
-      sxiv            # Alternative: suckless image viewer
+      feh # Minimal, fast
+      sxiv # Alternative: suckless image viewer
 
       # ──────────────────────────────────────────────────────
       # PDF Viewer
       # ──────────────────────────────────────────────────────
-      zathura         # Vim-like keybindings
+      zathura # Vim-like keybindings
       # evince        # Alternative: GNOME PDF viewer
 
       # ──────────────────────────────────────────────────────
       # Screenshot
       # ──────────────────────────────────────────────────────
-      scrot           # Simple screenshot tool
-      maim            # Modern screenshot tool
-      flameshot       # Feature-rich (GUI)
+      scrot # Simple screenshot tool
+      maim # Modern screenshot tool
+      flameshot # Feature-rich (GUI)
 
       # ──────────────────────────────────────────────────────
       # Screen Recorder
@@ -202,38 +207,38 @@ with lib;
       # ──────────────────────────────────────────────────────
       # Clipboard Manager
       # ──────────────────────────────────────────────────────
-      xclip           # CLI clipboard
-      xsel            # Alternative
-      clipmenu        # Clipboard history
+      xclip # CLI clipboard
+      xsel # Alternative
+      clipmenu # Clipboard history
 
       # ──────────────────────────────────────────────────────
       # System Monitor
       # ──────────────────────────────────────────────────────
-      htop            # Terminal
-      btop            # Modern terminal monitor
+      htop # Terminal
+      btop # Modern terminal monitor
       # gnome.gnome-system-monitor  # GUI
 
       # ──────────────────────────────────────────────────────
       # Network Manager
       # ──────────────────────────────────────────────────────
-      networkmanagerapplet  # nm-applet (system tray)
+      networkmanagerapplet # nm-applet (system tray)
 
       # ──────────────────────────────────────────────────────
       # Volume Control
       # ──────────────────────────────────────────────────────
-      pavucontrol     # PulseAudio GUI
-      volumeicon      # System tray icon
+      pavucontrol # PulseAudio GUI
+      volumeicon # System tray icon
 
       # ──────────────────────────────────────────────────────
       # Notification Daemon
       # ──────────────────────────────────────────────────────
-      dunst           # Lightweight notifications
-      libnotify       # notify-send command
+      dunst # Lightweight notifications
+      libnotify # notify-send command
 
       # ──────────────────────────────────────────────────────
       # Themes & Icons
       # ──────────────────────────────────────────────────────
-      arc-theme       # Popular GTK theme
+      arc-theme # Popular GTK theme
       papirus-icon-theme
 
       # ──────────────────────────────────────────────────────
@@ -242,16 +247,21 @@ with lib;
       dejavu_fonts
       noto-fonts
       noto-fonts-emoji
-      font-awesome    # Icon fonts
-      (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" ]; })
+      font-awesome # Icon fonts
+      (nerdfonts.override {
+        fonts = [
+          "FiraCode"
+          "JetBrainsMono"
+        ];
+      })
 
       # ──────────────────────────────────────────────────────
       # Utilities
       # ──────────────────────────────────────────────────────
-      arandr          # GUI for xrandr (monitor setup)
-      autorandr       # Auto-configure monitors
-      nitrogen        # Wallpaper setter
-      redshift        # Blue light filter
+      arandr # GUI for xrandr (monitor setup)
+      autorandr # Auto-configure monitors
+      nitrogen # Wallpaper setter
+      redshift # Blue light filter
     ];
 
     # ============================================================
@@ -491,7 +501,7 @@ with lib;
       };
     };
     location.provider = "manual";
-    location.latitude = -23.5505;   # São Paulo (ajuste para sua localização)
+    location.latitude = -23.5505; # São Paulo (ajuste para sua localização)
     location.longitude = -46.6333;
 
     # ============================================================
