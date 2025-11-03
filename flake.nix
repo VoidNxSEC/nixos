@@ -83,6 +83,9 @@
             # Applications (browsers and editors)
             ./modules/applications
 
+            # Packages (declarative .deb, flatpak, etc.)
+            ./modules/packages
+
             # Programs
             #./modules/programs/default.nix
 
@@ -98,6 +101,7 @@
             ./modules/system/aliases.nix
             ./modules/system/ml-gpu-users.nix
             ./modules/system/binary-cache.nix
+            ./modules/system/aliases.nix
 
             # Hardware (GPU, Trezor, WiFi)
             ./modules/hardware

@@ -53,6 +53,8 @@
       git
       git-lfs
 
+      qwen-code
+
       caddy
       python313Packages.meson
       kitty
