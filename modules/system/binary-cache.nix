@@ -15,7 +15,7 @@ with lib;
       enable = mkEnableOption "Enable local binary cache server";
       url = mkOption {
         type = types.str;
-        default = "http://192.168.15.7:5000";
+        default = "http://192.168.15.6:5000";
         description = "URL of the local binary cache server";
       };
       priority = mkOption {

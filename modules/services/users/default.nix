@@ -8,6 +8,7 @@
 {
   imports = [
     ./claude-code.nix
+    ./codex-agent.nix
     # Add more service users here as needed
   ];
 

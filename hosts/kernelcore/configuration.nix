@@ -166,7 +166,7 @@
       enable = false; # Set to true to enable self-hosted runner
       useSops = true; # SOPS fixed: now safe to enable when needed
       runnerName = "nixos-self-hosted";
-      repoUrl = "https://github.com/voidnxSEC"; # Organization-level runner
+      repoUrl = "https://github.com/VoidNxSEC"; # Organization-level runner
       extraLabels = [
         "nixos"
         "nix"
@@ -238,6 +238,15 @@
       };
     };
 
+    # Offload build server - permite laptop buildar remotamente neste desktop
+    offload-server = {
+      enable = false;
+      cachePort = 5000; # nix-serve porta
+      builderUser = "nix-builder";
+      cacheKeyPath = "/var/cache-priv-key.pem";
+      enableNFS = false; # Pode habilitar se quiser compartilhar /nix/store via NFS
+    };
+
     llamacpp = {
       enable = true;
       model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
@@ -302,7 +311,6 @@
       enable = false;
       name = "etc";
     };
-
 
     pulseaudio.enable = false;
     pipewire = {
@@ -388,8 +396,6 @@
       kubernetes
       kubernetes-polaris
       kubernetes-helm
-
-      gnome-secrets
 
       libreoffice
       onlyoffice-desktopeditors

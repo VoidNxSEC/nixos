@@ -20,10 +20,10 @@
 
 ```
 Repository: /etc/nixos
-Purpose: [ANOTAR: Propósito principal]
+Purpose: Stablish the services for server desktop client and laptop client for usual operations
 Hosts:
   - kernelcore-laptop (IP: 192.168.15.8) - Status: ✅ Active
-  - kernelcore-desktop (IP: 192.168.15.7) - Status: 🚧 Planned
+  - kernelcore-desktop (IP: 192.168.15.6) - Status: 🚧 In Progress
 ```
 
 **Estado Atual:**

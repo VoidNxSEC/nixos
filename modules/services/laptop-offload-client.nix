@@ -10,8 +10,8 @@
 
 let
   # CONFIGURE THESE VALUES FOR YOUR SETUP
-  desktopIP = "192.168.15.7"; # Desktop server IP
-  laptopIP = "192.168.15.8"; # Your laptop IP (replace XXX)
+  desktopIP = "192.168.15.6"; # Desktop server IP (UPDATED)
+  laptopIP = "192.168.15.8"; # Laptop IP (CONFIRMED)
 
   # SSH key path for builder authentication
   builderKeyPath = "/etc/nix/builder_key";
@@ -20,9 +20,9 @@ in
 {
   # ===== REMOTE BUILDERS CONFIGURATION =====
   nix.settings = {
-    # Enable distributed builds
-    builders = lib.mkForce [
-      "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1 nixos-test,benchmark,big-parallel"
+    # Enable distributed builds (optional - only used when desktop is available)
+    builders = lib.mkDefault [
+      "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1 nixos-test,benchmark,big-parallel - -"
     ];
 
     # Use remote builders for supported systems
@@ -40,7 +40,8 @@ in
     ];
 
     # Optimize for offload usage
-    max-jobs = lib.mkForce 0; # Disable local builds for offloadable packages
+    # max-jobs = lib.mkForce 0; # DISABLED: Allow local builds when desktop unavailable
+    max-jobs = 4; # Allow local builds as fallback
 
     # Build optimization
     connect-timeout = 5;

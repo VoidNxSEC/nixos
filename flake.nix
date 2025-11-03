@@ -70,6 +70,7 @@
             ./hosts/kernelcore/configuration.nix
 
             # Services
+            ./modules/services/offload-server.nix
             ./modules/services/laptop-offload-client.nix
             ./modules/services/default.nix
             #./modules/services/scripts.nix

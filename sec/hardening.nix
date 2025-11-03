@@ -97,14 +97,14 @@ with lib;
     settings = {
       PermitRootLogin = "no";
       PasswordAuthentication = false;
-      KbdInteractiveAuthentication = mkForce true;
+      KbdInteractiveAuthentication = false;
       PubkeyAuthentication = true;
       X11Forwarding = false;
       PermitEmptyPasswords = false;
       ClientAliveInterval = 300;
       ClientAliveCountMax = 2;
       MaxAuthTries = 3;
-      MaxSessions = 2;
+      MaxSessions = mkForce 10;
       UsePAM = true;
       StrictModes = true;
       IgnoreRhosts = true;

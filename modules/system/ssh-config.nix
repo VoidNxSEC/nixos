@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 # ============================================================
 # SSH Client Configuration
@@ -51,7 +56,7 @@ with lib;
     # Internal server details
     serverHost = mkOption {
       type = types.str;
-      default = "192.168.15.7";
+      default = "192.168.15.6";
       description = "Internal NixOS server hostname/IP";
     };
 
@@ -73,7 +78,7 @@ with lib;
       startAgent = true;
 
       # SSH agent configuration
-      agentTimeout = "1h";  # Keys expire after 1 hour
+      agentTimeout = "1h"; # Keys expire after 1 hour
 
       # Extra configuration (applies to all hosts)
       extraConfig = ''
@@ -118,88 +123,88 @@ with lib;
 
     # Uncomment if using home-manager:
     /*
-    home-manager.users.kernelcore = {
-      programs.ssh = {
-        enable = true;
+      home-manager.users.kernelcore = {
+        programs.ssh = {
+          enable = true;
 
-        matchBlocks = {
-          # ────────────────────────────────────────────────────
-          # GitHub - Personal Account
-          # ────────────────────────────────────────────────────
-          "github.com-marcos" = {
-            hostname = "github.com";
-            user = "git";
-            identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.personalKey}";
-            identitiesOnly = true;
-            extraOptions = {
-              PreferredAuthentications = "publickey";
-              AddKeysToAgent = "yes";
+          matchBlocks = {
+            # ────────────────────────────────────────────────────
+            # GitHub - Personal Account
+            # ────────────────────────────────────────────────────
+            "github.com-marcos" = {
+              hostname = "github.com";
+              user = "git";
+              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.personalKey}";
+              identitiesOnly = true;
+              extraOptions = {
+                PreferredAuthentications = "publickey";
+                AddKeysToAgent = "yes";
+              };
             };
-          };
 
-          # ────────────────────────────────────────────────────
-          # GitHub - VoidNxLabs Organization
-          # ────────────────────────────────────────────────────
-          "github.com-voidnxlabs" = {
-            hostname = "github.com";
-            user = "git";
-            identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.orgKey}";
-            identitiesOnly = true;
-            extraOptions = {
-              PreferredAuthentications = "publickey";
-              AddKeysToAgent = "yes";
+            # ────────────────────────────────────────────────────
+            # GitHub - VoidNxLabs Organization
+            # ────────────────────────────────────────────────────
+            "github.com-voidnxlabs" = {
+              hostname = "github.com";
+              user = "git";
+              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.orgKey}";
+              identitiesOnly = true;
+              extraOptions = {
+                PreferredAuthentications = "publickey";
+                AddKeysToAgent = "yes";
+              };
             };
-          };
 
-          # ────────────────────────────────────────────────────
-          # GitLab - External Projects
-          # ────────────────────────────────────────────────────
-          "gitlab.com" = {
-            hostname = "gitlab.com";
-            user = "git";
-            identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.gitlabKey}";
-            identitiesOnly = true;
-          };
+            # ────────────────────────────────────────────────────
+            # GitLab - External Projects
+            # ────────────────────────────────────────────────────
+            "gitlab.com" = {
+              hostname = "gitlab.com";
+              user = "git";
+              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.gitlabKey}";
+              identitiesOnly = true;
+            };
 
-          # ────────────────────────────────────────────────────
-          # Internal NixOS Server
-          # ────────────────────────────────────────────────────
-          "voidnx-server" = {
-            hostname = config.kernelcore.ssh.serverHost;
-            user = config.kernelcore.ssh.serverUser;
-            identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}";
-            identitiesOnly = true;
-            port = 22;
-            forwardAgent = true;  # Useful for git operations on server
-          };
+            # ────────────────────────────────────────────────────
+            # Internal NixOS Server
+            # ────────────────────────────────────────────────────
+            "voidnx-server" = {
+              hostname = config.kernelcore.ssh.serverHost;
+              user = config.kernelcore.ssh.serverUser;
+              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}";
+              identitiesOnly = true;
+              port = 22;
+              forwardAgent = true;  # Useful for git operations on server
+            };
 
-          # ────────────────────────────────────────────────────
-          # Desktop Machine (Builder/Cache)
-          # ────────────────────────────────────────────────────
-          "desktop" = {
-            hostname = "192.168.15.7";
-            user = "kernelcore";
-            identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}";
-            identitiesOnly = true;
-            port = 22;
-          };
+            # ────────────────────────────────────────────────────
+            # Desktop Machine (Builder/Cache)
+            # ────────────────────────────────────────────────────
+            "desktop" = {
+              hostname = "192.168.15.6";
+              user = "kernelcore";
+              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}";
+              identitiesOnly = true;
+              port = 22;
+            };
 
-          # ────────────────────────────────────────────────────
-          # CI/CD Automated Host
-          # ────────────────────────────────────────────────────
-          "ci-runner" = {
-            hostname = "ci.example.com";
-            user = "runner";
-            identityFile = "${config.kernelcore.ssh.sshDir}/id_ed25519_ci";
-            identitiesOnly = true;
-            extraOptions = {
-              StrictHostKeyChecking = "no";  # Only for CI
-              UserKnownHostsFile = "/dev/null";
+            # ────────────────────────────────────────────────────
+            # CI/CD Automated Host
+            # ────────────────────────────────────────────────────
+            "ci-runner" = {
+              hostname = "ci.example.com";
+              user = "runner";
+              identityFile = "${config.kernelcore.ssh.sshDir}/id_ed25519_ci";
+              identitiesOnly = true;
+              extraOptions = {
+                StrictHostKeyChecking = "no";  # Only for CI
+                UserKnownHostsFile = "/dev/null";
+              };
             };
           };
         };
       };
-    };
     */
 
     # ============================================================
