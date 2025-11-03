@@ -225,9 +225,14 @@
     };
 
     desktopManager.gnome.enable = true;
-    displayManager.gdm = {
-      enable = true;
-      wayland = true;
+    desktopManager.plasma6.enable = true;
+    displayManager = {
+      gdm = {
+        enable = true;
+        wayland = true;
+      };
+      sessionPackages = [ pkgs.sway ];
+      sddm.enable = false;
     };
 
     openssh = {
@@ -451,6 +456,11 @@
     gnupg.agent = {
       enable = true;
       enableSSHSupport = true;
+    };
+    ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
+    sway = {
+      enable = true;
+      wrapperFeatures.gtk = true;
     };
   };
 
