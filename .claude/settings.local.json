@@ -111,7 +111,8 @@
       "Bash(nix-debug:*)",
       "Bash(cargo generate-lockfile:*)",
       "Bash(timeout 120 nix flake check:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(git init:*)"
     ],
     "deny": [],
     "ask": []
