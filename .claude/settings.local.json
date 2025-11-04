@@ -105,7 +105,10 @@
       "Bash(time nix build:*)",
       "Bash(time sudo nixos-rebuild switch:*)",
       "Bash(tee:*)",
-      "Read(//run/wrappers/wrappers.2FCN6SLbKp/**)"
+      "Read(//run/wrappers/wrappers.2FCN6SLbKp/**)",
+      "Bash(rebuild:*)",
+      "Bash(dbg:*)",
+      "Bash(nix-debug:*)"
     ],
     "deny": [],
     "ask": []
