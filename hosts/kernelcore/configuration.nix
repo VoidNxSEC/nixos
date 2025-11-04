@@ -469,7 +469,7 @@
 
       # KDE Applications (replacing other GNOME apps)
       kdePackages.konsole # Terminal emulator
-      kdePackages.kate # Text editor
+      kdePackages.kate # Text editor (with built-in clipboard history)
       kdePackages.dolphin # File manager
       kdePackages.dolphin-plugins # Dolphin plugins (includes emblems)
       kdePackages.baloo # File indexing for Dolphin
@@ -559,6 +559,273 @@
     trezord
     trezor-udev-rules
     rust-analyzer
+    bat # Syntax highlighting for cat (used in debugging scripts)
+
+    # Debugging and profiling tools
+    gdb # GNU Debugger
+    lldb # LLVM Debugger
+    strace # System call tracer
+    ltrace # Library call tracer
+    valgrind # Memory debugger and profiler
+    perf # Performance analysis (kernel perf)
+    heaptrack # Heap memory profiler
+    hotspot # GUI for perf data
+    sysstat # System performance tools (sar, iostat, mpstat)
+    bpftrace # High-level tracing language for eBPF
+    iotop # I/O monitor
+    nethogs # Network bandwidth monitor per process
+    iftop # Network bandwidth monitor
+    nmon # Performance monitor
+    atop # Advanced system & process monitor
+    lsof # List open files
+    tcpdump # Network packet analyzer
+    wireshark # Network protocol analyzer (GUI)
+    tshark # Network protocol analyzer (CLI)
+
+    # Colored wrappers and debugging helpers
+    (writeShellScriptBin "rebuild" ''
+      #!/usr/bin/env bash
+      # Colored nixos-rebuild wrapper
+
+      # Colors
+      RED='\033[0;31m'
+      GREEN='\033[0;32m'
+      YELLOW='\033[1;33m'
+      BLUE='\033[0;34m'
+      MAGENTA='\033[0;35m'
+      CYAN='\033[0;36m'
+      WHITE='\033[1;37m'
+      BOLD='\033[1m'
+      NC='\033[0m' # No Color
+
+      echo -e "''${CYAN}''${BOLD}╔══════════════════════════════════════════════════════════════╗''${NC}"
+      echo -e "''${CYAN}''${BOLD}║           NixOS Rebuild - Colored Output Mode            ║''${NC}"
+      echo -e "''${CYAN}''${BOLD}╚══════════════════════════════════════════════════════════════╝''${NC}"
+      echo ""
+
+      ACTION="''${1:-switch}"
+      shift || true
+
+      echo -e "''${BLUE}→ Action:''${NC} ''${BOLD}$ACTION''${NC}"
+      echo -e "''${BLUE}→ Flake:''${NC} ''${BOLD}/etc/nixos#kernelcore''${NC}"
+      echo ""
+
+      # Run nixos-rebuild with colored output
+      sudo nixos-rebuild "$ACTION" --flake /etc/nixos#kernelcore "$@" 2>&1 | while IFS= read -r line; do
+        if [[ "$line" =~ ^error:|ERROR|Error ]]; then
+          echo -e "''${RED}''${BOLD}✗''${NC} ''${RED}$line''${NC}"
+        elif [[ "$line" =~ ^warning:|WARNING|Warning ]]; then
+          echo -e "''${YELLOW}''${BOLD}⚠''${NC} ''${YELLOW}$line''${NC}"
+        elif [[ "$line" =~ ^building|^copying|^unpacking ]]; then
+          echo -e "''${CYAN}⚙''${NC} $line"
+        elif [[ "$line" =~ ^these|^will\ be\ |^evaluating ]]; then
+          echo -e "''${BLUE}ℹ''${NC} $line"
+        elif [[ "$line" =~ activation|^restarting|^starting|^stopping ]]; then
+          echo -e "''${MAGENTA}⟳''${NC} $line"
+        elif [[ "$line" =~ succeed|success|Success|✓ ]]; then
+          echo -e "''${GREEN}''${BOLD}✓''${NC} ''${GREEN}$line''${NC}"
+        else
+          echo "$line"
+        fi
+      done
+
+      EXIT_CODE=''${PIPESTATUS[0]}
+
+      echo ""
+      if [ $EXIT_CODE -eq 0 ]; then
+        echo -e "''${GREEN}''${BOLD}╔══════════════════════════════════════════════════════════════╗''${NC}"
+        echo -e "''${GREEN}''${BOLD}║                  ✓ Rebuild Successful!                   ║''${NC}"
+        echo -e "''${GREEN}''${BOLD}╚══════════════════════════════════════════════════════════════╝''${NC}"
+      else
+        echo -e "''${RED}''${BOLD}╔══════════════════════════════════════════════════════════════╗''${NC}"
+        echo -e "''${RED}''${BOLD}║                   ✗ Rebuild Failed!                      ║''${NC}"
+        echo -e "''${RED}''${BOLD}╚══════════════════════════════════════════════════════════════╝''${NC}"
+        echo -e "''${RED}Exit code: $EXIT_CODE''${NC}"
+      fi
+
+      exit $EXIT_CODE
+    '')
+
+    (writeShellScriptBin "dbg" ''
+      #!/usr/bin/env bash
+      # Quick debugging helper
+
+      # Colors
+      RED='\033[0;31m'
+      GREEN='\033[0;32m'
+      YELLOW='\033[1;33m'
+      BLUE='\033[0;34m'
+      CYAN='\033[0;36m'
+      BOLD='\033[1m'
+      NC='\033[0m'
+
+      if [ $# -eq 0 ]; then
+        echo -e "''${CYAN}''${BOLD}Debug Tools Quick Menu''${NC}"
+        echo -e "''${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━''${NC}"
+        echo -e "''${GREEN}Usage:''${NC} dbg <tool> <target> [args]"
+        echo ""
+        echo -e "''${YELLOW}Available tools:''${NC}"
+        echo -e "  ''${BOLD}gdb''${NC}        - GNU Debugger"
+        echo -e "  ''${BOLD}lldb''${NC}       - LLVM Debugger"
+        echo -e "  ''${BOLD}strace''${NC}     - System call tracer"
+        echo -e "  ''${BOLD}ltrace''${NC}     - Library call tracer"
+        echo -e "  ''${BOLD}valgrind''${NC}   - Memory leak detector"
+        echo -e "  ''${BOLD}perf''${NC}       - Performance profiler"
+        echo -e "  ''${BOLD}heaptrack''${NC}  - Heap memory profiler"
+        echo -e "  ''${BOLD}bpftrace''${NC}   - eBPF tracer"
+        echo ""
+        echo -e "''${YELLOW}System debugging:''${NC}"
+        echo -e "  ''${BOLD}logs''${NC}       - Show recent system logs (journalctl)"
+        echo -e "  ''${BOLD}processes''${NC}  - List all processes with details"
+        echo -e "  ''${BOLD}network''${NC}    - Network connections and traffic"
+        echo -e "  ''${BOLD}disk''${NC}       - Disk I/O and usage"
+        echo -e "  ''${BOLD}memory''${NC}     - Memory usage analysis"
+        echo -e "  ''${BOLD}ports''${NC}      - Show listening ports"
+        echo ""
+        echo -e "''${YELLOW}Examples:''${NC}"
+        echo -e "  dbg gdb ./myprogram"
+        echo -e "  dbg strace ls -la"
+        echo -e "  dbg valgrind ./myprogram"
+        echo -e "  dbg logs -u docker"
+        exit 0
+      fi
+
+      TOOL="$1"
+      shift
+
+      case "$TOOL" in
+        gdb)
+          echo -e "''${GREEN}→ Launching GDB debugger...''${NC}"
+          gdb "$@"
+          ;;
+        lldb)
+          echo -e "''${GREEN}→ Launching LLDB debugger...''${NC}"
+          lldb "$@"
+          ;;
+        strace)
+          echo -e "''${GREEN}→ Tracing system calls...''${NC}"
+          strace -f -tt -T "$@"
+          ;;
+        ltrace)
+          echo -e "''${GREEN}→ Tracing library calls...''${NC}"
+          ltrace -f -tt -T "$@"
+          ;;
+        valgrind)
+          echo -e "''${GREEN}→ Running Valgrind memory check...''${NC}"
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes "$@"
+          ;;
+        perf)
+          echo -e "''${GREEN}→ Running performance profiler...''${NC}"
+          sudo perf record -g "$@"
+          echo -e "''${YELLOW}→ Use 'perf report' to view results''${NC}"
+          ;;
+        heaptrack)
+          echo -e "''${GREEN}→ Running heap profiler...''${NC}"
+          heaptrack "$@"
+          ;;
+        bpftrace)
+          echo -e "''${GREEN}→ Running eBPF tracer...''${NC}"
+          sudo bpftrace "$@"
+          ;;
+        logs)
+          echo -e "''${GREEN}→ System logs (last 50 lines):''${NC}"
+          sudo journalctl -n 50 -e "$@" | ${pkgs.bat}/bin/bat --paging=never --color=always -l log
+          ;;
+        processes)
+          echo -e "''${GREEN}→ Process list:''${NC}"
+          ps auxf --sort=-%mem | head -30 | ${pkgs.bat}/bin/bat --paging=never --color=always -l log
+          ;;
+        network)
+          echo -e "''${GREEN}→ Network connections:''${NC}"
+          echo -e "''${CYAN}Active connections:''${NC}"
+          ss -tunap | ${pkgs.bat}/bin/bat --paging=never --color=always -l log
+          echo ""
+          echo -e "''${CYAN}Network traffic (5 seconds):''${NC}"
+          timeout 5 sudo iftop -t -s 5 2>/dev/null || echo "Use Ctrl+C to stop iftop"
+          ;;
+        disk)
+          echo -e "''${GREEN}→ Disk I/O:''${NC}"
+          sudo iotop -b -n 3 | ${pkgs.bat}/bin/bat --paging=never --color=always -l log
+          ;;
+        memory)
+          echo -e "''${GREEN}→ Memory usage:''${NC}"
+          free -h
+          echo ""
+          echo -e "''${CYAN}Top memory consumers:''${NC}"
+          ps aux --sort=-%mem | head -11 | ${pkgs.bat}/bin/bat --paging=never --color=always -l log
+          ;;
+        ports)
+          echo -e "''${GREEN}→ Listening ports:''${NC}"
+          sudo ss -tulpn | grep LISTEN | ${pkgs.bat}/bin/bat --paging=never --color=always -l log
+          ;;
+        *)
+          echo -e "''${RED}Unknown tool: $TOOL''${NC}"
+          echo -e "''${YELLOW}Run 'dbg' without arguments to see available tools''${NC}"
+          exit 1
+          ;;
+      esac
+    '')
+
+    (writeShellScriptBin "nix-debug" ''
+      #!/usr/bin/env bash
+      # Nix-specific debugging helper
+
+      # Colors
+      CYAN='\033[0;36m'
+      GREEN='\033[0;32m'
+      YELLOW='\033[1;33m'
+      BOLD='\033[1m'
+      NC='\033[0m'
+
+      echo -e "''${CYAN}''${BOLD}Nix Debugging Tools''${NC}"
+      echo -e "''${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━''${NC}"
+
+      if [ $# -eq 0 ]; then
+        echo -e "''${GREEN}Usage:''${NC} nix-debug <command>"
+        echo ""
+        echo "Commands:"
+        echo "  show-trace     - Show full error trace for last build"
+        echo "  eval <expr>    - Evaluate Nix expression"
+        echo "  why <path>     - Why is this path in closure?"
+        echo "  tree <drv>     - Show derivation dependency tree"
+        echo "  diff           - Diff current config with last generation"
+        echo "  gc-roots       - Show what's preventing GC"
+        exit 0
+      fi
+
+      case "$1" in
+        show-trace)
+          echo -e "''${GREEN}→ Building with full trace...''${NC}"
+          nix build --show-trace "$@"
+          ;;
+        eval)
+          shift
+          echo -e "''${GREEN}→ Evaluating expression: $*''${NC}"
+          nix eval --expr "$@"
+          ;;
+        why)
+          shift
+          echo -e "''${GREEN}→ Analyzing closure for: $1''${NC}"
+          nix-store --query --roots "$1"
+          ;;
+        tree)
+          shift
+          echo -e "''${GREEN}→ Dependency tree:''${NC}"
+          nix-store -q --tree "$1"
+          ;;
+        diff)
+          echo -e "''${GREEN}→ Configuration diff:''${NC}"
+          sudo nix profile diff-closures --profile /nix/var/nix/profiles/system
+          ;;
+        gc-roots)
+          echo -e "''${GREEN}→ GC roots:''${NC}"
+          nix-store --gc --print-roots
+          ;;
+        *)
+          echo -e "''${YELLOW}Unknown command. Run without arguments for help.''${NC}"
+          ;;
+      esac
+    '')
   ];
 
   system.stateVersion = "25.05";
