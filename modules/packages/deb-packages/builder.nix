@@ -55,7 +55,7 @@ let
         map (path: "--bind ${path} ${path}") pkg.sandbox.allowedPaths
       );
 
-      fhsEnv = pkgs.buildFHSUserEnv {
+      fhsEnv = pkgs.buildFHSEnv {
         name = "${name}-fhs";
 
         # Common FHS directories for .deb compatibility

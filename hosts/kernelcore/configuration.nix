@@ -78,6 +78,21 @@
       cudaSupport = true;
     };
 
+    # Package managers for binaries not in nixpkgs or testing upstream
+    # NOTE: deb-packages has a bug with list/null validation - investigating
+    packages.deb = {
+      enable = false; # DISABLED: validation error - "expected a list but found null"
+      packages = import ../../modules/packages/deb-packages/packages/protonvpn.nix;
+    };
+
+    packages.tar = {
+      enable = true;
+      packages = lib.mkMerge [
+        (import ../../modules/packages/tar-packages/packages/zellij.nix)
+        (import ../../modules/packages/tar-packages/packages/lynis.nix)
+      ];
+    };
+
     hardware.wifi-optimization.enable = true;
 
     development = {

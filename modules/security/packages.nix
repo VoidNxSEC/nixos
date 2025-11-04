@@ -18,12 +18,13 @@ with lib;
     ##########################################################################
 
     # Allow wheel group users to run Lynis audits without password
+    # NOTE: Lynis is now managed via tar-packages module
     security.sudo.extraRules = [
       {
         groups = [ "wheel" ];
         commands = [
           {
-            command = "${pkgs.lynis}/bin/lynis";
+            command = "/run/current-system/sw/bin/lynis";
             options = [ "NOPASSWD" ];
           }
         ];
@@ -32,14 +33,16 @@ with lib;
 
     environment.systemPackages = with pkgs; [
       # Security auditing
-      lynis
+      # lynis  # MOVED: Now managed via kernelcore.packages.tar.lynis
       vulnix
       aide
       # Lynis wrapper for easier read-only audits
       (pkgs.writeScriptBin "lynis-audit" ''
         #!${pkgs.bash}/bin/bash
         # Run Lynis audit with sudo (read-only system scan)
-        exec ${pkgs.sudo}/bin/sudo ${pkgs.lynis}/bin/lynis audit system "$@"
+        # Uses Lynis from tar-packages module
+        # Use wrapper sudo which has setuid bit
+        exec /run/wrappers/bin/sudo /run/current-system/sw/bin/lynis audit system "$@"
       '')
 
       # VPN & Authentication
