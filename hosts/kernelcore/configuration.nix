@@ -771,10 +771,8 @@
     '')
   ];
 
-
   kernelcore.ml.offload.enable = true;
   kernelcore.ml.offload.api.enable = true;
-
 
   system.stateVersion = "25.05";
 }
