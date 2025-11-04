@@ -44,5 +44,18 @@ in
     };
 
     users.groups.llamacpp = { };
+
+    users.users.ml-offload = {
+      isSystemUser = true;
+      group = "ml-offload";
+      description = "ML Offload Manager service user";
+      extraGroups = [
+        "video" # GPU video device access
+        "render" # GPU render device access
+        "nvidia" # NVIDIA GPU access
+      ];
+    };
+
+    users.groups.ml-offload = { };
   };
 }
