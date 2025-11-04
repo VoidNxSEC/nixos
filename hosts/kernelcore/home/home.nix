@@ -190,6 +190,7 @@
       python313Packages.litellm
       python313Packages.uv
       python313Packages.pip
+      python313Packages.python-lsp-server
 
       # ─────────────────────────────────────────────────────
       # Nerd Fonts
