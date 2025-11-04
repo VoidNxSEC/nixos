@@ -202,7 +202,7 @@ in
     environment.sessionVariables = {
       # Force Brave to respect GPU memory limits
       BRAVE_GPU_MEMORY_BUFFER_SIZE = "256";
-      BRAVE_DISABLE_GPU_DRIVER_BUG_WORKAROUNDS = "1";
+      BRAVE_DISABLE_GPU_DRIVER_BUG_WORKAROUNDS = "0";
     };
   };
 }
