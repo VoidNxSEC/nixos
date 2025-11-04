@@ -160,6 +160,7 @@ in
         ML_OFFLOAD_PORT = toString cfg.port;
         ML_OFFLOAD_CORS_ENABLED = if cfg.corsEnabled then "true" else "false";
         ML_OFFLOAD_CORS_ORIGINS = lib.concatStringsSep "," cfg.corsOrigins;
+        LD_LIBRARY_PATH = "/run/opengl-driver/lib";
       };
 
       serviceConfig = {
@@ -180,13 +181,17 @@ in
         ];
         ReadOnlyPaths = [
           offloadCfg.modelsPath
+          "/sys/class/drm"
+          "/proc/driver/nvidia"
+          "/run/opengl-driver"
         ];
 
         # Need access to NVIDIA devices for VRAM queries
         DeviceAllow = [
-          "/dev/nvidia0 r"
-          "/dev/nvidiactl r"
-          "/dev/nvidia-uvm r"
+          "/dev/nvidia0 rw"
+          "/dev/nvidiactl rw"
+          "/dev/nvidia-uvm rw"
+          "/dev/nvidia-modeset rw"
         ];
         SupplementaryGroups = [
           "nvidia"
