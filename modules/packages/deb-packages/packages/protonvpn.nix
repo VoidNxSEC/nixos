@@ -27,8 +27,8 @@
     # Sandbox - disabled for VPN (needs network access)
     sandbox = {
       enable = false;
-      allowedPaths = [];
-      blockHardware = [];
+      allowedPaths = [ ];
+      blockHardware = [ ];
       resourceLimits = {
         memory = null;
         cpu = null;
