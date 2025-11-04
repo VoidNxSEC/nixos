@@ -149,7 +149,9 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix;
-              home-manager.backupFileExtension = "nix";
+              # Use a dedicated suffix for Home Manager backups to avoid collisions
+              # with real dotfiles such as ~/.gtkrc-2.0.nix.
+              home-manager.backupFileExtension = "hm-bak";
             }
 
             # Security modules LAST (highest priority to override other configs)
