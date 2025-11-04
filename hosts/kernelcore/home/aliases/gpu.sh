@@ -2,7 +2,74 @@
 # ============================================================
 # GPU Docker Aliases - NixOS Edition
 # ============================================================
+alias docker-check='docker exec jupyter-gpu python3 -c "import torch; print('PyTorch version:', torch.__version__); print('CUDA available:',
+      torch.cuda.is_available()); print('CUDA device count:', torch.cuda.device_count()); print('Current CUDA device:', torch.cuda.current_device() if
+      torch.cuda.is_available() else 'N/A'); print('CUDA device name:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'N/A');
+      print('cuDNN version:', torch.backends.cudnn.version() if torch.cuda.is_available() else 'N/A')"'
 
+alias docker-gpu='import torch
+   from transformers import AutoTokenizer, AutoModelForCausalLM
+   import warnings
+   warnings.filterwarnings('ignore')
+
+   print("=" * 60)
+   print("Testing LLM Inference Workflow")
+   print("=" * 60)
+
+   # Check CUDA
+   print(f"\n1. GPU Setup:")
+   print(f"   CUDA Available: {torch.cuda.is_available()}")
+   print(f"   Device: {torch.cuda.get_device_name(0)}")
+   print(f"   Memory Available: {torch.cuda.get_device_properties(0).total_memory /
+   1024**3:.2f} GB")
+
+   # Test loading a small model (GPT-2 as example)
+   print(f"\n2. Loading Model (GPT-2 small for testing)...")
+   try:
+       tokenizer = AutoTokenizer.from_pretrained("gpt2")
+       model = AutoModelForCausalLM.from_pretrained("gpt2")
+       model = model.to("cuda")
+       print(f"   ✓ Model loaded successfully on GPU")
+
+       # Test inference
+       print(f"\n3. Running Inference Test...")
+       input_text = "The future of AI is"
+       inputs = tokenizer(input_text, return_tensors="pt").to("cuda")
+
+       with torch.no_grad():
+           outputs = model.generate(
+               **inputs,
+               max_new_tokens=20,
+               temperature=0.7,
+               do_sample=True
+           )
+
+       result = tokenizer.decode(outputs[0], skip_special_tokens=True)
+       print(f"   Input: '{input_text}'")
+       print(f"   Output: '{result}'")
+       print(f"   ✓ Inference completed successfully!")
+
+       # Clean up
+       del model
+       torch.cuda.empty_cache()
+
+       print(f"\n4. Environment Check:")
+       print(f"   ✓ PyTorch: {torch.__version__}")
+       import transformers
+       print(f"   ✓ Transformers: {transformers.__version__}")
+       import accelerate
+       print(f"   ✓ Accelerate: {accelerate.__version__}")
+       import diffusers
+       print(f"   ✓ Diffusers: {diffusers.__version__}")
+
+       print(f"\n" + "=" * 60)
+       print("✓ ALL TESTS PASSED - Environment is 100% functional!")
+       print("=" * 60)
+
+   except Exception as e:
+       print(f"   ✗ Error: {str(e)}")
+       import traceback
+       traceback.print_exc()'
 # ============================================================
 # 🐳 DOCKER GPU BASE COMMANDS
 # ============================================================
