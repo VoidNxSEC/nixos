@@ -32,6 +32,14 @@ let
   cfg = config.kernelcore.ml.offload.vramIntelligence;
   offloadCfg = config.kernelcore.ml.offload;
 
+  # Python environment with all required dependencies
+  pythonEnv = pkgs.python311.withPackages (
+    ps: with ps; [
+      nvidia-ml-py
+      requests
+    ]
+  );
+
   vramMonitorScript = pkgs.writeShellScript "vram-monitor" ''
     #!/usr/bin/env bash
     set -euo pipefail
@@ -47,7 +55,7 @@ let
     echo "[$(date -Iseconds)] Starting VRAM Intelligence Monitor (interval: ''${INTERVAL}s)" >> "$LOG_FILE"
 
     # Run Python VRAM monitor
-    ${pkgs.python311}/bin/python3 ${./api/vram_monitor.py} monitor \
+    ${pythonEnv}/bin/python3 ${./api/vram_monitor.py} monitor \
       --interval "$INTERVAL" \
       --db-path "$DB_PATH" \
       --state-file "$STATE_FILE" \
@@ -225,7 +233,7 @@ in
     # Shell aliases
     programs.bash.shellAliases = {
       ml-vram = "sudo systemctl status ml-vram-monitor.service";
-      ml-vram-status = "${pkgs.python311}/bin/python3 ${./api/vram_monitor.py} status --state-file ${offloadCfg.dataDir}/vram-state.json";
+      ml-vram-status = "${pythonEnv}/bin/python3 ${./api/vram_monitor.py} status --state-file ${offloadCfg.dataDir}/vram-state.json";
       ml-vram-log = "sudo journalctl -u ml-vram-monitor.service -n 50 -f";
       ml-vram-restart = "sudo systemctl restart ml-vram-monitor.service";
     };
