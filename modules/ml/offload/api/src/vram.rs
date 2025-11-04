@@ -1,5 +1,5 @@
 use crate::models::{GpuInfo, GpuProcess, VramState};
-use nvml_wrapper::Nvml;
+use nvml_wrapper::{enum_wrappers::device::TemperatureSensor, Nvml};
 use tracing::{error, warn};
 
 /// VRAM monitor using NVIDIA Management Library
@@ -81,7 +81,7 @@ impl VramMonitor {
 
             // Get temperature
             let temperature = device
-                .temperature(nvml_wrapper::enum_wrappers::device::TemperatureSensor::Gpu)
+                .temperature(TemperatureSensor::Gpu)
                 .unwrap_or(0);
 
             // Get GPU name
@@ -134,11 +134,18 @@ impl VramMonitor {
                     .map(|s| s.trim().to_string())
                     .unwrap_or_else(|| format!("pid:{}", proc.pid));
 
+                // Extract memory usage from UsedGpuMemory enum
+                use nvml_wrapper::enums::device::UsedGpuMemory;
+                let memory_mb = match proc.used_gpu_memory {
+                    UsedGpuMemory::Used(bytes) => bytes / (1024 * 1024),
+                    UsedGpuMemory::Unavailable => 0,
+                };
+
                 all_processes.push(GpuProcess {
                     gpu_id: i,
                     pid: proc.pid,
                     name,
-                    memory_mb: proc.used_gpu_memory / (1024 * 1024),
+                    memory_mb,
                 });
             }
         }
