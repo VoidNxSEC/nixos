@@ -229,7 +229,7 @@
 
   services = {
     gnome.core-shell.enable = true;
-    gnome.core-apps.enable = true;
+    gnome.core-apps.enable = false; # MINIMAL: Disabled full GNOME apps, using KDE apps instead
     xserver = {
       enable = true;
       videoDrivers = [ "nvidia" ];
@@ -237,14 +237,30 @@
         layout = "br";
         variant = "";
       };
+
+      # i3 window manager configuration (based on nixtrap2)
+      windowManager.i3 = {
+        enable = true;
+        extraPackages = with pkgs; [
+          dmenu
+          i3status
+          i3lock
+          i3blocks
+          polybar
+          autotiling
+          feh
+          dunst
+        ];
+      };
     };
 
     desktopManager.gnome.enable = true;
-    desktopManager.plasma6.enable = true;
+    # desktopManager.plasma6.enable = true;  # DISABLED: Using GNOME minimal + i3 + KDE apps
+
     displayManager = {
       gdm = {
         enable = true;
-        wayland = true;
+        wayland = false; # X11 for i3 compatibility
       };
       sessionPackages = [ pkgs.sway ];
       sddm.enable = false;
@@ -446,6 +462,41 @@
 
       gnomeExtensions.gtile
       gnomeExtensions.awesome-tiles
+
+      # GNOME minimal apps
+      gnome-console # GNOME terminal
+      gnome-builder # GNOME IDE
+
+      # KDE Applications (replacing other GNOME apps)
+      kdePackages.konsole # Terminal emulator
+      kdePackages.kate # Text editor
+      kdePackages.dolphin # File manager
+      kdePackages.dolphin-plugins # Dolphin plugins (includes emblems)
+      kdePackages.baloo # File indexing for Dolphin
+
+      # i3 window manager utilities (from nixtrap2)
+      rofi # Application launcher (dmenu alternative)
+      nitrogen # Wallpaper setter
+      picom # Compositor for transparency/effects
+      playerctl # Media player control
+      brightnessctl # Brightness control
+      pavucontrol # Audio control
+      arandr # Display configuration GUI
+      lxappearance # GTK theme configuration
+      arc-theme # Modern GTK theme
+      papirus-icon-theme # Modern icon theme
+      font-awesome # Icon font for polybar
+      inter # Inter font family
+      fira-code # FiraCode font
+      jq # JSON processor for workspace scripts
+      libnotify # Desktop notifications
+      htop # System monitor
+      btop # Modern system monitor
+      lm_sensors # Hardware sensors
+      usbutils # USB utilities (lsusb)
+      pciutils # PCI utilities (lspci)
+      tree # Directory tree viewer
+      ncdu # Disk usage analyzer
     ];
   };
 
@@ -482,6 +533,12 @@
   nixpkgs.config.allowUnfree = true;
 
   nixpkgs.config.nvidia.acceptLicense = true;
+
+  # Exclude unwanted GNOME packages
+  environment.gnome.excludePackages = with pkgs; [
+    gnome-tour
+    xterm
+  ];
 
   environment.systemPackages = with pkgs; [
     wget
