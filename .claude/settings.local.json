@@ -105,7 +105,9 @@
       "Bash(time nix build:*)",
       "Bash(time sudo nixos-rebuild switch:*)",
       "Bash(tee:*)",
-      "Read(//run/wrappers/wrappers.2FCN6SLbKp/**)"
+      "Read(//run/wrappers/wrappers.2FCN6SLbKp/**)",
+      "Bash(git -C /etc/nixos diff hosts/kernelcore/configuration.nix)",
+      "Bash(git -C /etc/nixos commit -m \"$(cat <<''EOF''\nConfigure GNOME minimal + i3 with KDE apps\n\n## Changes:\n\n### Desktop Environment\n- Disabled full GNOME apps (gnome.core-apps.enable = false)\n- Enabled GNOME minimal (only core-shell)\n- Added i3 window manager with X11 support\n- Disabled Plasma6 (using GNOME + i3 instead)\n- Set GDM to X11 mode for i3 compatibility\n\n### Applications Added\n\n**GNOME Apps:**\n- gnome-console (GNOME terminal)\n- gnome-builder (GNOME IDE)\n\n**KDE Applications:**\n- konsole (Terminal emulator)\n- kate (Text editor)\n- dolphin (File manager with emblems support)\n- dolphin-plugins (Dolphin plugins including emblems)\n- baloo (File indexing for Dolphin)\n\n**i3 Window Manager Utilities:**\n- dmenu, i3status, i3lock, i3blocks, polybar, autotiling, feh, dunst\n- rofi, nitrogen, picom, playerctl, brightnessctl, pavucontrol\n- arandr, lxappearance, arc-theme, papirus-icon-theme\n- font-awesome, inter, fira-code\n- System monitoring: htop, btop, lm_sensors, ncdu\n\n### Exclusions\n- gnome-tour (excluded)\n- xterm (excluded)\n\n## Use Cases:\n\n- Lightweight GNOME base with i3 tiling WM\n- Kate editor for text editing (KDE app)\n- Konsole and gnome-console for terminal access\n- Dolphin for file management with emblems\n- Full i3 utilities for productivity\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
