@@ -166,7 +166,7 @@ in
     # Ensure nvidia-smi is available
     environment.systemPackages = with pkgs; [
       linuxPackages.nvidia_x11
-      pynvml # Python NVIDIA Management Library
+      python311Packages.nvidia-ml-py # Python NVIDIA Management Library
     ];
 
     # Create VRAM state file
