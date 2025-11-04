@@ -115,7 +115,8 @@
       "Bash(git init:*)",
       "Bash(npm run build:*)",
       "Bash(git fetch:*)",
-      "Bash(nvidia-smi:*)"
+      "Bash(nvidia-smi:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
