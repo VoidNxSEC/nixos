@@ -16,12 +16,12 @@ with lib;
     kernelcore.nvidia.prime.offload = mkEnableOption "ativa Prime offload mode";
     kernelcore.nvidia.prime.intelBusId = mkOption {
       type = types.str;
-      default = "";
+      default = "PCI:0:2:0";
       description = "PCI Bus ID do chip Intel/AMD (ex: PCI:0:2:0)";
     };
     kernelcore.nvidia.prime.nvidiaBusId = mkOption {
       type = types.str;
-      default = "";
+      default = "PCI:1:0:0";
       description = "PCI Bus ID do chip NVIDIA (ex: PCI:1:0:0)";
     };
   };
