@@ -22,28 +22,28 @@ impl BackendDriver {
     /// Load model on specified backend
     pub async fn load_model(
         backend: &str,
-        model_path: &str,
-        gpu_layers: Option<u32>,
+        _model_path: &str,
+        _gpu_layers: Option<u32>,
     ) -> anyhow::Result<()> {
         anyhow::bail!("Backend loading not implemented for: {}", backend)
     }
 
     /// Unload model from backend
-    pub async fn unload_model(backend: &str) -> anyhow::Result<()> {
-        anyhow::bail!("Backend unloading not implemented for: {}", backend)
+    pub async fn unload_model(_backend: &str) -> anyhow::Result<()> {
+        anyhow::bail!("Backend unloading not implemented")
     }
 
     /// Switch model on backend (hot-reload)
     pub async fn switch_model(
         backend: &str,
-        model_path: &str,
-        gpu_layers: Option<u32>,
+        _model_path: &str,
+        _gpu_layers: Option<u32>,
     ) -> anyhow::Result<()> {
         anyhow::bail!("Backend switching not implemented for: {}", backend)
     }
 
     /// Check backend health
-    pub async fn health_check(backend: &str) -> bool {
+    pub async fn health_check(_backend: &str) -> bool {
         // TODO: Implement health checks
         false
     }
