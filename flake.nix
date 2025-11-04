@@ -93,6 +93,7 @@
             ./modules/ml/llama.nix
             ./modules/ml/models-storage.nix
             ./modules/ml/ollama-gpu-manager.nix
+            ./modules/ml/offload # ML Offload Manager (unified API + intelligence)
 
             # System
             ./modules/system/memory.nix
