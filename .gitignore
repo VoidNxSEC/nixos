@@ -5,6 +5,8 @@ result-*
 # Nix REPL history
 .nix-repl-history
 
+nx.qcow2
+
 # IDE/Editor files
 .vscode/
 .idea/
