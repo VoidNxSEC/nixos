@@ -5,7 +5,7 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::{net::SocketAddr, sync::Arc};
 use tokio::sync::RwLock;
 use tower_http::{
@@ -21,7 +21,6 @@ mod models;
 mod vram;
 
 use db::Database;
-use models::*;
 use vram::VramMonitor;
 
 /// Application state shared across handlers
