@@ -1,0 +1,270 @@
+version: '3.8'
+
+services:
+  # PostgreSQL para armazenamento de dados
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: dev_postgres
+    environment:
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: devdb
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devuser"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dev_network
+
+  # Redis para caching e filas
+  redis:
+    image: redis:7-alpine
+    container_name: dev_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dev_network
+
+  # Milvus para vector search (alternativa ao ChromaDB)
+  milvus-standalone:
+    image: milvusdb/milvus:latest
+    container_name: dev_milvus
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    depends_on:
+      - etcd
+      - minio
+    networks:
+      - dev_network
+    volumes:
+      - milvus_data:/var/lib/milvus
+
+  # Etcd para Milvus
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+    container_name: dev_etcd
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - etcd_data:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    networks:
+      - dev_network
+
+  # MinIO (S3-compatible) para armazenamento de modelos
+  minio:
+    image: minio/minio:latest
+    container_name: dev_minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - dev_network
+
+  # Jupyter Lab standalone (alternativa ao Nix)
+  jupyter:
+    image: jupyter/tensorflow-notebook:latest
+    container_name: dev_jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/home/jovyan/work
+      - ./data:/home/jovyan/data
+      - ./models:/home/jovyan/models
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+      GRANT_SUDO: "yes"
+    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
+    networks:
+      - dev_network
+
+  # MLflow para tracking de experimentos
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: dev_mlflow
+    ports:
+      - "5000:5000"
+    environment:
+      BACKEND_STORE_URI: postgresql://devuser:devpass@postgres:5432/mlflow
+      ARTIFACT_ROOT: s3://mlflow
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+    command: >
+      mlflow server
+      --backend-store-uri postgresql://devuser:devpass@postgres:5432/mlflow
+      --default-artifact-root s3://mlflow
+      --host 0.0.0.0
+      --port 5000
+    depends_on:
+      - postgres
+      - minio
+    networks:
+      - dev_network
+
+  # Grafana para visualização de métricas
+  grafana:
+    image: grafana/grafana:latest
+    container_name: dev_grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - dev_network
+
+  # Prometheus para métricas
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: dev_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - dev_network
+
+  # Elastic Search para logging e busca
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: dev_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    networks:
+      - dev_network
+
+  # Kibana para visualização de logs
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: dev_kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - dev_network
+
+  # RabbitMQ para message queuing
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: dev_rabbitmq
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - dev_network
+
+  # Nginx para reverse proxy e load balancing
+  nginx:
+    image: nginx:alpine
+    container_name: dev_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - jupyter
+      - mlflow
+      - grafana
+    networks:
+      - dev_network
+
+  # VSCode Server (code-server) para dev no browser
+  code-server:
+    image: codercom/code-server:latest
+    container_name: dev_vscode
+    ports:
+      - "8080:8080"
+    environment:
+      PASSWORD: "devpassword"
+    volumes:
+      - ./:/home/coder/project
+      - code_server_data:/home/coder/.local/share/code-server
+    networks:
+      - dev_network
+
+  # Portainer para gerenciar containers
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: dev_portainer
+    ports:
+      - "9443:9443"
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - dev_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  milvus_data:
+  etcd_data:
+  minio_data:
+  grafana_data:
+  prometheus_data:
+  elastic_data:
+  rabbitmq_data:
+  code_server_data:
+  portainer_data:
+
+networks:
+  dev_network:
+    driver: bridge

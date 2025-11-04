@@ -157,7 +157,7 @@
 
             # Security modules LAST (highest priority to override other configs)
             ./modules/security
-
+            ./dev/default.nix
             ./sec/hardening.nix # Final override
           ];
         };
