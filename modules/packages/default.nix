@@ -12,6 +12,9 @@
     # Declarative .deb package management
     ./deb-packages
 
+    # Declarative .tar.gz package management
+    ./tar-packages
+
     # Future: Add other package format integrations here
     # ./flatpak
     # ./appimage
