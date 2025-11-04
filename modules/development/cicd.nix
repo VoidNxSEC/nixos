@@ -111,7 +111,7 @@ with lib;
             ${optionalString config.kernelcore.development.cicd.pre-commit.formatCode ''
               # Format Nix files
               echo "Formatting Nix files..."
-              git ls-files '*.nix' | xargs -r nixfmt
+              git ls-files -z '*.nix' | xargs -0 -r nixfmt
             ''}
 
             ${optionalString config.kernelcore.development.cicd.pre-commit.runTests ''
