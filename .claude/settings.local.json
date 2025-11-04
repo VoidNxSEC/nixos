@@ -114,7 +114,8 @@
       "Bash(npm install:*)",
       "Bash(git init:*)",
       "Bash(npm run build:*)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(nvidia-smi:*)"
     ],
     "deny": [],
     "ask": []
