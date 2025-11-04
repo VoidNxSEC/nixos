@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+# Package Setup Helper
+# Auto-download and setup packages for tar-packages and deb-packages
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NIXOS_ROOT="/etc/nixos"
+DEB_STORAGE="$NIXOS_ROOT/modules/packages/deb-packages/storage"
+TAR_STORAGE="$NIXOS_ROOT/modules/packages/tar-packages/storage"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+info() { echo -e "${GREEN}[INFO]${NC} $*"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $*"; }
+error() { echo -e "${RED}[ERROR]${NC} $*"; }
+
+# Calculate and update hash in nix file
+update_hash() {
+    local file="$1"
+    local nix_config="$2"
+
+    info "Calculating SHA256 for $file..."
+    local hash=$(nix-hash --type sha256 --flat "$file")
+    info "Hash: $hash"
+
+    if [[ -f "$nix_config" ]]; then
+        info "Updating hash in $nix_config..."
+        sed -i "s/sha256 = \"[^\"]*\"/sha256 = \"$hash\"/" "$nix_config"
+        info "Hash updated!"
+    fi
+}
+
+# Setup ProtonVPN
+setup_protonvpn() {
+    info "Setting up ProtonVPN..."
+
+    local file="$DEB_STORAGE/protonvpn-stable-release_1.0.8_all.deb"
+    local url="https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.8_all.deb"
+    local expected_hash="0b14e71586b22e498eb20926c48c7b434b751149b1f2af9902ef1cfe6b03e180"
+
+    if [[ ! -f "$file" ]]; then
+        info "Downloading ProtonVPN..."
+        wget -O "$file" "$url"
+    fi
+
+    info "Verifying checksum..."
+    echo "$expected_hash  $file" | sha256sum --check - || {
+        error "Checksum mismatch!"
+        return 1
+    }
+
+    info "✅ ProtonVPN ready!"
+}
+
+# Setup Lynis
+setup_lynis() {
+    info "Setting up Lynis..."
+
+    local version="3.1.6"
+    local file="$TAR_STORAGE/lynis-$version.tar.gz"
+    local url="https://github.com/CISOfy/lynis/releases/download/$version/lynis-$version.tar.gz"
+    local nix_config="$NIXOS_ROOT/modules/packages/tar-packages/packages/lynis.nix"
+
+    if [[ ! -f "$file" ]]; then
+        info "Downloading Lynis $version..."
+        wget -O "$file" "$url"
+    fi
+
+    update_hash "$file" "$nix_config"
+
+    info "✅ Lynis ready!"
+}
+
+# Setup NordVPN GUI
+setup_nordvpn() {
+    info "Setting up NordVPN GUI..."
+    warn "NordVPN requires manual extraction from installer"
+
+    echo ""
+    echo "Run these commands manually:"
+    echo ""
+    echo "  # Download and extract"
+    echo "  cd /tmp"
+    echo "  bash <(wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh) -p nordvpn-gui"
+    echo ""
+    echo "  # Create tarball"
+    echo "  tar -czf nordvpn-gui.tar.gz -C /path/to/extracted usr/bin/"
+    echo ""
+    echo "  # Move to storage"
+    echo "  sudo mv nordvpn-gui.tar.gz $TAR_STORAGE/"
+    echo ""
+
+    if [[ -f "$TAR_STORAGE/nordvpn-gui.tar.gz" ]]; then
+        update_hash "$TAR_STORAGE/nordvpn-gui.tar.gz" \
+                    "$NIXOS_ROOT/modules/packages/tar-packages/packages/nordvpn-gui.nix"
+        info "✅ NordVPN ready!"
+    else
+        warn "NordVPN tarball not found - manual setup needed"
+    fi
+}
+
+# Main menu
+main() {
+    echo ""
+    echo "═══════════════════════════════════════"
+    echo "  Package Setup Helper"
+    echo "═══════════════════════════════════════"
+    echo ""
+
+    PS3="Select package to setup: "
+    options=("ProtonVPN (.deb)" "Lynis (.tar.gz)" "NordVPN GUI" "All" "Quit")
+
+    select opt in "${options[@]}"; do
+        case $opt in
+            "ProtonVPN (.deb)")
+                setup_protonvpn
+                ;;
+            "Lynis (.tar.gz)")
+                setup_lynis
+                ;;
+            "NordVPN GUI")
+                setup_nordvpn
+                ;;
+            "All")
+                setup_protonvpn
+                setup_lynis
+                setup_nordvpn
+                ;;
+            "Quit")
+                break
+                ;;
+            *)
+                error "Invalid option"
+                ;;
+        esac
+    done
+
+    echo ""
+    info "Next steps:"
+    echo "  1. Review configs in modules/packages/*-packages/packages/"
+    echo "  2. Enable in configuration.nix"
+    echo "  3. Run: nix flake check"
+    echo "  4. Run: sudo nixos-rebuild switch"
+    echo ""
+}
+
+main "$@"

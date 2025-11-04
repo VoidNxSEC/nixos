@@ -94,7 +94,18 @@
       "Bash(ssh-keygen:*)",
       "Bash(nix:*)",
       "Bash(sed:*)",
-      "Bash(offload-status:*)"
+      "Bash(offload-status:*)",
+      "Bash(nix-hash:*)",
+      "Bash(tar:*)",
+      "Bash(ldd:*)",
+      "Bash(/nix/store/ylvrfv30gqmh4film9dvw51bpmj0fm1d-zellij-patched/zellij:*)",
+      "Bash(/nix/store/v4bs5ybp2vi3zm9xjiq87sgyn0v50nk8-zellij-extracted/zellij:*)",
+      "Bash(time nix flake check:*)",
+      "Bash(sudo nixos-rebuild switch:*)",
+      "Bash(time nix build:*)",
+      "Bash(time sudo nixos-rebuild switch:*)",
+      "Bash(tee:*)",
+      "Read(//run/wrappers/wrappers.2FCN6SLbKp/**)"
     ],
     "deny": [],
     "ask": []
