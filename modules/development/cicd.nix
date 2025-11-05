@@ -98,12 +98,48 @@ with lib;
             #!/usr/bin/env bash
             set -e
 
+            LFS_SIZE_LIMIT=52428800 # 50 MiB guardrail for git blobs
+
+            bytes_to_mb() {
+              local bytes=$1
+              awk -v b="$bytes" 'BEGIN { printf "%.1f", b/1048576 }'
+            }
+
+            check_large_files() {
+              local has_error=0
+              while IFS= read -r file; do
+                [ -n "$file" ] || continue
+                [ -f "$file" ] || continue
+
+                local size
+                size=$(stat -c%s -- "$file" 2>/dev/null || echo 0)
+                if (( size > LFS_SIZE_LIMIT )); then
+                  local attr
+                  attr=$(git check-attr filter -- "$file" 2>/dev/null | awk -F': ' '{print $3}')
+                  if [ "$attr" != "lfs" ]; then
+                    echo "ERROR: File '$file' is $(bytes_to_mb "$size") MiB. Track it with git LFS before committing."
+                    has_error=1
+                  else
+                    echo "INFO: '$file' exceeds the limit but is tracked via git LFS; continuing."
+                  fi
+                fi
+              done < <(git diff --cached --name-only --diff-filter=AM -z | tr '\0' '\n')
+
+              return $has_error
+            }
+
             echo "Running pre-commit hooks..."
+
+            echo "Checking staged files for oversized blobs..."
+            if ! check_large_files; then
+              echo "ERROR: Large files detected that are not handled by git LFS."
+              exit 1
+            fi
 
             ${optionalString config.kernelcore.development.cicd.pre-commit.checkDirty ''
               # Check for dirty git tree
-              if [[ -n $(git status --porcelain) ]]; then
-                echo "⚠️  Warning: You have uncommitted changes"
+              if [ -n "$(git status --porcelain)" ]; then
+                echo "WARNING: You have uncommitted changes"
                 git status --short
               fi
             ''}
@@ -120,7 +156,7 @@ with lib;
               nix flake check --show-trace
             ''}
 
-            echo "✅ Pre-commit hooks passed!"
+            echo "Pre-commit hooks passed."
           '';
           mode = "0755";
         };
@@ -132,23 +168,55 @@ with lib;
             #!/usr/bin/env bash
             set -e
 
+            LFS_SIZE_LIMIT=52428800 # 50 MiB guardrail for git blobs
+
+            bytes_to_mb() {
+              local bytes=$1
+              awk -v b="$bytes" 'BEGIN { printf "%.1f", b/1048576 }'
+            }
+
+            check_repo_for_large_files() {
+              local has_error=0
+              while IFS= read -r file; do
+                [ -n "$file" ] || continue
+                [ -f "$file" ] || continue
+                local size
+                size=$(stat -c%s -- "$file" 2>/dev/null || echo 0)
+                if (( size > LFS_SIZE_LIMIT )); then
+                  local attr
+                  attr=$(git check-attr filter -- "$file" 2>/dev/null | awk -F': ' '{print $3}')
+                  if [ "$attr" != "lfs" ]; then
+                    echo "ERROR: File '$file' is $(bytes_to_mb "$size") MiB. Track it with git LFS before pushing."
+                    has_error=1
+                  fi
+                fi
+              done < <(git ls-files -z | tr '\0' '\n')
+              return $has_error
+            }
+
             echo "Running pre-push hooks..."
 
             # Always check git status before push
-            if [[ -n $(git status --porcelain) ]]; then
-              echo "❌ Error: You have uncommitted changes. Commit them before pushing."
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "ERROR: You have uncommitted changes. Commit them before pushing."
               git status --short
+              exit 1
+            fi
+
+            echo "Scanning repository for oversized files..."
+            if ! check_repo_for_large_files; then
+              echo "ERROR: Refusing to push blobs larger than $((LFS_SIZE_LIMIT/1048576)) MiB unless tracked by git LFS."
               exit 1
             fi
 
             # Run flake check before push
             echo "Running flake check before push..."
             nix flake check --show-trace || {
-              echo "❌ Flake check failed. Fix errors before pushing."
+              echo "ERROR: Flake check failed. Fix errors before pushing."
               exit 1
             }
 
-            echo "✅ Pre-push hooks passed!"
+            echo "Pre-push hooks passed."
           '';
           mode = "0755";
         };

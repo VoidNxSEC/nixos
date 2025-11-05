@@ -2,6 +2,24 @@
 
 This repository contains a NixOS flake that defines hosts, modules, dev shells, and build artifacts (ISO/VM image/container). Follow the practices below to contribute safely and predictably.
 
+## GPT Agent Playbook
+- **Stay sandbox aware**: Commands default to `bash -lc` with `workdir` set; respect the current sandbox/approval policy before running anything that writes, touches secrets, or needs network.
+- **Plan when work is multi-step**: Use the planning tool for anything non-trivial (≥2 steps); never submit a single-step plan and update it as steps finish.
+- **Inspect before you edit**: Prefer `rg`/`rg --files` to locate context, and read files with `sed`/`nl` before changing them.
+- **Edit carefully**: Use `apply_patch` for hand-written changes; avoid it for generated content or large refactors.
+- **Validate what you touch**: Run the smallest relevant check (`nix fmt`, `nix flake check`, targeted scripts) whenever feasible; if you skip validation, call it out.
+- **Communicate crisply**: Final replies lead with the change, list affected paths with line refs, and suggest obvious next steps (rebuild, tests, commits) when they exist.
+- **Signal completion**: Keep the closing tone friendly and concise; when rebuilds are needed, point to the `rebuild` alias instead of restating full commands.
+- **Verify wiring**: After adding helpers or modules, confirm they are referenced by searching the tree (`rg <symbol>`) so we know the code path is live.
+
+### Permissible Commands
+- Read-only inspection: `ls`, `find`, `rg`, `cat`, `sed`, `nl`, `head`, `tail`, `stat` (never modify state).
+- Git hygiene: `git status`, `git diff`, `git show`, `git rev-parse` (no commits or resets without direction).
+- Nix tooling: `nix fmt`, `nix flake check`, `nix build`, `nix develop` (watch for derivations that download or require root).
+- System introspection: `systemctl status <svc>`, `journalctl -u <svc> --no-pager | head`, `nvidia-smi` (status only, no restarts).
+- Safe scripting helpers: `/nix/store/*/bin/python -c '...'`, `jq`, `awk` for data inspection; avoid scripts that write outside the workspace.
+- When in doubt, assume write/network/privileged operations need approval or an explicit user request before execution.
+
 ## Project Structure & Module Organization
 - Root: `flake.nix`/`flake.lock` (entrypoint, formatter, checks, packages, devShells)
 - Hosts: `hosts/<host>/...` (per‑machine configs; main host: `kernelcore`)
