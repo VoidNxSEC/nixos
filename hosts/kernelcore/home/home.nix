@@ -257,7 +257,7 @@
         gar = "git add remote origin";
 
         # NixOS management (usando home-manager agora!)
-        rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#kernelcore --show-trace";
+        #rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#kernelcore --show-trace";
         #build = "home-manager switch --flake ~/.config/NixHM#kernelcore";
         #upgrade = "nix flake update ~/.config/home-manager && home-manager switch --flake ~/.config/NixHM#kernelcore";
         clean = "sudo nix-collect-garbage -d && sudo nix-store --gc";
@@ -282,7 +282,6 @@
         nx = "cd /etc/nixos/";
         check = "nix flake check";
         update = "nix flake update";
-
 
         # Fun stuff
         weather = "curl wttr.in";
