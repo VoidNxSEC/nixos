@@ -37,6 +37,11 @@ with lib;
           default = true;
           description = "Format code before commit";
         };
+        flakeCheckOnPush = mkOption {
+          type = types.bool;
+          default = true;
+          description = "Run nix flake check in the pre-push hook (disable when relying on hosted CI)";
+        };
       };
     };
   };
@@ -209,12 +214,14 @@ with lib;
               exit 1
             fi
 
-            # Run flake check before push
-            echo "Running flake check before push..."
-            nix flake check --show-trace || {
-              echo "ERROR: Flake check failed. Fix errors before pushing."
-              exit 1
-            }
+            ${optionalString config.kernelcore.development.cicd.pre-commit.flakeCheckOnPush ''
+              # Run flake check before push
+              echo "Running flake check before push..."
+              nix flake check --show-trace || {
+                echo "ERROR: Flake check failed. Fix errors before pushing."
+                exit 1
+              }
+            ''}
 
             echo "Pre-push hooks passed."
           '';
