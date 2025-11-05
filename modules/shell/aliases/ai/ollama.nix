@@ -32,5 +32,9 @@
     # Jupyter
     "jupyter-gpu" =
       "docker run --rm -it --gpus all -p 8888:8888 -v $(pwd):/workspace jupyter/tensorflow-notebook";
+
+    # Offload GPU by stopping llama.cpp systemd service when switching stacks
+    "ai-llama-stop" =
+      "sudo systemctl stop llamacpp.service && echo 'llamacpp stopped; wait a few seconds for VRAM to clear'";
   };
 }
