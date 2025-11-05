@@ -258,8 +258,8 @@
 
         # NixOS management (usando home-manager agora!)
         rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#kernelcore --show-trace";
-        build = "home-manager switch --flake ~/.config/NixHM#kernelcore";
-        upgrade = "nix flake update ~/.config/home-manager && home-manager switch --flake ~/.config/NixHM#kernelcore";
+        #build = "home-manager switch --flake ~/.config/NixHM#kernelcore";
+        #upgrade = "nix flake update ~/.config/home-manager && home-manager switch --flake ~/.config/NixHM#kernelcore";
         clean = "sudo nix-collect-garbage -d && sudo nix-store --gc";
         cleanold = "sudo nix-collect-garbage --delete-older-than 7d";
 
@@ -275,9 +275,14 @@
         # Quick access
         dots = "cd ~/.config/NixHM";
         neo = "cd ~/.config/nvim";
-        dev = "cd ~/Dev";
-        dock = "cd ~/Dev/docker-hub/";
+        dev = "cd ~/dev";
+        dock = "cd ~/dev/docker-hub/";
         ml-clusters = "cd ~/Dev/docker-hub//ml-clusters/";
+
+        nx = "cd /etc/nixos/";
+        check = "nix flake check";
+        update = "nix flake update";
+
 
         # Fun stuff
         weather = "curl wttr.in";
@@ -601,7 +606,7 @@
 
     font = {
       name = "JetBrainsMono Nerd Font";
-      size = 11;
+      size = 12;
     };
 
     gtk3.extraConfig = {
@@ -694,7 +699,7 @@
     # Editor & Browser
     EDITOR = "nvim";
     VISUAL = "nvim";
-    BROWSER = "brave";
+    BROWSER = "firefox";
     TERMINAL = "gnome-terminal";
 
     # Python/Pipx
