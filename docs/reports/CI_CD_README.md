@@ -77,6 +77,7 @@ This repository includes comprehensive CI/CD pipeline configurations for multipl
       checkDirty = true;    # Warn about uncommitted changes
       formatCode = true;    # Auto-format Nix code
       runTests = false;     # Run flake check (can be slow)
+      flakeCheckOnPush = true; # Keep local push guardrails (set false when relying on hosted CI)
     };
   };
 }
@@ -120,7 +121,7 @@ Runs before each commit:
 ### Pre-push Hook
 Runs before pushing:
 - **Blocks push** if there are uncommitted changes
-- Runs `nix flake check` to validate configuration
+- Runs `nix flake check` to validate configuration (skip when `flakeCheckOnPush = false`)
 - Prevents pushing broken configurations
 
 ### Manual Hook Installation
