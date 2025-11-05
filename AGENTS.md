@@ -11,6 +11,7 @@ This repository contains a NixOS flake that defines hosts, modules, dev shells, 
 - **Communicate crisply**: Final replies lead with the change, list affected paths with line refs, and suggest obvious next steps (rebuild, tests, commits) when they exist.
 - **Signal completion**: Keep the closing tone friendly and concise; when rebuilds are needed, point to the `rebuild` alias instead of restating full commands.
 - **Verify wiring**: After adding helpers or modules, confirm they are referenced by searching the tree (`rg <symbol>`) so we know the code path is live.
+- **Ask follow-ups**: When context is missing or risks remain, surface focused follow-up questions before moving ahead so we stay proactive on issues and tasks.
 
 ### Permissible Commands
 - Read-only inspection: `ls`, `find`, `rg`, `cat`, `sed`, `nl`, `head`, `tail`, `stat` (never modify state).
