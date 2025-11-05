@@ -117,13 +117,14 @@
         enable = true;
         platforms = {
           github = true; # GitHub CLI and tools
-          gitlab = true; # GitLab CLI and tools
-          gitea = true; # Gitea CLI (local git server integration)
+          gitlab = false; # Use GitHub Actions instead of local GitLab runners
+          gitea = false; # Offload automation to GitHub hosted runners
         };
         pre-commit = {
           enable = true;
           formatCode = true; # Auto-format code before commits
           runTests = false; # Set to true when you have automated tests
+          flakeCheckOnPush = false; # Offload validation to GitHub-hosted Actions
         };
       };
     };
