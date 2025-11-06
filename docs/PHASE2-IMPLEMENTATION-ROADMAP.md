@@ -108,9 +108,9 @@ cd /etc/nixos/modules/ml/unified-llm
 git init
 git checkout -b feature/phase2-unification
 
-# Copy base files
-cp /home/kernelcore/Downloads/ClaudeSkills/Security-Architect/Cargo.toml .
-cp /home/kernelcore/Downloads/ClaudeSkills/Security-Architect/flake.nix .
+# Initialize base files from unified-llm
+# Files already exist in /etc/nixos/modules/ml/unified-llm
+cd /etc/nixos/modules/ml/unified-llm
 ```
 
 **Day 3-4: Cargo Workspace**
@@ -150,15 +150,13 @@ cp /home/kernelcore/Downloads/ClaudeSkills/Security-Architect/flake.nix .
 
 #### Tasks
 
-**Day 11-13: Security-Architect Migration**
+**Day 11-13: Core Crates Setup**
 ```bash
-# Copy crates
-cp -r /home/kernelcore/Downloads/ClaudeSkills/Security-Architect/crates/core ./crates/
-cp -r /home/kernelcore/Downloads/ClaudeSkills/Security-Architect/crates/security ./crates/
-cp -r /home/kernelcore/Downloads/ClaudeSkills/Security-Architect/crates/providers ./crates/
-cp -r /home/kernelcore/Downloads/ClaudeSkills/Security-Architect/crates/cli ./crates/
+# Crates already exist in /etc/nixos/modules/ml/unified-llm/crates/
+# Verify structure
+ls -la /etc/nixos/modules/ml/unified-llm/crates/
 
-# Update imports
+# Update imports if needed
 find crates/ -name "*.rs" -exec sed -i 's/securellm_/unified_llm_/g' {} \;
 ```
 
@@ -580,13 +578,11 @@ Features for future:
 ### Documentation
 - [Architecture Plan](PHASE2-UNIFIED-ARCHITECTURE.md) - Complete technical design
 - [ML Offload Phase 2 Design](ml-offload-phase2-design.md) - VRAM intelligence details
-- [Security-Architect CLAUDE.md](../../home/kernelcore/Downloads/ClaudeSkills/Security-Architect/CLAUDE.md) - Security architecture
-- [mlx-mcp README](../../home/kernelcore/dev/mlx-mcp/README.md) - MCP server details
+- [Unified LLM Project](../../modules/ml/unified-llm/) - Main project location
 
-### Repositories
-- Security-Architect: `/home/kernelcore/Downloads/ClaudeSkills/Security-Architect`
-- mlx-mcp: `/home/kernelcore/dev/mlx-mcp`
-- ML Offload: `/etc/nixos/modules/ml/offload`
+### Project Structure
+- Unified LLM Platform: `/etc/nixos/modules/ml/unified-llm`
+- ML Offload System: `/etc/nixos/modules/ml/offload`
 
 ### Tools
 - Rust toolchain: `nix develop`
