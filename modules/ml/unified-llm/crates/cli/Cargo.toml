@@ -1,0 +1,9 @@
+[package]
+name = "unified-llm-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+unified-llm-core = { path = "../core" }
