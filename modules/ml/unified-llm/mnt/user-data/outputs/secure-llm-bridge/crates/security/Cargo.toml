@@ -1,0 +1,24 @@
+[package]
+name = "securellm-security"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+# Workspace dependencies
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+rustls = { workspace = true }
+rustls-pemfile = { workspace = true }
+rustls-native-certs = "0.8"
+ring = { workspace = true }
+argon2 = { workspace = true }
+secrecy = { workspace = true }
+bytes = { workspace = true }
+
+[dev-dependencies]
+tokio-test = "0.4"

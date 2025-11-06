@@ -1,7 +1,7 @@
 use crate::{ProviderError, Result};
 use async_trait::async_trait;
-use unified_llm_core::{
-    Choice, ContentPart, Error, HealthStatus, LLMProvider, Message, MessageContent,
+use securellm_core::{
+    Choice, ContentPart, Error, HealthStatus, LLMProvider, Message, MessageContent, 
     MessageRole, ModelInfo, ModelPricing, ProviderCapabilities, ProviderHealth, Request, 
     Response, FinishReason, TokenUsage, ResponseMetadata,
 };
@@ -192,7 +192,7 @@ impl LLMProvider for DeepSeekProvider {
         "v1"
     }
     
-    fn validate_config(&self) -> unified_llm_core::Result<()> {
+    fn validate_config(&self) -> securellm_core::Result<()> {
         if self.config.api_key.expose_secret().is_empty() {
             return Err(Error::Config("DeepSeek API key is empty".to_string()));
         }
@@ -204,7 +204,7 @@ impl LLMProvider for DeepSeekProvider {
         Ok(())
     }
     
-    async fn send_request(&self, request: Request) -> unified_llm_core::Result<Response> {
+    async fn send_request(&self, request: Request) -> securellm_core::Result<Response> {
         // Validate request
         request.validate()?;
         
@@ -289,7 +289,7 @@ impl LLMProvider for DeepSeekProvider {
         Ok(securellm_response)
     }
     
-    async fn health_check(&self) -> unified_llm_core::Result<ProviderHealth> {
+    async fn health_check(&self) -> securellm_core::Result<ProviderHealth> {
         let start = Instant::now();
         
         // Try to list models as a health check
@@ -328,7 +328,7 @@ impl LLMProvider for DeepSeekProvider {
         }
     }
     
-    async fn list_models(&self) -> unified_llm_core::Result<Vec<ModelInfo>> {
+    async fn list_models(&self) -> securellm_core::Result<Vec<ModelInfo>> {
         // DeepSeek's main models
         Ok(vec![
             ModelInfo {
