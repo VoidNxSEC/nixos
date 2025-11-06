@@ -1,0 +1,9 @@
+[package]
+name = "unified-llm-router"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+unified-llm-core = { path = "../core" }
