@@ -41,7 +41,7 @@ Create a **unified, enterprise-grade platform** that combines:
 
 ## Current State Analysis
 
-### Project 1: Security-Architect (`/home/kernelcore/Downloads/ClaudeSkills/Security-Architect`)
+### Project 1: Security-Architect (`/etc/nixos/modules/ml/unified-llm`)
 
 **Language**: Rust  
 **Architecture**: Cargo workspace (5 crates)  
@@ -66,26 +66,26 @@ crates/
 ```
 
 #### Key Files
-- [`Cargo.toml`](../../home/kernelcore/Downloads/ClaudeSkills/Security-Architect/Cargo.toml) - Workspace config
-- [`CLAUDE.md`](../../home/kernelcore/Downloads/ClaudeSkills/Security-Architect/CLAUDE.md) - Comprehensive docs
-- [`mcp-server/`](../../home/kernelcore/Downloads/ClaudeSkills/Security-Architect/mcp-server/) - TypeScript MCP server
+- [`Cargo.toml`](../../modules/ml/unified-llm/Cargo.toml) - Workspace config
+- [`CLAUDE.md`](../../modules/ml/unified-llm/CLAUDE.md) - Comprehensive docs
+- [`mcp-server/`](../../modules/ml/unified-llm/mcp-server/) - TypeScript MCP server
 
 ---
 
-### Project 2: mlx-mcp (`/home/kernelcore/dev/mlx-mcp`)
+### Project 2: MCP Server (`/etc/nixos/modules/ml/unified-llm/mcp-server`)
 
-**Language**: TypeScript  
-**Architecture**: Standalone MCP server  
-**Status**: ✅ Functional, integrates with ML Offload API
+**Language**: TypeScript
+**Architecture**: MCP server for unified platform
+**Status**: 📋 Planned for Week 3 implementation
 
-#### Strengths
+#### Planned Features
 - Smart caching (5min models, 10s VRAM)
 - Token economy (80-90% savings)
 - Auto-summarization
 - Rate limiting
-- Clean MCP tool definitions
+- Unified tool definitions
 
-#### Available Tools
+#### Tools to Implement
 - `list_models` - Registry access with filters
 - `get_model_info` - Detailed model data
 - `load_model` - Load with params (gpu_layers, context_length)
@@ -94,11 +94,10 @@ crates/
 - `get_vram_status` - Real-time GPU monitoring
 - `trigger_model_scan` - Update registry
 
-#### Key Files
-- [`package.json`](../../home/kernelcore/dev/mlx-mcp/package.json) - Dependencies
-- [`src/index.ts`](../../home/kernelcore/dev/mlx-mcp/src/index.ts) - Main MCP server
-- [`src/cache.ts`](../../home/kernelcore/dev/mlx-mcp/src/cache.ts) - Caching logic
-- [`src/summarizer.ts`](../../home/kernelcore/dev/mlx-mcp/src/summarizer.ts) - Token optimization
+#### Implementation Target
+- Week 3 of Phase 2 roadmap
+- Will integrate with unified Rust backend
+- Location: [`/etc/nixos/modules/ml/unified-llm/mcp-server/`](../../modules/ml/unified-llm/mcp-server/)
 
 ---
 
@@ -1008,8 +1007,8 @@ summarization_enabled = true
 
 ### Phase 3: MCP Server Unification (Week 5)
 
-1. **Merge TypeScript codebases**
-   - Combine `Security-Architect/mcp-server` + `mlx-mcp`
+1. **Implement TypeScript MCP server**
+   - Build unified MCP server from scratch
    - Unified tool set
    - Enhanced caching
 
