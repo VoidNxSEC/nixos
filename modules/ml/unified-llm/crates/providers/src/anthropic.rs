@@ -2,7 +2,7 @@
 // TODO: Implement Anthropic API adapter
 
 use async_trait::async_trait;
-use unified_llm_core::*;
+use securellm_core::*;
 
 pub struct AnthropicProvider;
 
@@ -16,15 +16,15 @@ impl LLMProvider for AnthropicProvider {
         "2023-06-01"
     }
     
-    fn validate_config(&self) -> unified_llm_core::Result<()> {
+    fn validate_config(&self) -> securellm_core::Result<()> {
         todo!("Anthropic provider not yet implemented")
     }
     
-    async fn send_request(&self, _request: Request) -> unified_llm_core::Result<Response> {
+    async fn send_request(&self, _request: Request) -> securellm_core::Result<Response> {
         todo!("Anthropic provider not yet implemented")
     }
     
-    async fn health_check(&self) -> unified_llm_core::Result<ProviderHealth> {
+    async fn health_check(&self) -> securellm_core::Result<ProviderHealth> {
         todo!("Anthropic provider not yet implemented")
     }
     
@@ -40,7 +40,7 @@ impl LLMProvider for AnthropicProvider {
         }
     }
     
-    async fn list_models(&self) -> unified_llm_core::Result<Vec<ModelInfo>> {
+    async fn list_models(&self) -> securellm_core::Result<Vec<ModelInfo>> {
         todo!("Anthropic provider not yet implemented")
     }
 }

@@ -3,9 +3,6 @@ members = [
     "crates/core",
     "crates/security",
     "crates/providers",
-    "crates/local",
-    "crates/router",
-    "crates/api",
     "crates/cli",
 ]
 resolver = "2"
@@ -13,9 +10,9 @@ resolver = "2"
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-authors = ["kernelcore"]
+authors = ["SecureLLM Contributors"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/VoidNxSEC/nixos"
+repository = "https://github.com/securellm/bridge"
 
 [workspace.dependencies]
 # Async runtime
@@ -30,9 +27,8 @@ toml = "0.8"
 # HTTP/Network
 reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
 hyper = { version = "1.4", features = ["full"] }
-axum = { version = "0.7", features = ["macros", "ws"] }
+axum = { version = "0.7", features = ["macros"] }
 tower = { version = "0.5", features = ["full"] }
-tower-http = { version = "0.5", features = ["cors", "trace"] }
 
 # Security/Crypto
 rustls = "0.23"
@@ -60,24 +56,13 @@ governor = "0.6"
 # CLI
 clap = { version = "4.5", features = ["derive", "env"] }
 
-# Database (for audit logs and model registry)
+# Database (for audit logs)
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite"] }
-
-# NVIDIA GPU monitoring
-nvml-wrapper = "0.9"
-
-# Process management
-sysinfo = "0.30"
 
 # Utilities
 uuid = { version = "1.10", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 bytes = "1.7"
-futures = "0.3"
-tokio-tungstenite = "0.21"
-
-# Environment variables
-dotenvy = "0.15"
 
 [profile.release]
 opt-level = 3
@@ -89,8 +74,4 @@ panic = "abort"
 [profile.release-with-debug]
 inherits = "release"
 strip = false
-debug = true
-
-[profile.dev]
-opt-level = 0
 debug = true
