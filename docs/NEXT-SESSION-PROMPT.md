@@ -749,6 +749,523 @@ Security crate:
 - AES-256-GCM encryption (crypto.rs)
 - Input sanitization (sanitizer.rs)
 
+---
+
+## 🔍 Week 3 Day 21-30: MCP Server Unification (DETAILED GUIDE)
+
+### Phase Overview
+
+Merge two TypeScript MCP servers into one unified server:
+1. **Security-Architect MCP** (`/home/kernelcore/Downloads/ClaudeSkills/Security-Architect/mcp-server/`)
+   - Security tools (audit, logs, config validation)
+   - Basic inference tools
+   
+2. **mlx-mcp** (`/home/kernelcore/dev/mlx-mcp/`)
+   - Model management tools (list, load, unload, switch)
+   - Smart caching with TTL
+   - Token economy via summarization
+   - VRAM monitoring
+
+### Task 1: Analyze Existing MCP Servers (Day 21 - 2 hours)
+
+**Step 1.1: Inventory Security-Architect MCP Server**
+```bash
+cd /home/kernelcore/Downloads/ClaudeSkills/Security-Architect/mcp-server
+
+# List structure
+ls -la
+# Expected: package.json, tsconfig.json, src/
+
+# Check tools
+cat src/index.ts | grep "server.tool" -A 3
+
+# Check dependencies
+cat package.json | jq '.dependencies'
+```
+
+**Step 1.2: Inventory mlx-mcp Server**
+```bash
+cd /home/kernelcore/dev/mlx-mcp
+
+# List structure
+ls -la src/
+# Expected: index.ts, cache.ts, summarizer.ts, tools/
+
+# Check tools
+cat src/index.ts | grep "server.tool" -A 3
+
+# Check caching implementation
+cat src/cache.ts | head -50
+
+# Check summarization
+cat src/summarizer.ts | head -50
+
+# Check dependencies
+cat package.json | jq '.dependencies'
+```
+
+**Step 1.3: Create comparison matrix**
+```bash
+cat > /tmp/mcp-comparison.md << 'EOF'
+# MCP Server Comparison
+
+## Security-Architect MCP
+Tools:
+- [ ] List (exact tool names from code)
+
+Dependencies:
+- [ ] List from package.json
+
+## mlx-mcp
+Tools:
+- list_models
+- get_model_info
+- load_model
+- unload_model
+- switch_model
+- get_vram_status
+- trigger_model_scan
+
+Dependencies:
+- @modelcontextprotocol/sdk: ^1.0.4
+- axios: ^1.6.0
+- (others from package.json)
+
+Features:
+- Smart caching (5min models, 10s VRAM)
+- Token economy via summarization
+- Rate limiting
+EOF
+
+# Fill in Security-Architect details
+```
+
+### Task 2: Create Unified MCP Server Structure (Day 21-22 - 3 hours)
+
+**Step 2.1: Create unified directory**
+```bash
+cd /etc/nixos/modules/ml/unified-llm
+
+# Create MCP server structure
+mkdir -p mcp-server/{src/tools,build}
+
+# Copy base structure from mlx-mcp (it's more complete)
+cp /home/kernelcore/dev/mlx-mcp/package.json mcp-server/
+cp /home/kernelcore/dev/mlx-mcp/tsconfig.json mcp-server/
+cp /home/kernelcore/dev/mlx-mcp/.gitignore mcp-server/ 2>/dev/null || true
+```
+
+**Step 2.2: Merge package.json**
+```bash
+cd /etc/nixos/modules/ml/unified-llm/mcp-server
+
+# Edit package.json - update name and combine dependencies
+cat > package.json << 'EOF'
+{
+  "name": "unified-llm-mcp",
+  "version": "1.0.0",
+  "description": "Unified MCP server for LLM orchestration with security",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "node build/index.js",
+    "dev": "tsc --watch & node --watch build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "axios": "^1.6.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+EOF
+```
+
+**Step 2.3: Create tsconfig.json**
+```bash
+cat > tsconfig.json << 'EOF'
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ES2022"],
+    "moduleResolution": "node",
+    "rootDir": "./src",
+    "outDir": "./build",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "build"]
+}
+EOF
+```
+
+### Task 3: Merge MCP Server Code (Day 22-23 - 4 hours)
+
+**Step 3.1: Copy utility modules from mlx-mcp**
+```bash
+cd /etc/nixos/modules/ml/unified-llm/mcp-server/src
+
+# Copy cache.ts (smart caching)
+cp /home/kernelcore/dev/mlx-mcp/src/cache.ts .
+
+# Copy summarizer.ts (token economy)
+cp /home/kernelcore/dev/mlx-mcp/src/summarizer.ts .
+
+# Verify
+ls -la
+# Expected: cache.ts, summarizer.ts
+```
+
+**Step 3.2: Create tool modules**
+```bash
+mkdir -p tools
+
+# Create inference tools (new - combines both servers)
+cat > tools/inference.ts << 'EOF'
+import { z } from 'zod';
+
+export const chatTool = {
+  name: 'chat',
+  description: 'Send chat message to LLM with auto-routing',
+  inputSchema: z.object({
+    message: z.string().describe('The message to send'),
+    provider: z.string().optional().describe('Force specific provider'),
+    model: z.string().optional().describe('Model to use'),
+    strategy: z.enum(['local-first', 'cloud-first', 'cost-optimized']).optional()
+  })
+};
+
+export const completeTool = {
+  name: 'complete',
+  description: 'Text completion',
+  inputSchema: z.object({
+    prompt: z.string().describe('The prompt to complete'),
+    provider: z.string().optional(),
+    max_tokens: z.number().optional()
+  })
+};
+
+export const embedTool = {
+  name: 'embed',
+  description: 'Generate embeddings',
+  inputSchema: z.object({
+    input: z.string().describe('Text to embed'),
+    model: z.string().optional()
+  })
+};
+EOF
+
+# Create model tools (from mlx-mcp)
+cp /home/kernelcore/dev/mlx-mcp/src/tools/models.ts tools/ 2>/dev/null || \
+cat > tools/models.ts << 'EOF'
+// Model management tools from mlx-mcp
+import { z } from 'zod';
+
+export const listModelsTool = {
+  name: 'list_models',
+  description: 'List available models (cloud + local)',
+  inputSchema: z.object({
+    provider_type: z.enum(['cloud', 'local', 'all']).optional(),
+    backend: z.string().optional(),
+    format: z.string().optional()
+  })
+};
+
+// Add other model tools: get_model_info, load_model, unload_model, switch_model
+EOF
+
+# Create monitoring tools
+cat > tools/monitoring.ts << 'EOF'
+import { z } from 'zod';
+
+export const getVramStatusTool = {
+  name: 'get_vram_status',
+  description: 'Real-time GPU VRAM status',
+  inputSchema: z.object({})
+};
+
+export const getProviderHealthTool = {
+  name: 'get_provider_health',
+  description: 'Check all provider health',
+  inputSchema: z.object({})
+};
+
+export const getSystemStatusTool = {
+  name: 'get_system_status',
+  description: 'Complete system status',
+  inputSchema: z.object({})
+};
+EOF
+
+# Create security tools (from Security-Architect)
+cat > tools/security.ts << 'EOF'
+import { z } from 'zod';
+
+export const runSecurityAuditTool = {
+  name: 'run_security_audit',
+  description: 'Execute security audit',
+  inputSchema: z.object({
+    scope: z.enum(['config', 'providers', 'full']).optional()
+  })
+};
+
+export const getAuditLogsTool = {
+  name: 'get_audit_logs',
+  description: 'Retrieve audit logs',
+  inputSchema: z.object({
+    since: z.string().optional(),
+    provider: z.string().optional(),
+    limit: z.number().optional()
+  })
+};
+
+export const validateConfigTool = {
+  name: 'validate_config',
+  description: 'Validate configuration',
+  inputSchema: z.object({})
+};
+EOF
+```
+
+**Step 3.3: Create main server (index.ts)**
+```bash
+cat > src/index.ts << 'EOF'
+#!/usr/bin/env node
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import axios from 'axios';
+import { Cache } from './cache.js';
+import { Summarizer } from './summarizer.js';
+
+// Import tools
+import * as inference from './tools/inference.js';
+import * as models from './tools/models.js';
+import * as monitoring from './tools/monitoring.js';
+import * as security from './tools/security.js';
+
+const API_BASE_URL = process.env.UNIFIED_LLM_API || 'http://localhost:9000';
+
+// Initialize caching
+const cache = new Cache({
+  models: { ttl: 300, maxSize: 100 },
+  vram: { ttl: 10, maxSize: 1 },
+  health: { ttl: 60, maxSize: 10 },
+  audit: { ttl: 0, maxSize: 0 }  // No caching for security-sensitive
+});
+
+// Initialize summarizer
+const summarizer = new Summarizer();
+
+// Create server
+const server = new Server(
+  {
+    name: 'unified-llm-mcp',
+    version: '1.0.0',
+  },
+  {
+    capabilities: {
+      tools: {},
+    },
+  }
+);
+
+// Register all tools
+server.tool(inference.chatTool.name, inference.chatTool.description, inference.chatTool.inputSchema, async (args) => {
+  // Implementation
+});
+
+// ... register other tools
+
+// Start server
+const transport = new StdioServerTransport();
+await server.connect(transport);
+EOF
+```
+
+### Task 4: Install Dependencies and Build (Day 23 - 1 hour)
+
+```bash
+cd /etc/nixos/modules/ml/unified-llm/mcp-server
+
+# Install dependencies
+npm install
+
+# Build
+npm run build
+
+# Verify build
+ls -la build/
+# Expected: index.js and other compiled files
+```
+
+### Task 5: Test MCP Server (Day 24 - 2 hours)
+
+**Step 5.1: Test locally**
+```bash
+# Start server
+npm start
+
+# In another terminal, test with MCP inspector
+# Or test individual tools
+```
+
+**Step 5.2: Test with Claude Desktop**
+```bash
+# Update Claude Desktop config
+cat ~/.config/Claude/claude_desktop_config.json
+
+# Add unified-llm-mcp server
+# Test tools from Claude Desktop
+```
+
+### Task 6: Integration with Rust API (Day 25-26 - 3 hours)
+
+Ensure MCP server can communicate with the Rust API:
+
+```bash
+# Test API endpoints the MCP server will call
+curl http://localhost:9000/health
+curl http://localhost:9000/v1/models
+curl http://localhost:9000/health/vram
+```
+
+### Task 7: Documentation (Day 27 - 2 hours)
+
+```bash
+cat > mcp-server/README.md << 'EOF'
+# Unified LLM MCP Server
+
+Combined MCP server providing:
+- Inference tools (chat, complete, embed)
+- Model management (list, load, unload, switch)  
+- Monitoring (VRAM, health)
+- Security (audit, logs, validation)
+
+## Features
+
+- Smart caching (5min models, 10s VRAM)
+- Token economy via summarization
+- Rate limiting integration
+- Unified API backend
+
+## Installation
+
+\`\`\`bash
+npm install
+npm run build
+\`\`\`
+
+## Usage
+
+\`\`\`bash
+npm start
+\`\`\`
+
+## Configuration
+
+Set environment variables:
+- `UNIFIED_LLM_API` - API base URL (default: http://localhost:9000)
+
+## Available Tools
+
+### Inference
+- `chat` - Send chat message with auto-routing
+- `complete` - Text completion
+- `embed` - Generate embeddings
+
+### Model Management
+- `list_models` - List all models
+- `get_model_info` - Model details
+- `load_model` - Load local model
+- `unload_model` - Unload model
+- `switch_model` - Hot-swap models
+
+### Monitoring
+- `get_vram_status` - VRAM status
+- `get_provider_health` - Provider health
+- `get_system_status` - System status
+
+### Security
+- `run_security_audit` - Security audit
+- `get_audit_logs` - Audit logs
+- `validate_config` - Config validation
+EOF
+```
+
+### Task 8: Commit MCP Server (Day 27 - 15 min)
+
+```bash
+cd /etc/nixos
+
+git add modules/ml/unified-llm/mcp-server/
+git commit -m "feat: create unified MCP server (Week 3 Day 21-27)
+
+Merge Security-Architect MCP and mlx-mcp into unified server:
+
+Features:
+- Inference tools (chat, complete, embed)
+- Model management (list, load, unload, switch)
+- Monitoring (VRAM, health, system)
+- Security (audit, logs, validation)
+- Smart caching from mlx-mcp (5min models, 10s VRAM)
+- Token economy via summarization
+- Rate limiting integration
+
+Structure:
+- src/index.ts - Main server
+- src/cache.ts - Smart caching
+- src/summarizer.ts - Token economy
+- src/tools/ - Tool implementations
+- package.json - Dependencies
+- tsconfig.json - TypeScript config
+
+Integration:
+- Connects to Rust API at localhost:9000
+- Compatible with Claude Desktop
+- Supports all MCP protocol features
+
+Related: #phase2-unification
+Status: Week 3 Day 21-27 complete ✅"
+
+git push origin main
+```
+
+### Success Criteria for Week 3
+
+- [ ] MCP server structure created in `mcp-server/`
+- [ ] All tool categories implemented (inference, models, monitoring, security)
+- [ ] Smart caching from mlx-mcp integrated
+- [ ] Summarization for token economy working
+- [ ] npm install && npm run build succeeds
+- [ ] Server starts without errors
+- [ ] Can communicate with Rust API
+- [ ] Documentation complete
+- [ ] Changes committed and pushed
+
+### Time Estimates for Week 3
+
+- Day 21: Analysis (2 hours)
+- Day 22-23: Code migration (7 hours)
+- Day 24: Testing (2 hours)
+- Day 25-26: API integration (3 hours)
+- Day 27: Documentation & commit (2.25 hours)
+
+**Total: 16.25 hours**
+
+
 Providers crate:
 - DeepSeek API client (deepseek.rs) ✅ functional
 - OpenAI API client (openai.rs)
