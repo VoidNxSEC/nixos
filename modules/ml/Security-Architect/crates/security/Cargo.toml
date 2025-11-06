@@ -1,0 +1,33 @@
+[package]
+name = "unified-llm-security"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+# Core dependency
+unified-llm-core = { path = "../core" }
+
+# Async runtime
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Security/Crypto
+rustls = { workspace = true }
+rustls-pemfile = { workspace = true }
+rustls-native-certs = "0.8"
+ring = { workspace = true }
+argon2 = { workspace = true }
+secrecy = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
