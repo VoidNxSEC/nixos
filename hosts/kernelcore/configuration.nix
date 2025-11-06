@@ -149,7 +149,7 @@
       sourceImageDir = "/var/lib/vm-images";
       vms = {
         wazuh = {
-          enable = true;
+          enable = false;
           # Resolve under sourceImageDir unless absolute
           sourceImage = "wazuh-4.14.0.qcow2";
           # Final image location (symlink created if missing)
@@ -774,6 +774,6 @@
 
   kernelcore.ml.offload.enable = true;
   kernelcore.ml.offload.api.enable = true;
-
+  programs.vscodium-secure.enable = true;
   system.stateVersion = "25.05";
 }
