@@ -1,14 +1,13 @@
 [package]
-name = "unified-llm-core"
+name = "securellm-core"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Core abstractions and types for the Unified LLM Platform"
 
 [dependencies]
-# Async
+# Async runtime
 tokio = { workspace = true }
 async-trait = { workspace = true }
 
@@ -16,13 +15,23 @@ async-trait = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 
+# HTTP/Network
+reqwest = { workspace = true }
+
 # Error handling
 thiserror = { workspace = true }
 anyhow = { workspace = true }
 
+# Logging
+tracing = { workspace = true }
+
+# Rate limiting
+governor = { workspace = true }
+
+# Database (for audit logs)
+sqlx = { workspace = true }
+
 # Utilities
 uuid = { workspace = true }
 chrono = { workspace = true }
-
-[dev-dependencies]
-tokio = { workspace = true, features = ["test-util"] }
+bytes = { workspace = true }

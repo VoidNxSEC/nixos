@@ -1,13 +1,14 @@
 [package]
-name = "unified-llm-providers"
+name = "securellm-providers"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
+repository.workspace = true
 
 [dependencies]
 # Core crate
-unified-llm-core = { path = "../core" }
+securellm-core = { path = "../core" }
 
 # Async runtime
 tokio = { workspace = true }

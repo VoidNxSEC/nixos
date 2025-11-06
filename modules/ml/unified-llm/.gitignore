@@ -1,0 +1,26 @@
+# Rust build artifacts
+/target/
+**/target/
+Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Node.js (for mcp-server)
+node_modules/
+*.log
+npm-debug.log*
+dist/
+
+# MCP Server TypeScript build
+mcp-server/dist/
+mcp-server/node_modules/
+
+# SQLite databases (local dev only)
+*.db
+*.db-shm
+*.db-wal

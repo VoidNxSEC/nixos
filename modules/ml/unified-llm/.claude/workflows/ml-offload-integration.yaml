@@ -1,0 +1,208 @@
+workflow: ml-offload-integration
+description: "Integrate SecureLLM Bridge with ML-Offload-API server"
+version: 1.0.0
+type: hybrid
+author: kernelcore
+
+prerequisites:
+  - SecureLLM Bridge builds successfully
+  - ML-Offload-API server accessible at /etc/nixos/modules/ml/
+  - DeepSeek provider configured and tested
+
+phases:
+  - name: analysis
+    type: sequential
+    description: "Analyze ML-Offload-API architecture and requirements"
+    steps:
+      - id: analyze-mlapi
+        type: agent
+        agent: security-architect
+        task: analyze-ml-offload-api-architecture
+        config:
+          target_dir: /etc/nixos/modules/ml/
+          focus_areas:
+            - API endpoints
+            - Authentication mechanisms
+            - Request/response formats
+            - Error handling
+        outputs:
+          - architecture_doc: .claude/docs/ml-offload-api-analysis.md
+
+      - id: identify-integration-points
+        type: skill
+        skill: api-analysis
+        options:
+          source: /etc/nixos/modules/ml/
+          output: .claude/docs/integration-points.md
+
+  - name: provider-implementation
+    type: sequential
+    description: "Implement LocalProvider for ML-Offload-API"
+    steps:
+      - id: create-local-provider
+        type: agent
+        agent: security-architect
+        task: implement-local-provider
+        config:
+          provider_name: local
+          base_url: http://localhost:8000
+          features:
+            - streaming_support
+            - model_switching
+            - rate_limiting
+        outputs:
+          - provider_file: crates/providers/src/local.rs
+
+      - id: configure-local-provider
+        type: skill
+        skill: provider-integration
+        options:
+          provider: local
+          base-url: http://localhost:8000
+          auth-type: none
+          default-model: deepseek-chat
+
+      - id: add-tests
+        type: agent
+        agent: security-architect
+        task: create-provider-tests
+        config:
+          provider: local
+          test_types:
+            - unit
+            - integration
+            - performance
+
+  - name: proxy-configuration
+    type: sequential
+    description: "Configure SecureLLM Bridge as proxy to ML-Offload-API"
+    steps:
+      - id: implement-proxy-logic
+        type: agent
+        agent: security-architect
+        task: implement-proxy-middleware
+        config:
+          route: /v1/chat/completions
+          upstream: http://localhost:8000
+          features:
+            - request_transformation
+            - response_transformation
+            - error_mapping
+
+      - id: configure-routing
+        type: skill
+        skill: config-validate
+        options:
+          config_file: config.toml
+          validate_providers: true
+
+  - name: security-hardening
+    type: parallel
+    max_concurrent: 3
+    description: "Apply security measures"
+    steps:
+      - id: tls-setup
+        type: agent
+        agent: security-architect
+        task: setup-tls
+        config:
+          generate_certs: true
+          cert_path: ./certs/
+          enable_mtls: false
+
+      - id: rate-limiting
+        type: skill
+        skill: security-scan
+        options:
+          check_rate_limits: true
+          provider: local
+
+      - id: audit-logging
+        type: agent
+        agent: security-architect
+        task: configure-audit-logging
+        config:
+          log_level: info
+          log_sensitive_data: false
+
+  - name: testing
+    type: sequential
+    description: "Comprehensive testing of integration"
+    steps:
+      - id: unit-tests
+        type: skill
+        skill: build-and-test
+        options:
+          test_type: unit
+
+      - id: integration-tests
+        type: skill
+        skill: build-and-test
+        options:
+          test_type: integration
+
+      - id: end-to-end-test
+        type: agent
+        agent: security-architect
+        task: run-e2e-tests
+        config:
+          scenarios:
+            - basic_query
+            - streaming_query
+            - rate_limit_test
+            - error_handling
+
+  - name: documentation
+    type: parallel
+    max_concurrent: 2
+    description: "Create comprehensive documentation"
+    steps:
+      - id: api-docs
+        type: skill
+        skill: doc-gen
+        options:
+          category: providers
+          output: docs/providers/local.md
+
+      - id: integration-guide
+        type: agent
+        agent: security-architect
+        task: write-integration-guide
+        config:
+          output: docs/ML_OFFLOAD_INTEGRATION.md
+          include:
+            - architecture_diagram
+            - setup_instructions
+            - troubleshooting
+            - performance_tuning
+
+validation:
+  - cargo build --release
+  - cargo test --all
+  - cargo run --bin securellm -- test local --prompt "Hello"
+
+on_success:
+  - git add .
+  - git commit -m "feat: integrate with ML-Offload-API"
+  - echo "✅ ML-Offload-API integration complete"
+
+on_failure:
+  - echo "❌ Integration failed - check logs"
+  - git status
+
+recovery_strategy: checkpoint
+checkpoints:
+  - after: analysis
+  - after: provider-implementation
+  - after: security-hardening
+
+metadata:
+  estimated_duration: "4-6 hours"
+  complexity: high
+  risk_level: medium
+  rollback_safe: true
+
+monitoring:
+  log_file: .claude/workflows/ml-offload-integration/execution.log
+  state_file: .claude/workflows/ml-offload-integration/state.json
+  metrics_file: .claude/workflows/ml-offload-integration/metrics.json
