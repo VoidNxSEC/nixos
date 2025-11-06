@@ -258,14 +258,14 @@ in
 
       # Editor settings
       "editor.formatOnSave" = false;
-      "files.autoSave" = "off";
+      "files.autoSave" = "on";
     };
 
     # System-wide environment variables
     environment.sessionVariables = {
       # Disable VSCodium telemetry
       VSCODE_TELEMETRY_OPTOUT = "1";
-      DISABLE_UPDATE_CHECK = "1";
+      DISABLE_UPDATE_CHECK = "0";
     };
 
     # Install extensions if specified
