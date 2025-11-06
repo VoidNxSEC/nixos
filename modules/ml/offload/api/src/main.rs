@@ -17,8 +17,11 @@ use tracing::{info, warn};
 mod api;
 mod backends;
 mod db;
+mod health;
+mod inference;
 mod models;
 mod vram;
+mod websocket;
 
 use db::Database;
 use vram::VramMonitor;
@@ -102,8 +105,11 @@ async fn main() -> anyhow::Result<()> {
     let app = Router::new()
         // Root endpoint
         .route("/", get(root_handler))
-        // Health check
+        // Health check (basic)
         .route("/health", get(health_handler))
+        // API health check (detailed backend status)
+        .route("/api/health", get(health::health_check_handler))
+        .route("/api/backend/info", get(health::backend_info_handler))
         // Backends
         .route("/backends", get(list_backends_handler))
         // Models
@@ -114,6 +120,12 @@ async fn main() -> anyhow::Result<()> {
         .route("/status", get(status_handler))
         // VRAM
         .route("/vram", get(vram_handler))
+        // WebSocket
+        .route("/ws", get(websocket::websocket_handler))
+        // OpenAI-compatible inference endpoints
+        .route("/v1/models", get(inference::list_models_openai_handler))
+        .route("/v1/chat/completions", post(inference::chat_completions_handler))
+        .route("/v1/embeddings", post(inference::embeddings_handler))
         // Load/Unload/Switch
         .route("/load", post(load_model_handler))
         .route("/unload", post(unload_model_handler))

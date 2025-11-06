@@ -8,10 +8,12 @@ license = "MIT"
 
 [dependencies]
 # Web framework
-axum = { version = "0.7", features = ["macros"] }
+axum = { version = "0.7", features = ["macros", "ws"] }
 tokio = { version = "1", features = ["full"] }
+tokio-tungstenite = "0.21"
 tower = "0.4"
 tower-http = { version = "0.5", features = ["cors", "trace"] }
+futures = "0.3"
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -32,6 +34,9 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 # Time handling
 chrono = { version = "0.4", features = ["serde"] }
+
+# UUID generation
+uuid = { version = "1.6", features = ["v4", "serde"] }
 
 # Environment variables
 dotenvy = "0.15"
