@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "securellm-bridge": {
+      "command": "node",
+      "args": [
+        "/home/kernelcore/Downloads/ClaudeSkills/Security-Architect/mcp-server/build/index.js"
+      ],
+      "env": {
+        "PROJECT_ROOT": "/home/kernelcore/Downloads/ClaudeSkills/Security-Architect"
+      },
+      "disabled": false,
+      "alwaysAllow": []
+    }
+  }
+}

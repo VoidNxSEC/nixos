@@ -1,9 +1,29 @@
 [package]
-name = "unified-llm-cli"
+name = "securellm-cli"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "securellm"
+path = "src/main.rs"
 
 [dependencies]
-unified-llm-core = { path = "../core" }
+# Local crates
+securellm-core = { path = "../core" }
+securellm-providers = { path = "../providers" }
+
+# Async runtime
+tokio = { workspace = true }
+
+# CLI
+clap = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
