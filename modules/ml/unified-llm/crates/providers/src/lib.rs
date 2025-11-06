@@ -1,7 +1,25 @@
-//! Cloud providers for Unified LLM Platform
-//! 
-//! This crate will provide implementations for DeepSeek, OpenAI, Anthropic, etc.
+use thiserror::Error;
 
-pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+pub mod deepseek;
+pub mod openai;
+pub mod anthropic;
+pub mod ollama;
 
-// TODO: Migrate providers from Security-Architect
+/// Provider-specific error types
+#[derive(Error, Debug)]
+pub enum ProviderError {
+    #[error("HTTP error: {0}")]
+    Http(String),
+    
+    #[error("Serialization error: {0}")]
+    Serialization(String),
+    
+    #[error("Configuration error: {0}")]
+    Config(String),
+    
+    #[error("API error: {0}")]
+    Api(String),
+}
+
+/// Result type for provider operations
+pub type Result<T> = std::result::Result<T, ProviderError>;
