@@ -1,262 +1,332 @@
-//! Request types for LLM operations
-
+use crate::{Error, Message, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use uuid::Uuid;
 
-/// Chat completion request
+/// Secure request wrapper for LLM calls
+/// 
+/// This structure enforces security patterns and provides
+/// metadata for auditing and rate limiting.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ChatRequest {
-    /// Model identifier
+pub struct Request {
+    /// Unique request ID for tracking and auditing
+    pub id: Uuid,
+    
+    /// Provider to use (e.g., "openai", "anthropic", "deepseek")
+    pub provider: String,
+    
+    /// Model to use (e.g., "gpt-4", "claude-sonnet-4", "deepseek-chat")
     pub model: String,
     
     /// Messages in the conversation
     pub messages: Vec<Message>,
     
-    /// Temperature (0.0 - 2.0)
+    /// Optional system prompt
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub temperature: Option<f32>,
+    pub system: Option<String>,
     
+    /// Request parameters
+    #[serde(flatten)]
+    pub parameters: RequestParameters,
+    
+    /// Request metadata (not sent to provider)
+    #[serde(skip)]
+    pub metadata: RequestMetadata,
+}
+
+/// Request parameters
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RequestParameters {
     /// Maximum tokens to generate
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_tokens: Option<u32>,
+    
+    /// Temperature (0.0 - 2.0)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub temperature: Option<f32>,
     
     /// Top-p sampling
     #[serde(skip_serializing_if = "Option::is_none")]
     pub top_p: Option<f32>,
     
-    /// Frequency penalty
+    /// Top-k sampling
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub frequency_penalty: Option<f32>,
+    pub top_k: Option<u32>,
     
-    /// Presence penalty
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub presence_penalty: Option<f32>,
+    /// Enable streaming
+    #[serde(default)]
+    pub stream: bool,
     
     /// Stop sequences
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stop: Option<Vec<String>>,
-    
-    /// Whether to stream the response
-    #[serde(default)]
-    pub stream: bool,
     
     /// Additional provider-specific parameters
     #[serde(flatten)]
     pub extra: HashMap<String, serde_json::Value>,
 }
 
-impl ChatRequest {
-    /// Create a new chat request
-    pub fn new(model: impl Into<String>) -> Self {
+/// Request metadata for internal use
+#[derive(Debug, Clone)]
+pub struct RequestMetadata {
+    /// Timestamp when request was created
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    
+    /// User or organization ID making the request
+    pub caller_id: Option<String>,
+    
+    /// Request priority (for rate limiting)
+    pub priority: RequestPriority,
+    
+    /// Whether this request contains sensitive data
+    pub sensitive: bool,
+    
+    /// Request tags for categorization
+    pub tags: Vec<String>,
+    
+    /// Retry attempt number
+    pub retry_count: u32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RequestPriority {
+    Low,
+    Normal,
+    High,
+    Critical,
+}
+
+impl Request {
+    /// Create a new request with basic validation
+    pub fn new(provider: impl Into<String>, model: impl Into<String>) -> Self {
         Self {
+            id: Uuid::new_v4(),
+            provider: provider.into(),
             model: model.into(),
             messages: Vec::new(),
-            temperature: None,
-            max_tokens: None,
-            top_p: None,
-            frequency_penalty: None,
-            presence_penalty: None,
-            stop: None,
-            stream: false,
-            extra: HashMap::new(),
+            system: None,
+            parameters: RequestParameters::default(),
+            metadata: RequestMetadata::default(),
         }
     }
-
-    /// Add a message to the conversation
+    
+    /// Add a message to the request
     pub fn add_message(mut self, message: Message) -> Self {
         self.messages.push(message);
         self
     }
-
-    /// Add a user message
-    pub fn user_message(self, content: impl Into<String>) -> Self {
-        self.add_message(Message {
-            role: MessageRole::User,
-            content: MessageContent::Text(content.into()),
-            name: None,
-            metadata: None,
-        })
-    }
-
-    /// Add a system message
-    pub fn system_message(self, content: impl Into<String>) -> Self {
-        self.add_message(Message {
-            role: MessageRole::System,
-            content: MessageContent::Text(content.into()),
-            name: None,
-            metadata: None,
-        })
-    }
-
-    /// Add an assistant message
-    pub fn assistant_message(self, content: impl Into<String>) -> Self {
-        self.add_message(Message {
-            role: MessageRole::Assistant,
-            content: MessageContent::Text(content.into()),
-            name: None,
-            metadata: None,
-        })
-    }
-
-    /// Set temperature
-    pub fn with_temperature(mut self, temperature: f32) -> Self {
-        self.temperature = Some(temperature);
+    
+    /// Set system prompt
+    pub fn with_system(mut self, system: impl Into<String>) -> Self {
+        self.system = Some(system.into());
         self
     }
-
+    
     /// Set max tokens
     pub fn with_max_tokens(mut self, max_tokens: u32) -> Self {
-        self.max_tokens = Some(max_tokens);
+        self.parameters.max_tokens = Some(max_tokens);
         self
     }
-
+    
+    /// Set temperature
+    pub fn with_temperature(mut self, temperature: f32) -> Self {
+        self.parameters.temperature = Some(temperature);
+        self
+    }
+    
     /// Enable streaming
-    pub fn with_streaming(mut self) -> Self {
-        self.stream = true;
+    pub fn with_streaming(mut self, stream: bool) -> Self {
+        self.parameters.stream = stream;
         self
     }
-
-    /// Estimate token count (rough approximation)
-    pub fn estimate_tokens(&self) -> u32 {
-        self.messages
-            .iter()
-            .map(|m| m.estimate_tokens())
-            .sum::<u32>()
-            + 10 // Overhead
+    
+    /// Mark as sensitive data
+    pub fn mark_sensitive(mut self) -> Self {
+        self.metadata.sensitive = true;
+        self
+    }
+    
+    /// Set caller ID
+    pub fn with_caller_id(mut self, caller_id: impl Into<String>) -> Self {
+        self.metadata.caller_id = Some(caller_id.into());
+        self
+    }
+    
+    /// Validate request before sending
+    pub fn validate(&self) -> Result<()> {
+        // Provider name validation
+        if self.provider.is_empty() {
+            return Err(Error::InvalidRequest("Provider cannot be empty".to_string()));
+        }
+        
+        // Model name validation
+        if self.model.is_empty() {
+            return Err(Error::InvalidRequest("Model cannot be empty".to_string()));
+        }
+        
+        // Messages validation
+        if self.messages.is_empty() {
+            return Err(Error::InvalidRequest("At least one message is required".to_string()));
+        }
+        
+        // Parameter validation
+        if let Some(temp) = self.parameters.temperature {
+            if !(0.0..=2.0).contains(&temp) {
+                return Err(Error::InvalidRequest(
+                    "Temperature must be between 0.0 and 2.0".to_string()
+                ));
+            }
+        }
+        
+        if let Some(top_p) = self.parameters.top_p {
+            if !(0.0..=1.0).contains(&top_p) {
+                return Err(Error::InvalidRequest(
+                    "Top-p must be between 0.0 and 1.0".to_string()
+                ));
+            }
+        }
+        
+        if let Some(max_tokens) = self.parameters.max_tokens {
+            if max_tokens == 0 {
+                return Err(Error::InvalidRequest(
+                    "Max tokens must be greater than 0".to_string()
+                ));
+            }
+        }
+        
+        Ok(())
+    }
+    
+    /// Calculate estimated token count for the request
+    pub fn estimate_tokens(&self) -> usize {
+        // Simple estimation: ~4 chars per token
+        let mut total_chars = 0;
+        
+        if let Some(system) = &self.system {
+            total_chars += system.len();
+        }
+        
+        for message in &self.messages {
+            match &message.content {
+                crate::MessageContent::Text(text) => {
+                    total_chars += text.len();
+                }
+                crate::MessageContent::Parts(parts) => {
+                    for part in parts {
+                        if let crate::ContentPart::Text { text } = part {
+                            total_chars += text.len();
+                        }
+                    }
+                }
+            }
+        }
+        
+        (total_chars / 4).max(1)
     }
 }
 
-/// Message in a conversation
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Message {
-    /// Message role
-    pub role: MessageRole,
-    
-    /// Message content
-    pub content: MessageContent,
-    
-    /// Optional message name
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    
-    /// Optional metadata
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<HashMap<String, serde_json::Value>>,
-}
-
-impl Message {
-    /// Estimate token count for this message (rough approximation)
-    pub fn estimate_tokens(&self) -> u32 {
-        match &self.content {
-            MessageContent::Text(text) => (text.len() / 4) as u32, // Rough: 4 chars per token
-            MessageContent::MultiPart(parts) => parts
-                .iter()
-                .map(|p| match p {
-                    ContentPart::Text { text } => (text.len() / 4) as u32,
-                    ContentPart::Image { .. } => 85, // Rough estimate for image tokens
-                })
-                .sum(),
+impl Default for RequestParameters {
+    fn default() -> Self {
+        Self {
+            max_tokens: Some(1024),
+            temperature: Some(0.7),
+            top_p: None,
+            top_k: None,
+            stream: false,
+            stop: None,
+            extra: HashMap::new(),
         }
     }
 }
 
-/// Message role
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub enum MessageRole {
-    /// System message (instructions)
-    System,
-    /// User message
-    User,
-    /// Assistant message
-    Assistant,
-    /// Function/tool message
-    #[serde(rename = "function")]
-    Function,
-}
-
-/// Message content (text or multi-part)
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum MessageContent {
-    /// Simple text content
-    Text(String),
-    /// Multi-part content (text + images)
-    MultiPart(Vec<ContentPart>),
-}
-
-impl MessageContent {
-    /// Get text content if available
-    pub fn as_text(&self) -> Option<&str> {
-        match self {
-            MessageContent::Text(text) => Some(text),
-            MessageContent::MultiPart(_) => None,
+impl Default for RequestMetadata {
+    fn default() -> Self {
+        Self {
+            created_at: chrono::Utc::now(),
+            caller_id: None,
+            priority: RequestPriority::Normal,
+            sensitive: false,
+            tags: Vec::new(),
+            retry_count: 0,
         }
     }
-}
-
-/// Part of multi-part content
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(tag = "type", rename_all = "snake_case")]
-pub enum ContentPart {
-    /// Text part
-    Text {
-        text: String,
-    },
-    /// Image part
-    #[serde(rename = "image_url")]
-    Image {
-        #[serde(rename = "image_url")]
-        url: ImageUrl,
-    },
-}
-
-/// Image URL in multi-part content
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ImageUrl {
-    /// URL or base64 data
-    pub url: String,
-    
-    /// Optional detail level
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub detail: Option<String>,
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    use crate::{MessageRole, MessageContent};
+    
     #[test]
-    fn test_chat_request_builder() {
-        let request = ChatRequest::new("gpt-4")
-            .user_message("Hello!")
-            .with_temperature(0.7)
-            .with_max_tokens(100);
-
-        assert_eq!(request.model, "gpt-4");
-        assert_eq!(request.messages.len(), 1);
-        assert_eq!(request.temperature, Some(0.7));
-        assert_eq!(request.max_tokens, Some(100));
+    fn test_request_builder() {
+        let req = Request::new("openai", "gpt-4")
+            .with_max_tokens(500)
+            .with_temperature(0.5)
+            .add_message(Message {
+                role: MessageRole::User,
+                content: MessageContent::Text("Hello".to_string()),
+                name: None,
+                metadata: None,
+            });
+        
+        assert_eq!(req.provider, "openai");
+        assert_eq!(req.model, "gpt-4");
+        assert_eq!(req.parameters.max_tokens, Some(500));
+        assert_eq!(req.messages.len(), 1);
     }
-
+    
     #[test]
-    fn test_message_roles() {
-        let system = Message {
-            role: MessageRole::System,
-            content: MessageContent::Text("You are helpful".into()),
+    fn test_request_validation() {
+        let mut req = Request::new("", "gpt-4");
+        assert!(req.validate().is_err());
+        
+        req.provider = "openai".to_string();
+        req.model = "".to_string();
+        assert!(req.validate().is_err());
+        
+        req.model = "gpt-4".to_string();
+        assert!(req.validate().is_err()); // No messages
+        
+        req.messages.push(Message {
+            role: MessageRole::User,
+            content: MessageContent::Text("Hello".to_string()),
             name: None,
             metadata: None,
-        };
-
-        assert_eq!(system.role, MessageRole::System);
+        });
+        assert!(req.validate().is_ok());
     }
-
+    
+    #[test]
+    fn test_temperature_validation() {
+        let mut req = Request::new("openai", "gpt-4");
+        req.messages.push(Message {
+            role: MessageRole::User,
+            content: MessageContent::Text("test".to_string()),
+            name: None,
+            metadata: None,
+        });
+        
+        req.parameters.temperature = Some(3.0);
+        assert!(req.validate().is_err());
+        
+        req.parameters.temperature = Some(-0.1);
+        assert!(req.validate().is_err());
+        
+        req.parameters.temperature = Some(0.7);
+        assert!(req.validate().is_ok());
+    }
+    
     #[test]
     fn test_token_estimation() {
-        let request = ChatRequest::new("test")
-            .user_message("Hello world"); // ~3 tokens + overhead
-
-        let estimated = request.estimate_tokens();
-        assert!(estimated > 0);
+        let req = Request::new("openai", "gpt-4")
+            .add_message(Message {
+                role: MessageRole::User,
+                content: MessageContent::Text("A".repeat(400)),
+                name: None,
+                metadata: None,
+            });
+        
+        let tokens = req.estimate_tokens();
+        assert!(tokens >= 90 && tokens <= 110); // ~100 tokens expected
     }
 }
