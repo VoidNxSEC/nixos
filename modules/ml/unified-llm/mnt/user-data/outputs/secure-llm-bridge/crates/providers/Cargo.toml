@@ -1,0 +1,28 @@
+[package]
+name = "securellm-providers"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+# Workspace dependencies
+tokio = { workspace = true }
+async-trait = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+reqwest = { workspace = true }
+secrecy = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+
+# Local dependencies
+securellm-core = { path = "../core" }
+securellm-security = { path = "../security" }
+
+[dev-dependencies]
+tokio-test = "0.4"
+mockito = "1.5"
