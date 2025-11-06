@@ -1,12 +1,12 @@
 /// Backend driver module
 ///
 /// Implements standard interface for all ML backends:
-/// - Ollama (systemd service + HTTP API)
-/// - llama.cpp (systemd service + HTTP API)
-/// - vLLM (Docker container + HTTP API)
-/// - TGI (Docker container + HTTP API)
-///
-/// TODO: Implement in Phase 2
+/// - llama.cpp (systemd service + HTTP API) - PRIMARY
+/// - Ollama (systemd service + HTTP API) - Deprioritized
+/// - vLLM (Docker container + HTTP API) - Future
+/// - TGI (Docker container + HTTP API) - Future
+
+pub mod llamacpp;
 
 use crate::models::BackendInfo;
 
