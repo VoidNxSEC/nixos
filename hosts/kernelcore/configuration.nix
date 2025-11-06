@@ -774,6 +774,13 @@
 
   kernelcore.ml.offload.enable = true;
   kernelcore.ml.offload.api.enable = true;
-  programs.vscodium-secure.enable = true;
+
+  programs.vscodium-secure = {
+    enable = true;
+    extensions = with pkgs.vscode-extensions; [
+      rooveterinaryinc.roo-cline
+    ];
+  };
+
   system.stateVersion = "25.05";
 }
