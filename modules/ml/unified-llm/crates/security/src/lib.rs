@@ -1,7 +1,8 @@
-//! Security layer for Unified LLM Platform
-//! 
-//! This crate will provide TLS, audit logging, rate limiting, and other security features.
+// Re-export core types
+pub use unified_llm_core::{Error as SecurityError, Result, Request, Response};
 
-pub const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-// TODO: Implement security features from Security-Architect
+pub mod tls;
+pub mod crypto;
+pub mod secrets;
+pub mod sandbox;
+pub mod sanitizer;
