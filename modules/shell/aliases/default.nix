@@ -30,5 +30,6 @@
     ./ai
     ./nix
     ./system
+    #./amazon
   ];
 }
