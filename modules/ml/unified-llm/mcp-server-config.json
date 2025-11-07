@@ -3,10 +3,10 @@
     "securellm-bridge": {
       "command": "node",
       "args": [
-        "/home/kernelcore/Downloads/ClaudeSkills/Security-Architect/mcp-server/build/index.js"
+        "/etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js"
       ],
       "env": {
-        "PROJECT_ROOT": "/home/kernelcore/Downloads/ClaudeSkills/Security-Architect"
+        "PROJECT_ROOT": "/etc/nixos"
       },
       "disabled": false,
       "alwaysAllow": []
