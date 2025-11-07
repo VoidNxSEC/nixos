@@ -66,14 +66,41 @@ export interface CircuitBreakerMetrics {
  * Metrics tracked for rate limiting performance
  */
 export interface RateLimitMetrics {
-  provider: string;
+  provider?: string;
   totalRequests: number;
   successfulRequests: number;
   failedRequests: number;
   retriedRequests: number;
+  totalRetries: number;
   averageLatency: number;
-  circuitBreakerTrips: number;
-  lastRequestTime: number;
+  circuitBreakerActivations: number;
+  lastRequestTime?: number;
+  
+  // Enhanced metrics
+  errorsByCategory: {
+    transient: number;
+    rate_limit: number;
+    permanent: number;
+    server_error: number;
+    unknown: number;
+  };
+  latencyPercentiles: {
+    p50: number;
+    p95: number;
+    p99: number;
+    max: number;
+  };
+  requestsPerMinute: number;
+  queueMetrics: {
+    averageQueueLength: number;
+    maxQueueLength: number;
+    totalTimeInQueue: number;
+  };
+  timeWindow: {
+    startTime: number;
+    endTime: number;
+    durationMs: number;
+  };
 }
 
 /**
@@ -103,3 +130,8 @@ export class CircuitBreakerError extends Error {
     this.name = 'CircuitBreakerError';
   }
 }
+
+/**
+ * Re-export error classification types from error-classifier
+ */
+export { ErrorCategory, ErrorClassification } from '../../middleware/error-classifier.js';
