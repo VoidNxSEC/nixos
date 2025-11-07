@@ -17,7 +17,7 @@
 
     # Wrapper configuration
     wrapper = {
-      executable = "lynis";
+      executable = "lynis/lynis";
       environmentVariables = {
         # LYNIS_HOME will be set by builder to point to extracted directory
       };
