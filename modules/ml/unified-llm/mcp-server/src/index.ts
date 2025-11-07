@@ -16,7 +16,10 @@ import * as fs from "fs/promises";
 import { createKnowledgeDatabase } from "./knowledge/database.js";
 import { knowledgeTools } from "./tools/knowledge.js";
 import type { KnowledgeDatabase, CreateSessionInput, SaveKnowledgeInput, SearchKnowledgeInput } from "./types/knowledge.js";
+import { GuideManager } from "./resources/guides.js";
 import * as path from "path";
+import { SmartRateLimiter } from "./middleware/rate-limiter.js";
+import { RATE_LIMIT_CONFIGS } from "./config/index.js";
 
 const execAsync = promisify(exec);
 
@@ -55,8 +58,15 @@ interface CryptoKeyGenerateArgs {
 class SecureLLMBridgeMCPServer {
   private server: Server;
   private db: KnowledgeDatabase | null = null;
+  private guideManager: GuideManager;
+  private rateLimiter: SmartRateLimiter;
 
   constructor() {
+    // Initialize smart rate limiter for API protection
+    // Convert Record to Map for SmartRateLimiter
+    const configMap = new Map(Object.entries(RATE_LIMIT_CONFIGS));
+    this.rateLimiter = new SmartRateLimiter(configMap);
+    this.guideManager = new GuideManager();
     this.server = new Server(
       {
         name: "securellm-bridge",
@@ -205,6 +215,14 @@ class SecureLLMBridgeMCPServer {
             required: ["key_type", "output_path"],
           },
         },
+        {
+          name: "rate_limiter_status",
+          description: "Get current status of rate limiters for all providers",
+          inputSchema: {
+            type: "object",
+            properties: {},
+          },
+        },
         // Add knowledge tools if enabled
         ...(ENABLE_KNOWLEDGE && this.db ? knowledgeTools : []),
       ],
@@ -227,6 +245,8 @@ class SecureLLMBridgeMCPServer {
             return await this.handleProviderConfigValidate(args as unknown as ProviderConfigValidateArgs);
           case "crypto_key_generate":
             return await this.handleCryptoKeyGenerate(args as unknown as CryptoKeyGenerateArgs);
+          case "rate_limiter_status":
+            return await this.handleRateLimiterStatus();
           case "create_session":
             return await this.handleCreateSession(args);
           case "save_knowledge":
@@ -289,6 +309,44 @@ class SecureLLMBridgeMCPServer {
       const { uri } = request.params;
 
       try {
+        // Handle guide/skill/prompt resources
+        if (uri.startsWith('guide://')) {
+          const name = uri.replace('guide://', '');
+          const content = await this.guideManager.loadGuide(name);
+          return {
+            contents: [{
+              uri,
+              mimeType: "text/markdown",
+              text: content,
+            }],
+          };
+        }
+        
+        if (uri.startsWith('skill://')) {
+          const name = uri.replace('skill://', '');
+          const content = await this.guideManager.loadSkill(name);
+          return {
+            contents: [{
+              uri,
+              mimeType: "text/markdown",
+              text: content,
+            }],
+          };
+        }
+        
+        if (uri.startsWith('prompt://')) {
+          const name = uri.replace('prompt://', '');
+          const content = await this.guideManager.loadPrompt(name);
+          return {
+            contents: [{
+              uri,
+              mimeType: "text/markdown",
+              text: content,
+            }],
+          };
+        }
+
+        // Handle existing resources
         switch (uri) {
           case "config://current":
             return await this.readCurrentConfig();
@@ -317,15 +375,20 @@ class SecureLLMBridgeMCPServer {
   private async handleProviderTest(args: ProviderTestArgs) {
     const { provider, prompt, model } = args;
     
-    const testScript = `
-      cd "${PROJECT_ROOT}" && \
-      cargo run --bin securellm -- test ${provider} --prompt "${prompt.replace(/"/g, '\\"')}"${model ? ` --model ${model}` : ''}
-    `;
-
     try {
-      const { stdout, stderr } = await execAsync(testScript, {
-        cwd: PROJECT_ROOT,
-        timeout: 30000,
+      // Wrap API call with rate limiter
+      const result = await this.rateLimiter.execute(provider, async () => {
+        const testScript = `
+          cd "${PROJECT_ROOT}" && \
+          cargo run --bin securellm -- test ${provider} --prompt "${prompt.replace(/"/g, '\\"')}"${model ? ` --model ${model}` : ''}
+        `;
+
+        const { stdout, stderr } = await execAsync(testScript, {
+          cwd: PROJECT_ROOT,
+          timeout: 30000,
+        });
+
+        return { stdout, stderr, success: true };
       });
 
       return {
@@ -337,8 +400,8 @@ class SecureLLMBridgeMCPServer {
               model: model || "default",
               prompt,
               status: "success",
-              output: stdout,
-              stderr: stderr || null,
+              output: result.stdout,
+              stderr: result.stderr || null,
             }, null, 2),
           },
         ],
@@ -352,7 +415,7 @@ class SecureLLMBridgeMCPServer {
               provider,
               status: "error",
               error: error.message,
-              stderr: error.stderr,
+              errorType: error.constructor.name,
             }, null, 2),
           },
         ],
@@ -494,16 +557,21 @@ class SecureLLMBridgeMCPServer {
         break;
     }
 
-    const buildScript = `
-      cd "${PROJECT_ROOT}" && \
-      cargo build && \
-      ${testCommand}
-    `;
-
     try {
-      const { stdout, stderr } = await execAsync(buildScript, {
-        cwd: PROJECT_ROOT,
-        timeout: 120000,
+      // Wrap build operations with rate limiter to prevent spam
+      const result = await this.rateLimiter.execute('build', async () => {
+        const buildScript = `
+          cd "${PROJECT_ROOT}" && \
+          cargo build && \
+          ${testCommand}
+        `;
+
+        const { stdout, stderr } = await execAsync(buildScript, {
+          cwd: PROJECT_ROOT,
+          timeout: 120000,
+        });
+
+        return { stdout, stderr, success: true };
       });
 
       return {
@@ -513,8 +581,8 @@ class SecureLLMBridgeMCPServer {
             text: JSON.stringify({
               test_type,
               status: "success",
-              output: stdout,
-              stderr: stderr || null,
+              output: result.stdout,
+              stderr: result.stderr || null,
             }, null, 2),
           },
         ],
@@ -528,7 +596,7 @@ class SecureLLMBridgeMCPServer {
               test_type,
               status: "error",
               error: error.message,
-              stderr: error.stderr,
+              errorType: error.constructor.name,
             }, null, 2),
           },
         ],
@@ -584,24 +652,28 @@ class SecureLLMBridgeMCPServer {
     const outputDir = path.resolve(PROJECT_ROOT, output_path);
     
     try {
-      await fs.mkdir(outputDir, { recursive: true });
+      // Wrap crypto operations with rate limiter (expensive operations)
+      const result = await this.rateLimiter.execute('crypto', async () => {
+        await fs.mkdir(outputDir, { recursive: true });
 
-      let certCommand = "";
-      if (key_type === "server") {
-        certCommand = `
-          openssl req -x509 -newkey rsa:4096 -keyout "${outputDir}/server.key" \
-            -out "${outputDir}/server.crt" -days 365 -nodes \
-            -subj "/C=US/ST=State/L=City/O=Org/CN=securellm-server"
-        `;
-      } else {
-        certCommand = `
-          openssl req -x509 -newkey rsa:4096 -keyout "${outputDir}/client.key" \
-            -out "${outputDir}/client.crt" -days 365 -nodes \
-            -subj "/C=US/ST=State/L=City/O=Org/CN=securellm-client"
-        `;
-      }
+        let certCommand = "";
+        if (key_type === "server") {
+          certCommand = `
+            openssl req -x509 -newkey rsa:4096 -keyout "${outputDir}/server.key" \
+              -out "${outputDir}/server.crt" -days 365 -nodes \
+              -subj "/C=US/ST=State/L=City/O=Org/CN=securellm-server"
+          `;
+        } else {
+          certCommand = `
+            openssl req -x509 -newkey rsa:4096 -keyout "${outputDir}/client.key" \
+              -out "${outputDir}/client.crt" -days 365 -nodes \
+              -subj "/C=US/ST=State/L=City/O=Org/CN=securellm-client"
+          `;
+        }
 
-      await execAsync(certCommand);
+        await execAsync(certCommand);
+        return { success: true };
+      });
 
       return {
         content: [
@@ -628,6 +700,7 @@ class SecureLLMBridgeMCPServer {
             text: JSON.stringify({
               status: "error",
               error: error.message,
+              errorType: error.constructor.name,
             }, null, 2),
           },
         ],
@@ -863,6 +936,56 @@ class SecureLLMBridgeMCPServer {
       return {
         content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
         isError: true
+      };
+    }
+  }
+
+  private async handleRateLimiterStatus() {
+    try {
+      const allMetrics = this.rateLimiter.getAllMetrics();
+      const status: Record<string, any> = {};
+
+      for (const [provider, metrics] of allMetrics.entries()) {
+        const queueStatus = this.rateLimiter.getQueueStatus(provider);
+        status[provider] = {
+          metrics: {
+            totalRequests: metrics.totalRequests,
+            successRate: metrics.totalRequests > 0
+              ? ((metrics.successfulRequests / metrics.totalRequests) * 100).toFixed(2) + '%'
+              : '0%',
+            failedRequests: metrics.failedRequests,
+            retriedRequests: metrics.retriedRequests,
+            averageLatency: `${metrics.averageLatency.toFixed(0)}ms`,
+            circuitBreakerTrips: metrics.circuitBreakerTrips,
+          },
+          queue: queueStatus || { queueLength: 0, processing: false },
+        };
+      }
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              success: true,
+              timestamp: new Date().toISOString(),
+              providers: status,
+            }, null, 2),
+          },
+        ],
+      };
+    } catch (error: any) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              success: false,
+              error: error.message,
+            }, null, 2),
+          },
+        ],
+        isError: true,
       };
     }
   }
