@@ -34,7 +34,7 @@ in
           description = "CLI tool for Google's Gemini Generative AI API";
           homepage = "https://github.com/google-gemini/gemini-cli";
           license = licenses.asl20;
-          maintainers = [ ];
+          maintainers = [ marcosfpina ];
           platforms = platforms.all;
         };
       })
