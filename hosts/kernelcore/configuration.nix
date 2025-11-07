@@ -88,9 +88,28 @@
     packages.tar = {
       enable = true;
       packages = lib.mkMerge [
+        (import ../../modules/packages/tar-packages/packages/codex.nix)
         (import ../../modules/packages/tar-packages/packages/zellij.nix)
         (import ../../modules/packages/tar-packages/packages/lynis.nix)
       ];
+    };
+
+    packages.js = {
+      enable = true;
+      packages = {
+        gemini-cli = {
+          # Disabled temporarily - needs proper hashes from nix-prefetch-git
+          # To enable: run `nix-prefetch-git https://github.com/google-gemini/gemini-cli v0.15.0-nightly.20251107.cd27cae8`
+          # and update sha256 in modules/packages/js-packages/gemini-cli.nix
+          enable = false;
+        };
+      };
+    };
+
+    services = {
+      users."codex-agent" = lib.mkIf (config.kernelcore.packages.tar.resolvedPackages ? codex) {
+        package = config.kernelcore.packages.tar.resolvedPackages.codex;
+      };
     };
 
     hardware.wifi-optimization.enable = true;
@@ -193,6 +212,10 @@
     services.gpu-orchestration = {
       enable = true;
       defaultMode = "docker"; # Docker containers get GPU priority by default
+    };
+
+    services.users.gemini-agent = {
+      enable = true;
     };
 
     services.gitlab-runner = {
@@ -425,7 +448,6 @@
 
       python313Packages.groq
 
-      codex
       claude-code
       qwen-code
 
