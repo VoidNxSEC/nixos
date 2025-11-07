@@ -27,12 +27,41 @@ in
           sha256 = "a760b24312bb30b0f30a8fde932cd30fc8bb09b3f6dcca67f8fe0c4d5f798702";
         };
 
-        # This hash will be calculated on first build
-        # If build fails with hash mismatch, update with the correct hash from error message
-        npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+        # Hash calculated from first build
+        npmDepsHash = "sha256-FHA51ftpowmcS1zys+iFN9DLNKOg6UHRJ7dHxml2tOA=";
+
+        # Native dependencies required for building keytar (password management)
+        nativeBuildInputs = with pkgs; [
+          pkg-config
+          python3
+        ];
+
+        buildInputs = with pkgs; [
+          libsecret
+        ];
 
         # Skip tests to speed up build
         npmFlags = [ "--legacy-peer-deps" ];
+
+        # Disable broken symlinks check since this is a monorepo with internal packages
+        # that aren't included in the release tarball
+        dontCheckNoBrokenSymlinks = true;
+
+        # Clean up broken symlinks that point to missing workspace packages
+        postInstall = ''
+          # Remove symlinks to missing workspace packages
+          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/@google/gemini-cli-a2a-server
+          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/@google/gemini-cli-test-utils
+          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/@google/gemini-cli-core
+          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/@google/gemini-cli
+          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/gemini-cli-vscode-ide-companion
+          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/.bin/gemini-cli-a2a-server
+          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/.bin/gemini
+          
+          # Ensure the main executable symlink exists
+          mkdir -p $out/bin
+          ln -sf $out/lib/node_modules/@google/gemini-cli/bundle/gemini.js $out/bin/gemini
+        '';
 
         meta = with lib; {
           description = "CLI tool for Google's Gemini Generative AI API";
