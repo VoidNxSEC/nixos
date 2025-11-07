@@ -57,7 +57,7 @@ in
           rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/gemini-cli-vscode-ide-companion
           rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/.bin/gemini-cli-a2a-server
           rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/.bin/gemini
-          
+
           # Ensure the main executable symlink exists
           mkdir -p $out/bin
           ln -sf $out/lib/node_modules/@google/gemini-cli/bundle/gemini.js $out/bin/gemini
