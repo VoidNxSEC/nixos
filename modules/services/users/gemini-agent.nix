@@ -56,7 +56,8 @@ in
       extraGroups = cfg.allowedGroups;
       shell = pkgs.bash;
       packages = with pkgs; [
-        gemini-cli
+        # Note: gemini-cli is installed system-wide via kernelcore.packages.js.packages.gemini-cli
+        # Enable it in configuration.nix with: kernelcore.packages.js.packages.gemini-cli.enable = true;
       ];
     };
 

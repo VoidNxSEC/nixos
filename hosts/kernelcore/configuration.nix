@@ -96,14 +96,10 @@
 
     packages.js = {
       enable = true;
-      packages = {
-        gemini-cli = {
-          # Disabled temporarily - needs proper hashes from nix-prefetch-git
-          # To enable: run `nix-prefetch-git https://github.com/google-gemini/gemini-cli v0.15.0-nightly.20251107.cd27cae8`
-          # and update sha256 in modules/packages/js-packages/gemini-cli.nix
-          enable = false;
-        };
-      };
+    };
+
+    packages.gemini-cli = {
+      enable = true;
     };
 
     services = {
@@ -434,7 +430,6 @@
 
       awscli2
 
-      gemini-cli
       google-cloud-sdk
       minikube
       kubernetes
