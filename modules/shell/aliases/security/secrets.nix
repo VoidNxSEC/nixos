@@ -17,9 +17,11 @@
     # ========================================
     # SOPS Direct Commands
     # ========================================
+    # Note: sops-edit, sops-encrypt, sops-decrypt already defined in modules/secrets/sops-config.nix
+    # Using different names to avoid conflicts
 
     # Quick SOPS with AGE key pre-configured
-    "sops-edit" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops";
+    "sops-quick" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops";
     "sops-view" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d";
     "sops-set" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops --set";
     "sops-updatekeys" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops updatekeys";
@@ -42,15 +44,18 @@
 
     # Quick access to common secrets
     "secret-api" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops /etc/nixos/secrets/api.yaml";
-    "secret-github" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops /etc/nixos/secrets/github.yaml";
+    "secret-github" =
+      "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops /etc/nixos/secrets/github.yaml";
     "secret-aws" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops /etc/nixos/secrets/aws.yaml";
     "secret-db" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops /etc/nixos/secrets/database.yaml";
 
     # View specific secrets (read-only)
     "view-api" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d /etc/nixos/secrets/api.yaml";
-    "view-github" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d /etc/nixos/secrets/github.yaml";
+    "view-github" =
+      "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d /etc/nixos/secrets/github.yaml";
     "view-aws" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d /etc/nixos/secrets/aws.yaml";
-    "view-db" = "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d /etc/nixos/secrets/database.yaml";
+    "view-db" =
+      "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d /etc/nixos/secrets/database.yaml";
 
     # ========================================
     # Create New Secrets
@@ -130,42 +135,42 @@
     # ========================================
 
     "secrets-help" = ''
-      cat <<EOF
-🔐 SOPS Secrets Management - Quick Reference
+            cat <<EOF
+      🔐 SOPS Secrets Management - Quick Reference
 
-📋 List & View:
-  secrets-list       List all encrypted secrets
-  sl                 Short alias for secrets-list
-  sv <file>          View secret (descriptografado)
-  view-api           View API keys
-  view-github        View GitHub secrets
-  view-aws           View AWS credentials
-  view-db            View database credentials
+      📋 List & View:
+        secrets-list       List all encrypted secrets
+        sl                 Short alias for secrets-list
+        sv <file>          View secret (descriptografado)
+        view-api           View API keys
+        view-github        View GitHub secrets
+        view-aws           View AWS credentials
+        view-db            View database credentials
 
-✏️  Edit:
-  se <file>          Edit secret in SOPS
-  secret-api         Edit API keys
-  secret-github      Edit GitHub secrets
-  secret-aws         Edit AWS credentials
-  secret-db          Edit database credentials
+      ✏️  Edit:
+        se <file>          Edit secret in SOPS
+        secret-api         Edit API keys
+        secret-github      Edit GitHub secrets
+        secret-aws         Edit AWS credentials
+        secret-db          Edit database credentials
 
-➕ Create New:
-  secret-new-api     Create new API keys secret
-  secret-new-github  Create new GitHub secret
-  secret-new-db      Create new database secret
+      ➕ Create New:
+        secret-new-api     Create new API keys secret
+        secret-new-github  Create new GitHub secret
+        secret-new-db      Create new database secret
 
-🔧 Advanced:
-  secret-get <file> <key>    Extract specific key value
-  secrets-reencrypt          Reencrypt all secrets
-  age-pubkey                 Show your AGE public key
-  secrets-verify             Verify all secrets decrypt OK
-  secrets-check-plaintext    Check for plaintext leaks
+      🔧 Advanced:
+        secret-get <file> <key>    Extract specific key value
+        secrets-reencrypt          Reencrypt all secrets
+        age-pubkey                 Show your AGE public key
+        secrets-verify             Verify all secrets decrypt OK
+        secrets-check-plaintext    Check for plaintext leaks
 
-📖 Documentation:
-  cat /etc/nixos/docs/guides/SECRETS.md
-  /etc/nixos/scripts/add-secret.sh --help
+      📖 Documentation:
+        cat /etc/nixos/docs/guides/SECRETS.md
+        /etc/nixos/scripts/add-secret.sh --help
 
-EOF
+      EOF
     '';
 
     "sops-help" = "secrets-help";
