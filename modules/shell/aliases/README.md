@@ -20,6 +20,8 @@ aliases/
 │   └── gpu.nix         # GPU/ML stack management
 ├── nix/                 # Nix ecosystem
 │   └── system.nix      # nix-build, nix-shell, nixos-rebuild
+├── security/            # Security & secrets management
+│   └── secrets.nix     # SOPS secrets management
 └── system/              # General system utilities
     └── utils.nix       # ls, grep, find shortcuts
 ```
@@ -33,6 +35,7 @@ Cada categoria tem seu próprio diretório:
 - **gcloud/** - Google Cloud Platform
 - **ai/** - Machine Learning e AI stacks
 - **nix/** - Nix/NixOS específico
+- **security/** - Gerenciamento de segurança e secrets (SOPS)
 - **system/** - Utilidades gerais do sistema
 
 ### 2. Nomenclatura Clara
@@ -183,8 +186,31 @@ nx-shell python
 nx-rebuild
 ```
 
+### Security/Secrets (SOPS)
+```bash
+# Listar secrets
+secrets-list  # ou: sl
+
+# Ver secret descriptografado
+sv /etc/nixos/secrets/api.yaml
+view-api      # Atalho para API keys
+
+# Editar secret
+se /etc/nixos/secrets/api.yaml
+secret-api    # Atalho para editar API keys
+
+# Extrair valor específico
+secret-get api.yaml openai_api_key
+
+# Verificar integridade
+secrets-verify
+
+# Ver todos os comandos
+secrets-help
+```
+
 ---
 
-**Última Atualização**: 2025-11-01
+**Última Atualização**: 2025-11-07
 **Mantido por**: kernelcore
-**Versão**: 2.0.0 (Reestruturação Completa)
+**Versão**: 2.1.0 (Adicionado: Security/Secrets aliases)
