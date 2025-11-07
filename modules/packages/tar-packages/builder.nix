@@ -220,12 +220,12 @@ let
           pkgs.writeShellScriptBin name ''
             # Set base directory for tools that need to find their files
             export PACKAGE_BASE_DIR="${patchedBinaries}"
-            
+
             # Set tool-specific environment variables
             ${concatStringsSep "\n" (
               mapAttrsToList (name: value: "export ${name}='${value}'") pkg.wrapper.environmentVariables
             )}
-            
+
             # For tools like lynis that need to find include directories
             cd "${patchedBinaries}"
             exec ${patchedBinaries}/${pkg.wrapper.executable} "$@"
