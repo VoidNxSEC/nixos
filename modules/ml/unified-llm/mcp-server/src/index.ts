@@ -948,17 +948,41 @@ class SecureLLMBridgeMCPServer {
       for (const [provider, metrics] of allMetrics.entries()) {
         const queueStatus = this.rateLimiter.getQueueStatus(provider);
         status[provider] = {
-          metrics: {
+          performance: {
             totalRequests: metrics.totalRequests,
             successRate: metrics.totalRequests > 0
-              ? ((metrics.successfulRequests / metrics.totalRequests) * 100).toFixed(2) + '%'
+              ? `${((metrics.successfulRequests / metrics.totalRequests) * 100).toFixed(2)}%`
               : '0%',
-            failedRequests: metrics.failedRequests,
+            requestsPerMinute: metrics.requestsPerMinute.toFixed(1),
             retriedRequests: metrics.retriedRequests,
-            averageLatency: `${metrics.averageLatency.toFixed(0)}ms`,
-            circuitBreakerTrips: metrics.circuitBreakerTrips,
+            averageRetries: metrics.retriedRequests > 0
+              ? (metrics.totalRetries / metrics.retriedRequests).toFixed(1)
+              : '0',
           },
-          queue: queueStatus || { queueLength: 0, processing: false },
+          latency: {
+            average: `${metrics.averageLatency.toFixed(0)}ms`,
+            p50: `${metrics.latencyPercentiles.p50}ms`,
+            p95: `${metrics.latencyPercentiles.p95}ms`,
+            p99: `${metrics.latencyPercentiles.p99}ms`,
+            max: `${metrics.latencyPercentiles.max}ms`,
+          },
+          errors: {
+            total: metrics.failedRequests,
+            byCategory: metrics.errorsByCategory,
+            circuitBreakerTrips: metrics.circuitBreakerActivations,
+          },
+          queue: {
+            current: queueStatus || { queueLength: 0, processing: false },
+            averageLength: metrics.queueMetrics.averageQueueLength.toFixed(1),
+            maxLength: metrics.queueMetrics.maxQueueLength,
+            averageWaitTime: metrics.totalRequests > 0
+              ? `${(metrics.queueMetrics.totalTimeInQueue / metrics.totalRequests).toFixed(0)}ms`
+              : '0ms',
+          },
+          timeWindow: {
+            duration: `${(metrics.timeWindow.durationMs / 1000).toFixed(0)}s`,
+            since: new Date(metrics.timeWindow.startTime).toISOString(),
+          },
         };
       }
 
