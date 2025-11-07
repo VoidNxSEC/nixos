@@ -283,6 +283,13 @@ in
       default = false;
       description = "Enable audit logging for all packages by default";
     };
+
+    resolvedPackages = mkOption {
+      type = types.attrsOf types.package;
+      default = { };
+      readOnly = true;
+      description = "Internal attrset with the built package derivations for reuse in other modules.";
+    };
   };
 
   # ============================================================
@@ -291,6 +298,8 @@ in
   config = mkIf cfg.enable {
     # Install all built packages
     environment.systemPackages = attrValues builtPackages;
+
+    kernelcore.packages.tar.resolvedPackages = builtPackages;
 
     # Create cache directory
     systemd.tmpfiles.rules = [
