@@ -12,6 +12,8 @@ import {
 } from '../types/middleware/rate-limiter.js';
 import { CircuitBreaker } from './circuit-breaker.js';
 import { RetryStrategy } from './retry-strategy.js';
+import { ErrorClassifier, ErrorCategory } from './error-classifier.js';
+import { MetricsCollector } from './metrics-collector.js';
 
 /**
  * Smart Rate Limiter - Phase 1.3 Implementation
@@ -27,17 +29,17 @@ import { RetryStrategy } from './retry-strategy.js';
 export class SmartRateLimiter {
   private configs: Map<string, RateLimitConfig>;
   private queues: Map<string, RequestQueue>;
-  private metrics: Map<string, RateLimitMetrics>;
+  private metricsCollectors: Map<string, MetricsCollector>;
   private circuitBreakers: Map<string, CircuitBreaker>;
   private retryStrategies: Map<string, RetryStrategy>;
 
   constructor(configs: Map<string, RateLimitConfig>) {
     this.configs = configs;
     this.queues = new Map();
-    this.metrics = new Map();
+    this.metricsCollectors = new Map();
     this.circuitBreakers = new Map();
 
-    // Initialize queues, metrics, and circuit breakers for each provider
+    // Initialize queues, metrics collectors, and circuit breakers for each provider
     for (const [provider, config] of configs.entries()) {
       this.queues.set(provider, {
         queue: [],
@@ -45,16 +47,8 @@ export class SmartRateLimiter {
         lastRequestTime: 0,
       });
 
-      this.metrics.set(provider, {
-        provider,
-        totalRequests: 0,
-        successfulRequests: 0,
-        failedRequests: 0,
-        retriedRequests: 0,
-        averageLatency: 0,
-        circuitBreakerTrips: 0,
-        lastRequestTime: 0,
-      });
+      // Initialize MetricsCollector for enhanced metrics tracking
+      this.metricsCollectors.set(provider, new MetricsCollector());
 
       // Initialize circuit breaker with config settings
       this.circuitBreakers.set(
@@ -97,35 +91,64 @@ export class SmartRateLimiter {
 
     const circuitBreaker = this.circuitBreakers.get(provider);
     const retryStrategy = this.retryStrategies.get(provider);
+    const collector = this.metricsCollectors.get(provider);
     
     if (!circuitBreaker || !retryStrategy) {
       throw new Error(`Missing components for provider: ${provider}`);
     }
 
     let lastError: Error | undefined;
-    let retriedAttempts = 0;
+    let lastClassification: any = undefined;
 
     // Retry loop: attempt 0 to maxRetries (inclusive)
     for (let attempt = 0; attempt <= config.maxRetries; attempt++) {
+      const startTime = Date.now();
+      
       try {
         // Attempt execution through circuit breaker and queue
         const result = await circuitBreaker.execute(async () => {
           return this.executeWithQueue(provider, fn);
         });
         
-        // Success - update retry metrics if this wasn't the first attempt
-        if (attempt > 0) {
-          retriedAttempts = attempt;
-          this.updateRetryMetrics(provider, retriedAttempts);
+        const latency = Date.now() - startTime;
+        
+        // Success - record metrics
+        if (collector) {
+          collector.recordSuccess(latency);
+          if (attempt > 0) {
+            collector.recordRetry(attempt === 1);
+          }
         }
         
         return result;
       } catch (error) {
+        const latency = Date.now() - startTime;
         lastError = error as Error;
 
         // Don't retry if circuit breaker is open - fail fast
         if (error instanceof CircuitBreakerError) {
+          if (collector) {
+            collector.recordCircuitBreakerTrip();
+          }
           throw error;
+        }
+
+        // Classify the error to determine if we should retry
+        const classification = ErrorClassifier.classify(error);
+        lastClassification = classification;
+        
+        // Record failure with error category
+        if (collector) {
+          collector.recordFailure(latency, classification.category);
+        }
+
+        // Don't retry permanent errors
+        if (!classification.shouldRetry) {
+          throw new RateLimitError(
+            `Permanent error (${classification.category}): ${classification.message}`,
+            provider,
+            undefined
+          );
         }
 
         // Don't retry on last attempt
@@ -133,12 +156,20 @@ export class SmartRateLimiter {
           break;
         }
 
-        // Calculate and apply backoff delay before next retry
-        const delay = retryStrategy.calculateDelay(attempt);
+        // Record retry attempt
+        if (collector && attempt > 0) {
+          collector.recordRetry(false);
+        }
+
+        // For rate limit errors, use longer delays
+        const baseDelay = classification.category === ErrorCategory.RATE_LIMIT
+          ? retryStrategy.calculateDelay(attempt) * 2 // Double delay for rate limits
+          : retryStrategy.calculateDelay(attempt);
+
         console.log(
-          `[RateLimiter] Retry attempt ${attempt + 1}/${config.maxRetries} for ${provider} after ${Math.round(delay)}ms`
+          `[RateLimiter] Retry attempt ${attempt + 1}/${config.maxRetries} for ${provider} after ${Math.round(baseDelay)}ms (${classification.category})`
         );
-        await this.sleep(delay);
+        await this.sleep(baseDelay);
       }
     }
 
@@ -156,10 +187,14 @@ export class SmartRateLimiter {
    */
   private async executeWithQueue<T>(provider: string, fn: () => Promise<T>): Promise<T> {
     const queue = this.queues.get(provider);
+    const collector = this.metricsCollectors.get(provider);
+    
     if (!queue) {
       throw new Error(`No queue found for provider: ${provider}`);
     }
 
+    const queueStartTime = Date.now();
+    
     // Create a promise that will be resolved when the request completes
     return new Promise<T>((resolve, reject) => {
       const request: QueuedRequest<T> = {
@@ -173,6 +208,13 @@ export class SmartRateLimiter {
 
       // Add to queue
       queue.queue.push(request);
+      
+      // Record queue metrics
+      if (collector) {
+        const queueTime = Date.now() - queueStartTime;
+        const queueLength = queue.queue.length;
+        collector.recordQueueMetrics(queueLength, queueTime);
+      }
 
       // Start processing if not already processing
       if (!queue.processing) {
@@ -262,42 +304,19 @@ export class SmartRateLimiter {
 
   /**
    * Update metrics for a provider
+   * @deprecated This method is no longer used - MetricsCollector handles all metrics
    */
   private updateMetrics(provider: string, success: boolean, latency: number): void {
-    const metrics = this.metrics.get(provider);
-    if (!metrics) {
-      return;
-    }
-
-    metrics.totalRequests++;
-    metrics.lastRequestTime = Date.now();
-
-    if (success) {
-      metrics.successfulRequests++;
-      
-      // Update average latency (running average)
-      const totalLatency = metrics.averageLatency * (metrics.successfulRequests - 1);
-      metrics.averageLatency = (totalLatency + latency) / metrics.successfulRequests;
-    } else {
-      metrics.failedRequests++;
-    }
-
-    // Update circuit breaker trip count
-    const circuitBreaker = this.circuitBreakers.get(provider);
-    if (circuitBreaker && circuitBreaker.getState() === 'open') {
-      metrics.circuitBreakerTrips++;
-    }
+    // Legacy method - metrics now handled by MetricsCollector
+    // Kept for backward compatibility but does nothing
   }
+  
   /**
    * Update retry metrics when a request required retries
+   * @deprecated This method is no longer used - MetricsCollector handles all metrics
    */
   private updateRetryMetrics(provider: string, attemptCount: number): void {
-    const metrics = this.metrics.get(provider);
-    if (!metrics) {
-      return;
-    }
-
-    metrics.retriedRequests++;
+    // Legacy method - metrics now handled by MetricsCollector
     console.log(`[RateLimiter] Request for ${provider} succeeded after ${attemptCount} retries`);
   }
 
@@ -323,14 +342,19 @@ export class SmartRateLimiter {
    * Get current metrics for a provider
    */
   getMetrics(provider: string): RateLimitMetrics | undefined {
-    return this.metrics.get(provider);
+    const collector = this.metricsCollectors.get(provider);
+    return collector?.getMetrics();
   }
 
   /**
    * Get all metrics
    */
   getAllMetrics(): Map<string, RateLimitMetrics> {
-    return new Map(this.metrics);
+    const allMetrics = new Map<string, RateLimitMetrics>();
+    for (const [provider, collector] of this.metricsCollectors.entries()) {
+      allMetrics.set(provider, collector.getMetrics());
+    }
+    return allMetrics;
   }
 
   /**
