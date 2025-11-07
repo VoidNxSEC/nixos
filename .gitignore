@@ -62,3 +62,10 @@ result-*
 # Ignore automatically generated direnv output
 .direnv
 *.qcow2
+
+# OAuth tokens (plaintext - never commit)
+modules/ml/unified-llm/mcp-server/secrets/oauth/*.token.json
+modules/ml/unified-llm/mcp-server/secrets/oauth/*.dev.json
+
+# Only commit encrypted tokens
+!modules/ml/unified-llm/mcp-server/secrets/oauth/*.token.enc.json

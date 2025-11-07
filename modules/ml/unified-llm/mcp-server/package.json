@@ -7,7 +7,9 @@
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
     "watch": "tsc --watch",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test": "npm run build && node --test build/tests/**/*.test.js",
+    "test:watch": "node --test --watch build/tests/**/*.test.js"
   },
   "keywords": [
     "mcp",

@@ -15,6 +15,9 @@
     # Declarative .tar.gz package management
     ./tar-packages
 
+    # Declarative .js package management
+    ./js-packages
+
     # Future: Add other package format integrations here
     # ./flatpak
     # ./appimage

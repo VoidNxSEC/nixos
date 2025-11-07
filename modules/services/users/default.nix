@@ -7,9 +7,11 @@
 
 {
   imports = [
+    ./actions.nix
     ./claude-code.nix
     ./codex-agent.nix
-    # Add more service users here as needed
+    ./gemini-agent.nix
+    ./gitlab-runner.nix
   ];
 
   # Service users centralization module
