@@ -10,8 +10,18 @@ with lib;
 let
   cfg = config.kernelcore.services.users.codex-agent;
 
+  tarCodexPackage =
+    if config.kernelcore.packages.tar.resolvedPackages ? codex then
+      config.kernelcore.packages.tar.resolvedPackages.codex
+    else
+      null;
+
+  packageDefault = if tarCodexPackage != null then tarCodexPackage else pkgs.codex;
+
+  codexBinary = "${cfg.package}/bin/${cfg.binaryName}";
+
   defaultCommand = [
-    "${pkgs.codex}/bin/codex"
+    codexBinary
     "agent"
     "serve"
     "--config"
@@ -60,6 +70,18 @@ in
       type = types.nullOr types.path;
       default = null;
       description = "Optional EnvironmentFile consumed by systemd for secrets.";
+    };
+
+    package = mkOption {
+      type = types.package;
+      default = packageDefault;
+      description = "Derivation that provides the Codex CLI binary executed by the agent.";
+    };
+
+    binaryName = mkOption {
+      type = types.str;
+      default = "codex";
+      description = "Binary name within the package used for ExecStart.";
     };
 
     extraEnvironment = mkOption {
@@ -115,13 +137,15 @@ in
       }
       // cfg.extraEnvironment;
 
-      path = with pkgs; [
-        codex
+      path = [
+        cfg.package
+      ]
+      ++ (with pkgs; [
         git
         nix
         coreutils
         findutils
-      ];
+      ]);
 
       serviceConfig = {
         Type = "simple";
