@@ -15,7 +15,10 @@
     enable = lib.mkEnableOption "Custom shell configuration";
 
     defaultShell = lib.mkOption {
-      type = lib.types.enum [ "bash" "zsh" ];
+      type = lib.types.enum [
+        "bash"
+        "zsh"
+      ];
       default = "zsh";
       description = "Default shell to use (bash or zsh)";
     };
