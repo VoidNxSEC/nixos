@@ -1,11 +1,16 @@
 # Codex CLI
 # Version: 0.56.0 (rust-v0.56.0)
 # Source: https://github.com/openai/codex/releases/tag/rust-v0.56.0
+#
+# Method: "fhs" required because codex-x86_64-unknown-linux-gnu is a
+# dynamically linked GNU binary that expects standard FHS paths.
+# Unlike zellij (musl-static), codex needs libc, libgcc_s, and other
+# system libraries that are only available in an FHS environment.
 {
   codex = {
     enable = true;
 
-    method = "native";
+    method = "fhs";
 
     source = {
       url = "https://github.com/openai/codex/releases/download/rust-v0.56.0/codex-x86_64-unknown-linux-gnu.tar.gz";
