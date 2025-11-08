@@ -265,14 +265,16 @@ in
     environment.sessionVariables = {
       # Disable VSCodium telemetry
       VSCODE_TELEMETRY_OPTOUT = "1";
-      DISABLE_UPDATE_CHECK = "0";
+      DISABLE_UPDATE_CHECK = "1";
     };
 
     # Install extensions if specified
     home-manager.users = mkIf (cfg.extensions != [ ]) {
       kernelcore = {
         programs.vscode = {
-          extensions = cfg.extensions;
+          profiles = {
+            extensions = cfg.extensions;
+          };
         };
       };
     };
