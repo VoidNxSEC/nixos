@@ -63,6 +63,46 @@ let
     in
     binaries;
 
+  # Detect if a binary is dynamically linked
+  detectDynamicLinking =
+    binary:
+    pkgs.runCommand "check-dynamic"
+      {
+        buildInputs = [
+          pkgs.file
+          pkgs.glibc.bin
+        ];
+      }
+      ''
+        if [ ! -f "${binary}" ]; then
+          echo "unknown" > $out
+          exit 0
+        fi
+        
+        # Check if file is ELF and dynamically linked
+        if file "${binary}" | grep -q "dynamically linked"; then
+          echo "dynamic" > $out
+        elif file "${binary}" | grep -q "statically linked"; then
+          echo "static" > $out
+        else
+          echo "unknown" > $out
+        fi
+      '';
+
+  # Detect target triple from executable name
+  detectTargetTriple =
+    execName:
+    if lib.hasSuffix "-musl" execName then
+      "musl"
+    else if lib.hasSuffix "-gnu" execName then
+      "gnu"
+    else if lib.hasInfix "musl" execName then
+      "musl"
+    else if lib.hasInfix "gnu" execName then
+      "gnu"
+    else
+      "unknown";
+
   # Build using FHS User Environment (for complex binaries)
   buildFHS =
     name: pkg: extracted:
@@ -233,21 +273,40 @@ let
     in
     wrapperScript;
 
-  # Auto-detect best build method
+  # Auto-detect best build method based on binary characteristics
   autoDetectMethod =
-    name: extracted:
+    name: pkg: extracted:
     let
-      # Check for complex dependencies
-      hasManyLibs = pkgs.runCommand "check-libs" { } ''
-        count=$(find ${extracted} -name "*.so*" | wc -l)
-        if [ $count -gt 5 ]; then
-          echo "fhs" > $out
+      executable = "${extracted}/${pkg.wrapper.executable}";
+      targetTriple = detectTargetTriple pkg.wrapper.executable;
+      hasDynamicLibs = builtins.pathExists "${extracted}/lib";
+      
+      # Detect linkage type if executable exists
+      linkType =
+        if builtins.pathExists executable then
+          lib.removeSuffix "\n" (builtins.readFile (detectDynamicLinking executable))
         else
-          echo "native" > $out
-        fi
-      '';
+          "unknown";
+      
+      # Decision logic with explanations
+      decision =
+        if targetTriple == "musl" then
+          { method = "native"; reason = "MUSL binaries are statically linked and work with native patching"; }
+        else if targetTriple == "gnu" && linkType == "dynamic" then
+          { method = "fhs"; reason = "GNU dynamically linked binaries require FHS environment"; }
+        else if hasDynamicLibs then
+          { method = "fhs"; reason = "Package includes dynamic libraries, needs FHS environment"; }
+        else if linkType == "static" then
+          { method = "native"; reason = "Statically linked binary works with native patching"; }
+        else
+          { method = "native"; reason = "Default fallback for unknown binary type"; };
+      
+      # Log decision for debugging
+      _ = builtins.trace
+        "Package ${name}: Auto-detected method='${decision.method}' (target=${targetTriple}, linkType=${linkType}, reason: ${decision.reason})"
+        null;
     in
-    builtins.readFile hasManyLibs;
+    decision.method;
 
   # Main builder function
   buildPackage =
@@ -256,12 +315,15 @@ let
       tarFile = fetchTarball name pkg.source;
       extracted = extractTarball name tarFile;
 
-      # Determine build method
+      # Determine build method with improved auto-detection
       method =
         if pkg.method == "auto" then
-          if pkg.sandbox.enable || (builtins.pathExists "${extracted}/lib") then "fhs" else "native"
+          autoDetectMethod name pkg extracted
         else
           pkg.method;
+
+      # Log final method selection
+      _ = builtins.trace "Package ${name}: Using build method '${method}'" null;
 
       # Build the package
       package = if method == "fhs" then buildFHS name pkg extracted else buildNative name pkg extracted;
