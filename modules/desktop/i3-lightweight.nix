@@ -450,34 +450,9 @@ with lib;
     # ============================================================
     # Notification Daemon (dunst)
     # ============================================================
-
-    services.dunst = {
-      enable = true;
-      settings = {
-        global = {
-          font = "DejaVu Sans Mono 10";
-          geometry = "300x5-30+20";
-          transparency = 10;
-          frame_width = 2;
-          frame_color = "#4c7899";
-        };
-        urgency_low = {
-          background = "#222222";
-          foreground = "#888888";
-          timeout = 5;
-        };
-        urgency_normal = {
-          background = "#285577";
-          foreground = "#ffffff";
-          timeout = 10;
-        };
-        urgency_critical = {
-          background = "#900000";
-          foreground = "#ffffff";
-          timeout = 0;
-        };
-      };
-    };
+    # Note: services.dunst doesn't exist in NixOS
+    # Install dunst package and configure via ~/.config/dunst/dunstrc
+    # or use home-manager for per-user configuration
 
     # ============================================================
     # Auto-lock on idle (optional)
@@ -500,9 +475,11 @@ with lib;
         night = 3700;
       };
     };
-    location.provider = "manual";
-    location.latitude = -23.5505; # São Paulo (ajuste para sua localização)
-    location.longitude = -46.6333;
+    location = {
+      provider = "manual";
+      latitude = -23.5505; # São Paulo (ajuste para sua localização)
+      longitude = -46.6333;
+    };
 
     # ============================================================
     # Documentation

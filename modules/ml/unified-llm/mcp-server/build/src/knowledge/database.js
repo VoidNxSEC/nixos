@@ -1,9 +1,17 @@
 // Knowledge Database Implementation with SQLite + FTS5
 import Database from 'better-sqlite3';
 import { randomBytes } from 'crypto';
+import { mkdirSync, existsSync } from 'fs';
+import { dirname } from 'path';
 export class SQLiteKnowledgeDatabase {
     db;
     constructor(dbPath) {
+        // Ensure directory exists before creating database
+        const dir = dirname(dbPath);
+        if (!existsSync(dir)) {
+            mkdirSync(dir, { recursive: true });
+            console.error(`[Knowledge DB] Created directory: ${dir}`);
+        }
         this.db = new Database(dbPath);
         this.db.pragma('journal_mode = WAL');
         this.db.pragma('foreign_keys = ON');

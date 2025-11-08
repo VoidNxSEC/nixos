@@ -12,6 +12,7 @@
       memory.optimizations.enable = true;
       nix.optimizations.enable = true;
       nix.experimental-features.enable = true;
+      sudo-claude-code.enable = true; # Passwordless sudo for Claude Code operations
     };
 
     security = {
@@ -248,8 +249,8 @@
   };
 
   services = {
-    gnome.core-shell.enable = true;
-    gnome.core-apps.enable = true;
+    gnome.core-shell.enable = false;
+    gnome.core-apps.enable = false;
     xserver = {
       enable = true;
       videoDrivers = [ "nvidia" ];
@@ -259,16 +260,18 @@
       };
     };
 
-    #desktopManager.gnome.enable = true;
     desktopManager.plasma6.enable = true;
     displayManager = {
       gdm = {
         enable = true;
         wayland = true;
       };
-      sessionPackages = [ pkgs.sway ];
+      #sessionPackages = [ pkgs.sway ];
       sddm.enable = false;
     };
+
+    # Hyprland desktop environment
+    hyprland-desktop.enable = true;
 
     openssh = {
       enable = true;
@@ -369,6 +372,9 @@
     "d /var/lib/gitea/custom/https 0750 gitea gitea -"
     "L+ /var/lib/gitea/custom/https/localhost.crt - - - - /home/kernelcore/localhost.crt"
     "L+ /var/lib/gitea/custom/https/localhost.key - - - - /home/kernelcore/localhost.key"
+
+    # MCP Knowledge Database directory
+    "d /var/lib/mcp-knowledge 0755 kernelcore users -"
   ];
 
   nixpkgs.config.allowUnfreePredicate =
@@ -454,6 +460,8 @@
       glab
       gh
       codeberg-cli
+
+      gnome-console
 
       zed-editor
       rust-analyzer
