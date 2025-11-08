@@ -20,11 +20,18 @@ import { GuideManager } from "./resources/guides.js";
 import * as path from "path";
 import { SmartRateLimiter } from "./middleware/rate-limiter.js";
 import { RATE_LIMIT_CONFIGS } from "./config/index.js";
+import { PackageDiagnoseTool, packageDiagnoseSchema } from "./tools/package-diagnose.js";
+import { PackageDownloadTool, packageDownloadSchema } from "./tools/package-download.js";
+import { PackageConfigureTool, packageConfigureSchema } from "./tools/package-configure.js";
+import { detectProjectRoot } from "./utils/project-detection.js";
+import { detectNixOSHost } from "./utils/host-detection.js";
 
 const execAsync = promisify(exec);
 
+// Legacy constants for backward compatibility - will be overridden by auto-detection
 const PROJECT_ROOT = process.env.PROJECT_ROOT || process.cwd();
-const KNOWLEDGE_DB_PATH = process.env.KNOWLEDGE_DB_PATH || path.join(PROJECT_ROOT, "knowledge.db");
+const KNOWLEDGE_DB_PATH = process.env.KNOWLEDGE_DB_PATH ||
+  path.join(process.env.HOME || process.env.USERPROFILE || ".", ".local/share/securellm/knowledge.db");
 const ENABLE_KNOWLEDGE = process.env.ENABLE_KNOWLEDGE !== 'false';
 
 interface ProviderTestArgs {
@@ -60,6 +67,11 @@ class SecureLLMBridgeMCPServer {
   private db: KnowledgeDatabase | null = null;
   private guideManager: GuideManager;
   private rateLimiter: SmartRateLimiter;
+  private packageDiagnose!: PackageDiagnoseTool;
+  private packageDownload!: PackageDownloadTool;
+  private packageConfigure!: PackageConfigureTool;
+  private projectRoot: string = PROJECT_ROOT;
+  private hostname: string = "default";
 
   constructor() {
     // Initialize smart rate limiter for API protection
@@ -67,6 +79,7 @@ class SecureLLMBridgeMCPServer {
     const configMap = new Map(Object.entries(RATE_LIMIT_CONFIGS));
     this.rateLimiter = new SmartRateLimiter(configMap);
     this.guideManager = new GuideManager();
+    
     this.server = new Server(
       {
         name: "securellm-bridge",
@@ -82,12 +95,7 @@ class SecureLLMBridgeMCPServer {
 
     this.setupToolHandlers();
     this.setupResourceHandlers();
-    
-    // Initialize knowledge database if enabled
-    if (ENABLE_KNOWLEDGE) {
-      this.initKnowledge();
-    }
-    
+
     this.server.onerror = (error) => console.error("[MCP Error]", error);
     process.on("SIGINT", async () => {
       if (this.db) {
@@ -96,6 +104,63 @@ class SecureLLMBridgeMCPServer {
       await this.server.close();
       process.exit(0);
     });
+  }
+
+  /**
+   * Initialize async resources (PROJECT_ROOT, hostname, knowledge DB)
+   * Must be called before starting the server
+   */
+  async initialize(): Promise<void> {
+    try {
+      // Detect project root
+      const rootDetection = await detectProjectRoot();
+      this.projectRoot = rootDetection.projectRoot;
+      console.log(
+        `Project root detected: ${this.projectRoot} (method: ${rootDetection.method}${
+          rootDetection.flakeFound ? ", flake.nix found" : ""
+        })`
+      );
+
+      // Detect NixOS hostname
+      if (rootDetection.flakeFound) {
+        try {
+          const hostDetection = await detectNixOSHost(this.projectRoot);
+          this.hostname = hostDetection.hostname;
+          if (hostDetection.warnings.length > 0) {
+            console.warn("Host detection warnings:");
+            hostDetection.warnings.forEach((w) => console.warn(`  ${w}`));
+          }
+        } catch (error) {
+          console.warn(
+            `Failed to detect NixOS host: ${error}. Using default hostname.`
+          );
+          this.hostname = "default";
+        }
+      } else {
+        console.warn(
+          "No flake.nix found. Using default hostname. Package tools may not work correctly."
+        );
+        this.hostname = "default";
+      }
+
+      // Initialize package tools with detected values
+      this.packageDiagnose = new PackageDiagnoseTool(
+        this.projectRoot,
+        this.hostname
+      );
+      this.packageDownload = new PackageDownloadTool(this.projectRoot);
+      this.packageConfigure = new PackageConfigureTool(this.projectRoot);
+
+      // Initialize knowledge database if enabled
+      if (ENABLE_KNOWLEDGE) {
+        this.initKnowledge();
+      }
+
+      console.log("MCP Server initialization complete.");
+    } catch (error) {
+      console.error("Failed to initialize MCP server:", error);
+      throw error;
+    }
   }
 
   private initKnowledge() {
@@ -223,6 +288,124 @@ class SecureLLMBridgeMCPServer {
             properties: {},
           },
         },
+        {
+          name: "package_diagnose",
+          description: "Diagnose issues in package configuration and build",
+          inputSchema: {
+            type: "object",
+            properties: {
+              package_path: {
+                type: "string",
+                description: "Path to the package .nix file",
+              },
+              package_type: {
+                type: "string",
+                enum: ["tar", "deb", "js"],
+                description: "Type of package system",
+              },
+              build_test: {
+                type: "boolean",
+                description: "Whether to perform a test build",
+                default: true,
+              },
+            },
+            required: ["package_path", "package_type"],
+          },
+        },
+        {
+          name: "package_download",
+          description: "Download package from various sources with automatic hash calculation",
+          inputSchema: {
+            type: "object",
+            properties: {
+              package_name: {
+                type: "string",
+                description: "Name of the package",
+              },
+              package_type: {
+                type: "string",
+                enum: ["tar", "deb", "js"],
+                description: "Type of package system",
+              },
+              source: {
+                type: "object",
+                properties: {
+                  type: {
+                    type: "string",
+                    enum: ["github_release", "npm", "url"],
+                    description: "Source type",
+                  },
+                  url: {
+                    type: "string",
+                    description: "Direct URL (for type: url)",
+                  },
+                  github: {
+                    type: "object",
+                    properties: {
+                      repo: { type: "string" },
+                      tag: { type: "string" },
+                      asset_pattern: { type: "string" },
+                    },
+                    required: ["repo"],
+                  },
+                  npm: {
+                    type: "object",
+                    properties: {
+                      package: { type: "string" },
+                      version: { type: "string" },
+                    },
+                    required: ["package"],
+                  },
+                },
+                required: ["type"],
+              },
+            },
+            required: ["package_name", "package_type", "source"],
+          },
+        },
+        {
+          name: "package_configure",
+          description: "Generate intelligent package configuration from downloaded file",
+          inputSchema: {
+            type: "object",
+            properties: {
+              package_name: {
+                type: "string",
+                description: "Name of the package",
+              },
+              package_type: {
+                type: "string",
+                enum: ["tar", "deb", "js"],
+                description: "Type of package system",
+              },
+              storage_file: {
+                type: "string",
+                description: "Path to downloaded file in storage",
+              },
+              sha256: {
+                type: "string",
+                description: "SHA256 hash of the file",
+              },
+              options: {
+                type: "object",
+                properties: {
+                  method: {
+                    type: "string",
+                    enum: ["auto", "native", "fhs"],
+                  },
+                  sandbox: { type: "boolean" },
+                  audit: { type: "boolean" },
+                  executable: { type: "string" },
+                  npm_flags: {
+                    type: "array",
+                    items: { type: "string" },
+                  },
+                },
+              },
+            },
+            required: ["package_name", "package_type", "storage_file", "sha256"],
+          },
+        },
         // Add knowledge tools if enabled
         ...(ENABLE_KNOWLEDGE && this.db ? knowledgeTools : []),
       ],
@@ -247,6 +430,12 @@ class SecureLLMBridgeMCPServer {
             return await this.handleCryptoKeyGenerate(args as unknown as CryptoKeyGenerateArgs);
           case "rate_limiter_status":
             return await this.handleRateLimiterStatus();
+          case "package_diagnose":
+            return await this.handlePackageDiagnose(args);
+          case "package_download":
+            return await this.handlePackageDownload(args);
+          case "package_configure":
+            return await this.handlePackageConfigure(args);
           case "create_session":
             return await this.handleCreateSession(args);
           case "save_knowledge":
@@ -1014,6 +1203,92 @@ class SecureLLMBridgeMCPServer {
     }
   }
 
+  // ===== PACKAGE DEBUGGER HANDLERS =====
+
+  private async handlePackageDiagnose(args: any) {
+    try {
+      const result = await this.packageDiagnose.diagnose(args);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    } catch (error: any) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              success: false,
+              error: error.message,
+            }, null, 2),
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+
+  private async handlePackageDownload(args: any) {
+    try {
+      const result = await this.packageDownload.download(args);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    } catch (error: any) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              success: false,
+              error: error.message,
+            }, null, 2),
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+
+  private async handlePackageConfigure(args: any) {
+    try {
+      const result = await this.packageConfigure.configure(args);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    } catch (error: any) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              success: false,
+              error: error.message,
+            }, null, 2),
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+
   private async readApiDocs() {
     const docs = `# SecureLLM Bridge API Documentation
 
@@ -1054,5 +1329,20 @@ Generate server and client TLS certificates for secure communication.
   }
 }
 
-const server = new SecureLLMBridgeMCPServer();
-server.run().catch(console.error);
+// Main entry point
+async function main() {
+  const server = new SecureLLMBridgeMCPServer();
+
+  try {
+    // Initialize async resources (project root, hostname, knowledge DB)
+    await server.initialize();
+
+    // Start MCP server
+    await server.run();
+  } catch (error) {
+    console.error("Failed to start MCP server:", error);
+    process.exit(1);
+  }
+}
+
+main();

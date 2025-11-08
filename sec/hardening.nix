@@ -323,8 +323,8 @@ with lib;
     "p8023"
     "llc"
     "p8022"
-    "bluetooth"
-    "btusb"
+    #"bluetooth"
+    #"btusb"
     "uvcvideo"
   ];
 

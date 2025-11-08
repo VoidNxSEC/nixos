@@ -120,9 +120,12 @@
       "Bash(echo:*)",
       "Bash(source:*)",
       "Bash(grep:*)",
-      "Bash(nix-instantiate:*)"
+      "Bash(nix-instantiate:*)",
+      "Bash(node modules/ml/unified-llm/mcp-server/build/index.js:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true
 }

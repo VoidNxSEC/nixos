@@ -30,6 +30,8 @@ in
         # Hash calculated from first build
         npmDepsHash = "sha256-FHA51ftpowmcS1zys+iFN9DLNKOg6UHRJ7dHxml2tOA=";
 
+        nodeLinker = "pnpm";
+
         # Native dependencies required for building keytar (password management)
         nativeBuildInputs = with pkgs; [
           pkg-config
