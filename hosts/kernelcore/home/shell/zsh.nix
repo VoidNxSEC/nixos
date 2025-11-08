@@ -173,6 +173,22 @@ in
         tobash = "chsh -s $(which bash) && exec bash";
         tozsh = "chsh -s $(which zsh) && exec zsh";
 
+        # Shell reload
+        reload = "source ~/.zshrc";
+
+        # Hyprland & Desktop
+        reland = "hyprctl reload";
+        hypredit = "$EDITOR ~/.config/hypr/hyprland.conf";
+        hyprconf = "cd ~/.config/hypr && ls -la";
+
+        # Waybar
+        wayreload = "killall waybar && waybar &";
+        wayedit = "$EDITOR ~/.config/waybar/config";
+        waystyle = "$EDITOR ~/.config/waybar/style.css";
+
+        # Quick edits
+        aliases = "cd /etc/nixos/modules/shell/aliases && ls -la";
+
         # Utilities
         weather = "curl wttr.in";
         cat = "bat";
@@ -180,9 +196,9 @@ in
       };
 
       # ========================================================
-      # ZSH Init Extra
+      # ZSH Init Content
       # ========================================================
-      initExtra = ''
+      initContent = ''
         # ====================================================
         # POWERLEVEL10K CONFIGURATION
         # ====================================================
@@ -314,7 +330,10 @@ in
       localVariables = {
         # ZSH autosuggestions
         ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE = "fg=#666666";
-        ZSH_AUTOSUGGEST_STRATEGY = [ "history" "completion" ];
+        ZSH_AUTOSUGGEST_STRATEGY = [
+          "history"
+          "completion"
+        ];
 
         # History substring search colors
         HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND = "bg=green,fg=white,bold";

@@ -23,9 +23,7 @@
     # Set default user shell
     home.sessionVariables = {
       SHELL =
-        if config.myShell.defaultShell == "zsh"
-        then "${pkgs.zsh}/bin/zsh"
-        else "${pkgs.bash}/bin/bash";
+        if config.myShell.defaultShell == "zsh" then "${pkgs.zsh}/bin/zsh" else "${pkgs.bash}/bin/bash";
     };
 
     # Install required packages
@@ -39,15 +37,15 @@
       nix-zsh-completions
 
       # Additional tools for better experience
-      eza              # Modern ls
-      bat              # Better cat
-      ripgrep          # Better grep
-      fd               # Better find
-      fzf              # Fuzzy finder
-      zoxide           # Smarter cd
-      thefuck          # Correct previous command
-      direnv           # Directory-based environments
-      nix-direnv       # Direnv for Nix
+      eza # Modern ls
+      bat # Better cat
+      ripgrep # Better grep
+      fd # Better find
+      fzf # Fuzzy finder
+      zoxide # Smarter cd
+      # thefuck removed (incompatible with python 3.12+)
+      direnv # Directory-based environments
+      nix-direnv # Direnv for Nix
     ];
 
     # Enable tool integrations (use mkDefault to allow overriding)
