@@ -78,7 +78,7 @@ let
           echo "unknown" > $out
           exit 0
         fi
-        
+
         # Check if file is ELF and dynamically linked
         if file "${binary}" | grep -q "dynamically linked"; then
           echo "dynamic" > $out
@@ -151,6 +151,9 @@ let
             glibc
             # Add bubblewrap for sandboxing
             bubblewrap
+            # Crypto and SSL libraries (commonly needed by binaries)
+            openssl
+            openssl.dev
           ];
 
         # Environment for the FHS environment
@@ -181,16 +184,16 @@ let
                 --die-with-parent \
                 --setenv PATH "${extracted}/bin:${extracted}/usr/bin:/usr/bin:/bin" \
                 --setenv LD_LIBRARY_PATH "${extracted}/lib:${extracted}/usr/lib" \
-                ${pkg.wrapper.executable} "$@"
+                ${extracted}/${pkg.wrapper.executable} "$@"
             ''
           else
             pkgs.writeShellScript "${name}-direct" ''
-              export PATH="${extracted}/bin:${extracted}/usr/bin:$PATH"
+              export PATH="${extracted}/bin:${extracted}/usr/bin:${extracted}:$PATH"
               export LD_LIBRARY_PATH="${extracted}/lib:${extracted}/usr/lib:$LD_LIBRARY_PATH"
               ${concatStringsSep "\n" (
                 mapAttrsToList (name: value: "export ${name}='${value}'") pkg.wrapper.environmentVariables
               )}
-              exec ${pkg.wrapper.executable} "$@"
+              exec ${extracted}/${pkg.wrapper.executable} "$@"
             '';
       };
     in
@@ -280,31 +283,44 @@ let
       executable = "${extracted}/${pkg.wrapper.executable}";
       targetTriple = detectTargetTriple pkg.wrapper.executable;
       hasDynamicLibs = builtins.pathExists "${extracted}/lib";
-      
+
       # Detect linkage type if executable exists
       linkType =
         if builtins.pathExists executable then
           lib.removeSuffix "\n" (builtins.readFile (detectDynamicLinking executable))
         else
           "unknown";
-      
+
       # Decision logic with explanations
       decision =
         if targetTriple == "musl" then
-          { method = "native"; reason = "MUSL binaries are statically linked and work with native patching"; }
+          {
+            method = "native";
+            reason = "MUSL binaries are statically linked and work with native patching";
+          }
         else if targetTriple == "gnu" && linkType == "dynamic" then
-          { method = "fhs"; reason = "GNU dynamically linked binaries require FHS environment"; }
+          {
+            method = "fhs";
+            reason = "GNU dynamically linked binaries require FHS environment";
+          }
         else if hasDynamicLibs then
-          { method = "fhs"; reason = "Package includes dynamic libraries, needs FHS environment"; }
+          {
+            method = "fhs";
+            reason = "Package includes dynamic libraries, needs FHS environment";
+          }
         else if linkType == "static" then
-          { method = "native"; reason = "Statically linked binary works with native patching"; }
+          {
+            method = "native";
+            reason = "Statically linked binary works with native patching";
+          }
         else
-          { method = "native"; reason = "Default fallback for unknown binary type"; };
-      
+          {
+            method = "native";
+            reason = "Default fallback for unknown binary type";
+          };
+
       # Log decision for debugging
-      _ = builtins.trace
-        "Package ${name}: Auto-detected method='${decision.method}' (target=${targetTriple}, linkType=${linkType}, reason: ${decision.reason})"
-        null;
+      _ = builtins.trace "Package ${name}: Auto-detected method='${decision.method}' (target=${targetTriple}, linkType=${linkType}, reason: ${decision.reason})" null;
     in
     decision.method;
 
@@ -316,11 +332,7 @@ let
       extracted = extractTarball name tarFile;
 
       # Determine build method with improved auto-detection
-      method =
-        if pkg.method == "auto" then
-          autoDetectMethod name pkg extracted
-        else
-          pkg.method;
+      method = if pkg.method == "auto" then autoDetectMethod name pkg extracted else pkg.method;
 
       # Log final method selection
       _ = builtins.trace "Package ${name}: Using build method '${method}'" null;
