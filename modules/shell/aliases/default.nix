@@ -31,6 +31,7 @@
     ./nix
     ./system
     ./security
-    #./amazon
+    ./desktop
+    ./amazon
   ];
 }
