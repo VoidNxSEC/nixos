@@ -22,6 +22,18 @@ const PROJECT_ROOT = process.env.PROJECT_ROOT || process.cwd();
 const KNOWLEDGE_DB_PATH = process.env.KNOWLEDGE_DB_PATH ||
     path.join(process.env.HOME || process.env.USERPROFILE || ".", ".local/share/securellm/knowledge.db");
 const ENABLE_KNOWLEDGE = process.env.ENABLE_KNOWLEDGE !== 'false';
+// Provider API keys from environment (loaded from SOPS-decrypted secrets)
+const API_KEYS = {
+    anthropic: process.env.ANTHROPIC_API_KEY || "",
+    openai: process.env.OPENAI_API_KEY || "",
+    deepseek: process.env.DEEPSEEK_API_KEY || "",
+    gemini: process.env.GEMINI_API_KEY || "",
+    openrouter: process.env.OPENROUTER_API_KEY || "",
+    groq: process.env.GROQ_API_KEY || "",
+    mistral: process.env.MISTRAL_API_KEY || "",
+    nvidia: process.env.NVIDIA_API_KEY || "",
+    replicate: process.env.REPLICATE_API_TOKEN || "",
+};
 class SecureLLMBridgeMCPServer {
     server;
     db = null;
@@ -67,7 +79,17 @@ class SecureLLMBridgeMCPServer {
             // Detect project root
             const rootDetection = await detectProjectRoot();
             this.projectRoot = rootDetection.projectRoot;
-            console.log(`Project root detected: ${this.projectRoot} (method: ${rootDetection.method}${rootDetection.flakeFound ? ", flake.nix found" : ""})`);
+            console.error(`[MCP] Project root detected: ${this.projectRoot} (method: ${rootDetection.method}${rootDetection.flakeFound ? ", flake.nix found" : ""})`);
+            // Log available API keys (masked)
+            const availableKeys = Object.entries(API_KEYS)
+                .filter(([_, key]) => key.length > 0)
+                .map(([name, key]) => `${name}(${key.substring(0, 8)}...)`);
+            if (availableKeys.length > 0) {
+                console.error(`[MCP] Available API keys: ${availableKeys.join(", ")}`);
+            }
+            else {
+                console.error(`[MCP] Warning: No API keys loaded. Provider tools will fail.`);
+            }
             // Detect NixOS hostname
             if (rootDetection.flakeFound) {
                 try {
