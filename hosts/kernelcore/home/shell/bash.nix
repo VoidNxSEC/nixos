@@ -21,10 +21,14 @@ in
       # History Configuration
       historySize = 10000;
       historyFileSize = 20000;
-      historyControl = [ "ignoredups" "erasedups" ];
+      historyControl = [
+        "ignoredups"
+        "erasedups"
+      ];
 
       # Shell Aliases (same as zsh for consistency)
       shellAliases = {
+        # Navigation
         ll = "eza -la --icons --git";
         la = "eza -la --icons --git";
         lt = "eza --tree --icons --git";
@@ -32,13 +36,46 @@ in
         ".." = "cd ..";
         "..." = "cd ../..";
         "...." = "cd ../../..";
+
+        # Git
         gs = "git status";
         ga = "git add";
+        gaa = "git add --all";
         gc = "git commit -m";
         gp = "git push";
         gl = "git log --oneline --graph --decorate --all -10";
+        gd = "git diff";
+        gco = "git checkout";
+
+        # Docker
+        dps = "docker ps --format 'table {{.Names}}\\t{{.Status}}\\t{{.Ports}}'";
+        dimg = "docker images";
+        dstop = "docker stop $(docker ps -q)";
+        dclean = "docker system prune -af";
+
+        # Quick access
+        dots = "cd ~/.config";
+        neo = "cd ~/.config/nvim";
+        dev = "cd ~/dev";
+        nx = "cd /etc/nixos/";
+
+        # Shell reload
+        reload = "source ~/.bashrc";
+
+        # Hyprland & Desktop
+        reland = "hyprctl reload";
+        hypredit = "$EDITOR ~/.config/hypr/hyprland.conf";
+        hyprconf = "cd ~/.config/hypr && ls -la";
+
+        # Waybar
+        wayreload = "killall waybar && waybar &";
+        wayedit = "$EDITOR ~/.config/waybar/config";
+        waystyle = "$EDITOR ~/.config/waybar/style.css";
+
+        # Utilities
         cat = "bat";
         grep = "rg";
+        weather = "curl wttr.in";
       };
 
       bashrcExtra = ''

@@ -10,7 +10,7 @@
   # IMPORTS
   # ============================================================
   imports = [
-    ./shell  # Modern shell configuration with zsh + powerlevel10k
+    ./shell # Modern shell configuration with zsh + powerlevel10k
   ];
 
   # ============================================================
@@ -18,7 +18,7 @@
   # ============================================================
   myShell = {
     enable = true;
-    defaultShell = "zsh";  # Options: "zsh" or "bash"
+    defaultShell = "zsh"; # Options: "zsh" or "bash"
     enablePowerlevel10k = true;
     enableNerdFonts = true;
   };
@@ -243,166 +243,6 @@
     # ========================================================
     # All shell configuration (bash/zsh) is now in ./shell/
     # To switch shells, edit: myShell.defaultShell = "bash" or "zsh"
-
-    # Keeping this stub to avoid removing the entire bash block
-    bash.enable = lib.mkForce false;
-
-    # OLD CONFIGURATION (kept for reference, can be deleted)
-    /*
-    bash = {
-      enable = false;
-
-      shellAliases = {
-        # Navigation with eza
-        ll = "eza -la --icons --git";
-        la = "eza -la --icons --git";
-        lt = "eza --tree --icons --git";
-        ls = "eza --icons";
-
-        # System monitoring
-        ps = "ps auxf";
-        psg = "ps aux | grep -v grep | grep -i -e VSZ -e";
-        mkdir = "mkdir -p";
-        meminfo = "free -m -l -t";
-        cpuinfo = "lscpu";
-
-        # Network diagnostics
-        ports = "netstat -tulanp";
-        listening = "lsof -i -P | grep LISTEN";
-
-        # Git shortcuts (enhanced)
-        gs = "git status";
-        ga = "git add";
-        gaa = "git add --all";
-        gc = "git commit -m";
-        gp = "git push -u origin main";
-        gl = "git log --oneline --graph --decorate --all -10";
-        gd = "git diff";
-        gco = "git checkout";
-        gar = "git add remote origin";
-
-        # NixOS management (usando home-manager agora!)
-        #rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#kernelcore --show-trace";
-        #build = "home-manager switch --flake ~/.config/NixHM#kernelcore";
-        #upgrade = "nix flake update ~/.config/home-manager && home-manager switch --flake ~/.config/NixHM#kernelcore";
-        clean = "sudo nix-collect-garbage -d && sudo nix-store --gc";
-        cleanold = "sudo nix-collect-garbage --delete-older-than 7d";
-
-        # Docker shortcuts
-        dps = "docker ps --format 'table {{.Names}}\\t{{.Status}}\\t{{.Ports}}'";
-        dimg = "docker images";
-        dstop = "docker stop $(docker ps -q)";
-        dclean = "docker system prune -af";
-
-        # Security & Privacy
-        shred = "shred -vfz -n 3";
-
-        # Quick access
-        dots = "cd ~/.config/NixHM";
-        neo = "cd ~/.config/nvim";
-        dev = "cd ~/dev";
-        dock = "cd ~/dev/docker-hub/";
-        ml-clusters = "cd ~/Dev/docker-hub//ml-clusters/";
-
-        nx = "cd /etc/nixos/";
-        check = "nix flake check";
-        update = "nix flake update";
-
-        # Fun stuff
-        weather = "curl wttr.in";
-        speedtest = "curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -";
-      };
-
-      bashrcExtra = ''
-                # ====================================================
-                # SHELL ENVIRONMENT
-                # ====================================================
-
-                # Enhanced history
-                export HISTSIZE=10000
-                export HISTFILESIZE=20000
-                export HISTCONTROL=ignoredups:erasedups
-                export HISTTIMEFORMAT="%F %T "
-                shopt -s histappend # Append to history, don't overwrite
-
-                # Application defaults
-                export EDITOR="nvim"
-                export VISUAL="nvim"
-                export BROWSER="brave"
-                export ANTHROPIC_MODEL="claude-sonnet-4-5-20250929"
-
-                # Security paranoia
-                umask 077
-
-                # Better cd behavior
-                shopt -s autocd # cd by typing directory name
-                shopt -s cdspell # autocorrect typos in path
-
-                # Zoxide integration (smarter cd)
-                eval "$(zoxide init bash)"
-
-                # ====================================================
-                # CUSTOM PROMPT (Git-aware)
-                # ====================================================
-
-                parse_git_branch() {
-                  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-                }
-
-                parse_git_dirty() {
-                  [[ $(git status --porcelain 2> /dev/null) ]] && echo "*"
-                }
-
-                # Colorful prompt with git status
-                export PS1="\[\033[32m\]\u@\h\[\033[00m\]:\[\033[34m\]\w\[\033[31m\]\$(parse_git_branch)\$(parse_git_dirty)\[\033[00m\]\$ "
-
-                # ====================================================
-                # QUALITY OF LIFE FUNCTIONS
-                # ====================================================
-
-                # Quick cd up multiple directories
-                up() {
-                  local d=""
-                  local limit="''${1:-1}"
-                  for ((i=1; i<=limit; i++)); do
-                    d="../$d"
-                  done
-                  cd "$d" || return
-                }
-
-                # Extract any archive
-                extract() {
-                  if [ -f "$1" ]; then
-                    case "$1" in
-                      *.tar.bz2)   tar xjf "$1"     ;;
-                      *.tar.gz)    tar xzf "$1"     ;;
-                      *.bz2)       bunzip2 "$1"     ;;
-                      *.rar)       unrar x "$1"     ;;
-                      *.gz)        gunzip "$1"      ;;
-                      *.tar)       tar xf "$1"      ;;
-                      *.tbz2)      tar xjf "$1"     ;;
-                      *.tgz)       tar xzf "$1"     ;;
-                      *.zip)       unzip "$1"       ;;
-                      *.Z)         uncompress "$1"  ;;
-                      *.7z)        7z x "$1"        ;;
-                      *)           echo "'$1' cannot be extracted via extract()" ;;
-                    esac
-                  else
-                    echo "'$1' is not a valid file"
-                  fi
-                }
-
-                # Quick backup
-                backup() {
-                  cp "$1" "$1.backup-$(date +%Y%m%d-%H%M%S)"
-                }
-
-                # Welcome message
-                #echo "⚡ Welcome back, $(whoami)! Ready to hack? 🚀"
-
-        	#EXPORT=jup-ml --port 8899 --workdir ~/my‑project
-      '';
-    };
 
     # ========================================================
     # Git Configuration
