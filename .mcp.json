@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "securellm-bridge": {
+      "command": "node",
+      "args": [
+        "/etc/nixos/modules/ml/unified-llm/mcp-server/build/src/index.js"
+      ],
+      "env": {
+        "KNOWLEDGE_DB_PATH": "${HOME}/.local/share/securellm/knowledge.db",
+        "ENABLE_KNOWLEDGE": "true"
+      }
+    }
+  }
+}

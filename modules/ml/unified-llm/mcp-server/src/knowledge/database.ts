@@ -2,6 +2,8 @@
 
 import Database from 'better-sqlite3';
 import { randomBytes } from 'crypto';
+import { mkdirSync, existsSync } from 'fs';
+import { dirname } from 'path';
 import type {
   KnowledgeDatabase,
   Session,
@@ -17,6 +19,13 @@ export class SQLiteKnowledgeDatabase implements KnowledgeDatabase {
   private db: Database.Database;
 
   constructor(dbPath: string) {
+    // Ensure directory exists before creating database
+    const dir = dirname(dbPath);
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+      console.error(`[Knowledge DB] Created directory: ${dir}`);
+    }
+    
     this.db = new Database(dbPath);
     this.db.pragma('journal_mode = WAL');
     this.db.pragma('foreign_keys = ON');

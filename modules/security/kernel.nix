@@ -55,7 +55,7 @@ with lib;
       "p8022"
 
       # Uncomment if not needed:
-      # "bluetooth"
+      # "bluetooth"  # Responsável: hardware.bluetooth module (modules/hardware/bluetooth.nix ou system config)
       # "btusb"
       # "uvcvideo"
     ];

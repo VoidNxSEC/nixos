@@ -17,6 +17,56 @@
 - **Tools**: 12 total (6 security + 6 knowledge management)
 - **Database**: SQLite with FTS5 full-text search
 - **Dependencies**: Node.js, MCP SDK 1.21.0, better-sqlite3 11.10.0
+- **Auto-Detection**: ✅ PROJECT_ROOT and NixOS hostname automatically detected
+
+## Environment Variables
+
+### Auto-Detected (No Configuration Required)
+
+#### `PROJECT_ROOT`
+**Status**: 🔄 Auto-detected by default
+**Detection Method**:
+1. Checks `PROJECT_ROOT` env var (if explicitly set)
+2. Searches upward for `flake.nix` from current directory
+3. Falls back to `process.cwd()` if not found
+
+**Override**: Set `PROJECT_ROOT=/path/to/project` to explicitly specify
+
+#### `NIXOS_HOST_NAME`
+**Status**: 🔄 Auto-detected from flake.nix
+**Detection Method**:
+1. Checks `NIXOS_HOST_NAME` env var (if explicitly set)
+2. If single host in flake.nix, uses it automatically
+3. Tries system `hostname` command
+4. Falls back to first host alphabetically (with warning)
+
+**Override**: Set `NIXOS_HOST_NAME=kernelcore` to explicitly specify
+
+### Configurable
+
+#### `KNOWLEDGE_DB_PATH`
+**Status**: 📁 Configurable
+**Default**: `$HOME/.local/share/securellm/knowledge.db` (XDG standard)
+**Purpose**: SQLite database location for knowledge management
+**Security Note**: Set to dedicated secure directory for production
+
+**Example**:
+```bash
+# Production (dedicated secure directory)
+KNOWLEDGE_DB_PATH=/var/lib/securellm/knowledge.db
+
+# Development (XDG standard - default)
+KNOWLEDGE_DB_PATH=$HOME/.local/share/securellm/knowledge.db
+
+# Custom location
+KNOWLEDGE_DB_PATH=/custom/path/knowledge.db
+```
+
+#### `ENABLE_KNOWLEDGE`
+**Status**: 🔧 Feature toggle
+**Default**: `true`
+**Purpose**: Enable/disable knowledge management tools
+**Values**: `true` or `false`
 
 ## Tools Available
 
@@ -39,7 +89,8 @@
 ## Setup for Roo Code/Cline
 
 ### Configuration File
-`~/.config/VSCodium/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
+
+**Claude Code CLI**: `.mcp.json` (project root)
 
 ```json
 {
@@ -50,7 +101,25 @@
         "/etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js"
       ],
       "env": {
-        "PROJECT_ROOT": "/etc/nixos/modules/ml/unified-llm",
+        "KNOWLEDGE_DB_PATH": "${HOME}/.local/share/securellm/knowledge.db",
+        "ENABLE_KNOWLEDGE": "true"
+      }
+    }
+  }
+}
+```
+
+**Roo Code/Cline**: `~/.config/VSCodium/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
+
+```json
+{
+  "mcpServers": {
+    "securellm-bridge": {
+      "command": "node",
+      "args": [
+        "/etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js"
+      ],
+      "env": {
         "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
         "ENABLE_KNOWLEDGE": "true"
       }
@@ -58,6 +127,8 @@
   }
 }
 ```
+
+**Note**: `PROJECT_ROOT` and `NIXOS_HOST_NAME` are now auto-detected and don't need to be configured!
 
 ### Quick Setup
 ```bash

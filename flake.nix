@@ -81,6 +81,9 @@
             ./modules/services/users/gitlab-runner.nix
             ./modules/services/gpu-orchestration.nix
 
+            # Desktop environments
+            ./modules/desktop
+
             # Applications (browsers and editors)
             ./modules/applications
 
@@ -103,7 +106,7 @@
             ./modules/system/aliases.nix
             ./modules/system/ml-gpu-users.nix
             ./modules/system/binary-cache.nix
-            ./modules/system/aliases.nix
+            ./modules/system/sudo-claude-code.nix
 
             # Hardware (GPU, Trezor, WiFi)
             ./modules/hardware
@@ -151,8 +154,9 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix;
-              # Enable automatic backups to prevent activation failures on conflicting files
-              home-manager.backupFileExtension = "backup";
+              # Use custom backup command with timestamp to avoid conflicts
+              home-manager.backupFileExtension = null;
+              home-manager.backupCommand = "${pkgs.coreutils}/bin/cp -a $1 $1.backup-$(date +%Y%m%d-%H%M%S)";
             }
 
             # Security modules LAST (highest priority to override other configs)
