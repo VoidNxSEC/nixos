@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -20,31 +25,31 @@ in
     # Essential Wayland and Hyprland packages
     environment.systemPackages = with pkgs; [
       # Core Hyprland tools
-      waybar          # Status bar
-      wofi            # Application launcher
-      dunst           # Notification daemon
-      swaylock        # Screen locker
-      swayidle        # Idle management
+      waybar # Status bar
+      wofi # Application launcher
+      dunst # Notification daemon
+      swaylock # Screen locker
+      swayidle # Idle management
 
       # Screenshot and screen recording
-      grim            # Screenshot utility
-      slurp           # Screen area selection
-      wl-clipboard    # Clipboard utilities
-      wf-recorder     # Screen recorder
+      grim # Screenshot utility
+      slurp # Screen area selection
+      wl-clipboard # Clipboard utilities
+      wf-recorder # Screen recorder
 
       # File manager and utilities
-      nemo            # File manager (Cinnamon)
-      pavucontrol     # Audio control
+      nemo # File manager (Cinnamon)
+      pavucontrol # Audio control
       networkmanagerapplet # Network manager applet
 
       # Terminal (already have alacritty)
-      kitty           # Backup terminal
+      kitty # Backup terminal
 
       # System monitoring
-      btop            # System monitor
+      btop # System monitor
 
       # Media
-      playerctl       # Media player control
+      playerctl # Media player control
 
       # Appearance
       qt5.qtwayland
