@@ -38,6 +38,14 @@
 
       # Install security audit and monitoring tools
       packages.enable = true;
+
+      # OS Keyring - gnome-keyring for Secret Service API
+      keyring = {
+        enable = true;
+        enableGUI = true; # Seahorse for managing credentials
+        enableKeePassXCIntegration = true; # KeePassXC Secret Service integration
+        autoUnlock = true; # Auto-unlock keyring on login
+      };
     };
 
     network = {
