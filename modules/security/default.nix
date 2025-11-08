@@ -26,6 +26,7 @@
     ./ssh.nix
     ./nix-daemon.nix
     ./packages.nix
+    ./keyring.nix
 
     # Security monitoring and scanning
     ./aide.nix
