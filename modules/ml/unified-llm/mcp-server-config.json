@@ -3,10 +3,12 @@
     "securellm-bridge": {
       "command": "node",
       "args": [
-        "/etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js"
+        "/etc/nixos/modules/ml/unified-llm/mcp-server/build/src/index.js"
       ],
       "env": {
-        "PROJECT_ROOT": "/etc/nixos"
+        "PROJECT_ROOT": "/etc/nixos",
+        "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
+        "ENABLE_KNOWLEDGE": "true"
       },
       "disabled": false,
       "alwaysAllow": []
