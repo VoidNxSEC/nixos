@@ -7,6 +7,23 @@
 
 {
   # ============================================================
+  # IMPORTS
+  # ============================================================
+  imports = [
+    ./shell  # Modern shell configuration with zsh + powerlevel10k
+  ];
+
+  # ============================================================
+  # SHELL CONFIGURATION
+  # ============================================================
+  myShell = {
+    enable = true;
+    defaultShell = "zsh";  # Options: "zsh" or "bash"
+    enablePowerlevel10k = true;
+    enableNerdFonts = true;
+  };
+
+  # ============================================================
   # CORE IDENTITY MATRIX
   # ============================================================
   home = {
@@ -222,10 +239,18 @@
     home-manager.enable = true;
 
     # ========================================================
-    # BASH Configuration
+    # BASH Configuration - MANAGED BY SHELL MODULE
     # ========================================================
+    # All shell configuration (bash/zsh) is now in ./shell/
+    # To switch shells, edit: myShell.defaultShell = "bash" or "zsh"
+
+    # Keeping this stub to avoid removing the entire bash block
+    bash.enable = lib.mkForce false;
+
+    # OLD CONFIGURATION (kept for reference, can be deleted)
+    /*
     bash = {
-      enable = true;
+      enable = false;
 
       shellAliases = {
         # Navigation with eza
@@ -467,43 +492,14 @@
     };
 
     # ========================================================
-    # Eza (Modern ls replacement)
+    # Eza (Modern ls replacement) - MANAGED BY SHELL MODULE
     # ========================================================
-    eza = {
-      enable = true;
-      enableBashIntegration = true;
-      git = true;
-      icons = "auto";
-      extraOptions = [
-        "--group-directories-first"
-        "--header"
-        "--long"
-      ];
-    };
+    # Configuration moved to shell module
 
     # ========================================================
-    # Fzf (Fuzzy finder)
+    # Fzf (Fuzzy finder) - MANAGED BY SHELL MODULE
     # ========================================================
-    fzf = {
-      enable = true;
-      enableBashIntegration = true;
-
-      defaultCommand = "fd --type f --hidden --follow --exclude .git";
-      defaultOptions = [
-        "--height 40%"
-        "--border"
-        "--layout=reverse"
-        "--preview 'bat --color=always {}'"
-        "--bind 'ctrl-/:toggle-preview'"
-      ];
-
-      colors = {
-        bg = "#1e1e1e";
-        "bg+" = "#2e2e2e";
-        fg = "#d4d4d4";
-        "fg+" = "#ffffff";
-      };
-    };
+    # Configuration moved to shell module
 
     # ========================================================
     # Ripgrep (Better grep)
@@ -520,23 +516,14 @@
     };
 
     # ========================================================
-    # Bat (Better cat with syntax highlighting)
+    # Bat (Better cat with syntax highlighting) - MANAGED BY SHELL MODULE
     # ========================================================
-    bat = {
-      enable = true;
-      config = {
-        theme = "TwoDark";
-        pager = "less -FR";
-      };
-    };
+    # Configuration moved to shell module
 
     # ========================================================
-    # Zoxide (Smarter cd)
+    # Zoxide (Smarter cd) - MANAGED BY SHELL MODULE
     # ========================================================
-    zoxide = {
-      enable = true;
-      enableBashIntegration = true;
-    };
+    # Configuration moved to shell module
   };
 
   # ============================================================
