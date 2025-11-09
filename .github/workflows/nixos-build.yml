@@ -17,9 +17,16 @@ env:
   CACHIX_CACHE_NAME: kernelcore
 
 jobs:
+  # SOPS: Decrypt secrets first
+  setup-secrets:
+    name: Decrypt SOPS secrets
+    uses: ./.github/workflows/setup-sops.yml
+    secrets: inherit
+
   check:
     name: Check Nix flake
     runs-on: [self-hosted, nixos]
+    needs: setup-secrets
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,7 +35,7 @@ jobs:
         uses: cachix/cachix-action@v15
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
           pushFilter: '(-source$|-env$)'
 
       - name: Check flake syntax
@@ -44,7 +51,7 @@ jobs:
   build:
     name: Build NixOS configuration
     runs-on: [self-hosted, nixos]
-    needs: check
+    needs: [setup-secrets, check]
     strategy:
       matrix:
         target: [toplevel, iso, vm-image]
@@ -56,7 +63,7 @@ jobs:
         uses: cachix/cachix-action@v15
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
           pushFilter: '(-source$|-env$)'
 
       - name: Build ${{ matrix.target }}
@@ -95,7 +102,7 @@ jobs:
   test-modules:
     name: Test NixOS modules
     runs-on: [self-hosted, nixos]
-    needs: check
+    needs: [setup-secrets, check]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -104,7 +111,7 @@ jobs:
         uses: cachix/cachix-action@v15
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
 
       - name: Test dev shells
         run: |
@@ -166,7 +173,7 @@ jobs:
   deploy:
     name: Deploy to NixOS
     runs-on: [self-hosted, nixos]
-    needs: [build, test-modules, security, format]
+    needs: [setup-secrets, build, test-modules, security, format]
     if: |
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
@@ -179,7 +186,7 @@ jobs:
         uses: cachix/cachix-action@v15
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
 
       - name: Build system configuration
         run: |
