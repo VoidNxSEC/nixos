@@ -112,8 +112,9 @@ in
           "colored-man-pages"
           "command-not-found"
           "history-substring-search"
-          "zsh-autosuggestions"
-          "zsh-syntax-highlighting"
+          # Note: zsh-autosuggestions and zsh-syntax-highlighting are managed
+          # natively by home-manager via autosuggestion.enable and
+          # syntaxHighlighting.enable options (lines 19-20)
         ];
       };
 
