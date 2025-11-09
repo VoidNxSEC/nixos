@@ -105,7 +105,7 @@ in
         group = "users";
       };
 
-      # GitHub
+      # GitHub Personal Access Token (for gh CLI, development)
       "github_token" = {
         sopsFile = ../../secrets/github.yaml;
         mode = "0440";
