@@ -13,5 +13,6 @@
     # ./intel.nix  # Commented out in flake.nix
     ./trezor.nix
     ./wifi-optimization.nix
+    ./bluetooth.nix
   ];
 }
