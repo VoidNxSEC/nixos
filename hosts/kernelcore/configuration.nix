@@ -212,13 +212,12 @@
     };
 
     services.github-runner = {
-      # OPTIONAL: Enable self-hosted GitHub Actions runner when needed
+      # Self-hosted GitHub Actions runner
       # Requires secrets/github.yaml to be configured with registration token
-      # Default: use GitHub-hosted runners (more reliable, no local resource usage)
-      enable = false; # Set to true to enable self-hosted runner
-      useSops = true; # SOPS fixed: now safe to enable when needed
+      enable = true; # ✅ ENABLED - Runner will start on rebuild
+      useSops = true; # SOPS for secure token management
       runnerName = "nixos-self-hosted";
-      repoUrl = "https://github.com/VoidNxSEC"; # Organization-level runner
+      repoUrl = "https://github.com/VoidNxSEC/nixos"; # Repository URL
       extraLabels = [
         "nixos"
         "nix"
