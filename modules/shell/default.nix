@@ -16,6 +16,7 @@
   imports = [
     ./gpu-flags.nix
     ./aliases
+    ./training-logger.nix
   ];
 
   # ============================================================
