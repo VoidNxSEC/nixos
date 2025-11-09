@@ -211,7 +211,7 @@
       };
     };
 
-    services.github-runner = {
+    kernelcore.services.github-runner = {
       # Self-hosted GitHub Actions runner
       # Requires secrets/github.yaml to be configured with registration token
       enable = true; # ✅ ENABLED - Runner will start on rebuild
