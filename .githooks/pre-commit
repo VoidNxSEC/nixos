@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Pre-commit hook: Format check and syntax validation
+# Installed via: git config core.hooksPath .githooks
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Check Nix formatting
+echo "  → Checking Nix formatting..."
+if ! nix fmt -- --check . 2>/dev/null; then
+  echo "❌ Formatting check failed"
+  echo "💡 Fix with: nix fmt"
+  exit 1
+fi
+
+# Validate flake syntax (no-build for speed)
+echo "  → Validating flake syntax..."
+if ! nix flake check --no-build 2>/dev/null; then
+  echo "❌ Flake syntax check failed"
+  echo "💡 Run: nix flake check --show-trace"
+  exit 1
+fi
+
+# Check for common mistakes
+echo "  → Checking for common issues..."
+
+# Check for hardcoded secrets (excluding SOPS encrypted files)
+if git diff --cached --name-only | grep -v "\.yaml$" | xargs grep -l "ghp_\|sk-ant-\|sk-" 2>/dev/null; then
+  echo "❌ Potential hardcoded secrets detected!"
+  echo "💡 Use SOPS for secrets: sops secrets/github.yaml"
+  exit 1
+fi
+
+# Check for TODO without issue reference
+if git diff --cached | grep -i "^+.*TODO" | grep -v "#[0-9]"; then
+  echo "⚠️  TODO comment without issue reference found"
+  echo "💡 Link TODOs to issues: TODO(#123): description"
+  # Warning only, don't fail
+fi
+
+echo "✅ Pre-commit checks passed!"
