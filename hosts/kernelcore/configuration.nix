@@ -7,6 +7,13 @@
 
 {
 
+  # Shell configuration - Training session logger
+  shell.trainingLogger = {
+    enable = true;
+    userLogDirectory = "\${HOME}/.training-logs";
+    maxLogSize = "1G";
+  };
+
   kernelcore = {
     system = {
       memory.optimizations.enable = true;
@@ -315,7 +322,7 @@
     };
 
     ollama = {
-      enable = true;
+      enable = false;
       host = "127.0.0.1"; # Security: Bind to localhost only
       port = 11434; # Default port - Docker ollama uses 11435
       acceleration = "cuda";
