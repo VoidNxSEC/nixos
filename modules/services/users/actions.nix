@@ -173,7 +173,12 @@ in
           fi
 
           cd /var/lib/actions-runner
-          ./config.sh \
+
+          # Patch config.sh to use NixOS bash
+          ${pkgs.gnused}/bin/sed -i 's|#!/bin/bash|#!${pkgs.bash}/bin/bash|' config.sh || true
+
+          # Run configuration with explicit bash interpreter
+          ${pkgs.bash}/bin/bash ./config.sh \
             --unattended \
             --url "$RUNNER_URL" \
             --token "$RUNNER_TOKEN" \
@@ -189,7 +194,12 @@ in
 
       script = ''
         cd /var/lib/actions-runner
-        exec ./run.sh
+
+        # Patch run.sh to use NixOS bash
+        ${pkgs.gnused}/bin/sed -i 's|#!/bin/bash|#!${pkgs.bash}/bin/bash|' run.sh || true
+
+        # Run with explicit bash interpreter
+        exec ${pkgs.bash}/bin/bash ./run.sh
       '';
 
       # Cleanup on stop
