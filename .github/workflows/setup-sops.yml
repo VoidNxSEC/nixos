@@ -1,0 +1,126 @@
+name: Setup SOPS and Decrypt Secrets
+
+# Reusable workflow for decrypting SOPS secrets in GitHub Actions
+# Usage:
+#   jobs:
+#     setup-secrets:
+#       uses: ./.github/workflows/setup-sops.yml
+#       secrets: inherit
+
+on:
+  workflow_call:
+    outputs:
+      cachix_token:
+        description: "Decrypted Cachix authentication token"
+        value: ${{ jobs.decrypt.outputs.cachix_token }}
+      github_token:
+        description: "Decrypted GitHub personal access token"
+        value: ${{ jobs.decrypt.outputs.github_token }}
+
+jobs:
+  decrypt:
+    runs-on: [self-hosted, nixos]
+    outputs:
+      cachix_token: ${{ steps.decrypt.outputs.cachix_token }}
+      github_token: ${{ steps.decrypt.outputs.github_token }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup AGE key for SOPS
+        env:
+          AGE_SECRET_KEY: ${{ secrets.AGE_SECRET_KEY }}
+        run: |
+          set -euo pipefail
+
+          # Create SOPS AGE directory
+          mkdir -p ~/.config/sops/age
+
+          # Write AGE private key
+          echo "$AGE_SECRET_KEY" > ~/.config/sops/age/keys.txt
+          chmod 600 ~/.config/sops/age/keys.txt
+
+          # Verify key format
+          if ! grep -q "AGE-SECRET-KEY" ~/.config/sops/age/keys.txt; then
+            echo "❌ Invalid AGE key format"
+            exit 1
+          fi
+
+          echo "✅ AGE key configured"
+
+      - name: Verify SOPS installation
+        run: |
+          set -euo pipefail
+
+          # Check SOPS is available
+          if ! command -v sops &> /dev/null; then
+            echo "📦 Installing SOPS..."
+            nix-env -iA nixpkgs.sops
+          fi
+
+          sops --version
+          echo "✅ SOPS is available"
+
+      - name: Decrypt secrets
+        id: decrypt
+        env:
+          SOPS_AGE_KEY_FILE: ${{ github.workspace }}/.sops-age-key
+        run: |
+          set -euo pipefail
+
+          # Copy AGE key to workspace for SOPS
+          cp ~/.config/sops/age/keys.txt "$SOPS_AGE_KEY_FILE"
+
+          echo "🔓 Decrypting secrets..."
+
+          # Decrypt github.yaml and extract tokens
+          if [[ -f secrets/github.yaml ]]; then
+            # Extract Cachix token
+            CACHIX_TOKEN=$(sops -d secrets/github.yaml | \
+              nix run nixpkgs#yq -- -r '.github.cachix_auth_token // empty')
+
+            # Extract GitHub PAT
+            GITHUB_PAT=$(sops -d secrets/github.yaml | \
+              nix run nixpkgs#yq -- -r '.github.personal_access_token // empty')
+
+            # Set outputs (masked)
+            if [[ -n "$CACHIX_TOKEN" ]]; then
+              echo "::add-mask::$CACHIX_TOKEN"
+              echo "cachix_token=$CACHIX_TOKEN" >> $GITHUB_OUTPUT
+              echo "✅ Cachix token decrypted"
+            fi
+
+            if [[ -n "$GITHUB_PAT" ]]; then
+              echo "::add-mask::$GITHUB_PAT"
+              echo "github_token=$GITHUB_PAT" >> $GITHUB_OUTPUT
+              echo "✅ GitHub PAT decrypted"
+            fi
+          else
+            echo "⚠️  secrets/github.yaml not found"
+          fi
+
+          echo "✅ Secrets decrypted successfully"
+
+      - name: Cleanup sensitive files
+        if: always()
+        run: |
+          # Remove AGE keys
+          rm -f ~/.config/sops/age/keys.txt
+          rm -f "${{ github.workspace }}/.sops-age-key"
+          echo "🧹 Cleanup complete"
+
+      - name: Verify secrets (without exposing values)
+        run: |
+          echo "Secret verification:"
+          if [[ -n "${{ steps.decrypt.outputs.cachix_token }}" ]]; then
+            echo "  ✅ Cachix token: Available (${#${{ steps.decrypt.outputs.cachix_token }}} chars)"
+          else
+            echo "  ⚠️  Cachix token: Not available"
+          fi
+
+          if [[ -n "${{ steps.decrypt.outputs.github_token }}" ]]; then
+            echo "  ✅ GitHub token: Available (${#${{ steps.decrypt.outputs.github_token }}} chars)"
+          else
+            echo "  ⚠️  GitHub token: Not available"
+          fi
