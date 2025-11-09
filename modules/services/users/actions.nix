@@ -61,7 +61,7 @@ in
 
     # SOPS secret for runner token
     sops.secrets = mkIf cfg.useSops {
-      "github/runner/token" = {
+      "github_runner_token" = {
         sopsFile = ../../../secrets/github.yaml;
         owner = "actions";
         group = "actions";
@@ -144,13 +144,13 @@ in
           ${
             if cfg.useSops then
               let
-                tokenPath = config.sops.secrets."github/runner/token".path;
+                tokenPath = config.sops.secrets."github_runner_token".path;
               in
               ''
                 # Read token from SOPS secret
                 if [ ! -f "${tokenPath}" ]; then
                   echo "ERROR: SOPS secret not found at ${tokenPath}"
-                  echo "Please ensure secrets/github.yaml is encrypted and contains github.runner.token"
+                  echo "Please ensure secrets/github.yaml is encrypted and contains github_runner_token"
                   exit 1
                 fi
                 RUNNER_TOKEN=$(cat "${tokenPath}")
