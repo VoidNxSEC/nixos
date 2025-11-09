@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Pre-push hook: Run tests before pushing
+# Installed via: git config core.hooksPath .githooks
+
+set -e
+
+echo "🧪 Running pre-push checks..."
+
+# Get remote and branch
+remote="$1"
+url="$2"
+
+# Skip for backup branches
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$current_branch" == backup-* ]]; then
+  echo "⏭️  Skipping checks for backup branch"
+  exit 0
+fi
+
+# Run flake check with timeout
+echo "  → Running nix flake check (with 120s timeout)..."
+if ! timeout 120 nix flake check 2>&1 | tee /tmp/flake-check.log; then
+  echo "❌ Flake check failed or timed out"
+  echo ""
+  echo "Last 20 lines of output:"
+  tail -20 /tmp/flake-check.log
+  echo ""
+  echo "💡 Fix errors or run: nix flake check --show-trace"
+  exit 1
+fi
+
+# Check if pushing to main without PR
+if [[ "$current_branch" == "main" ]] && git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null | grep -q "origin/main"; then
+  echo "⚠️  You are pushing directly to main"
+  echo "💡 Consider using a PR for better code review"
+  # Warning only for now
+fi
+
+echo "✅ Pre-push checks passed!"
