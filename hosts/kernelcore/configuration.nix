@@ -87,6 +87,11 @@
       cudaSupport = true;
     };
 
+    # Bluetooth support
+    bluetooth = {
+      enable = true;
+    };
+
     # Package managers for binaries not in nixpkgs or testing upstream
     # NOTE: deb-packages has a bug with list/null validation - investigating
     packages.deb = {
