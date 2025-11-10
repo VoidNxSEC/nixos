@@ -98,6 +98,7 @@
             ./modules/ml/models-storage.nix
             ./modules/ml/ollama-gpu-manager.nix
             ./modules/ml/offload # ML Offload Manager (unified API + intelligence)
+            ./modules/ml/mcp-config # MCP (Model Context Protocol) centralized config
 
             # System
             ./modules/system/memory.nix
