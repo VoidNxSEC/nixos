@@ -49,20 +49,26 @@ in
         # that aren't included in the release tarball
         dontCheckNoBrokenSymlinks = true;
 
-        # Clean up broken symlinks that point to missing workspace packages
+        # Clean up broken symlinks intelligently - only remove symlinks that point to nowhere
         postInstall = ''
-          # Remove symlinks to missing workspace packages
-          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/@google/gemini-cli-a2a-server
-          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/@google/gemini-cli-test-utils
-          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/@google/gemini-cli-core
-          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/@google/gemini-cli
-          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/gemini-cli-vscode-ide-companion
-          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/.bin/gemini-cli-a2a-server
-          rm -f $out/lib/node_modules/@google/gemini-cli/node_modules/.bin/gemini
+          echo "Cleaning up broken symlinks in Gemini CLI..."
 
-          # Ensure the main executable symlink exists
-          mkdir -p $out/bin
-          ln -sf $out/lib/node_modules/@google/gemini-cli/bundle/gemini.js $out/bin/gemini
+          # Find and remove only broken symlinks (symlinks that don't resolve)
+          find $out/lib/node_modules/@google/gemini-cli/node_modules -type l 2>/dev/null | while read -r link; do
+            if [ ! -e "$link" ]; then
+              echo "Removing broken symlink: $link"
+              rm -f "$link"
+            fi
+          done
+
+          # Ensure the main executable exists and is correctly linked
+          if [ ! -f "$out/bin/gemini" ]; then
+            echo "Creating main gemini executable symlink..."
+            mkdir -p $out/bin
+            ln -sf $out/lib/node_modules/@google/gemini-cli/bundle/gemini.js $out/bin/gemini
+          fi
+
+          echo "Gemini CLI post-install cleanup complete"
         '';
 
         meta = with lib; {
