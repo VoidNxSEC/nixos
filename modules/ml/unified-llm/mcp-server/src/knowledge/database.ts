@@ -30,6 +30,7 @@ export class SQLiteKnowledgeDatabase implements KnowledgeDatabase {
     this.db.pragma('journal_mode = WAL');
     this.db.pragma('foreign_keys = ON');
     this.initialize();
+    this.initContextTables();
   }
 
   private initialize(): void {
@@ -101,6 +102,46 @@ export class SQLiteKnowledgeDatabase implements KnowledgeDatabase {
     `);
 
     console.error('[Knowledge DB] Database initialized successfully');
+  }
+
+  /**
+   * Initialize context inference tables
+   */
+  private initContextTables(): void {
+    // Patterns table
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS patterns (
+        id TEXT PRIMARY KEY,
+        type TEXT NOT NULL,
+        description TEXT NOT NULL,
+        frequency INTEGER DEFAULT 1,
+        steps TEXT NOT NULL,
+        success_rate REAL DEFAULT 1.0,
+        last_seen INTEGER NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    `);
+
+    // Project states table
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS project_states (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        root TEXT NOT NULL,
+        git_branch TEXT,
+        git_dirty BOOLEAN,
+        build_success BOOLEAN,
+        recent_files TEXT,
+        file_types TEXT,
+        timestamp INTEGER NOT NULL
+      )
+    `);
+
+    // Create indexes
+    this.db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_patterns_type ON patterns(type);
+      CREATE INDEX IF NOT EXISTS idx_patterns_last_seen ON patterns(last_seen);
+      CREATE INDEX IF NOT EXISTS idx_project_states_timestamp ON project_states(timestamp);
+    `);
   }
 
   // ===== SESSION OPERATIONS =====
@@ -309,6 +350,116 @@ export class SQLiteKnowledgeDatabase implements KnowledgeDatabase {
       recent_sessions: stats.recent_sessions || 0,
       storage_size_mb: (dbSize.size || 0) / (1024 * 1024),
     };
+  }
+
+  // ===== CONTEXT INFERENCE OPERATIONS =====
+
+  /**
+   * Store a pattern
+   */
+  public storePattern(pattern: {
+    id: string;
+    type: string;
+    description: string;
+    frequency: number;
+    steps: string[];
+    successRate: number;
+  }): void {
+    const stmt = this.db.prepare(`
+      INSERT OR REPLACE INTO patterns (id, type, description, frequency, steps, success_rate, last_seen, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      pattern.id,
+      pattern.type,
+      pattern.description,
+      pattern.frequency,
+      JSON.stringify(pattern.steps),
+      pattern.successRate,
+      Date.now(),
+      Date.now()
+    );
+  }
+
+  /**
+   * Get patterns by type
+   */
+  public getPatterns(type?: string, limit: number = 10): any[] {
+    let query = 'SELECT * FROM patterns';
+    const params: any[] = [];
+
+    if (type) {
+      query += ' WHERE type = ?';
+      params.push(type);
+    }
+
+    query += ' ORDER BY frequency DESC, last_seen DESC LIMIT ?';
+    params.push(limit);
+
+    const stmt = this.db.prepare(query);
+    const rows = stmt.all(...params);
+
+    return rows.map((row: any) => ({
+      id: row.id,
+      type: row.type,
+      description: row.description,
+      frequency: row.frequency,
+      steps: JSON.parse(row.steps),
+      successRate: row.success_rate,
+      lastSeen: row.last_seen,
+    }));
+  }
+
+  /**
+   * Store project state snapshot
+   */
+  public storeProjectState(state: {
+    root: string;
+    gitBranch?: string;
+    gitDirty: boolean;
+    buildSuccess: boolean;
+    recentFiles: string[];
+    fileTypes: Record<string, number>;
+  }): void {
+    const stmt = this.db.prepare(`
+      INSERT INTO project_states (root, git_branch, git_dirty, build_success, recent_files, file_types, timestamp)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      state.root,
+      state.gitBranch || null,
+      state.gitDirty ? 1 : 0,
+      state.buildSuccess ? 1 : 0,
+      JSON.stringify(state.recentFiles),
+      JSON.stringify(state.fileTypes),
+      Date.now()
+    );
+  }
+
+  /**
+   * Get recent project states
+   */
+  public getRecentProjectStates(limit: number = 10): any[] {
+    const stmt = this.db.prepare(`
+      SELECT * FROM project_states
+      ORDER BY timestamp DESC
+      LIMIT ?
+    `);
+
+    const rows = stmt.all(limit);
+
+    return rows.map((row: any) => ({
+      id: row.id,
+      root: row.root,
+      gitBranch: row.git_branch,
+      gitDirty: Boolean(row.git_dirty),
+      buildSuccess: Boolean(row.build_success),
+      recentFiles: JSON.parse(row.recent_files),
+      fileTypes: JSON.parse(row.file_types),
+      timestamp: row.timestamp,
+    }));
   }
 
   // ===== CLEANUP =====
