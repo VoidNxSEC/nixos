@@ -30,6 +30,7 @@ This repository contains proprietary system configuration files for production i
 ### AUTHORIZED OPERATIONS
 
 System operations are restricted to:
+
 - Authorized system administrators
 - Pre-approved maintenance procedures
 - Security-audited modifications
@@ -38,6 +39,7 @@ System operations are restricted to:
 ### PROHIBITED ACTIVITIES
 
 The following activities are expressly prohibited:
+
 - Unauthorized access or attempted access
 - Modification without proper authorization
 - Distribution or copying of configuration files
@@ -64,7 +66,8 @@ This system incorporates third-party software components, each subject to their 
 ### CONTACT
 
 For authorized access requests or security concerns:
-- **Administrative Contact**: marcosfpina@voidnxlabs.com
+
+- **Administrative Contact**: sec@voidnxlabs.com
 - **Security Incidents**: Report through established security channels only
 
 ### JURISDICTION
