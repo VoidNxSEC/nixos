@@ -263,6 +263,37 @@
       baseDirectory = "/var/lib/ml-models";
     };
 
+    # MCP (Model Context Protocol) - Centralized configuration for AI agents
+    # PROJECT_ROOT points to ~/dev/ for all agents (HOME-based development)
+    ml.mcp = {
+      enable = true;
+      agents = {
+        # Roo/Claude Code - USER workspace (HOME-based ~/dev/)
+        roo = {
+          enable = true;
+          projectRoot = "/home/kernelcore/dev";
+          configPath = "/home/kernelcore/.roo/mcp.json";
+          user = "kernelcore";
+        };
+
+        # Codex Agent - Isolated workspace with bwrap (already stable)
+        codex = {
+          enable = true;
+          projectRoot = "/var/lib/codex/dev";
+          configPath = "/var/lib/codex/.codex/mcp.json";
+          user = "codex";
+        };
+
+        # Gemini Agent - Isolated workspace (needs bwrap isolation)
+        gemini = {
+          enable = true;
+          projectRoot = "/var/lib/gemini-agent/dev";
+          configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
+          user = "gemini-agent";
+        };
+      };
+    };
+
     # Centralized ML/GPU user and group management
     system.ml-gpu-users.enable = true;
   };
@@ -441,6 +472,7 @@
       "render"
       "libvirtd"
       "kvm"
+      "mcp-shared" # For shared MCP knowledge DB access
     ];
     hashedPasswordFile = "/etc/nixos/sec/user-password";
     packages = with pkgs; [

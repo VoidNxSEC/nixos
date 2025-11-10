@@ -116,6 +116,7 @@ in
       createHome = true;
       description = "Codex CLI automation user";
       shell = pkgs.bash;
+      extraGroups = [ "mcp-shared" ]; # For shared knowledge DB access
     };
 
     systemd.tmpfiles.rules = [
@@ -139,6 +140,7 @@ in
 
       path = [
         cfg.package
+        pkgs.nodejs_22 # Required for MCP server stdio connection
       ]
       ++ (with pkgs; [
         git
