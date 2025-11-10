@@ -482,6 +482,9 @@
 
       gnome-console
 
+      yt-dlg
+      tts
+
       zed-editor
       rust-analyzer
       rustup
@@ -535,6 +538,8 @@
     cudatoolkit
     cmake
     gcc
+    ffmpeg
+    yt-dlp
     docker-compose
     docker-buildx
     docker
