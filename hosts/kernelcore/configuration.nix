@@ -484,6 +484,7 @@
 
       yt-dlg
       tts
+      spotify
 
       zed-editor
       rust-analyzer
