@@ -53,11 +53,15 @@ in
       home = cfg.homeDirectory;
       createHome = true;
       group = cfg.userName;
-      extraGroups = cfg.allowedGroups;
+      extraGroups = cfg.allowedGroups ++ [ "mcp-shared" ]; # Add shared knowledge DB access
       shell = pkgs.bash;
       packages = with pkgs; [
-        # Note: gemini-cli is installed system-wide via kernelcore.packages.js.packages.gemini-cli
-        # Enable it in configuration.nix with: kernelcore.packages.js.packages.gemini-cli.enable = true;
+        nodejs_22 # Required for MCP server stdio connection
+        git
+        nix
+        coreutils
+        findutils
+        # Note: gemini-cli is installed system-wide via kernelcore.packages.gemini-cli
       ];
     };
 
@@ -90,6 +94,7 @@ in
     systemd.tmpfiles.rules = [
       "d ${cfg.homeDirectory} 0750 ${cfg.userName} ${cfg.userName} -"
       "d ${cfg.homeDirectory}/.ssh 0700 ${cfg.userName} ${cfg.userName} -"
+      "d ${cfg.homeDirectory}/dev 0750 ${cfg.userName} ${cfg.userName} -"
       "d ${cfg.homeDirectory}/workspace 0750 ${cfg.userName} ${cfg.userName} -"
     ];
   };
