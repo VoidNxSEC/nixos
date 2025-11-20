@@ -484,8 +484,10 @@
       tmux
       starship
       terraform
-
+      ghidra
       awscli2
+
+      invidious
 
       google-cloud-sdk
       minikube
@@ -517,6 +519,7 @@
       yt-dlg
       tts
       spotify
+      spotifyd
 
       zed-editor
       rust-analyzer
