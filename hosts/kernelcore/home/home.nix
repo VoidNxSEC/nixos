@@ -528,7 +528,7 @@
     EDITOR = "nvim";
     VISUAL = "nvim";
     BROWSER = "firefox";
-    TERMINAL = "gnome-terminal";
+    TERMINAL = "alacritty";
 
     # Python/Pipx
     #PIPX_HOME = "${config.home.homeDirectory}/.local/share/pipx";
