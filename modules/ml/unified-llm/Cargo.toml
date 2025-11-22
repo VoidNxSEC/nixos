@@ -4,6 +4,7 @@ members = [
     "crates/security",
     "crates/providers",
     "crates/cli",
+    "crates/api-server",
 ]
 resolver = "2"
 
