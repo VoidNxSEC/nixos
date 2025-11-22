@@ -10,7 +10,7 @@
 
 let
   # CONFIGURE THESE VALUES FOR YOUR SETUP
-  desktopIP = "192.168.15.6"; # Desktop server IP (UPDATED)
+  desktopIP = "192.168.15.7"; # Desktop server IP (ATUALIZADO)
   laptopIP = "192.168.15.8"; # Laptop IP (CONFIRMED)
 
   # SSH key path for builder authentication
@@ -225,7 +225,7 @@ in
         echo
         echo "📋 To complete setup:"
         echo "1. Copy the SSH private key from desktop:"
-        echo "   scp voidnx@${desktopIP}:~/.ssh/id_rsa ${builderKeyPath}"
+        echo "   scp cypher@${desktopIP}:~/.ssh/id_rsa ${builderKeyPath}"
         echo "2. Set correct permissions:"
         echo "   sudo chmod 600 ${builderKeyPath}"
         echo "3. Add this laptop's public key to desktop:"
