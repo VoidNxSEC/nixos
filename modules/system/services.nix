@@ -17,7 +17,7 @@
     };
     script = ''
       ${pkgs.docker}/bin/docker pull nvcr.io/nvidia/pytorch:25.09-py3
-      ${pkgs.docker}/bin/docker pull ghcr.io/huggingface/text-generation-inference:latest
+      #${pkgs.docker}/bin/docker pull ghcr.io/huggingface/text-generation-inference:latest
     '';
   };
 
