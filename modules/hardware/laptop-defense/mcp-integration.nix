@@ -37,7 +37,10 @@ with lib;
               };
             };
             command = "${pkgs.bash}/bin/bash";
-            args = [ "-c" "nix run /etc/nixos/modules/hardware/laptop-defense#thermal-forensics" ];
+            args = [
+              "-c"
+              "nix run /etc/nixos/modules/hardware/laptop-defense#thermal-forensics"
+            ];
           }
 
           {
@@ -45,10 +48,13 @@ with lib;
             description = "Real-time thermal monitoring war room";
             inputSchema = {
               type = "object";
-              properties = {};
+              properties = { };
             };
             command = "${pkgs.bash}/bin/bash";
-            args = [ "-c" "nix run /etc/nixos/modules/hardware/laptop-defense#thermal-warroom" ];
+            args = [
+              "-c"
+              "nix run /etc/nixos/modules/hardware/laptop-defense#thermal-warroom"
+            ];
           }
 
           {
@@ -76,7 +82,7 @@ with lib;
                 exit 1
               fi
             ''}";
-            args = [];
+            args = [ ];
           }
 
           {
@@ -93,7 +99,10 @@ with lib;
               required = [ "evidence_dir" ];
             };
             command = "${pkgs.bash}/bin/bash";
-            args = [ "-c" "nix run /etc/nixos/modules/hardware/laptop-defense#verdict -- $1" ];
+            args = [
+              "-c"
+              "nix run /etc/nixos/modules/hardware/laptop-defense#verdict -- $1"
+            ];
           }
 
           {
@@ -110,7 +119,10 @@ with lib;
               };
             };
             command = "${pkgs.bash}/bin/bash";
-            args = [ "-c" "nix run /etc/nixos/modules/hardware/laptop-defense#mcp-extract" ];
+            args = [
+              "-c"
+              "nix run /etc/nixos/modules/hardware/laptop-defense#mcp-extract"
+            ];
           }
 
           {
@@ -118,7 +130,7 @@ with lib;
             description = "Pre-rebuild safety check (thermal + resources)";
             inputSchema = {
               type = "object";
-              properties = {};
+              properties = { };
             };
             command = "${pkgs.writeShellScript "rebuild-safety-check" ''
               set -e
@@ -151,7 +163,7 @@ with lib;
               # Exit code based on verdict
               [ $TEMP -le 75 ] && [ $MEM_AVAIL -ge 2000 ] && [ $LOAD -le 10 ]
             ''}";
-            args = [];
+            args = [ ];
           }
         ];
       };

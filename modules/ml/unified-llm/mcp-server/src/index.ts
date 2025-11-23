@@ -25,6 +25,27 @@ import { PackageDownloadTool, packageDownloadSchema } from "./tools/package-down
 import { PackageConfigureTool, packageConfigureSchema } from "./tools/package-configure.js";
 import { detectProjectRoot } from "./utils/project-detection.js";
 import { detectNixOSHost } from "./utils/host-detection.js";
+import {
+  emergencyTools,
+  handleEmergencyStatus,
+  handleEmergencyAbort,
+  handleEmergencyCooldown,
+  handleEmergencyNuke,
+  handleEmergencySwap,
+  handleSystemHealthCheck,
+  handleSafeRebuildCheck,
+} from "./tools/emergency/index.js";
+import {
+  laptopDefenseTools,
+  handleThermalCheck,
+  handleRebuildSafetyCheck,
+  handleThermalForensics,
+  handleThermalWarroom,
+  handleLaptopVerdict,
+  handleFullInvestigation,
+  handleForceCooldown,
+  handleResetPerformance,
+} from "./tools/laptop-defense/index.js";
 
 const execAsync = promisify(exec);
 
@@ -431,6 +452,10 @@ class SecureLLMBridgeMCPServer {
         },
         // Add knowledge tools if enabled
         ...(ENABLE_KNOWLEDGE && this.db ? knowledgeTools : []),
+        // Add Emergency Framework tools
+        ...emergencyTools,
+        // Add Laptop Defense Framework tools
+        ...laptopDefenseTools,
       ],
     }));
 
@@ -471,6 +496,41 @@ class SecureLLMBridgeMCPServer {
             return await this.handleListSessions(args);
           case "get_recent_knowledge":
             return await this.handleGetRecentKnowledge(args);
+
+          // Emergency Framework handlers
+          case "emergency_status":
+            return await this.handleEmergencyStatus();
+          case "emergency_abort":
+            return await this.handleEmergencyAbort(args);
+          case "emergency_cooldown":
+            return await this.handleEmergencyCooldown();
+          case "emergency_nuke":
+            return await this.handleEmergencyNuke(args);
+          case "emergency_swap":
+            return await this.handleEmergencySwap();
+          case "system_health_check":
+            return await this.handleSystemHealthCheck(args);
+          case "safe_rebuild_check":
+            return await this.handleSafeRebuildCheck();
+
+          // Laptop Defense handlers
+          case "thermal_check":
+            return await this.handleThermalCheck(args);
+          case "rebuild_safety_check":
+            return await this.handleRebuildSafetyCheck();
+          case "thermal_forensics":
+            return await this.handleThermalForensics(args);
+          case "thermal_warroom":
+            return await this.handleThermalWarroom(args);
+          case "laptop_verdict":
+            return await this.handleLaptopVerdict(args);
+          case "full_investigation":
+            return await this.handleFullInvestigation();
+          case "force_cooldown":
+            return await this.handleForceCooldown();
+          case "reset_performance":
+            return await this.handleResetPerformance();
+
           default:
             throw new McpError(
               ErrorCode.MethodNotFound,
@@ -1343,6 +1403,265 @@ Generate server and client TLS certificates for secure communication.
         },
       ],
     };
+  }
+
+  // ===== EMERGENCY FRAMEWORK HANDLERS =====
+
+  private async handleEmergencyStatus() {
+    try {
+      const result = await handleEmergencyStatus();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleEmergencyAbort(args: any) {
+    try {
+      const result = await handleEmergencyAbort(args.force || false);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleEmergencyCooldown() {
+    try {
+      const result = await handleEmergencyCooldown();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleEmergencyNuke(args: any) {
+    try {
+      const result = await handleEmergencyNuke(args.confirm || false);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleEmergencySwap() {
+    try {
+      const result = await handleEmergencySwap();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleSystemHealthCheck(args: any) {
+    try {
+      const result = await handleSystemHealthCheck(args.detailed || false);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleSafeRebuildCheck() {
+    try {
+      const result = await handleSafeRebuildCheck();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  // ===== LAPTOP DEFENSE HANDLERS =====
+
+  private async handleThermalCheck(args: any) {
+    try {
+      const result = await handleThermalCheck(args.max_temp || 75);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleRebuildSafetyCheck() {
+    try {
+      const result = await handleRebuildSafetyCheck();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleThermalForensics(args: any) {
+    try {
+      const result = await handleThermalForensics(args.duration || 180, args.skip_rebuild || false);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleThermalWarroom(args: any) {
+    try {
+      const result = await handleThermalWarroom(args.duration || 60);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleLaptopVerdict(args: any) {
+    try {
+      const result = await handleLaptopVerdict(args.evidence_dir);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleFullInvestigation() {
+    try {
+      const result = await handleFullInvestigation();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleForceCooldown() {
+    try {
+      const result = await handleForceCooldown();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleResetPerformance() {
+    try {
+      const result = await handleResetPerformance();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
   }
 
   async run() {
