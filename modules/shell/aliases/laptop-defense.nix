@@ -99,7 +99,7 @@
       echo "=== DISK ===" && \
       df -h / /nix
     '';
-    "sh" = "system-health";  # Note: conflicts with shell, use full name
+    "sh" = "system-health"; # Note: conflicts with shell, use full name
 
     # Check if safe to rebuild
     "can-rebuild" = ''
