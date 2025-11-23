@@ -122,7 +122,12 @@
       "Bash(grep:*)",
       "Bash(nix-instantiate:*)",
       "Bash(node modules/ml/unified-llm/mcp-server/build/index.js:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(pgrep:*)",
+      "Bash(git -C /etc/nixos tag -l -n1 '*framework*' '*mcp-helper*')",
+      "Bash(git -C /etc/nixos tag -l '*v1.0.0')",
+      "Bash(xargs -I {} sh -c 'echo \"\"\"\"=== {} ===\"\"\"\" && git -C /etc/nixos show {} --no-patch --format=\"\"\"\"%H - %s%n%b\"\"\"\" && echo \"\"\"\"\"\"\"\"')",
+      "Bash(git -C /etc/nixos log --oneline --graph --decorate --tags='*v1.0.0' -5)"
     ],
     "deny": [],
     "ask": []
