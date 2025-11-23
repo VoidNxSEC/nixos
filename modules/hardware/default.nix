@@ -10,7 +10,9 @@
 {
   imports = [
     ./nvidia.nix
-    # ./intel.nix  # Commented out in flake.nix
+    ./intel.nix
+    ./lenovo-throttled.nix
+    ./thermal-profiles.nix
     ./trezor.nix
     ./wifi-optimization.nix
     ./bluetooth.nix
