@@ -116,7 +116,7 @@
     # Safe nix commands (limited resources)
     "safe-check" = "nix flake check --no-build";
     "safe-build" = "nix build --max-jobs 2 --cores 4";
-    "safe-rebuild" = "sudo nixos-rebuild switch --max-jobs 2 --cores 4 --fast";
+    # Note: safe-rebuild defined in laptop-defense.nix with thermal monitoring
 
     # ========================================
     # EMERGENCY COMBOS (Combinações)
