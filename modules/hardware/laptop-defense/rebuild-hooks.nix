@@ -64,38 +64,40 @@ with lib;
     # PRE-REBUILD HOOK
     # ========================================
 
-    system.activationScripts.pre-rebuild-thermal-check = mkIf config.hardware.rebuildHooks.thermalCheck.enable {
-      text = ''
-        echo "🌡️  PRE-REBUILD: Thermal safety check..."
+    system.activationScripts.pre-rebuild-thermal-check =
+      mkIf config.hardware.rebuildHooks.thermalCheck.enable
+        {
+          text = ''
+            echo "🌡️  PRE-REBUILD: Thermal safety check..."
 
-        # Get current temperature
-        MAX_TEMP=$(${pkgs.lm_sensors}/bin/sensors 2>/dev/null | grep -oP '\+\K[0-9]+' | sort -rn | head -1 || echo "0")
+            # Get current temperature
+            MAX_TEMP=$(${pkgs.lm_sensors}/bin/sensors 2>/dev/null | grep -oP '\+\K[0-9]+' | sort -rn | head -1 || echo "0")
 
-        echo "   Current temperature: ''${MAX_TEMP}°C"
-        echo "   Maximum allowed: ${toString config.hardware.rebuildHooks.thermalCheck.maxStartTemp}°C"
+            echo "   Current temperature: ''${MAX_TEMP}°C"
+            echo "   Maximum allowed: ${toString config.hardware.rebuildHooks.thermalCheck.maxStartTemp}°C"
 
-        if [ "''${MAX_TEMP:-0}" -gt ${toString config.hardware.rebuildHooks.thermalCheck.maxStartTemp} ]; then
-          echo ""
-          echo "❌ THERMAL SAFETY: Temperature too high (''${MAX_TEMP}°C)"
-          echo ""
-          echo "ABORT REASON: System temperature exceeds safe threshold"
-          echo "RECOMMENDED ACTION:"
-          echo "  1. Wait for system to cool down"
-          echo "  2. Check fan operation (run: sensors)"
-          echo "  3. Close unnecessary applications"
-          echo "  4. Try again in 10 minutes"
-          echo ""
-          echo "To bypass (NOT RECOMMENDED):"
-          echo "  hardware.rebuildHooks.thermalCheck.maxStartTemp = 90;"
-          echo ""
+            if [ "''${MAX_TEMP:-0}" -gt ${toString config.hardware.rebuildHooks.thermalCheck.maxStartTemp} ]; then
+              echo ""
+              echo "❌ THERMAL SAFETY: Temperature too high (''${MAX_TEMP}°C)"
+              echo ""
+              echo "ABORT REASON: System temperature exceeds safe threshold"
+              echo "RECOMMENDED ACTION:"
+              echo "  1. Wait for system to cool down"
+              echo "  2. Check fan operation (run: sensors)"
+              echo "  3. Close unnecessary applications"
+              echo "  4. Try again in 10 minutes"
+              echo ""
+              echo "To bypass (NOT RECOMMENDED):"
+              echo "  hardware.rebuildHooks.thermalCheck.maxStartTemp = 90;"
+              echo ""
 
-          exit 1
-        fi
+              exit 1
+            fi
 
-        echo "   ✅ Temperature OK - proceeding with rebuild"
-        echo ""
-      '';
-    };
+            echo "   ✅ Temperature OK - proceeding with rebuild"
+            echo ""
+          '';
+        };
 
     # ========================================
     # REBUILD MONITOR SERVICE
@@ -255,46 +257,48 @@ with lib;
     # EVIDENCE COLLECTOR
     # ========================================
 
-    environment.etc."laptop-defense/collect-evidence.sh" = mkIf config.hardware.rebuildHooks.evidenceCollection.enable {
-      mode = "0755";
-      text = ''
-        #!/usr/bin/env bash
+    environment.etc."laptop-defense/collect-evidence.sh" =
+      mkIf config.hardware.rebuildHooks.evidenceCollection.enable
+        {
+          mode = "0755";
+          text = ''
+                    #!/usr/bin/env bash
 
-        REASON="''${1:-unknown}"
-        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-        EVIDENCE_DIR="${config.hardware.rebuildHooks.evidenceCollection.storePath}/$REASON-$TIMESTAMP"
+                    REASON="''${1:-unknown}"
+                    TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+                    EVIDENCE_DIR="${config.hardware.rebuildHooks.evidenceCollection.storePath}/$REASON-$TIMESTAMP"
 
-        mkdir -p "$EVIDENCE_DIR"/{logs,thermal,system}
+                    mkdir -p "$EVIDENCE_DIR"/{logs,thermal,system}
 
-        echo "📦 Collecting evidence: $REASON"
+                    echo "📦 Collecting evidence: $REASON"
 
-        # Logs
-        cp /var/log/rebuild-thermal.log "$EVIDENCE_DIR/logs/" 2>/dev/null || true
-        ${pkgs.systemd}/bin/journalctl -u nixos-rebuild --since "10 minutes ago" > "$EVIDENCE_DIR/logs/nixos-rebuild.log" 2>/dev/null || true
+                    # Logs
+                    cp /var/log/rebuild-thermal.log "$EVIDENCE_DIR/logs/" 2>/dev/null || true
+                    ${pkgs.systemd}/bin/journalctl -u nixos-rebuild --since "10 minutes ago" > "$EVIDENCE_DIR/logs/nixos-rebuild.log" 2>/dev/null || true
 
-        # Thermal data
-        ${pkgs.lm_sensors}/bin/sensors > "$EVIDENCE_DIR/thermal/sensors.txt" 2>/dev/null || true
-        cat /sys/class/thermal/thermal_zone*/temp > "$EVIDENCE_DIR/thermal/zones.txt" 2>/dev/null || true
+                    # Thermal data
+                    ${pkgs.lm_sensors}/bin/sensors > "$EVIDENCE_DIR/thermal/sensors.txt" 2>/dev/null || true
+                    cat /sys/class/thermal/thermal_zone*/temp > "$EVIDENCE_DIR/thermal/zones.txt" 2>/dev/null || true
 
-        # System state
-        uptime > "$EVIDENCE_DIR/system/uptime.txt"
-        free -h > "$EVIDENCE_DIR/system/memory.txt"
-        ps aux > "$EVIDENCE_DIR/system/processes.txt"
+                    # System state
+                    uptime > "$EVIDENCE_DIR/system/uptime.txt"
+                    free -h > "$EVIDENCE_DIR/system/memory.txt"
+                    ps aux > "$EVIDENCE_DIR/system/processes.txt"
 
-        # Metadata
-        cat > "$EVIDENCE_DIR/METADATA.txt" <<EOF
-Reason: $REASON
-Timestamp: $TIMESTAMP
-Hostname: $(hostname)
-Kernel: $(uname -r)
-EOF
+                    # Metadata
+                    cat > "$EVIDENCE_DIR/METADATA.txt" <<EOF
+            Reason: $REASON
+            Timestamp: $TIMESTAMP
+            Hostname: $(hostname)
+            Kernel: $(uname -r)
+            EOF
 
-        # Archive
-        tar czf "$EVIDENCE_DIR.tar.gz" -C "${config.hardware.rebuildHooks.evidenceCollection.storePath}" "$(basename $EVIDENCE_DIR)"
+                    # Archive
+                    tar czf "$EVIDENCE_DIR.tar.gz" -C "${config.hardware.rebuildHooks.evidenceCollection.storePath}" "$(basename $EVIDENCE_DIR)"
 
-        echo "✅ Evidence collected: $EVIDENCE_DIR.tar.gz"
-      '';
-    };
+                    echo "✅ Evidence collected: $EVIDENCE_DIR.tar.gz"
+          '';
+        };
 
     # ========================================
     # LOG ROTATION
