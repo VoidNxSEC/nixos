@@ -24,8 +24,9 @@ with lib;
     trusted-users = [ "@wheel" ];
     allowed-users = [ "@users" ];
     build-users-group = "nixbld";
-    max-jobs = mkDefault "auto";
-    cores = mkDefault 0;
+    # Optimized for 8-core/12-thread laptop to prevent CPU thrashing
+    max-jobs = mkDefault 4; # Parallel build jobs (was "auto" = 12)
+    cores = mkDefault 3; # Cores per job (was 0 = use all 12)
     require-sigs = true;
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
