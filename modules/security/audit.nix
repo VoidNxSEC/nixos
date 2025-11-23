@@ -69,20 +69,8 @@ with lib;
       '';
     };
 
-    # Rsyslog for traditional syslog
-    services.rsyslogd = {
-      enable = true;
-      extraConfig = ''
-        # Log authentication messages
-        auth,authpriv.* /var/log/auth.log
-
-        # Log kernel messages
-        kern.* /var/log/kern.log
-
-        # Log anything of level info or higher
-        *.info;mail.none;authpriv.none;cron.none /var/log/messages
-      '';
-    };
+    # Rsyslog configuration moved to sec/hardening.nix to avoid duplication
+    # (was causing 3x log entries in /var/log/messages)
 
     # Credential storage setup
     systemd.services."setup-system-credentials" = {

@@ -1,0 +1,3 @@
+timestamp,total_fds,nix_daemon_fds,nix_build_fds
+1763845007,7136,3729,3729
+1763845012,7232,3753,3753
