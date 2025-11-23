@@ -49,13 +49,13 @@ with lib;
 
     kernelcore.security.nix.connectTimeout = mkOption {
       type = types.int;
-      default = 5;
+      default = 30;
       description = "Seconds to wait before falling back to the next substituter.";
     };
 
     kernelcore.security.nix.stalledDownloadTimeout = mkOption {
       type = types.int;
-      default = 30;
+      default = 300;
       description = "Seconds before a stalled download is abandoned.";
     };
   };
@@ -104,8 +104,9 @@ with lib;
         trusted-users = [ "@wheel" ];
         allowed-users = [ "@users" ];
         build-users-group = "nixbld";
-        max-jobs = mkDefault "auto";
-        cores = mkDefault 0;
+        # Optimized for 8-core/12-thread laptop to prevent CPU thrashing
+        max-jobs = mkDefault 4; # Parallel build jobs (was "auto" = 12)
+        cores = mkDefault 3; # Cores per job (was 0 = use all 12)
 
         # Binary cache security
         require-sigs = true;
