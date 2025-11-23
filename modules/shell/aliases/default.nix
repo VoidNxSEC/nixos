@@ -33,5 +33,8 @@
     ./security
     ./desktop
     ./amazon
+    ./mcp.nix
+    ./emergency.nix
+    ./laptop-defense.nix
   ];
 }
