@@ -28,7 +28,7 @@ in
         };
 
         # Hash calculated from first build
-        npmDepsHash = "sha256-q8LMBpKL5GEgObqUl8U2wtfdraYWorwCFZylrekwGVM=";
+        npmDepsHash = "sha256-7b26DHFWHSvIlag1fjICz68Zwav59RnM5q6MfkdZarc=";
 
         nodeLinker = "pnpm";
 
@@ -75,7 +75,7 @@ in
           description = "CLI tool for Google's Gemini Generative AI API";
           homepage = "https://github.com/google-gemini/gemini-cli";
           license = licenses.asl20;
-          maintainers = [ ];
+          maintainers = [ marcosfpina ];
           platforms = platforms.all;
         };
       })

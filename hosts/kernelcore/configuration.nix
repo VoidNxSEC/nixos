@@ -368,7 +368,7 @@
     };
 
     gitea = {
-      enable = true;
+      enable = false; # Disabled - causing systemd loops during rebuild
       settings = {
         server = {
           DOMAIN = "git.voidnxlabs";
