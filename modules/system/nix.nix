@@ -35,8 +35,10 @@ with lib;
         })
 
         {
-          max-jobs = mkDefault "auto";
-          cores = mkDefault 0;
+          # Optimized for 8-core/12-thread laptop to prevent CPU thrashing
+          # max-jobs × cores should not exceed total CPU threads
+          max-jobs = mkDefault 4; # Parallel build jobs (was "auto" = 12)
+          cores = mkDefault 3; # Cores per job (was 0 = use all 12)
 
           trusted-users = [
             "root"
@@ -47,6 +49,10 @@ with lib;
           keep-outputs = true;
 
           auto-optimise-store = true;
+
+          # Network timeout settings - increased for slow connections
+          connect-timeout = mkDefault 30; # 30 seconds for connection (up from 5)
+          stalled-download-timeout = mkDefault 300; # 5 minutes for stalled downloads (up from 30)
         }
       ];
 

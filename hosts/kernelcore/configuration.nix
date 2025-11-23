@@ -9,7 +9,7 @@
 
   # Shell configuration - Training session logger
   shell.trainingLogger = {
-    enable = true;
+    enable = false;
     userLogDirectory = "\${HOME}/.training-logs";
     maxLogSize = "1G";
   };
@@ -24,15 +24,17 @@
 
     security = {
       hardening.enable = true;
-      sandbox-fallback = true;
-      audit.enable = true;
+      sandbox-fallback = false;
+      audit.enable = false;
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
       # File integrity monitoring - detects unauthorized file modifications
       aide.enable = false;
 
       # Antivirus scanning for malware detection
-      clamav.enable = true;
+      # DISABLED: ClamAV consumes 2.7GB RAM + 1.2GB swap (causes system slowdown)
+      # See REFATORACAO-ARQUITETURA-2025.md for optimized configuration
+      clamav.enable = false;
 
       # Enhanced SSH security hardening
       ssh.enable = true;
@@ -123,11 +125,11 @@
       enable = true;
     };
 
-    services = {
-      users."codex-agent" = lib.mkIf (config.kernelcore.packages.tar.resolvedPackages ? codex) {
-        package = config.kernelcore.packages.tar.resolvedPackages.codex;
-      };
-    };
+    #services = {
+    #users."codex-agent" = lib.mkIf (config.kernelcore.packages.tar.resolvedPackages ? codex) {
+    #package = config.kernelcore.packages.tar.resolvedPackages.codex;
+    #};
+    #};
 
     hardware.wifi-optimization.enable = true;
 
@@ -150,14 +152,14 @@
 
       # MEDIUM PRIORITY: CI/CD and code quality tools
       cicd = {
-        enable = true;
+        enable = false;
         platforms = {
-          github = true; # GitHub CLI and tools
+          github = false; # GitHub CLI and tools
           gitlab = false; # Use GitHub Actions instead of local GitLab runners
           gitea = false; # Offload automation to GitHub hosted runners
         };
         pre-commit = {
-          enable = true;
+          enable = false;
           formatCode = true; # Auto-format code before commits
           runTests = false; # Set to true when you have automated tests
           flakeCheckOnPush = false; # Offload validation to GitHub-hosted Actions
@@ -166,17 +168,17 @@
     };
 
     containers = {
-      docker.enable = true;
+      docker.enable = false;
       podman = {
         enable = false; # Set to true to use Podman instead of/alongside Docker
         dockerCompat = false; # Enable Docker CLI compatibility (creates docker -> podman alias)
         enableNvidia = true; # NVIDIA GPU support for containers
       };
-      nixos.enable = true;
+      nixos.enable = false;
     };
 
     virtualization = {
-      enable = true;
+      enable = false;
       virt-manager = true;
       libvirtdGroup = [ "kernelcore" ];
       virtiofs.enable = true;
@@ -214,7 +216,7 @@
     services.github-runner = {
       # Self-hosted GitHub Actions runner
       # Requires secrets/github.yaml to be configured with registration token
-      enable = true; # ✅ ENABLED - Runner will start on rebuild
+      enable = false; # ❌ DISABLED - CI/CD disabled as requested
       useSops = true; # SOPS for secure token management
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos"; # Repository URL
@@ -226,12 +228,12 @@
     };
 
     services.gpu-orchestration = {
-      enable = true;
+      enable = false;
       defaultMode = "docker"; # Docker containers get GPU priority by default
     };
 
     services.users.gemini-agent = {
-      enable = true;
+      enable = false;
     };
 
     services.gitlab-runner = {
@@ -358,7 +360,7 @@
       acceleration = "cuda";
       # GPU memory management: unload models after 5 minutes of inactivity
       environmentVariables = {
-        OLLAMA_KEEP_ALIVE = "5m"; # Unload models after 5min idle to free VRAM
+        #OLLAMA_KEEP_ALIVE = "5m"; # Unload models after 5min idle to free VRAM
       };
       # NOTE: Systemd ollama service uses port 11434
       # Docker ollama in ~/Dev/Docker.Base/sql/docker-compose.yml uses host port 11435
@@ -513,6 +515,7 @@
       glab
       gh
       codeberg-cli
+      brev-cli
 
       gnome-console
 
@@ -857,8 +860,8 @@
     '')
   ];
 
-  kernelcore.ml.offload.enable = true;
-  kernelcore.ml.offload.api.enable = true;
+  #kernelcore.ml.offload.enable = false;
+  #kernelcore.ml.offload.api.enable = false;
 
   programs.vscodium-secure = {
     enable = true;
