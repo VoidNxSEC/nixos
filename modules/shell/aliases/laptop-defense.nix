@@ -113,30 +113,79 @@
     "cr" = "can-rebuild";
 
     # ========================================
+    # THERMAL PROFILES (i5-13420H + RTX 3050)
+    # ========================================
+
+    # Profile management
+    "profile-status" = "thermal-profile status";
+    "ps" = "thermal-profile status";
+
+    "profile-silent" = "thermal-profile silent && sudo systemctl restart thermal-profile-manager";
+    "psi" = "thermal-profile silent && sudo systemctl restart thermal-profile-manager";
+
+    "profile-balanced" = "thermal-profile balanced && sudo systemctl restart thermal-profile-manager";
+    "pb" = "thermal-profile balanced && sudo systemctl restart thermal-profile-manager";
+
+    "profile-performance" =
+      "thermal-profile performance && sudo systemctl restart thermal-profile-manager";
+    "pp" = "thermal-profile performance && sudo systemctl restart thermal-profile-manager";
+
+    "profile-stats" = "thermal-profile stats";
+    "pst" = "thermal-profile stats";
+
+    "profile-watch" = "thermal-profile watch";
+    "pw" = "thermal-profile watch";
+
+    # ========================================
     # EMERGENCY
     # ========================================
 
-    # Force cooldown
-    "force-cooldown" = ''
+    # Force cooldown (now uses thermal profile)
+    "force-cooldown" =
+      "thermal-profile silent && sudo systemctl restart thermal-profile-manager && echo '✅ Emergency cooldown activated (Silent profile)'";
+    "fc" = "force-cooldown";
+
+    # Reset to performance (now uses thermal profile)
+    "reset-performance" =
+      "thermal-profile performance && sudo systemctl restart thermal-profile-manager && echo '✅ Performance restored (Performance profile)'";
+    "rp" = "reset-performance";
+
+    # Legacy manual controls (kept for compatibility)
+    "force-cooldown-manual" = ''
       echo "Forcing CPU to powersave..." && \
       for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do \
         echo powersave | sudo tee $cpu > /dev/null 2>&1; \
       done && \
       echo 1 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo > /dev/null 2>&1 && \
-      echo "✅ Cooldown activated"
+      echo "✅ Manual cooldown activated"
     '';
-    "fc" = "force-cooldown";
 
-    # Reset to performance
-    "reset-performance" = ''
+    "reset-performance-manual" = ''
       echo "Resetting to performance..." && \
       for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do \
         echo performance | sudo tee $cpu > /dev/null 2>&1; \
       done && \
       echo 0 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo > /dev/null 2>&1 && \
-      echo "✅ Performance restored"
+      echo "✅ Manual performance restored"
     '';
-    "rp" = "reset-performance";
+
+    # ========================================
+    # GPU MONITORING (RTX 3050)
+    # ========================================
+
+    # NVIDIA GPU status
+    "gpu-status" =
+      "nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,power.draw,clocks.gr,clocks.mem --format=csv,noheader";
+    "gs" =
+      "nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,power.draw,clocks.gr,clocks.mem --format=csv,noheader";
+
+    # GPU watch
+    "gpu-watch" = "watch -n 2 nvidia-smi";
+    "gw" = "watch -n 2 nvidia-smi";
+
+    # GPU power limit info
+    "gpu-power" = "nvidia-smi -q -d POWER | grep -E 'Power Limit|Power Draw'";
+    "gp" = "nvidia-smi -q -d POWER | grep -E 'Power Limit|Power Draw'";
 
     # ========================================
     # DOCUMENTATION
