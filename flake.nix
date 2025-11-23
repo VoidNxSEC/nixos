@@ -97,7 +97,7 @@
             ./modules/ml/llama.nix
             ./modules/ml/models-storage.nix
             ./modules/ml/ollama-gpu-manager.nix
-            ./modules/ml/offload # ML Offload Manager (unified API + intelligence)
+            # ./modules/ml/offload # DISABLED: Rust compilation consumes 7GB+ RAM causing OOM - Re-enable after memory optimizations
             ./modules/ml/mcp-config # MCP (Model Context Protocol) centralized config
 
             # System
