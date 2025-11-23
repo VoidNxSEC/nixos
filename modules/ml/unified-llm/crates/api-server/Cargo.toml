@@ -1,0 +1,76 @@
+[package]
+name = "securellm-api-server"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+# Core workspace dependencies
+securellm-core = { path = "../core" }
+securellm-security = { path = "../security" }
+securellm-providers = { path = "../providers" }
+
+# Async runtime
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+# HTTP server & middleware
+axum = { workspace = true, features = ["macros", "multipart"] }
+tower = { workspace = true, features = ["timeout", "limit", "buffer"] }
+tower-http = { version = "0.5", features = ["trace", "cors", "compression-gzip", "timeout"] }
+hyper = { workspace = true, features = ["server", "http1", "http2"] }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+# Logging & Tracing
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true, features = ["env-filter", "json", "fmt"] }
+tracing-appender = { workspace = true }
+
+# OpenTelemetry for distributed tracing
+opentelemetry = { version = "0.24", features = ["trace", "metrics"] }
+opentelemetry-otlp = { version = "0.17", features = ["trace", "metrics"] }
+opentelemetry_sdk = { version = "0.24", features = ["trace", "metrics", "rt-tokio"] }
+opentelemetry-semantic-conventions = "0.16"
+tracing-opentelemetry = "0.25"
+
+# Prometheus metrics
+prometheus = "0.13"
+prometheus-client = "0.22"
+
+# Database
+sqlx = { workspace = true, features = ["runtime-tokio-rustls", "sqlite", "migrate", "macros"] }
+
+# Redis for caching & rate limiting
+redis = { version = "0.26", features = ["tokio-comp", "connection-manager", "streams"] }
+deadpool-redis = "0.16"
+
+# Rate limiting
+governor = { workspace = true }
+
+# Configuration
+config = { workspace = true }
+directories = { workspace = true }
+
+# Utilities
+uuid = { workspace = true, features = ["v4", "serde"] }
+chrono = { workspace = true, features = ["serde"] }
+bytes = { workspace = true }
+futures = "0.3"
+futures-util = "0.3"
+dashmap = "6.0"
+parking_lot = "0.12"
+
+# HTTP client with connection pooling
+reqwest = { workspace = true, features = ["json", "stream"] }
+
+[dev-dependencies]
+tokio-test = "0.4"

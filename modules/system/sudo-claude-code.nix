@@ -73,6 +73,39 @@ in
             command = "${config.nix.package}/bin/nix-collect-garbage";
             options = [ "NOPASSWD" ];
           }
+          # File system operations (for log management, backups, etc.)
+          {
+            command = "${pkgs.coreutils}/bin/truncate";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.coreutils}/bin/mkdir";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.coreutils}/bin/cp";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.coreutils}/bin/mv";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.coreutils}/bin/rm";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.coreutils}/bin/chmod";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.coreutils}/bin/chown";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.coreutils}/bin/ls";
+            options = [ "NOPASSWD" ];
+          }
         ];
       }
     ];
