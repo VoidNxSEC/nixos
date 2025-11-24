@@ -75,7 +75,7 @@ with lib;
         python313Packages.seaborn
         python313Packages.plotly
         python313Packages.scikit-learn
-        python313Packages.torchWithCuda
+        # python313Packages.torchWithCuda  # DISABLED: Use container version for faster rebuilds
         python313Packages.litellm
         python313Packages.anthropic
         python313Packages.jupyter-core
@@ -89,7 +89,7 @@ with lib;
         python313Packages.langchain-mistralai
         python313Packages.pillow
         python313Packages.google-genai
-        python313Packages.crewai
+        #python313Packages.crewai
         python313Packages.transformers
         python313Packages.setuptools
         python313Packages.pandas
