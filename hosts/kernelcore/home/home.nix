@@ -88,7 +88,7 @@
       # ─────────────────────────────────────────────────────
       uv
       python313Packages.python
-      python313Packages.torchWithCuda
+      # python313Packages.torchWithCuda  # DISABLED: Use container version instead (faster rebuilds)
 
       # ─────────────────────────────────────────────────────
       # Build Tools
