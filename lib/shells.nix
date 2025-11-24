@@ -258,7 +258,7 @@ in
         kubectl
         helm
         kustomize
-        awscli2
+        # awscli2  # TEMP DISABLED: nixpkgs hash mismatch (prompt-toolkit) - re-enable after upstream fix
         sops
         age
         gnupg

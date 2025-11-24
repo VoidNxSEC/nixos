@@ -58,7 +58,7 @@ in
     name = "dev";
     extraPackages = with pkgs; [
       kubectl
-      awscli2
+      # awscli2  # TEMP DISABLED: nixpkgs hash mismatch (prompt-toolkit) - re-enable after upstream fix
       docker-compose
     ];
   };
@@ -69,7 +69,7 @@ in
     tfVersion = pkgs.terraform; # versão específica se quiser
     secrets = ./secrets/prod.yaml;
     extraPackages = with pkgs; [
-      awscli2
+      # awscli2  # TEMP DISABLED: nixpkgs hash mismatch (prompt-toolkit) - re-enable after upstream fix
       kubectl
     ];
   };
@@ -79,7 +79,7 @@ in
     name = "staging";
     secrets = ./secrets/staging.yaml;
     extraPackages = with pkgs; [
-      awscli2
+      # awscli2  # TEMP DISABLED: nixpkgs hash mismatch (prompt-toolkit) - re-enable after upstream fix
       kubectl
     ];
   };
