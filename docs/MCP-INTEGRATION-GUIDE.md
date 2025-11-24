@@ -1,133 +1,120 @@
-# MCP Server Integration Guide
+# Guia de Integração do Servidor MCP
 
-**Last Updated**: 2025-11-08
-**Version**: 2.0.0
-**Status**: Production Ready
+Este guia mostra como integrar o servidor MCP SecureLLM Bridge ao seu sistema NixOS.
 
----
+## 📦 Instalação Rápida
 
-## Overview
+### Opção 1: Usando o Módulo de Serviço (Recomendado)
 
-This guide explains how to integrate the SecureLLM Bridge MCP server with various AI coding assistants. The MCP server provides 12 tools for provider testing, security auditing, knowledge management, and package debugging.
+Adicione ao seu `hosts/kernelcore/configuration.nix` ou `default.nix`:
 
-### Supported Clients
-
-1. **Roo Code** (VSCodium/VS Code extension)
-2. **Claude Desktop** (Anthropic's desktop app)
-3. **Cline** (formerly Claude Dev)
-4. **Any MCP-compatible client**
-
----
-
-## Quick Start
-
-### 1. Generate Configuration
-
-The easiest way to set up MCP integration is using our automated script:
-
-```bash
-# For Roo Code only
-/etc/nixos/scripts/generate-mcp-config.sh roo
-
-# For Claude Desktop only
-/etc/nixos/scripts/generate-mcp-config.sh claude
-
-# For both clients
-/etc/nixos/scripts/generate-mcp-config.sh both
-```
-
-### 2. Load API Keys
-
-```bash
-# Load API keys into environment
-source /etc/load-api-keys.sh
-
-# Verify keys are loaded
-echo $ANTHROPIC_API_KEY | cut -c1-15
-```
-
-### 3. Reload Your IDE
-
-- **Roo Code**: Reload VSCodium window (Ctrl+Shift+P → "Developer: Reload Window")
-- **Claude Desktop**: Restart the application
-
-### 4. Verify MCP Tools
-
-Open your AI assistant and verify these tools are available:
-
-**Security Tools**:
-- `provider_test` - Test LLM provider connectivity
-- `security_audit` - Run security checks on configs
-- `rate_limit_check` - Check provider rate limits
-- `build_and_test` - Build and run tests
-- `provider_config_validate` - Validate provider configs
-- `crypto_key_generate` - Generate TLS certificates
-
-**Knowledge Tools**:
-- `create_session` - Create knowledge session
-- `save_knowledge` - Save knowledge entries
-- `search_knowledge` - Search knowledge base
-- `load_session` - Load previous session
-- `list_sessions` - List all sessions
-- `get_recent_knowledge` - Get recent entries
-
-**Package Tools**:
-- `package_diagnose` - Diagnose package build issues
-- `package_download` - Download packages with hash calculation
-- `package_configure` - Generate intelligent package configs
-
----
-
-## Manual Configuration
-
-### Roo Code Configuration
-
-**Location**: `~/.config/VSCodium/User/globalStorage/rooveterinaryinc.roo-code-nightly/settings/mcp_settings.json`
-
-```json
+```nix
 {
-  "mcpServers": {
-    "securellm-bridge": {
-      "command": "node",
-      "args": [
-        "/etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js"
-      ],
-      "env": {
-        "PROJECT_ROOT": "/etc/nixos",
-        "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
-        "ENABLE_KNOWLEDGE": "true",
-        "ANTHROPIC_API_KEY": "",
-        "OPENAI_API_KEY": "",
-        "DEEPSEEK_API_KEY": "",
-        "GEMINI_API_KEY": "",
-        "OPENROUTER_API_KEY": "",
-        "GROQ_API_KEY": "",
-        "MISTRAL_API_KEY": "",
-        "NVIDIA_API_KEY": "",
-        "REPLICATE_API_TOKEN": ""
-      }
-    }
-  }
+  imports = [
+    ../../modules/services/mcp-server.nix
+  ];
+
+  # Habilitar o servidor MCP
+  services.securellm-mcp = {
+    enable = true;
+    user = "kernelcore";  # Seu usuário
+    dataDir = "/var/lib/mcp-knowledge";
+    autoConfigureClaudeDesktop = true;
+  };
 }
 ```
 
-**Note**: Leave API key values empty in the JSON. They will be loaded from `/run/secrets/` at runtime via the shell environment.
+Depois rebuild:
+```bash
+sudo nixos-rebuild switch --flake .#kernelcore
+```
 
-### Claude Desktop Configuration
+### Opção 2: Instalação Manual (Apenas o Pacote)
 
-**Location**: `~/.config/Claude/claude_desktop_config.json`
+Adicione ao `environment.systemPackages`:
+
+```nix
+{
+  environment.systemPackages = [
+    (pkgs.callPackage ../../lib/packages.nix {}).securellm-mcp
+  ];
+}
+```
+
+## 🚀 Uso
+
+### Com o Módulo de Serviço
+
+Após habilitar o módulo, você terá acesso aos seguintes comandos:
+
+```bash
+# Ver status do servidor MCP
+mcp-server status
+# ou simplesmente
+mcp status
+
+# Testar conexão
+mcp-server test
+
+# Ver configuração atual
+mcp-server config
+
+# Informações do banco de conhecimento
+mcp-server db-info
+
+# Backup do banco
+mcp-server db-backup
+
+# Rebuild do pacote
+mcp-server rebuild
+
+# Help completo
+mcp-server help
+```
+
+### Comandos Disponíveis
+
+#### Status e Diagnóstico
+```bash
+mcp-server status     # Status completo do sistema
+mcp-server test       # Testa conectividade
+mcp-server config     # Mostra configuração atual
+```
+
+#### Gerenciamento do Banco de Dados
+```bash
+mcp-server db-info    # Info do knowledge database
+mcp-server db-backup  # Criar backup
+```
+
+#### Desenvolvimento
+```bash
+mcp-server rebuild    # Rebuild do pacote MCP
+mcp-server version    # Versão do servidor
+```
+
+## 🔧 Configuração do Claude Desktop
+
+### Automática (Com Módulo)
+
+Se você habilitou `autoConfigureClaudeDesktop = true`, o arquivo `.mcp.json` será criado automaticamente em `~/.config/Claude/.mcp.json`.
+
+### Manual
+
+Crie ou edite `~/.config/Claude/.mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "securellm-bridge": {
-      "command": "node",
+      "command": "nix",
       "args": [
-        "/etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js"
+        "run",
+        ".#securellm-mcp",
+        "--"
       ],
       "env": {
-        "PROJECT_ROOT": "/etc/nixos",
-        "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
+        "KNOWLEDGE_DB_PATH": "${HOME}/.local/share/securellm/knowledge.db",
         "ENABLE_KNOWLEDGE": "true"
       }
     }
@@ -135,338 +122,197 @@ Open your AI assistant and verify these tools are available:
 }
 ```
 
----
+Ou use o caminho direto do Nix store:
 
-## Environment Variables
-
-The MCP server uses these environment variables:
-
-### Required
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PROJECT_ROOT` | NixOS configuration root | `/etc/nixos` |
-| `KNOWLEDGE_DB_PATH` | SQLite database path | `/var/lib/mcp-knowledge/knowledge.db` |
-| `ENABLE_KNOWLEDGE` | Enable knowledge tools | `true` |
-
-### Provider API Keys (Optional)
-
-These are loaded from SOPS-decrypted secrets in `/run/secrets/`:
-
-| Variable | Provider | Loaded From |
-|----------|----------|-------------|
-| `ANTHROPIC_API_KEY` | Anthropic Claude | `/run/secrets/anthropic_api_key` |
-| `OPENAI_API_KEY` | OpenAI GPT | `/run/secrets/openai_api_key` |
-| `DEEPSEEK_API_KEY` | DeepSeek | `/run/secrets/deepseek_api_key` |
-| `GEMINI_API_KEY` | Google Gemini | `/run/secrets/gemini_api_key` |
-| `OPENROUTER_API_KEY` | OpenRouter | `/run/secrets/openrouter_api_key` |
-| `GROQ_API_KEY` | Groq | `/run/secrets/groq_api_key` |
-| `MISTRAL_API_KEY` | Mistral AI | `/run/secrets/mistral_api_key` |
-| `NVIDIA_API_KEY` | NVIDIA NIM | `/run/secrets/nvidia_api_key` |
-| `REPLICATE_API_TOKEN` | Replicate | `/run/secrets/replicate_api_key` |
-
----
-
-## Adding New Providers
-
-### 1. Add API Key to Secrets
-
-Edit `/etc/nixos/secrets/api.yaml`:
-
-```yaml
-# Add new provider key
-newprovider_api_key: your-encrypted-key-here
+```json
+{
+  "mcpServers": {
+    "securellm-bridge": {
+      "command": "/nix/store/<hash>-securellm-bridge-mcp-2.0.0/bin/securellm-mcp",
+      "env": {
+        "KNOWLEDGE_DB_PATH": "${HOME}/.local/share/securellm/knowledge.db",
+        "ENABLE_KNOWLEDGE": "true"
+      }
+    }
+  }
+}
 ```
 
-### 2. Update SOPS Configuration
+Obtenha o caminho do store com:
+```bash
+readlink -f $(which securellm-mcp)
+```
 
-Edit `/etc/nixos/modules/secrets/api-keys.nix`:
+## 📍 Localizações Importantes
+
+| Item | Localização |
+|------|-------------|
+| **Binário MCP** | `/nix/store/<hash>-securellm-bridge-mcp-2.0.0/bin/securellm-mcp` |
+| **Banco de Dados** | `/var/lib/mcp-knowledge/knowledge.db` (padrão do módulo) |
+| **Config Claude** | `~/.config/Claude/.mcp.json` |
+| **Source TypeScript** | `/etc/nixos/modules/ml/unified-llm/mcp-server/` |
+| **Package Nix** | `/etc/nixos/lib/packages.nix` |
+
+## 🛠️ Desenvolvimento Local
+
+### Workflow Completo
+
+1. **Editar código TypeScript**
+   ```bash
+   cd /etc/nixos/modules/ml/unified-llm/mcp-server
+   # Edite arquivos em src/
+   ```
+
+2. **Compilar TypeScript**
+   ```bash
+   npm run build
+   # Ou para watch mode:
+   npm run watch
+   ```
+
+3. **Testar localmente (opcional)**
+   - Aponte o `.mcp.json` para o build local:
+   ```json
+   {
+     "mcpServers": {
+       "securellm-bridge": {
+         "command": "/run/current-system/sw/bin/node",
+         "args": [
+           "/etc/nixos/modules/ml/unified-llm/mcp-server/build/src/index.js"
+         ]
+       }
+     }
+   }
+   ```
+
+4. **Rebuild do pacote Nix**
+   ```bash
+   cd /etc/nixos
+   nix build .#securellm-mcp
+   ```
+
+5. **Atualizar sistema**
+   ```bash
+   sudo nixos-rebuild switch --flake .#kernelcore
+   ```
+
+6. **Voltar config para produção**
+   - Restaure o `.mcp.json` para usar `nix run .#securellm-mcp`
+
+## 🔍 Troubleshooting
+
+### MCP Server não inicia
+
+```bash
+# Verificar se o binário existe
+which securellm-mcp
+
+# Verificar permissões do banco
+ls -la /var/lib/mcp-knowledge/
+
+# Testar execução direta
+securellm-mcp
+
+# Ver logs do Claude Desktop (se disponível)
+journalctl --user -u claude-desktop
+```
+
+### Banco de dados não encontrado
+
+```bash
+# Criar diretório manualmente
+sudo mkdir -p /var/lib/mcp-knowledge
+sudo chown $USER:users /var/lib/mcp-knowledge
+
+# Ou usar localização no home
+export KNOWLEDGE_DB_PATH="$HOME/.local/share/securellm/knowledge.db"
+mkdir -p "$HOME/.local/share/securellm"
+```
+
+### Build falha
+
+```bash
+# Limpar build cache
+nix-collect-garbage
+
+# Rebuild from scratch
+cd /etc/nixos
+nix build .#securellm-mcp --rebuild
+
+# Ver logs completos
+nix log $(nix-store -qd $(nix-build .#securellm-mcp))
+```
+
+### Claude Desktop não vê o servidor
+
+1. Verifique o `.mcp.json` está em `~/.config/Claude/`
+2. Reinicie o Claude Desktop completamente
+3. Verifique os logs do Claude (varia por plataforma)
+
+## 📊 Monitoramento
+
+### Ver estatísticas do banco
+
+```bash
+sqlite3 /var/lib/mcp-knowledge/knowledge.db <<EOF
+SELECT 'Total Sessions:', COUNT(*) FROM sessions;
+SELECT 'Total Entries:', COUNT(*) FROM knowledge_entries;
+SELECT 'Database Size:', (page_count * page_size) / 1024 / 1024 || ' MB' 
+  FROM pragma_page_count(), pragma_page_size();
+EOF
+```
+
+### Backup automatizado
+
+Adicione ao seu `configuration.nix`:
 
 ```nix
-sops.secrets = {
-  # ... existing secrets ...
+systemd.services.mcp-backup = {
+  description = "Backup MCP Knowledge Database";
+  serviceConfig = {
+    Type = "oneshot";
+    ExecStart = "${pkgs.bash}/bin/bash -c 'cp /var/lib/mcp-knowledge/knowledge.db /var/lib/mcp-knowledge/backups/knowledge-$(date +%Y%m%d).db'";
+    User = "kernelcore";
+  };
+};
 
-  "newprovider_api_key" = {
-    sopsFile = ../../secrets/api.yaml;
-    mode = "0440";
-    owner = config.users.users.kernelcore.name;
-    group = "users";
+systemd.timers.mcp-backup = {
+  wantedBy = [ "timers.target" ];
+  timerConfig = {
+    OnCalendar = "daily";
+    Persistent = true;
   };
 };
 ```
 
-### 3. Update Load Script
+## 🎯 Próximos Passos
 
-Edit `/etc/nixos/modules/secrets/api-keys.nix` (line 118):
-
-```bash
-export NEWPROVIDER_API_KEY="$(cat /run/secrets/newprovider_api_key 2>/dev/null || echo "")"
-```
-
-### 4. Update MCP Server
-
-Edit `/etc/nixos/modules/ml/unified-llm/mcp-server/src/index.ts`:
-
-```typescript
-const API_KEYS = {
-  // ... existing keys ...
-  newprovider: process.env.NEWPROVIDER_API_KEY || "",
-};
-```
-
-### 5. Rebuild and Regenerate
-
-```bash
-# Rebuild NixOS to decrypt new secret
-sudo nixos-rebuild switch
-
-# Rebuild MCP server
-cd /etc/nixos/modules/ml/unified-llm/mcp-server
-npm run build
-
-# Regenerate MCP configs
-/etc/nixos/scripts/generate-mcp-config.sh both
-
-# Reload IDE
-```
-
----
-
-## Testing MCP Connection
-
-### Test MCP Protocol
-
-```bash
-# Test tools list
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | \
-  node /etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js
-
-# Test resources list
-echo '{"jsonrpc":"2.0","id":2,"method":"resources/list"}' | \
-  node /etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js
-```
-
-### Test Provider Tool
-
-```bash
-# Load API keys
-source /etc/load-api-keys.sh
-
-# Test DeepSeek provider
-echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"provider_test","arguments":{"provider":"deepseek","prompt":"Hello!"}}}' | \
-  node /etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js
-```
-
-### Test Knowledge Tools
-
-```bash
-# Create session
-echo '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"create_session","arguments":{"summary":"Test session"}}}' | \
-  node /etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js
-
-# Save knowledge
-echo '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"save_knowledge","arguments":{"content":"Test knowledge","type":"insight"}}}' | \
-  node /etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js
-```
-
----
-
-## Troubleshooting
-
-### MCP Tools Not Showing
-
-**Symptoms**: Tools don't appear in IDE
-
-**Solutions**:
-1. Verify MCP server is built:
+1. **Verifique a instalação**
    ```bash
-   ls -lh /etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js
+   mcp-server status
    ```
 
-2. Check config file exists:
+2. **Teste a conexão**
    ```bash
-   cat ~/.config/VSCodium/User/globalStorage/rooveterinaryinc.roo-code-nightly/settings/mcp_settings.json
+   mcp-server test
    ```
 
-3. Reload IDE window
+3. **Configure o Claude Desktop**
+   - Reinicie o Claude Desktop
+   - Verifique se o servidor MCP aparece
 
-4. Check IDE logs for MCP errors
+4. **Use no Claude**
+   - Abra o Claude Desktop
+   - Os tools do MCP estarão disponíveis automaticamente
 
-### Provider Test Fails
+## 📚 Documentação Adicional
 
-**Symptoms**: `provider_test` tool returns errors
+- [MCP Server Package Guide](./MCP-SERVER-PACKAGE.md) - Detalhes do empacotamento
+- [MCP Extended Tools Design](./MCP-EXTENDED-TOOLS-DESIGN.md) - Arquitetura das tools
+- [Repository Guidelines](../AGENTS.md) - Padrões do projeto
 
-**Solutions**:
-1. Verify API keys are loaded:
-   ```bash
-   source /etc/load-api-keys.sh
-   echo "DeepSeek: ${DEEPSEEK_API_KEY:0:15}..."
-   ```
+## 🆘 Suporte
 
-2. Check secrets are decrypted:
-   ```bash
-   ls -la /run/secrets/
-   cat /run/secrets/deepseek_api_key
-   ```
-
-3. Verify NixOS configuration:
-   ```bash
-   sudo nixos-rebuild switch
-   ```
-
-### Knowledge Database Issues
-
-**Symptoms**: Knowledge tools fail with database errors
-
-**Solutions**:
-1. Check database directory exists:
-   ```bash
-   sudo mkdir -p /var/lib/mcp-knowledge
-   sudo chown $USER:users /var/lib/mcp-knowledge
-   ```
-
-2. Verify permissions:
-   ```bash
-   ls -la /var/lib/mcp-knowledge/
-   ```
-
-3. Initialize database manually:
-   ```bash
-   sqlite3 /var/lib/mcp-knowledge/knowledge.db "VACUUM;"
-   ```
-
-### API Keys Not Loading
-
-**Symptoms**: MCP server shows "No API keys loaded" warning
-
-**Solutions**:
-1. Check SOPS configuration:
-   ```bash
-   sudo systemctl restart sops-nix
-   ```
-
-2. Verify age key exists:
-   ```bash
-   ls -la ~/.config/sops/age/keys.txt
-   ```
-
-3. Test manual decryption:
-   ```bash
-   SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt \
-     sops -d /etc/nixos/secrets/api.yaml
-   ```
-
-4. Regenerate MCP config:
-   ```bash
-   source /etc/load-api-keys.sh
-   /etc/nixos/scripts/generate-mcp-config.sh both
-   ```
-
----
-
-## Architecture
-
-### MCP Server Flow
-
-```
-┌─────────────────────────────────────────┐
-│         IDE (Roo Code/Claude)           │
-└───────────────┬─────────────────────────┘
-                │ JSON-RPC 2.0 (stdio)
-┌───────────────▼─────────────────────────┐
-│         MCP Server (Node.js)            │
-│  - 12 Tools (security, knowledge, pkg)  │
-│  - 4 Resources (config, logs, metrics)  │
-│  - Environment: API keys from SOPS      │
-└───────────────┬─────────────────────────┘
-                │
-    ┌───────────┴───────────┬──────────────┐
-    │                       │              │
-┌───▼────────┐   ┌──────────▼─────┐   ┌──▼──────────┐
-│ Provider   │   │   Knowledge     │   │   Package   │
-│ Tools      │   │   Database      │   │   Tools     │
-│ (Testing)  │   │   (SQLite)      │   │   (Nix)     │
-└────────────┘   └─────────────────┘   └─────────────┘
-```
-
-### API Key Loading Flow
-
-```
-┌─────────────────────────────────────────┐
-│   SOPS-Encrypted Secrets (.yaml)       │
-│   /etc/nixos/secrets/api.yaml          │
-└───────────────┬─────────────────────────┘
-                │ Age decryption
-┌───────────────▼─────────────────────────┐
-│   Decrypted Runtime Secrets             │
-│   /run/secrets/*_api_key                │
-└───────────────┬─────────────────────────┘
-                │ Read by load script
-┌───────────────▼─────────────────────────┐
-│   Shell Environment Variables           │
-│   ANTHROPIC_API_KEY=sk-...              │
-└───────────────┬─────────────────────────┘
-                │ Inherited by Node.js
-┌───────────────▼─────────────────────────┐
-│   MCP Server (process.env)              │
-│   Available to all tools                │
-└─────────────────────────────────────────┘
-```
-
----
-
-## Security Considerations
-
-### API Key Security
-
-1. **Never hardcode keys**: Always use SOPS-encrypted secrets
-2. **Minimal exposure**: Keys only exist in `/run/secrets/` at runtime
-3. **No disk storage**: MCP config has empty strings, keys loaded from env
-4. **Masked logging**: Keys shown as `provider(sk-12345...)`
-
-### Permission Model
-
-```
-Secrets:      root:root (600)  → SOPS decrypts
-/run/secrets: kernelcore:users (440) → Runtime access
-Environment:  kernelcore (process) → MCP server
-```
-
-### Best Practices
-
-1. **Rotate keys regularly**: Update SOPS secrets and rebuild
-2. **Monitor access**: Check audit logs for provider usage
-3. **Principle of least privilege**: Only enable needed providers
-4. **Separate dev/prod**: Use different keys for testing
-
----
-
-## Related Documentation
-
-- **MCP Architecture**: `/etc/nixos/docs/MCP-ARCHITECTURE-ACCESS.md`
-- **API Keys Setup**: `/etc/nixos/docs/guides/SECRETS.md`
-- **SOPS Configuration**: `/etc/nixos/docs/guides/SETUP-SOPS-FINAL.md`
-- **SecureLLM Bridge**: `/etc/nixos/modules/ml/unified-llm/CLAUDE.md`
-
----
-
-## Support
-
-### Report Issues
-
-Issues with MCP integration? Check:
-
-1. IDE logs (VSCodium: Help → Toggle Developer Tools → Console)
-2. MCP server logs (stderr output)
-3. NixOS journal: `journalctl -u sops-nix.service -f`
-
-### Community
-
-- NixOS Config: `/etc/nixos/`
-- Maintainer: kernelcore
-- Version: 2.0.0
-
----
-
-**Last Updated**: 2025-11-08
-**Status**: Production Ready ✅
+- Consulte os logs: `journalctl --user`
+- Use o MCP helper: `mcp-server help`
+- Verifique a documentação do projeto

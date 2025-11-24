@@ -45,6 +45,14 @@
       # imagens Docker e utilidades de build (definido abaixo em lib/packages.nix)
       packages.${system} = import ./lib/packages.nix { inherit pkgs self; };
 
+      # nix run .#securellm-mcp
+      apps.${system} = {
+        securellm-mcp = {
+          type = "app";
+          program = "${self.packages.${system}.securellm-mcp}/bin/securellm-mcp";
+        };
+      };
+
       # checks que o CI pode rodar (fmt, flake check, builds importantes)
       checks.${system} = {
         fmt = pkgs.runCommand "fmt-check" { buildInputs = [ pkgs.nixfmt-rfc-style ]; } ''
@@ -54,6 +62,7 @@
         iso = self.packages.${system}.iso;
         vm = self.packages.${system}.vm-image;
         docker-app = self.packages.${system}.image-app;
+        mcp-server = self.packages.${system}.securellm-mcp;
       };
 
       nixosConfigurations = {
@@ -74,7 +83,7 @@
             ./modules/services/offload-server.nix
             # ./modules/services/laptop-offload-client.nix # DISABLED: Causes remote build failures when desktop offline
             ./modules/services/default.nix
-            #./modules/services/scripts.nix
+            ./modules/services/scripts.nix  # Shell aliases for ML containers (pytorch, tgi, etc)
             ./modules/services/users/default.nix
             ./modules/services/users/claude-code.nix
             ./modules/services/users/actions.nix
@@ -114,6 +123,7 @@
 
             # Development
             ./modules/development/environments.nix
+            #./modules/development/claude-profiles.nix  # TEMP DISABLED for troubleshooting
             ./modules/development/jupyter.nix
             ./modules/development/cicd.nix
 
@@ -139,6 +149,7 @@
             # Secrets
             ./modules/secrets/sops-config.nix
             ./modules/secrets/api-keys.nix
+            ./modules/secrets/aws-bedrock.nix
 
             sops-nix.nixosModules.sops
             {

@@ -176,8 +176,8 @@
     # NVIDIA GPU status
     "gpu-status" =
       "nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,power.draw,clocks.gr,clocks.mem --format=csv,noheader";
-    "gs" =
-      "nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,power.draw,clocks.gr,clocks.mem --format=csv,noheader";
+    # Note: "gs" removed - conflicts with "git status" in utils.nix
+    # Use "gpu-status" instead
 
     # GPU watch
     "gpu-watch" = "watch -n 2 nvidia-smi";
@@ -185,7 +185,8 @@
 
     # GPU power limit info
     "gpu-power" = "nvidia-smi -q -d POWER | grep -E 'Power Limit|Power Draw'";
-    "gp" = "nvidia-smi -q -d POWER | grep -E 'Power Limit|Power Draw'";
+    # Note: "gp" removed - conflicts with "git push" in utils.nix
+    # Use "gpu-power" instead
 
     # ========================================
     # DOCUMENTATION
