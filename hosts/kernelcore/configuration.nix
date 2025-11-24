@@ -25,7 +25,7 @@
     security = {
       hardening.enable = true;
       sandbox-fallback = false;
-      audit.enable = false;
+      audit.enable = true;
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
       # File integrity monitoring - detects unauthorized file modifications
@@ -101,6 +101,14 @@
       enable = true;
     };
 
+    # Applications
+    applications.zellij = {
+      enable = true;
+      autoCleanup = true;
+      cleanupInterval = "daily";
+      maxCacheSizeMB = 50;
+    };
+
     # Package managers for binaries not in nixpkgs or testing upstream
     # NOTE: deb-packages has a bug with list/null validation - investigating
     packages.deb = {
@@ -168,17 +176,17 @@
     };
 
     containers = {
-      docker.enable = false;
+      docker.enable = true;
       podman = {
         enable = false; # Set to true to use Podman instead of/alongside Docker
         dockerCompat = false; # Enable Docker CLI compatibility (creates docker -> podman alias)
         enableNvidia = true; # NVIDIA GPU support for containers
       };
-      nixos.enable = false;
+      nixos.enable = true;
     };
 
     virtualization = {
-      enable = false;
+      enable = true;
       virt-manager = true;
       libvirtdGroup = [ "kernelcore" ];
       virtiofs.enable = true;
@@ -228,12 +236,12 @@
     };
 
     services.gpu-orchestration = {
-      enable = false;
+      enable = true;
       defaultMode = "docker"; # Docker containers get GPU priority by default
     };
 
     services.users.gemini-agent = {
-      enable = false;
+      enable = true;
     };
 
     services.gitlab-runner = {
@@ -258,6 +266,7 @@
     };
 
     secrets.api-keys.enable = true; # Load decrypted API keys
+    secrets.aws-bedrock.enable = true; # Load AWS Bedrock credentials for Claude Code
 
     # MEDIUM PRIORITY: Standardized ML model storage
     ml.models-storage = {
@@ -354,7 +363,7 @@
     };
 
     ollama = {
-      enable = false;
+      enable = true;
       host = "127.0.0.1"; # Security: Bind to localhost only
       port = 11434; # Default port - Docker ollama uses 11435
       acceleration = "cuda";
@@ -464,6 +473,7 @@
   users.users.kernelcore = {
     isNormalUser = true;
     description = "kernel";
+    shell = pkgs.zsh;  # Set zsh as default shell
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -487,7 +497,7 @@
       starship
       terraform
       ghidra
-      awscli2
+      awscli  # AWS CLI v1 (estável) - Para comandos aws bedrock, s3, etc
 
       invidious
 
@@ -617,7 +627,7 @@
     # Colored wrappers and debugging helpers
     (writeShellScriptBin "rebuild" ''
       #!/usr/bin/env bash
-      # Colored nixos-rebuild wrapper
+      # Colored nixos-rebuild wrapper - Compatible with bash and zsh
 
       # Colors
       RED='\033[0;31m'
@@ -630,49 +640,50 @@
       BOLD='\033[1m'
       NC='\033[0m' # No Color
 
-      echo -e "''${CYAN}''${BOLD}╔══════════════════════════════════════════════════════════════╗''${NC}"
-      echo -e "''${CYAN}''${BOLD}║           NixOS Rebuild - Colored Output Mode            ║''${NC}"
-      echo -e "''${CYAN}''${BOLD}╚══════════════════════════════════════════════════════════════╝''${NC}"
-      echo ""
+      # Use printf instead of echo -e for better shell compatibility
+      printf "%b" "''${CYAN}''${BOLD}╔══════════════════════════════════════════════════════════════╗''${NC}\n"
+      printf "%b" "''${CYAN}''${BOLD}║           NixOS Rebuild - Colored Output Mode            ║''${NC}\n"
+      printf "%b" "''${CYAN}''${BOLD}╚══════════════════════════════════════════════════════════════╝''${NC}\n"
+      printf "\n"
 
       ACTION="''${1:-switch}"
       shift || true
 
-      echo -e "''${BLUE}→ Action:''${NC} ''${BOLD}$ACTION''${NC}"
-      echo -e "''${BLUE}→ Flake:''${NC} ''${BOLD}/etc/nixos#kernelcore''${NC}"
-      echo ""
+      printf "%b" "''${BLUE}→ Action:''${NC} ''${BOLD}$ACTION''${NC}\n"
+      printf "%b" "''${BLUE}→ Flake:''${NC} ''${BOLD}/etc/nixos#kernelcore''${NC}\n"
+      printf "\n"
 
       # Run nixos-rebuild with colored output
       sudo nixos-rebuild "$ACTION" --flake /etc/nixos#kernelcore "$@" 2>&1 | while IFS= read -r line; do
         if [[ "$line" =~ ^error:|ERROR|Error ]]; then
-          echo -e "''${RED}''${BOLD}✗''${NC} ''${RED}$line''${NC}"
+          printf "%b" "''${RED}''${BOLD}✗''${NC} ''${RED}$line''${NC}\n"
         elif [[ "$line" =~ ^warning:|WARNING|Warning ]]; then
-          echo -e "''${YELLOW}''${BOLD}⚠''${NC} ''${YELLOW}$line''${NC}"
+          printf "%b" "''${YELLOW}''${BOLD}⚠''${NC} ''${YELLOW}$line''${NC}\n"
         elif [[ "$line" =~ ^building|^copying|^unpacking ]]; then
-          echo -e "''${CYAN}⚙''${NC} $line"
+          printf "%b" "''${CYAN}⚙''${NC} $line\n"
         elif [[ "$line" =~ ^these|^will\ be\ |^evaluating ]]; then
-          echo -e "''${BLUE}ℹ''${NC} $line"
+          printf "%b" "''${BLUE}ℹ''${NC} $line\n"
         elif [[ "$line" =~ activation|^restarting|^starting|^stopping ]]; then
-          echo -e "''${MAGENTA}⟳''${NC} $line"
+          printf "%b" "''${MAGENTA}⟳''${NC} $line\n"
         elif [[ "$line" =~ succeed|success|Success|✓ ]]; then
-          echo -e "''${GREEN}''${BOLD}✓''${NC} ''${GREEN}$line''${NC}"
+          printf "%b" "''${GREEN}''${BOLD}✓''${NC} ''${GREEN}$line''${NC}\n"
         else
-          echo "$line"
+          printf "%s\n" "$line"
         fi
       done
 
       EXIT_CODE=''${PIPESTATUS[0]}
 
-      echo ""
+      printf "\n"
       if [ $EXIT_CODE -eq 0 ]; then
-        echo -e "''${GREEN}''${BOLD}╔══════════════════════════════════════════════════════════════╗''${NC}"
-        echo -e "''${GREEN}''${BOLD}║                  ✓ Rebuild Successful!                   ║''${NC}"
-        echo -e "''${GREEN}''${BOLD}╚══════════════════════════════════════════════════════════════╝''${NC}"
+        printf "%b" "''${GREEN}''${BOLD}╔══════════════════════════════════════════════════════════════╗''${NC}\n"
+        printf "%b" "''${GREEN}''${BOLD}║                  ✓ Rebuild Successful!                   ║''${NC}\n"
+        printf "%b" "''${GREEN}''${BOLD}╚══════════════════════════════════════════════════════════════╝''${NC}\n"
       else
-        echo -e "''${RED}''${BOLD}╔══════════════════════════════════════════════════════════════╗''${NC}"
-        echo -e "''${RED}''${BOLD}║                   ✗ Rebuild Failed!                      ║''${NC}"
-        echo -e "''${RED}''${BOLD}╚══════════════════════════════════════════════════════════════╝''${NC}"
-        echo -e "''${RED}Exit code: $EXIT_CODE''${NC}"
+        printf "%b" "''${RED}''${BOLD}╔══════════════════════════════════════════════════════════════╗''${NC}\n"
+        printf "%b" "''${RED}''${BOLD}║                   ✗ Rebuild Failed!                      ║''${NC}\n"
+        printf "%b" "''${RED}''${BOLD}╚══════════════════════════════════════════════════════════════╝''${NC}\n"
+        printf "%b" "''${RED}Exit code: $EXIT_CODE''${NC}\n"
       fi
 
       exit $EXIT_CODE

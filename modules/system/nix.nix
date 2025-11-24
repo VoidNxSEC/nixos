@@ -35,31 +35,47 @@ with lib;
         })
 
         {
-          # Optimized for 8-core/12-thread laptop to prevent CPU thrashing
-          # max-jobs × cores should not exceed total CPU threads
-          max-jobs = mkDefault 4; # Parallel build jobs (was "auto" = 12)
-          cores = mkDefault 3; # Cores per job (was 0 = use all 12)
+          # ULTRA-OPTIMIZED: Prevent CPU/RAM throttling and OOM
+          # Reduced from max-jobs=4 cores=3 to prevent memory exhaustion
+          # Using mkForce to override hardening.nix settings
+          max-jobs = mkForce 2; # Only 2 parallel builds to prevent RAM overload
+          cores = mkForce 2; # 2 cores per job (total 4 cores active)
+          # Total concurrent threads: 2 jobs × 2 cores = 4 threads (was 12)
+
+          # Kill builds that take too long (prevents zombie builds)
+          timeout = mkDefault 3600; # 1 hour timeout for stuck builds
 
           trusted-users = [
             "root"
             "@wheel"
           ];
 
-          keep-derivations = true;
-          keep-outputs = true;
+          # Aggressive cleanup to save disk space
+          keep-derivations = false; # Don't keep build dependencies (saves space)
+          keep-outputs = false; # Don't keep build outputs (saves space)
 
+          # Auto-optimize store to save space via hardlinks
           auto-optimise-store = true;
 
           # Network timeout settings - increased for slow connections
           connect-timeout = mkDefault 30; # 30 seconds for connection (up from 5)
           stalled-download-timeout = mkDefault 300; # 5 minutes for stalled downloads (up from 30)
+
+          # Limit parallel downloads to reduce network congestion
+          http-connections = mkDefault 25; # Default is 25, but explicitly set
+
+          # Enable aggressive substitution to avoid local builds
+          substitute = true;
+          builders-use-substitutes = true;
         }
       ];
 
       gc = {
         automatic = true;
-        dates = "weekly";
-        options = "--delete-older-than 30d";
+        dates = "04:00"; # Run at 4 AM to avoid interfering with late night work
+        options = "--delete-older-than 7d"; # Aggressive: delete after 7 days
+        # Randomize GC time to avoid system load spikes
+        randomizedDelaySec = "45min";
       };
 
       optimise = {

@@ -18,6 +18,7 @@ import { detectProjectRoot } from "./utils/project-detection.js";
 import { detectNixOSHost } from "./utils/host-detection.js";
 import { emergencyTools, handleEmergencyStatus, handleEmergencyAbort, handleEmergencyCooldown, handleEmergencyNuke, handleEmergencySwap, handleSystemHealthCheck, handleSafeRebuildCheck, } from "./tools/emergency/index.js";
 import { laptopDefenseTools, handleThermalCheck, handleRebuildSafetyCheck, handleThermalForensics, handleThermalWarroom, handleLaptopVerdict, handleFullInvestigation, handleForceCooldown, handleResetPerformance, } from "./tools/laptop-defense/index.js";
+import { handleWebSearch, handleNixSearch, handleGithubSearch, handleTechNewsSearch, handleDiscourseSearch, handleStackOverflowSearch, } from "./tools/web-search.js";
 const execAsync = promisify(exec);
 // Legacy constants for backward compatibility - will be overridden by auto-detection
 const PROJECT_ROOT = process.env.PROJECT_ROOT || process.cwd();
@@ -445,6 +446,19 @@ class SecureLLMBridgeMCPServer {
                         return await this.handleForceCooldown();
                     case "reset_performance":
                         return await this.handleResetPerformance();
+                    // Web Search handlers
+                    case "web_search":
+                        return await this.handleWebSearch(args);
+                    case "nix_search":
+                        return await this.handleNixSearch(args);
+                    case "github_search":
+                        return await this.handleGithubSearch(args);
+                    case "tech_news_search":
+                        return await this.handleTechNewsSearch(args);
+                    case "nixos_discourse_search":
+                        return await this.handleDiscourseSearch(args);
+                    case "stackoverflow_search":
+                        return await this.handleStackOverflowSearch(args);
                     default:
                         throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
                 }
@@ -1493,6 +1507,109 @@ Generate server and client TLS certificates for secure communication.
     async handleResetPerformance() {
         try {
             const result = await handleResetPerformance();
+            return {
+                content: [{
+                        type: "text",
+                        text: JSON.stringify(result, null, 2)
+                    }]
+            };
+        }
+        catch (error) {
+            return {
+                content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+                isError: true
+            };
+        }
+    }
+    // ===== WEB SEARCH HANDLERS =====
+    async handleWebSearch(args) {
+        try {
+            const result = await handleWebSearch(args);
+            return {
+                content: [{
+                        type: "text",
+                        text: JSON.stringify(result, null, 2)
+                    }]
+            };
+        }
+        catch (error) {
+            return {
+                content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+                isError: true
+            };
+        }
+    }
+    async handleNixSearch(args) {
+        try {
+            const result = await handleNixSearch(args);
+            return {
+                content: [{
+                        type: "text",
+                        text: JSON.stringify(result, null, 2)
+                    }]
+            };
+        }
+        catch (error) {
+            return {
+                content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+                isError: true
+            };
+        }
+    }
+    async handleGithubSearch(args) {
+        try {
+            const result = await handleGithubSearch(args);
+            return {
+                content: [{
+                        type: "text",
+                        text: JSON.stringify(result, null, 2)
+                    }]
+            };
+        }
+        catch (error) {
+            return {
+                content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+                isError: true
+            };
+        }
+    }
+    async handleTechNewsSearch(args) {
+        try {
+            const result = await handleTechNewsSearch(args);
+            return {
+                content: [{
+                        type: "text",
+                        text: JSON.stringify(result, null, 2)
+                    }]
+            };
+        }
+        catch (error) {
+            return {
+                content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+                isError: true
+            };
+        }
+    }
+    async handleDiscourseSearch(args) {
+        try {
+            const result = await handleDiscourseSearch(args);
+            return {
+                content: [{
+                        type: "text",
+                        text: JSON.stringify(result, null, 2)
+                    }]
+            };
+        }
+        catch (error) {
+            return {
+                content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+                isError: true
+            };
+        }
+    }
+    async handleStackOverflowSearch(args) {
+        try {
+            const result = await handleStackOverflowSearch(args);
             return {
                 content: [{
                         type: "text",

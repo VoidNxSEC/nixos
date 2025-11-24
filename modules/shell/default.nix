@@ -45,6 +45,24 @@
   config = {
 
     # ============================================================
+    # ZSH CONFIGURATION
+    # ============================================================
+
+    programs.zsh = {
+      enable = true;  # Required when users.users.*.shell = pkgs.zsh
+      enableCompletion = true;
+      autosuggestions.enable = true;
+      syntaxHighlighting.enable = true;
+
+      # Oh-My-Zsh configuration
+      ohMyZsh = {
+        enable = true;
+        plugins = [ "git" "docker" "kubectl" "systemd" "sudo" ];
+        theme = "robbyrussell";
+      };
+    };
+
+    # ============================================================
     # PACOTES NECESSÁRIOS
     # ============================================================
 

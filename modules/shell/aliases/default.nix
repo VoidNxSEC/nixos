@@ -36,5 +36,7 @@
     ./mcp.nix
     ./emergency.nix
     ./laptop-defense.nix
+    #./service-control.nix # GPU/ML service control & RAM optimization  # TEMP DISABLED
+    #./nixos-explorer.nix # NixOS configuration explorer  # TEMP DISABLED
   ];
 }

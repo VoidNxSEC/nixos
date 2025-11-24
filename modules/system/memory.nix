@@ -39,12 +39,20 @@ with lib;
       "vm.watermark_scale_factor" = 200; # More aggressive reclaim
     };
 
-    # Early OOM killer
+    # Early OOM killer - AGGRESSIVE SETTINGS
     services.earlyoom = {
       enable = true;
-      freeMemThreshold = 8;
-      freeSwapThreshold = 20;
+      freeMemThreshold = 5; # Kill processes when <5% RAM free (was 8%)
+      freeSwapThreshold = 10; # Kill when <10% swap free (was 20%)
       enableNotifications = true;
+      # Kill the largest memory consumer first
+      extraArgs = [
+        "-g" # Kill entire process group
+        "--prefer"
+        "(cc1|rustc|ld|cargo|nix-build)" # Prefer killing build processes
+        "--avoid"
+        "(X|plasma|gnome|firefox|chrome)" # Avoid killing desktop
+      ];
     };
 
     # ZRAM swap - Enhanced for heavy compilation (50% compression ratio)

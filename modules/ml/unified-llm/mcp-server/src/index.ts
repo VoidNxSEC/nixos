@@ -46,6 +46,15 @@ import {
   handleForceCooldown,
   handleResetPerformance,
 } from "./tools/laptop-defense/index.js";
+import {
+  webSearchTools,
+  handleWebSearch,
+  handleNixSearch,
+  handleGithubSearch,
+  handleTechNewsSearch,
+  handleDiscourseSearch,
+  handleStackOverflowSearch,
+} from "./tools/web-search.js";
 
 const execAsync = promisify(exec);
 
@@ -530,6 +539,20 @@ class SecureLLMBridgeMCPServer {
             return await this.handleForceCooldown();
           case "reset_performance":
             return await this.handleResetPerformance();
+
+          // Web Search handlers
+          case "web_search":
+            return await this.handleWebSearch(args);
+          case "nix_search":
+            return await this.handleNixSearch(args);
+          case "github_search":
+            return await this.handleGithubSearch(args);
+          case "tech_news_search":
+            return await this.handleTechNewsSearch(args);
+          case "nixos_discourse_search":
+            return await this.handleDiscourseSearch(args);
+          case "stackoverflow_search":
+            return await this.handleStackOverflowSearch(args);
 
           default:
             throw new McpError(
@@ -1650,6 +1673,110 @@ Generate server and client TLS certificates for secure communication.
   private async handleResetPerformance() {
     try {
       const result = await handleResetPerformance();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  // ===== WEB SEARCH HANDLERS =====
+
+  private async handleWebSearch(args: any) {
+    try {
+      const result = await handleWebSearch(args);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleNixSearch(args: any) {
+    try {
+      const result = await handleNixSearch(args);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleGithubSearch(args: any) {
+    try {
+      const result = await handleGithubSearch(args);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleTechNewsSearch(args: any) {
+    try {
+      const result = await handleTechNewsSearch(args);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleDiscourseSearch(args: any) {
+    try {
+      const result = await handleDiscourseSearch(args);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    } catch (error: any) {
+      return {
+        content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
+        isError: true
+      };
+    }
+  }
+
+  private async handleStackOverflowSearch(args: any) {
+    try {
+      const result = await handleStackOverflowSearch(args);
       return {
         content: [{
           type: "text",
