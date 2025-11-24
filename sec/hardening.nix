@@ -150,49 +150,51 @@ with lib;
     };
   };
 
-  services.clamav = {
-    daemon.enable = true;
-    updater.enable = true;
-    updater.interval = "hourly";
-    updater.frequency = 24;
-  };
+  # ClamAV configuration moved to modules/security/clamav.nix
+  # (commented out to prevent duplication and allow conditional enabling)
+  #services.clamav = {
+  #  daemon.enable = true;
+  #  updater.enable = true;
+  #  updater.interval = "hourly";
+  #  updater.frequency = 24;
+  #};
 
-  systemd.tmpfiles.rules = [
-    "d /var/log/clamav 0755 clamav clamav -"
-  ];
+  #systemd.tmpfiles.rules = [
+  #  "d /var/log/clamav 0755 clamav clamav -"
+  #];
 
-  systemd.services.clamav-scan = {
-    description = "ClamAV system scan";
-    serviceConfig = {
-      Type = "oneshot";
-      Nice = 19;
-      IOSchedulingClass = "idle";
-      ExecStart = ''
-        ${pkgs.clamav}/bin/clamscan \
-          --recursive \
-          --infected \
-          --log=/var/log/clamav/scan.log \
-          --exclude-dir="^/sys" \
-          --exclude-dir="^/proc" \
-          --exclude-dir="^/dev" \
-          --exclude-dir="^/run" \
-          --exclude-dir="^/nix/store" \
-          --max-filesize=100M \
-          --max-scansize=300M \
-          /home
-      '';
-    };
-  };
+  #systemd.services.clamav-scan = {
+  #  description = "ClamAV system scan";
+  #  serviceConfig = {
+  #    Type = "oneshot";
+  #    Nice = 19;
+  #    IOSchedulingClass = "idle";
+  #    ExecStart = ''
+  #      ${pkgs.clamav}/bin/clamscan \
+  #        --recursive \
+  #        --infected \
+  #        --log=/var/log/clamav/scan.log \
+  #        --exclude-dir="^/sys" \
+  #        --exclude-dir="^/proc" \
+  #        --exclude-dir="^/dev" \
+  #        --exclude-dir="^/run" \
+  #        --exclude-dir="^/nix/store" \
+  #        --max-filesize=100M \
+  #        --max-scansize=300M \
+  #        /home
+  #    '';
+  #  };
+  #};
 
-  systemd.timers.clamav-scan = {
-    description = "Weekly ClamAV scan";
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnCalendar = "weekly";
-      RandomizedDelaySec = "2h";
-      Persistent = true;
-    };
-  };
+  #systemd.timers.clamav-scan = {
+  #  description = "Weekly ClamAV scan";
+  #  wantedBy = [ "timers.target" ];
+  #  timerConfig = {
+  #    OnCalendar = "weekly";
+  #    RandomizedDelaySec = "2h";
+  #    Persistent = true;
+  #  };
+  #};
 
   networking.firewall = {
     enable = true;
@@ -242,15 +244,16 @@ with lib;
       AmbientCapabilities = "";
     };
 
-    "clamav-daemon".serviceConfig = {
-      PrivateTmp = lib.mkForce true;
-      ProtectSystem = "strict";
-      ProtectHome = "read-only";
-      ReadWritePaths = [
-        "/var/lib/clamav"
-        "/var/log/clamav"
-      ];
-    };
+    # ClamAV hardening moved to modules/security/clamav.nix
+    #"clamav-daemon".serviceConfig = {
+    #  PrivateTmp = lib.mkForce true;
+    #  ProtectSystem = "strict";
+    #  ProtectHome = "read-only";
+    #  ReadWritePaths = [
+    #    "/var/lib/clamav"
+    #    "/var/log/clamav"
+    #  ];
+    #};
   };
 
   boot.kernel.sysctl = {
@@ -326,7 +329,7 @@ with lib;
     "p8022"
     #"bluetooth"
     #"btusb"
-    "uvcvideo"
+    #"uvcvideo"
   ];
 
   boot.kernelParams = [
@@ -379,7 +382,7 @@ with lib;
   };
 
   system.autoUpgrade = {
-    enable = true;
+    enable = false;
     allowReboot = false;
     dates = "04:00";
     # Local flake-based system (not using remote flakes due to confidentiality)

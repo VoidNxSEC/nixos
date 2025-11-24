@@ -127,7 +127,9 @@
       "Bash(git -C /etc/nixos tag -l -n1 '*framework*' '*mcp-helper*')",
       "Bash(git -C /etc/nixos tag -l '*v1.0.0')",
       "Bash(xargs -I {} sh -c 'echo \"\"\"\"=== {} ===\"\"\"\" && git -C /etc/nixos show {} --no-patch --format=\"\"\"\"%H - %s%n%b\"\"\"\" && echo \"\"\"\"\"\"\"\"')",
-      "Bash(git -C /etc/nixos log --oneline --graph --decorate --tags='*v1.0.0' -5)"
+      "Bash(git -C /etc/nixos log --oneline --graph --decorate --tags='*v1.0.0' -5)",
+      "Bash(sensors:*)",
+      "Bash(lsmod:*)"
     ],
     "deny": [],
     "ask": []

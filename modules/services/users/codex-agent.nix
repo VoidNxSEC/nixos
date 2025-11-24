@@ -135,6 +135,8 @@ in
         CODEX_AGENT_USER = cfg.userName;
         CODEX_AGENT_HOME = cfg.homeDirectory;
         CODEX_AGENT_WORKDIR = cfg.workDirectory;
+        # MCP Server configuration path - enables codex to discover and use MCP tools
+        MCP_CONFIG_PATH = "${cfg.homeDirectory}/.codex/mcp.json";
       }
       // cfg.extraEnvironment;
 
