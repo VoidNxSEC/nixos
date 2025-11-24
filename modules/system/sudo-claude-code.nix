@@ -40,33 +40,62 @@ in
       {
         users = cfg.allowedUsers;
         commands = [
-          # NixOS rebuild operations
+          # NixOS rebuild operations (allow via current-system symlink to avoid hash changes)
+          {
+            command = "/run/current-system/sw/bin/nixos-rebuild";
+            options = [ "NOPASSWD" ];
+          }
+          # Also allow via Nix store path (for consistency)
           {
             command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild";
             options = [ "NOPASSWD" ];
           }
           # System service management
           {
+            command = "/run/current-system/sw/bin/systemctl";
+            options = [ "NOPASSWD" ];
+          }
+          {
             command = "${pkgs.systemd}/bin/systemctl";
             options = [ "NOPASSWD" ];
           }
           # Journal access
+          {
+            command = "/run/current-system/sw/bin/journalctl";
+            options = [ "NOPASSWD" ];
+          }
           {
             command = "${pkgs.systemd}/bin/journalctl";
             options = [ "NOPASSWD" ];
           }
           # Docker operations
           {
+            command = "/run/current-system/sw/bin/docker";
+            options = [ "NOPASSWD" ];
+          }
+          {
             command = "${pkgs.docker}/bin/docker";
             options = [ "NOPASSWD" ];
           }
           # Nix operations
           {
+            command = "/run/current-system/sw/bin/nix";
+            options = [ "NOPASSWD" ];
+          }
+          {
             command = "${config.nix.package}/bin/nix";
             options = [ "NOPASSWD" ];
           }
           {
+            command = "/run/current-system/sw/bin/nix-store";
+            options = [ "NOPASSWD" ];
+          }
+          {
             command = "${config.nix.package}/bin/nix-store";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/nix-collect-garbage";
             options = [ "NOPASSWD" ];
           }
           {
@@ -75,7 +104,15 @@ in
           }
           # File system operations (for log management, backups, etc.)
           {
+            command = "/run/current-system/sw/bin/truncate";
+            options = [ "NOPASSWD" ];
+          }
+          {
             command = "${pkgs.coreutils}/bin/truncate";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/mkdir";
             options = [ "NOPASSWD" ];
           }
           {
@@ -83,7 +120,15 @@ in
             options = [ "NOPASSWD" ];
           }
           {
+            command = "/run/current-system/sw/bin/cp";
+            options = [ "NOPASSWD" ];
+          }
+          {
             command = "${pkgs.coreutils}/bin/cp";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/mv";
             options = [ "NOPASSWD" ];
           }
           {
@@ -91,7 +136,15 @@ in
             options = [ "NOPASSWD" ];
           }
           {
+            command = "/run/current-system/sw/bin/rm";
+            options = [ "NOPASSWD" ];
+          }
+          {
             command = "${pkgs.coreutils}/bin/rm";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/chmod";
             options = [ "NOPASSWD" ];
           }
           {
@@ -99,7 +152,15 @@ in
             options = [ "NOPASSWD" ];
           }
           {
+            command = "/run/current-system/sw/bin/chown";
+            options = [ "NOPASSWD" ];
+          }
+          {
             command = "${pkgs.coreutils}/bin/chown";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/ls";
             options = [ "NOPASSWD" ];
           }
           {
