@@ -17,5 +17,8 @@
     # Editors
     ./vscodium-secure.nix
     ./vscode-secure.nix
+
+    # Terminal
+    ./zellij.nix
   ];
 }
