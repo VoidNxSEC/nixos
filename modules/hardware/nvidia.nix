@@ -39,7 +39,8 @@ with lib;
     hardware.nvidia = {
       modesetting.enable = true;
       powerManagement.enable = true;
-      powerManagement.finegrained = true; # Enable for RTX 3050 power management
+      # Fine-grained power management requires offload mode to be enabled
+      powerManagement.finegrained = config.kernelcore.nvidia.prime.offload;
       open = false;
       nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.production;
