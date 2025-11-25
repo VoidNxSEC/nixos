@@ -15,20 +15,21 @@ let
     // Zellij Configuration - Managed by NixOS
     // Performance optimized for low latency and minimal resource usage
 
-    // UI Settings - Simplified for performance
+    // UI Settings - Balanced for usability and performance
     theme "gruvbox-dark"
     default_shell "bash"
-    pane_frames false
-    simplified_ui true
+    pane_frames true              // Keep frames for better visibility
+    simplified_ui false           // Full UI for better UX
     default_layout "compact"
     default_mode "normal"
     mouse_mode true
-    copy_on_select false  // Disabled for performance
+    copy_on_select true           // Enable copy on select (essential UX)
+    copy_command "wl-copy"        // Wayland clipboard
     scrollback_editor "nvim"
 
-    // Performance optimizations
-    session_serialization false  // Disable session saves (reduces I/O)
-    mirror_session true          // Efficient session mirroring
+    // Performance optimizations (kept reasonable)
+    session_serialization true    // Keep session saves (useful feature)
+    mirror_session true           // Efficient session mirroring
 
     // Cache settings - aggressive cleanup
     on_force_close "quit"        // Clean exit
@@ -70,6 +71,7 @@ let
             bind "Alt x" { CloseFocus; }
             bind "Alt f" { ToggleFocusFullscreen; }
             bind "Alt s" { SwitchToMode "scroll"; }
+            bind "Alt c" { SwitchToMode "copy"; }
             bind "Alt r" { SwitchToMode "RenameTab"; TabNameInput 0; }
         }
 
@@ -82,6 +84,19 @@ let
             bind "u" { HalfPageScrollUp; }
             bind "PageDown" { PageScrollDown; }
             bind "PageUp" { PageScrollUp; }
+            bind "Space" { SwitchToMode "copy"; }
+        }
+
+        copy {
+            bind "Esc" { SwitchToMode "Normal"; }
+            bind "q" { SwitchToMode "Normal"; }
+            bind "j" "Down" { ScrollDown; }
+            bind "k" "Up" { ScrollUp; }
+            bind "d" { HalfPageScrollDown; }
+            bind "u" { HalfPageScrollUp; }
+            bind "v" { ToggleActiveSyncTab; }
+            bind "y" { Copy; SwitchToMode "Normal"; }
+            bind "Enter" { Copy; SwitchToMode "Normal"; }
         }
 
         renametab {
