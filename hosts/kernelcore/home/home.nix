@@ -10,7 +10,8 @@
   # IMPORTS
   # ============================================================
   imports = [
-    ./shell # Modern shell configuration with zsh + powerlevel10k
+    ./shell      # Modern shell configuration with zsh + powerlevel10k
+    ./yazi.nix   # Yazi file manager configuration
   ];
 
   # ============================================================
@@ -370,6 +371,17 @@
   # SERVICES
   # ============================================================
   services = {
+    # Flameshot (Screenshot tool)
+    flameshot = {
+      enable = true;
+      settings = {
+        General = {
+          disabledTrayIcon = false;
+          showStartupLaunchMessage = false;
+        };
+      };
+    };
+
     # GPG agent
     gpg-agent = {
       enable = true;
