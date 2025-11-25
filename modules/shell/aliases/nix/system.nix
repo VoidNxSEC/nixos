@@ -12,28 +12,28 @@
 {
   environment.shellAliases = {
     # NixOS Rebuild - Standard
-    "nx-rebuild" = "sudo nixos-rebuild switch --flake /etc/nixos";
-    "nx-rebuild-test" = "sudo nixos-rebuild test --flake /etc/nixos";
-    "nx-rebuild-boot" = "sudo nixos-rebuild boot --flake /etc/nixos";
-    "nx-rebuild-trace" = "sudo nixos-rebuild switch --flake /etc/nixos --show-trace";
+    "nx-rebuild" = "sudo nixos-rebuild switch --flake '/etc/nixos#kernelcore'";
+    "nx-rebuild-test" = "sudo nixos-rebuild test --flake '/etc/nixos#kernelcore'";
+    "nx-rebuild-boot" = "sudo nixos-rebuild boot --flake '/etc/nixos#kernelcore'";
+    "nx-rebuild-trace" = "sudo nixos-rebuild switch --flake '/etc/nixos#kernelcore' --show-trace";
 
     # NixOS Rebuild - Laptop Optimized (prevents OOM/thermal issues from heavy builds like magma)
     "nx-rebuild-safe" =
-      "sudo nixos-rebuild switch --flake /etc/nixos --max-jobs 1 --cores 4 --keep-going --fallback";
+      "sudo nixos-rebuild switch --flake '/etc/nixos#kernelcore' --max-jobs 1 --cores 4 --keep-going --fallback";
     "nx-rebuild-balanced" =
-      "sudo nixos-rebuild switch --flake /etc/nixos --max-jobs 2 --cores 4 --keep-going";
+      "sudo nixos-rebuild switch --flake '/etc/nixos#kernelcore' --max-jobs 2 --cores 4 --keep-going";
     "nx-rebuild-aggressive" =
-      "sudo nixos-rebuild switch --flake /etc/nixos --max-jobs 6 --cores 2 --keep-going";
+      "sudo nixos-rebuild switch --flake '/etc/nixos#kernelcore' --max-jobs 6 --cores 2 --keep-going";
 
     # NixOS Rebuild - With Desktop Offload (requires configured builder)
     "nx-rebuild-offload" =
-      "sudo nixos-rebuild switch --flake /etc/nixos --max-jobs 2 --cores 2 --builders 'ssh://builder@desktop.local x86_64-linux - 8 3 big-parallel'";
+      "sudo nixos-rebuild switch --flake '/etc/nixos#kernelcore' --max-jobs 2 --cores 2 --builders 'ssh://builder@desktop.local x86_64-linux - 8 3 big-parallel'";
 
     # NixOS Rebuild - Test variants
     "nx-rebuild-safe-test" =
-      "sudo nixos-rebuild test --flake /etc/nixos --max-jobs 1 --cores 4 --keep-going";
+      "sudo nixos-rebuild test --flake '/etc/nixos#kernelcore' --max-jobs 1 --cores 4 --keep-going";
     "nx-rebuild-balanced-test" =
-      "sudo nixos-rebuild test --flake /etc/nixos --max-jobs 2 --cores 4 --keep-going";
+      "sudo nixos-rebuild test --flake '/etc/nixos#kernelcore' --max-jobs 2 --cores 4 --keep-going";
 
     # Nix Build - Standard
     "nx-build" = "nix build";
