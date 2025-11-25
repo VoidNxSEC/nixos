@@ -129,7 +129,22 @@
       "Bash(xargs -I {} sh -c 'echo \"\"\"\"=== {} ===\"\"\"\" && git -C /etc/nixos show {} --no-patch --format=\"\"\"\"%H - %s%n%b\"\"\"\" && echo \"\"\"\"\"\"\"\"')",
       "Bash(git -C /etc/nixos log --oneline --graph --decorate --tags='*v1.0.0' -5)",
       "Bash(sensors:*)",
-      "Bash(lsmod:*)"
+      "Bash(lsmod:*)",
+      "Bash(zellij --version:*)",
+      "Bash(test-alacritty-zellij:*)",
+      "Bash(zellij-cleanup:*)",
+      "Bash(alacritty --version:*)",
+      "Bash(alacritty msg config:*)",
+      "Bash(zellij list-sessions:*)",
+      "Bash(zellij attach:*)",
+      "Bash(zellij kill-session:*)",
+      "Bash(du -sh ~/.cache/zellij:*)",
+      "Read(//home/kernelcore/.config/alacritty/**)",
+      "Read(//home/kernelcore/.config/zellij/**)",
+      "Read(//home/kernelcore/.local/bin/test-alacritty-zellij)",
+      "Write(//home/kernelcore/.config/alacritty/**)",
+      "Bash(wl-copy:*)",
+      "Bash(wl-paste:*)"
     ],
     "deny": [],
     "ask": []

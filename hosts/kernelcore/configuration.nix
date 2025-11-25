@@ -6,6 +6,9 @@
 }:
 
 {
+  imports = [
+    # Yazi configuration moved to home-manager: hosts/kernelcore/home/yazi.nix
+  ];
 
   # Shell configuration - Training session logger
   shell.trainingLogger = {
@@ -444,6 +447,8 @@
       "terraform"
     ];
 
+  # Yazi configuration moved to home-manager: hosts/kernelcore/home/yazi.nix
+
   time.timeZone = "America/Scoresbysund";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
@@ -513,6 +518,7 @@
       certbot
 
       python313Packages.groq
+      flameshot
 
       claude-code
       qwen-code
@@ -534,6 +540,7 @@
       spotify
       spotifyd
 
+      antigravity
       zed-editor
       rust-analyzer
       rustup

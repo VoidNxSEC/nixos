@@ -102,6 +102,8 @@
             # Programs
             #./modules/programs/default.nix
 
+            ./modules/desktop/yazi/yazi.nix
+
             # ML
             ./modules/ml/llama.nix
             ./modules/ml/models-storage.nix

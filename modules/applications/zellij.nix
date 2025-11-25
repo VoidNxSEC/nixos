@@ -260,22 +260,5 @@ in
       ZELLIJ_CONFIG_DIR = "$HOME/.config/zellij";
       ZELLIJ_CONFIG_FILE = "$HOME/.config/zellij/config.kdl";
     };
-
-    # Shell aliases
-    programs.bash.shellAliases = {
-      zj = "zellij";
-      zja = "zellij attach --create";
-      zjl = "zellij list-sessions";
-      zjk = "zellij kill-session";
-      zjc = "zellij-cleanup";
-    };
-
-    programs.zsh.shellAliases = {
-      zj = "zellij";
-      zja = "zellij attach --create";
-      zjl = "zellij list-sessions";
-      zjk = "zellij kill-session";
-      zjc = "zellij-cleanup";
-    };
   };
 }
