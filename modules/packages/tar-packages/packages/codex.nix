@@ -1,24 +1,24 @@
 # Codex CLI
 # Version: 0.56.0 (rust-v0.56.0)
-# Source: https://github.com/openai/codex/releases/tag/rust-v0.56.0
+# Source: Local storage (musl static binary)
 #
-# Method: "fhs" required because codex-x86_64-unknown-linux-gnu is a
-# dynamically linked GNU binary that expects standard FHS paths.
-# Unlike zellij (musl-static), codex needs libc, libgcc_s, and other
-# system libraries that are only available in an FHS environment.
+# Method: "native" used because codex-x86_64-unknown-linux-musl is a
+# statically linked musl binary that doesn't require FHS environment.
+# Unlike GNU binaries, musl binaries are self-contained and don't need
+# system libraries, making them ideal for direct Nix integration.
 {
   codex = {
     enable = true;
 
-    method = "fhs";
+    method = "native";
 
     source = {
-      url = "https://github.com/openai/codex/releases/download/rust-v0.56.0/codex-x86_64-unknown-linux-gnu.tar.gz";
-      sha256 = "3aafd4ea76f3d72c15877ae372da072377c58477547606b05228abc6b8bb1114";
+      path = ../storage/codex-x86_64-unknown-linux-musl.tar.gz;
+      sha256 = "ebbeb9b5fb391fdb6300ea02b8ca9ac70e8681e13e5e6c73ad3766be28e58db1";
     };
 
     wrapper = {
-      executable = "codex-x86_64-unknown-linux-gnu";
+      executable = "codex-x86_64-unknown-linux-musl";
       environmentVariables = { };
     };
 
