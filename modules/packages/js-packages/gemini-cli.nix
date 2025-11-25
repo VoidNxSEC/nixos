@@ -19,16 +19,16 @@ in
     environment.systemPackages = [
       (pkgs.buildNpmPackage rec {
         pname = "gemini-cli";
-        version = "0.19.0-nightly.20251123.dadd606c0";
+        version = "0.19.0-nightly.20251124.e177314a4";
 
         # Use locally stored tarball for reproducible builds
         src = pkgs.fetchurl {
-          url = "file://${./storage/gemini-cli-v0.19.0-nightly.20251123.dadd606c0.tar.gz}";
-          sha256 = "755a131a48e58822ceae8eb88954ada8a280af96bfc2004c5d9ef3637b559aef";
+          url = "file://${./storage/gemini-cli-0.19.0-nightly.20251124.e177314a4.tar.gz}";
+          sha256 = "3d5cffc5a3df3c9430fb9f742424656442c07951a0b8a5a1532a033376786ded";
         };
 
         # Hash calculated from first build
-        npmDepsHash = "sha256-7b26DHFWHSvIlag1fjICz68Zwav59RnM5q6MfkdZarc=";
+        npmDepsHash = "sha256-N2GI/G5CzuO8USGg2OEGHDTp+J6nfvz6gUm3Y9f03gc=";
 
         nodeLinker = "pnpm";
 
