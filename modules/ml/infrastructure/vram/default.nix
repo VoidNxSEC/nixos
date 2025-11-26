@@ -11,6 +11,7 @@
 {
   imports = [
     ./monitoring.nix
-    # ./scheduler.nix  # TODO: Create in Phase 2
+    # ./scheduler.nix  # TODO: Create central GPU scheduler
   ];
 }
+
