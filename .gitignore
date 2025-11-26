@@ -63,9 +63,33 @@ result-*
 .direnv
 *.qcow2
 
-# OAuth tokens (plaintext - never commit)
-modules/ml/unified-llm/mcp-server/secrets/oauth/*.token.json
-modules/ml/unified-llm/mcp-server/secrets/oauth/*.dev.json
+# ML Build Artifacts
+modules/ml/**/target/
+modules/ml/**/node_modules/
+modules/ml/**/*.db
+modules/ml/**/*.db-shm
+modules/ml/**/*.db-wal
+modules/ml/**/build/
+
+# OAuth tokens (plaintext - never commit) - Updated paths
+modules/ml/integrations/mcp/server/secrets/oauth/*.token.json
+modules/ml/integrations/mcp/server/secrets/oauth/*.dev.json
+modules/ml/applications/securellm-bridge/secrets/oauth/*.token.json
+modules/ml/applications/securellm-bridge/secrets/oauth/*.dev.json
 
 # Only commit encrypted tokens
-!modules/ml/unified-llm/mcp-server/secrets/oauth/*.token.enc.json
+!modules/ml/integrations/mcp/server/secrets/oauth/*.token.enc.json
+!modules/ml/applications/securellm-bridge/secrets/oauth/*.token.enc.json
+
+# Gemini CLI Build Artifacts
+modules/packages/js-packages/storage/*/.allstar/
+modules/packages/js-packages/storage/*/.gcp/
+modules/packages/js-packages/storage/*/.gemini/
+modules/packages/js-packages/storage/*/.github/
+modules/packages/js-packages/storage/*/.husky/
+modules/packages/js-packages/storage/*/.vscode/
+modules/packages/js-packages/storage/*/node_modules/
+modules/packages/js-packages/storage/*/dist/
+modules/packages/js-packages/storage/*/build/
+modules/packages/js-packages/storage/*/.turbo/
+modules/packages/js-packages/storage/*/coverage/
