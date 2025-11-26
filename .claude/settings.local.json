@@ -144,7 +144,8 @@
       "Read(//home/kernelcore/.local/bin/test-alacritty-zellij)",
       "Write(//home/kernelcore/.config/alacritty/**)",
       "Bash(wl-copy:*)",
-      "Bash(wl-paste:*)"
+      "Bash(wl-paste:*)",
+      "Bash(git tag:*)"
     ],
     "deny": [],
     "ask": []
