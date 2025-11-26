@@ -18,7 +18,7 @@ import { detectProjectRoot } from "./utils/project-detection.js";
 import { detectNixOSHost } from "./utils/host-detection.js";
 import { emergencyTools, handleEmergencyStatus, handleEmergencyAbort, handleEmergencyCooldown, handleEmergencyNuke, handleEmergencySwap, handleSystemHealthCheck, handleSafeRebuildCheck, } from "./tools/emergency/index.js";
 import { laptopDefenseTools, handleThermalCheck, handleRebuildSafetyCheck, handleThermalForensics, handleThermalWarroom, handleLaptopVerdict, handleFullInvestigation, handleForceCooldown, handleResetPerformance, } from "./tools/laptop-defense/index.js";
-import { handleWebSearch, handleNixSearch, handleGithubSearch, handleTechNewsSearch, handleDiscourseSearch, handleStackOverflowSearch, } from "./tools/web-search.js";
+import { webSearchTools, handleWebSearch, handleNixSearch, handleGithubSearch, handleTechNewsSearch, handleDiscourseSearch, handleStackOverflowSearch, } from "./tools/web-search.js";
 const execAsync = promisify(exec);
 // Legacy constants for backward compatibility - will be overridden by auto-detection
 const PROJECT_ROOT = process.env.PROJECT_ROOT || process.cwd();
@@ -143,6 +143,7 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "provider_test",
                     description: "Test LLM provider connectivity with a sample query",
+                    defer_loading: true,
                     inputSchema: {
                         type: "object",
                         properties: {
@@ -166,6 +167,7 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "security_audit",
                     description: "Run security checks on project configuration",
+                    defer_loading: true,
                     inputSchema: {
                         type: "object",
                         properties: {
@@ -180,6 +182,7 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "rate_limit_check",
                     description: "Check current rate limit status for a provider",
+                    defer_loading: true,
                     inputSchema: {
                         type: "object",
                         properties: {
@@ -195,6 +198,7 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "build_and_test",
                     description: "Build the project and run tests",
+                    defer_loading: true,
                     inputSchema: {
                         type: "object",
                         properties: {
@@ -210,6 +214,7 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "provider_config_validate",
                     description: "Validate provider configuration format",
+                    defer_loading: true,
                     inputSchema: {
                         type: "object",
                         properties: {
@@ -228,6 +233,7 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "crypto_key_generate",
                     description: "Generate TLS certificates and keys for secure communication",
+                    defer_loading: true,
                     inputSchema: {
                         type: "object",
                         properties: {
@@ -247,6 +253,8 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "rate_limiter_status",
                     description: "Get current status of rate limiters for all providers",
+                    defer_loading: true,
+                    allowed_callers: ["code_execution_20250825"],
                     inputSchema: {
                         type: "object",
                         properties: {},
@@ -255,6 +263,7 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "package_diagnose",
                     description: "Diagnose issues in package configuration and build",
+                    defer_loading: true,
                     inputSchema: {
                         type: "object",
                         properties: {
@@ -279,6 +288,32 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "package_download",
                     description: "Download package from various sources with automatic hash calculation",
+                    defer_loading: true,
+                    input_examples: [
+                        {
+                            package_name: "example-app",
+                            package_type: "js",
+                            source: {
+                                type: "github_release",
+                                github: {
+                                    repo: "owner/repo",
+                                    tag: "v1.0.0",
+                                    asset_pattern: "*.tar.gz"
+                                }
+                            }
+                        },
+                        {
+                            package_name: "npm-package",
+                            package_type: "js",
+                            source: {
+                                type: "npm",
+                                npm: {
+                                    package: "package-name",
+                                    version: "1.2.3"
+                                }
+                            }
+                        }
+                    ],
                     inputSchema: {
                         type: "object",
                         properties: {
@@ -330,6 +365,20 @@ class SecureLLMBridgeMCPServer {
                 {
                     name: "package_configure",
                     description: "Generate intelligent package configuration from downloaded file",
+                    defer_loading: true,
+                    input_examples: [
+                        {
+                            package_name: "example-app",
+                            package_type: "js",
+                            storage_file: "/path/to/storage/example-app.tar.gz",
+                            sha256: "abc123...",
+                            options: {
+                                method: "auto",
+                                sandbox: true,
+                                audit: true
+                            }
+                        }
+                    ],
                     inputSchema: {
                         type: "object",
                         properties: {
@@ -376,6 +425,8 @@ class SecureLLMBridgeMCPServer {
                 ...emergencyTools,
                 // Add Laptop Defense Framework tools
                 ...laptopDefenseTools,
+                // Add Web Search tools
+                ...webSearchTools,
             ],
         }));
         this.server.setRequestHandler(CallToolRequestSchema, async (request) => {

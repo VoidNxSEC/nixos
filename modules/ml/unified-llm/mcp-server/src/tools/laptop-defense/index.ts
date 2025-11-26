@@ -15,6 +15,7 @@ export const laptopDefenseTools = [
   {
     name: "thermal_check",
     description: "Quick thermal check before operation (temperature verification)",
+    // Core tool - always loaded
     inputSchema: {
       type: "object",
       properties: {
@@ -29,6 +30,8 @@ export const laptopDefenseTools = [
   {
     name: "thermal_forensics",
     description: "Run complete thermal forensics analysis (3-phase: baseline, stress, rebuild)",
+    defer_loading: true,
+    allowed_callers: ["code_execution_20250825"],
     inputSchema: {
       type: "object",
       properties: {
@@ -48,6 +51,7 @@ export const laptopDefenseTools = [
   {
     name: "thermal_warroom",
     description: "Launch real-time thermal monitoring war room (continuous display)",
+    defer_loading: true,
     inputSchema: {
       type: "object",
       properties: {
@@ -62,6 +66,7 @@ export const laptopDefenseTools = [
   {
     name: "rebuild_safety_check",
     description: "Pre-rebuild safety check (thermal + resources + load)",
+    // Core tool - always loaded
     inputSchema: {
       type: "object",
       properties: {},
@@ -70,6 +75,8 @@ export const laptopDefenseTools = [
   {
     name: "laptop_verdict",
     description: "Generate laptop replacement verdict from forensic evidence",
+    defer_loading: true,
+    allowed_callers: ["code_execution_20250825"],
     inputSchema: {
       type: "object",
       properties: {
@@ -84,6 +91,8 @@ export const laptopDefenseTools = [
   {
     name: "full_investigation",
     description: "Run complete laptop investigation suite (forensics + verdict)",
+    defer_loading: true,
+    allowed_callers: ["code_execution_20250825"],
     inputSchema: {
       type: "object",
       properties: {},
@@ -92,6 +101,7 @@ export const laptopDefenseTools = [
   {
     name: "force_cooldown",
     description: "Force CPU to powersave mode (emergency thermal response)",
+    defer_loading: true,
     inputSchema: {
       type: "object",
       properties: {},
@@ -100,6 +110,7 @@ export const laptopDefenseTools = [
   {
     name: "reset_performance",
     description: "Reset CPU to performance mode (after cooldown)",
+    defer_loading: true,
     inputSchema: {
       type: "object",
       properties: {},

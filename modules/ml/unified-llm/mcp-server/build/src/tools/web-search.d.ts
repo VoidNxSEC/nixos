@@ -36,6 +36,17 @@ export interface TechNewsArgs {
 export declare const webSearchTools: ({
     name: string;
     description: string;
+    defer_loading: boolean;
+    allowed_callers: string[];
+    input_examples: ({
+        query: string;
+        search_type: string;
+        limit?: undefined;
+    } | {
+        query: string;
+        search_type: string;
+        limit: number;
+    })[];
     inputSchema: {
         type: string;
         properties: {
@@ -70,6 +81,19 @@ export declare const webSearchTools: ({
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
+    allowed_callers: string[];
+    input_examples: ({
+        package_name: string;
+        channel: string;
+        type: string;
+        query?: undefined;
+    } | {
+        query: string;
+        type: string;
+        channel: string;
+        package_name?: undefined;
+    })[];
     inputSchema: {
         type: string;
         properties: {
@@ -108,6 +132,19 @@ export declare const webSearchTools: ({
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
+    allowed_callers: string[];
+    input_examples: ({
+        query: string;
+        type: string;
+        language: string;
+        sort: string;
+    } | {
+        query: string;
+        type: string;
+        sort: string;
+        language?: undefined;
+    })[];
     inputSchema: {
         type: string;
         properties: {
@@ -146,6 +183,13 @@ export declare const webSearchTools: ({
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
+    allowed_callers: string[];
+    input_examples: {
+        topic: string;
+        source: string;
+        time_range: string;
+    }[];
     inputSchema: {
         type: string;
         properties: {
@@ -181,6 +225,8 @@ export declare const webSearchTools: ({
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
+    allowed_callers: string[];
     inputSchema: {
         type: string;
         properties: {
@@ -206,9 +252,12 @@ export declare const webSearchTools: ({
         };
         required: string[];
     };
+    input_examples?: undefined;
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
+    allowed_callers: string[];
     inputSchema: {
         type: string;
         properties: {
@@ -242,6 +291,7 @@ export declare const webSearchTools: ({
         };
         required: string[];
     };
+    input_examples?: undefined;
 })[];
 /**
  * Execute web search using curl and DuckDuckGo's HTML API
@@ -250,7 +300,7 @@ export declare function handleWebSearch(args: WebSearchArgs): Promise<{
     success: boolean;
     results: {
         query: string;
-        search_type: "github" | "general" | "nixos" | "stackoverflow" | "reddit";
+        search_type: "nixos" | "github" | "general" | "stackoverflow" | "reddit";
         instant_answer: any;
         related_topics: any;
         web_results: string[];
