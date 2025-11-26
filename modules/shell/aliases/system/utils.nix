@@ -11,10 +11,7 @@
 
 {
   environment.shellAliases = {
-    # List
-    "ll" = "ls -lah";
-    "la" = "ls -A";
-    "l" = "ls -CF";
+    # NOTE: List aliases (ll, la, l, ls) are now in navigation.nix with eza
 
     # Grep with color
     "grep" = "grep --color=auto";
