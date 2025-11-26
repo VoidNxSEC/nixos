@@ -177,7 +177,7 @@ export const webSearchTools = [
     allowed_callers: ["code_execution_20250825"],
     input_examples: [
       {
-        topic: "NixOS 24.11 release",
+        topic: "NixOS 25.11 release",
         source: "all",
         time_range: "week"
       },
@@ -192,7 +192,7 @@ export const webSearchTools = [
       properties: {
         topic: {
           type: "string",
-          description: "Topic to search for (e.g., 'NixOS 24.11', 'nvidia drivers')",
+          description: "Topic to search for (e.g., 'NixOS 25.11', 'nvidia drivers')",
         },
         source: {
           type: "string",
@@ -364,11 +364,11 @@ export async function handleNixSearch(args: NixSearchArgs) {
           version: info.version,
           description: info.description,
         })),
-        search_url: `https://search.nixos.org/${type}?channel=${channel === "stable" ? "24.05" : "unstable"}&query=${encodeURIComponent(searchTerm)}`,
+        search_url: `https://search.nixos.org/${type}?channel=${channel === "stable" ? "25.05" : "unstable"}&query=${encodeURIComponent(searchTerm)}`,
       };
     } catch (nixError) {
       // Fallback to web scraping search.nixos.org
-      const searchUrl = `https://search.nixos.org/${type}?channel=${channel === "stable" ? "24.05" : "unstable"}&query=${encodeURIComponent(searchTerm)}`;
+      const searchUrl = `https://search.nixos.org/${type}?channel=${channel === "stable" ? "25.05" : "unstable"}&query=${encodeURIComponent(searchTerm)}`;
       
       return {
         success: true,
