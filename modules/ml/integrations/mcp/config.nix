@@ -36,7 +36,7 @@ in
 
     mcpServerPath = mkOption {
       type = types.str;
-      default = "/etc/nixos/modules/ml/unified-llm/mcp-server";
+      default = "/etc/nixos/modules/ml/integrations/mcp/server";
       description = "Path to MCP server installation";
     };
 
