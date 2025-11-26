@@ -14,9 +14,11 @@ export declare const emergencyTools: ({
             detailed?: undefined;
         };
     };
+    defer_loading?: undefined;
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
     inputSchema: {
         type: string;
         properties: {
@@ -32,6 +34,19 @@ export declare const emergencyTools: ({
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
+    inputSchema: {
+        type: string;
+        properties: {
+            force?: undefined;
+            confirm?: undefined;
+            detailed?: undefined;
+        };
+    };
+} | {
+    name: string;
+    description: string;
+    defer_loading: boolean;
     inputSchema: {
         type: string;
         properties: {
@@ -59,6 +74,7 @@ export declare const emergencyTools: ({
             confirm?: undefined;
         };
     };
+    defer_loading?: undefined;
 })[];
 interface EmergencyStatusResult {
     status: 'ok' | 'warning' | 'critical' | 'emergency';
