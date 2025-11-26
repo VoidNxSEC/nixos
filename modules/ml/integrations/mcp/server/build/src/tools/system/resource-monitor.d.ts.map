@@ -1,0 +1,1 @@
+{"version":3,"file":"resource-monitor.d.ts","sourceRoot":"","sources":["../../../../src/tools/system/resource-monitor.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAIH,OAAO,KAAK,EAAE,yBAAyB,EAAE,UAAU,EAAE,MAAM,+BAA+B,CAAC;AAE3F,qBAAa,yBAAyB;IAC9B,OAAO,CAAC,IAAI,EAAE,yBAAyB,GAAG,OAAO,CAAC,UAAU,CAAC;CAyDpE;AAED,eAAO,MAAM,qBAAqB;;;;;;;;;;;;;;;;;;;;;;;;CAejC,CAAC"}
