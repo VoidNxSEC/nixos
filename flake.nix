@@ -104,12 +104,8 @@
 
             ./modules/desktop/yazi/yazi.nix
 
-            # ML
-            ./modules/ml/llama.nix
-            ./modules/ml/models-storage.nix
-            ./modules/ml/ollama-gpu-manager.nix
-            # ./modules/ml/offload # DISABLED: Rust compilation consumes 7GB+ RAM causing OOM - Re-enable after memory optimizations
-            ./modules/ml/mcp-config # MCP (Model Context Protocol) centralized config
+            # ML - Machine Learning Infrastructure (modular, see modules/ml/README.md)
+            ./modules/ml
 
             # System
             ./modules/system/memory.nix
