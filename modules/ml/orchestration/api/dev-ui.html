@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Offload Manager - Development UI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .panel {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #333;
+        }
+        
+        .panel h2 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-connected {
+            background: #4CAF50;
+            box-shadow: 0 0 8px #4CAF50;
+        }
+        
+        .status-disconnected {
+            background: #f44336;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-family: inherit;
+        }
+        
+        textarea {
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .log {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid #4CAF50;
+            padding-left: 10px;
+        }
+        
+        .log-entry.error {
+            border-left-color: #f44336;
+        }
+        
+        .log-entry.info {
+            border-left-color: #2196F3;
+        }
+        
+        .metric {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            transition: width 0.3s ease;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 ML Offload Manager</h1>
+        <p class="subtitle">Development UI for WebSocket & Inference Testing</p>
+        
+        <div class="grid">
+            <!-- WebSocket Panel -->
+            <div class="panel">
+                <h2>
+                    <span class="status-indicator" id="ws-status"></span>
+                    WebSocket Connection
+                </h2>
+                <input type="text" id="ws-url" value="ws://localhost:9000/ws" placeholder="WebSocket URL">
+                <button id="ws-connect">Connect</button>
+                <button id="ws-disconnect" disabled>Disconnect</button>
+                <button id="ws-clear-log">Clear Log</button>
+                <div class="log" id="ws-log"></div>
+            </div>
+            
+            <!-- VRAM Monitor -->
+            <div class="panel">
+                <h2>📊 VRAM Monitor</h2>
+                <div class="metric">
+                    <div class="metric-label">Total VRAM</div>
+                    <div class="metric-value" id="vram-total">-- GB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Used VRAM</div>
+                    <div class="metric-value" id="vram-used">-- GB</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="vram-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Free VRAM</div>
+                    <div class="metric-value" id="vram-free">-- GB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Utilization</div>
+                    <div class="metric-value" id="vram-util">--%</div>
+                </div>
+            </div>
+            
+            <!-- Chat Completions -->
+            <div class="panel full-width">
+                <h2>💬 Chat Completions (OpenAI Compatible)</h2>
+                <input type="text" id="chat-model" value="llama2" placeholder="Model name">
+                <textarea id="chat-prompt" placeholder="Enter your prompt here...">Hello! How are you today?</textarea>
+                <label>
+                    <input type="checkbox" id="chat-stream"> Stream response
+                </label>
+                <br><br>
+                <button id="chat-send">Send Chat Request</button>
+                <h3 style="margin-top: 15px; margin-bottom: 10px;">Response:</h3>
+                <div class="log" id="chat-response"></div>
+            </div>
+            
+            <!-- Embeddings -->
+            <div class="panel">
+                <h2>🔢 Embeddings</h2>
+                <input type="text" id="embed-model" value="sentence-transformers" placeholder="Model name">
+                <textarea id="embed-text" placeholder="Text to embed...">This is a test sentence for embedding generation.</textarea>
+                <button id="embed-send">Generate Embeddings</button>
+                <h3 style="margin-top: 15px; margin-bottom: 10px;">Result:</h3>
+                <div class="log" id="embed-response"></div>
+            </div>
+            
+            <!-- API Status -->
+            <div class="panel">
+                <h2>🔧 API Status</h2>
+                <button id="status-refresh">Refresh Status</button>
+                <button id="models-list">List Models</button>
+                <button id="backends-list">List Backends</button>
+                <div class="log" id="api-log"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // WebSocket handling
+        let ws = null;
+        const wsStatus = document.getElementById('ws-status');
+        const wsLog = document.getElementById('ws-log');
+        const wsConnectBtn = document.getElementById('ws-connect');
+        const wsDisconnectBtn = document.getElementById('ws-disconnect');
+        
+        function logWs(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            wsLog.appendChild(entry);
+            wsLog.scrollTop = wsLog.scrollHeight;
+        }
+        
+        function connectWebSocket() {
+            const url = document.getElementById('ws-url').value;
+            logWs(`Connecting to ${url}...`);
+            
+            ws = new WebSocket(url);
+            
+            ws.onopen = () => {
+                logWs('✅ Connected!', 'info');
+                wsStatus.className = 'status-indicator status-connected';
+                wsConnectBtn.disabled = true;
+                wsDisconnectBtn.disabled = false;
+            };
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    logWs(`📥 ${data.type}: ${JSON.stringify(data)}`, 'info');
+                    
+                    // Update VRAM metrics if it's a VRAM update
+                    if (data.type === 'vram_update') {
+                        updateVramMetrics(data);
+                    }
+                } catch (e) {
+                    logWs(`📥 ${event.data}`);
+                }
+            };
+            
+            ws.onerror = (error) => {
+                logWs(`❌ Error: ${error}`, 'error');
+            };
+            
+            ws.onclose = () => {
+                logWs('🔌 Disconnected', 'info');
+                wsStatus.className = 'status-indicator status-disconnected';
+                wsConnectBtn.disabled = false;
+                wsDisconnectBtn.disabled = true;
+            };
+        }
+        
+        function disconnectWebSocket() {
+            if (ws) {
+                ws.close();
+            }
+        }
+        
+        function updateVramMetrics(data) {
+            document.getElementById('vram-total').textContent = `${data.total_gb.toFixed(2)} GB`;
+            document.getElementById('vram-used').textContent = `${data.used_gb.toFixed(2)} GB`;
+            document.getElementById('vram-free').textContent = `${data.free_gb.toFixed(2)} GB`;
+            document.getElementById('vram-util').textContent = `${data.utilization_percent.toFixed(1)}%`;
+            document.getElementById('vram-progress').style.width = `${data.utilization_percent}%`;
+        }
+        
+        wsConnectBtn.addEventListener('click', connectWebSocket);
+        wsDisconnectBtn.addEventListener('click', disconnectWebSocket);
+        document.getElementById('ws-clear-log').addEventListener('click', () => {
+            wsLog.innerHTML = '';
+        });
+        
+        // Chat completions
+        document.getElementById('chat-send').addEventListener('click', async () => {
+            const model = document.getElementById('chat-model').value;
+            const prompt = document.getElementById('chat-prompt').value;
+            const stream = document.getElementById('chat-stream').checked;
+            const responseDiv = document.getElementById('chat-response');
+            
+            responseDiv.innerHTML = '<div class="log-entry info">Sending request...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:9000/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model,
+                        messages: [{ role: 'user', content: prompt }],
+                        stream,
+                    }),
+                });
+                
+                if (stream) {
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        const chunk = decoder.decode(value);
+                        const entry = document.createElement('div');
+                        entry.className = 'log-entry';
+                        entry.textContent = chunk;
+                        responseDiv.appendChild(entry);
+                        responseDiv.scrollTop = responseDiv.scrollHeight;
+                    }
+                } else {
+                    const data = await response.json();
+                    responseDiv.innerHTML = `<div class="log-entry">${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `<div class="log-entry error">Error: ${error.message}</div>`;
+            }
+        });
+        
+        // Embeddings
+        document.getElementById('embed-send').addEventListener('click', async () => {
+            const model = document.getElementById('embed-model').value;
+            const text = document.getElementById('embed-text').value;
+            const responseDiv = document.getElementById('embed-response');
+            
+            responseDiv.innerHTML = '<div class="log-entry info">Sending request...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:9000/v1/embeddings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model,
+                        input: text,
+                    }),
+                });
+                
+                const data = await response.json();
+                responseDiv.innerHTML = `<div class="log-entry">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                responseDiv.innerHTML = `<div class="log-entry error">Error: ${error.message}</div>`;
+            }
+        });
+        
+        // API status
+        async function fetchStatus() {
+            const logDiv = document.getElementById('api-log');
+            logDiv.innerHTML = '<div class="log-entry info">Fetching status...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:9000/status');
+                const data = await response.json();
+                logDiv.innerHTML = `<div class="log-entry">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                logDiv.innerHTML = `<div class="log-entry error">Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function fetchModels() {
+            const logDiv = document.getElementById('api-log');
+            logDiv.innerHTML = '<div class="log-entry info">Fetching models...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:9000/v1/models');
+                const data = await response.json();
+                logDiv.innerHTML = `<div class="log-entry">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                logDiv.innerHTML = `<div class="log-entry error">Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function fetchBackends() {
+            const logDiv = document.getElementById('api-log');
+            logDiv.innerHTML = '<div class="log-entry info">Fetching backends...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:9000/backends');
+                const data = await response.json();
+                logDiv.innerHTML = `<div class="log-entry">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                logDiv.innerHTML = `<div class="log-entry error">Error: ${error.message}</div>`;
+            }
+        }
+        
+        document.getElementById('status-refresh').addEventListener('click', fetchStatus);
+        document.getElementById('models-list').addEventListener('click', fetchModels);
+        document.getElementById('backends-list').addEventListener('click', fetchBackends);
+        
+        // Initialize
+        wsStatus.className = 'status-indicator status-disconnected';
+        logWs('WebSocket UI loaded. Click "Connect" to start.', 'info');
+    </script>
+</body>
+</html>

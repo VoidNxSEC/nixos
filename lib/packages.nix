@@ -13,7 +13,7 @@ in
     pname = "securellm-bridge-mcp";
     version = "2.0.0";
 
-    src = ../modules/ml/unified-llm/mcp-server;
+    src = ../modules/ml/integrations/mcp/server;
 
     npmDepsHash = "sha256-u0xDEW8vlMcyJtnMEPuVDhJv/piK6lUHKPlkAU5H6+8=";
 
