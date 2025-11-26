@@ -18,6 +18,19 @@ export const webSearchTools = [
     {
         name: "web_search",
         description: "Search the web for configurations, news, features, issues, and bug reports. Uses DuckDuckGo for privacy-focused searches.",
+        defer_loading: true,
+        allowed_callers: ["code_execution_20250825"],
+        input_examples: [
+            {
+                query: "nixos flake configuration examples",
+                search_type: "nixos"
+            },
+            {
+                query: "thermal throttling laptop linux",
+                search_type: "general",
+                limit: 5
+            }
+        ],
         inputSchema: {
             type: "object",
             properties: {
@@ -43,6 +56,20 @@ export const webSearchTools = [
     {
         name: "nix_search",
         description: "Search NixOS packages and options on search.nixos.org. Find package configurations, versions, and documentation.",
+        defer_loading: true,
+        allowed_callers: ["code_execution_20250825"],
+        input_examples: [
+            {
+                package_name: "firefox",
+                channel: "unstable",
+                type: "packages"
+            },
+            {
+                query: "networking firewall",
+                type: "options",
+                channel: "stable"
+            }
+        ],
         inputSchema: {
             type: "object",
             properties: {
@@ -72,6 +99,21 @@ export const webSearchTools = [
     {
         name: "github_search",
         description: "Search GitHub for repositories, issues, and code. Find NixOS configurations, bug reports, and implementation examples.",
+        defer_loading: true,
+        allowed_callers: ["code_execution_20250825"],
+        input_examples: [
+            {
+                query: "nixos configuration thermal management",
+                type: "repositories",
+                language: "nix",
+                sort: "stars"
+            },
+            {
+                query: "nvidia drivers thermal throttling",
+                type: "issues",
+                sort: "updated"
+            }
+        ],
         inputSchema: {
             type: "object",
             properties: {
@@ -102,12 +144,26 @@ export const webSearchTools = [
     {
         name: "tech_news_search",
         description: "Search tech news sources (Hacker News, Reddit, Lobsters) for discussions about packages, features, and issues.",
+        defer_loading: true,
+        allowed_callers: ["code_execution_20250825"],
+        input_examples: [
+            {
+                topic: "NixOS 25.11 release",
+                source: "all",
+                time_range: "week"
+            },
+            {
+                topic: "nvidia drivers linux",
+                source: "reddit",
+                time_range: "month"
+            }
+        ],
         inputSchema: {
             type: "object",
             properties: {
                 topic: {
                     type: "string",
-                    description: "Topic to search for (e.g., 'NixOS 24.11', 'nvidia drivers')",
+                    description: "Topic to search for (e.g., 'NixOS 25.11', 'nvidia drivers')",
                 },
                 source: {
                     type: "string",
@@ -128,6 +184,8 @@ export const webSearchTools = [
     {
         name: "nixos_discourse_search",
         description: "Search NixOS Discourse forum for community discussions, solutions, and best practices.",
+        defer_loading: true,
+        allowed_callers: ["code_execution_20250825"],
         inputSchema: {
             type: "object",
             properties: {
@@ -146,6 +204,8 @@ export const webSearchTools = [
     {
         name: "stackoverflow_search",
         description: "Search Stack Overflow for technical solutions and code examples related to NixOS and related technologies.",
+        defer_loading: true,
+        allowed_callers: ["code_execution_20250825"],
         inputSchema: {
             type: "object",
             properties: {
@@ -255,12 +315,12 @@ export async function handleNixSearch(args) {
                     version: info.version,
                     description: info.description,
                 })),
-                search_url: `https://search.nixos.org/${type}?channel=${channel === "stable" ? "24.05" : "unstable"}&query=${encodeURIComponent(searchTerm)}`,
+                search_url: `https://search.nixos.org/${type}?channel=${channel === "stable" ? "25.05" : "unstable"}&query=${encodeURIComponent(searchTerm)}`,
             };
         }
         catch (nixError) {
             // Fallback to web scraping search.nixos.org
-            const searchUrl = `https://search.nixos.org/${type}?channel=${channel === "stable" ? "24.05" : "unstable"}&query=${encodeURIComponent(searchTerm)}`;
+            const searchUrl = `https://search.nixos.org/${type}?channel=${channel === "stable" ? "25.05" : "unstable"}&query=${encodeURIComponent(searchTerm)}`;
             return {
                 success: true,
                 channel,

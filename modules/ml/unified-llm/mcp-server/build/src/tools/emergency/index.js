@@ -10,6 +10,7 @@ export const emergencyTools = [
     {
         name: "emergency_status",
         description: "Get comprehensive emergency system status (CPU, memory, SWAP, thermal, load)",
+        // Core tool - always loaded
         inputSchema: {
             type: "object",
             properties: {},
@@ -18,6 +19,7 @@ export const emergencyTools = [
     {
         name: "emergency_abort",
         description: "Emergency abort: Kill all NIX builds and heavy processes",
+        defer_loading: true,
         inputSchema: {
             type: "object",
             properties: {
@@ -32,6 +34,7 @@ export const emergencyTools = [
     {
         name: "emergency_cooldown",
         description: "Force CPU cooldown (powersave governor, disable turbo)",
+        defer_loading: true,
         inputSchema: {
             type: "object",
             properties: {},
@@ -40,6 +43,7 @@ export const emergencyTools = [
     {
         name: "emergency_nuke",
         description: "Nuclear option: Kill ALL heavy processes (compilers, indexers, etc)",
+        defer_loading: true,
         inputSchema: {
             type: "object",
             properties: {
@@ -54,6 +58,7 @@ export const emergencyTools = [
     {
         name: "emergency_swap",
         description: "Emergency SWAP cleanup: Free critical SWAP memory",
+        defer_loading: true,
         inputSchema: {
             type: "object",
             properties: {},
@@ -62,6 +67,7 @@ export const emergencyTools = [
     {
         name: "system_health_check",
         description: "Comprehensive system health check (thermal, CPU, memory, disk, SWAP)",
+        // Core tool - always loaded
         inputSchema: {
             type: "object",
             properties: {
@@ -76,6 +82,7 @@ export const emergencyTools = [
     {
         name: "safe_rebuild_check",
         description: "Check if it's safe to run nixos-rebuild (temperature, load, memory)",
+        // Core tool - always loaded
         inputSchema: {
             type: "object",
             properties: {},

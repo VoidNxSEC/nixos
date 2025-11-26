@@ -20,9 +20,13 @@ export declare const laptopDefenseTools: ({
         };
         required?: undefined;
     };
+    defer_loading?: undefined;
+    allowed_callers?: undefined;
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
+    allowed_callers: string[];
     inputSchema: {
         type: string;
         properties: {
@@ -44,6 +48,7 @@ export declare const laptopDefenseTools: ({
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
     inputSchema: {
         type: string;
         properties: {
@@ -58,6 +63,7 @@ export declare const laptopDefenseTools: ({
         };
         required?: undefined;
     };
+    allowed_callers?: undefined;
 } | {
     name: string;
     description: string;
@@ -71,9 +77,13 @@ export declare const laptopDefenseTools: ({
         };
         required?: undefined;
     };
+    defer_loading?: undefined;
+    allowed_callers?: undefined;
 } | {
     name: string;
     description: string;
+    defer_loading: boolean;
+    allowed_callers: string[];
     inputSchema: {
         type: string;
         properties: {
@@ -87,6 +97,36 @@ export declare const laptopDefenseTools: ({
         };
         required: string[];
     };
+} | {
+    name: string;
+    description: string;
+    defer_loading: boolean;
+    allowed_callers: string[];
+    inputSchema: {
+        type: string;
+        properties: {
+            max_temp?: undefined;
+            duration?: undefined;
+            skip_rebuild?: undefined;
+            evidence_dir?: undefined;
+        };
+        required?: undefined;
+    };
+} | {
+    name: string;
+    description: string;
+    defer_loading: boolean;
+    inputSchema: {
+        type: string;
+        properties: {
+            max_temp?: undefined;
+            duration?: undefined;
+            skip_rebuild?: undefined;
+            evidence_dir?: undefined;
+        };
+        required?: undefined;
+    };
+    allowed_callers?: undefined;
 })[];
 interface ThermalCheckResult {
     current_temp: number;
