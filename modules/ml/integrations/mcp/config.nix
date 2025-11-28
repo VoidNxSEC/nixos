@@ -23,7 +23,18 @@ let
               PROJECT_ROOT = projectRoot;
               KNOWLEDGE_DB_PATH = cfg.knowledgeDbPath;
               ENABLE_KNOWLEDGE = "true";
+              NIXOS_HOST_NAME = "kernelcore";
+              GEMINI_API_KEY = "\${GEMINI_API_KEY}";
+              GOOGLE_CLOUD_PROJECT = "\${GOOGLE_CLOUD_PROJECT}";
+              GOOGLE_CLOUD_LOCATION = "\${GOOGLE_CLOUD_LOCATION}";
             };
+            alwaysAllow = [
+              "emergency_status"
+              "system_health_check"
+              "thermal_check"
+              "safe_rebuild_check"
+              "rebuild_safety_check"
+            ];
           };
         };
       }
