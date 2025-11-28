@@ -51,11 +51,26 @@ in
       };
 
       # Google Gemini
-      "gemini_api_key" = {
-        sopsFile = ../../secrets/api.yaml;
-        mode = "0440";
-        owner = config.users.users.kernelcore.name;
-        group = "users";
+      #"gemini_api_key" = {
+      #sopsFile = ../../secrets/api.yaml;
+      #mode = "0440";
+      #owner = config.users.users.kernelcore.name;
+      #group = "users";
+      #};
+
+      # Google Cloud Project Configuration
+      "google_cloud_project" = {
+      sopsFile = ../../secrets/api.yaml;
+      mode = "0440";
+      owner = config.users.users.kernelcore.name;
+      group = "users";
+      };
+
+      "google_cloud_location" = {
+      sopsFile = ../../secrets/api.yaml;
+      mode = "0440";
+      owner = config.users.users.kernelcore.name;
+      group = "users";
       };
 
       # OpenRouter
@@ -126,6 +141,8 @@ in
         export OPENAI_PROJECT_ID="$(cat /run/secrets/openai_project_id 2>/dev/null || echo "")"
         export DEEPSEEK_API_KEY="$(cat /run/secrets/deepseek_api_key 2>/dev/null || echo "")"
         export GEMINI_API_KEY="$(cat /run/secrets/gemini_api_key 2>/dev/null || echo "")"
+        export GOOGLE_CLOUD_PROJECT="$(cat /run/secrets/google_cloud_project 2>/dev/null || echo "")"
+        export GOOGLE_CLOUD_LOCATION="$(cat /run/secrets/google_cloud_location 2>/dev/null || echo "")"
         export OPENROUTER_API_KEY="$(cat /run/secrets/openrouter_api_key 2>/dev/null || echo "")"
         export REPLICATE_API_TOKEN="$(cat /run/secrets/replicate_api_key 2>/dev/null || echo "")"
         export MISTRAL_API_KEY="$(cat /run/secrets/mistral_api_key 2>/dev/null || echo "")"
@@ -137,6 +154,8 @@ in
         echo "✓ API keys loaded into environment"
         echo "  - ANTHROPIC_API_KEY: ''${ANTHROPIC_API_KEY:0:15}..."
         echo "  - OPENAI_API_KEY: ''${OPENAI_API_KEY:0:15}..."
+        echo "  - GEMINI_API_KEY: ''${GEMINI_API_KEY:0:15}..."
+        echo "  - GOOGLE_CLOUD_PROJECT: ''${GOOGLE_CLOUD_PROJECT}"
         echo "  - GROQ_API_KEY: ''${GROQ_API_KEY:0:15}..."
         echo "  - GITHUB_TOKEN: ''${GITHUB_TOKEN:0:10}..."
       '';

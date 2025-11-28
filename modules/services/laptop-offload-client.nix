@@ -10,33 +10,34 @@
 
 let
   # CONFIGURE THESE VALUES FOR YOUR SETUP
-  desktopIP = "192.168.15.7"; # Desktop server IP (ATUALIZADO)
-  laptopIP = "192.168.15.8"; # Laptop IP (CONFIRMED)
+  desktopIP = "192.168.15.7"; # Desktop server IP (CONFIRMED)
+  laptopIP = "192.168.15.9"; # Laptop IP (UPDATED - current IP)
 
-  # SSH key path for builder authentication
-  builderKeyPath = "/etc/nix/builder_key";
+  # SSH key path for builder authentication (user-accessible key)
+  builderKeyPath = "/home/kernelcore/.ssh/nix-builder";
 in
 
 {
   # ===== REMOTE BUILDERS CONFIGURATION =====
   nix.settings = {
     # Enable distributed builds (optional - only used when desktop is available)
-    builders = lib.mkDefault [
-      "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1 nixos-test,benchmark,big-parallel - -"
-    ];
+    # DISABLED: Using nix.buildMachines in configuration.nix instead (more declarative)
+    # builders = lib.mkDefault [
+    #   "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1 nixos-test,benchmark,big-parallel - -"
+    # ];
 
     # Use remote builders for supported systems
     builders-use-substitutes = true;
 
     # Binary cache configuration (desktop-first)
     substituters = [
-      "http://${desktopIP}:5000" # Desktop cache (highest priority)
+      "https://${desktopIP}:5000" # Desktop cache (highest priority)
       "https://cache.nixos.org" # Official cache (fallback)
     ];
 
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "cache-key:02WKFpKSXrblw9GTALpIE9qAMu5oGebPfpCizFCwHWE=" # Desktop cache key
+      "cache.kernelcore.local:Hz52ZzMXdvZeSh2VkYZzGHy1baXq371xGBpaM2qE+Lk=" # Desktop cache key
     ];
 
     # Optimize for offload usage

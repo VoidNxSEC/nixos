@@ -23,6 +23,8 @@ let
     "*.db-shm"
     "*.db-wal"
     "*.map"
+    "*.js.map"
+    "*.css.map"
     "*.pyc"
     "__pycache__"
     ".cache"

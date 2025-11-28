@@ -10,8 +10,10 @@
   # IMPORTS
   # ============================================================
   imports = [
-    ./shell      # Modern shell configuration with zsh + powerlevel10k
-    ./yazi.nix   # Yazi file manager configuration
+    ./shell        # Modern shell configuration with zsh + powerlevel10k
+    ./yazi.nix     # Yazi file manager configuration
+    ./alacritty.nix # Alacritty terminal emulator (Zellij integration)
+    ./hyprland.nix # Hyprland config (bindings + defaults)
   ];
 
   # ============================================================
@@ -30,7 +32,7 @@
   home = {
     username = "kernelcore";
     homeDirectory = "/home/kernelcore";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
 
     # ========================================================
     # OPERATIONAL PACKAGES
@@ -118,6 +120,7 @@
       folder-color-switcher
       nemo-python
       nemo-fileroller
+      nemo-preview
 
       # ─────────────────────────────────────────────────────
       # Clipboard & Shell
@@ -149,7 +152,6 @@
       ardour
 
       # Secrets
-      proton-pass
       python313Packages.proton-keyring-linux
 
       # VPN
@@ -291,7 +293,7 @@
     # Tmux Configuration
     # ========================================================
     tmux = {
-      enable = true;
+      enable = false;
       terminal = "screen-256color";
       keyMode = "vi";
       mouse = true;

@@ -30,9 +30,9 @@ with lib;
 
       settings = {
         # Authentication
-        PermitRootLogin = "no";
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = mkDefault false;
+        PermitRootLogin = "yes";
+        PasswordAuthentication = true;
+        KbdInteractiveAuthentication = mkDefault true;
         PubkeyAuthentication = true;
         PermitEmptyPasswords = false;
         UsePAM = true;

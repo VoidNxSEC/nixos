@@ -17,66 +17,40 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = [
-      (pkgs.buildNpmPackage rec {
+      (pkgs.stdenv.mkDerivation rec {
         pname = "gemini-cli";
-        version = "0.19.0-nightly.20251124.e177314a4";
+        version = "0.19.0-preview.0";
 
-        # Use locally stored tarball for reproducible builds
+        # Use locally stored standalone JavaScript bundle
         src = pkgs.fetchurl {
-          url = "file://${./storage/gemini-cli-0.19.0-nightly.20251124.e177314a4.tar.gz}";
-          sha256 = "3d5cffc5a3df3c9430fb9f742424656442c07951a0b8a5a1532a033376786ded";
+          url = "file://${./storage/gemini.js}";
+          sha256 = "afb3b417531f19c07542ab218467853b6b8684c745ad523e02ca84f0a4be0af8";
         };
 
-        # Hash calculated from first build
-        npmDepsHash = "sha256-N2GI/G5CzuO8USGg2OEGHDTp+J6nfvz6gUm3Y9f03gc=";
+        dontUnpack = true;
+        dontBuild = true;
 
-        nodeLinker = "pnpm";
+        nativeBuildInputs = [ pkgs.makeWrapper ];
 
-        # Native dependencies required for building keytar (password management)
-        nativeBuildInputs = with pkgs; [
-          pkg-config
-          python3
-        ];
+        installPhase = ''
+          mkdir -p $out/bin $out/lib
 
-        buildInputs = with pkgs; [
-          libsecret
-        ];
+          # Install the standalone JavaScript bundle
+          cp $src $out/lib/gemini.js
+          chmod +x $out/lib/gemini.js
 
-        # Skip tests to speed up build
-        npmFlags = [ "--legacy-peer-deps" ];
-
-        # Disable broken symlinks check since this is a monorepo with internal packages
-        # that aren't included in the release tarball
-        dontCheckNoBrokenSymlinks = true;
-
-        # Clean up broken symlinks intelligently - only remove symlinks that point to nowhere
-        postInstall = ''
-          echo "Cleaning up broken symlinks in Gemini CLI..."
-
-          # Find and remove only broken symlinks (symlinks that don't resolve)
-          find $out/lib/node_modules/@google/gemini-cli/node_modules -type l 2>/dev/null | while read -r link; do
-            if [ ! -e "$link" ]; then
-              echo "Removing broken symlink: $link"
-              rm -f "$link"
-            fi
-          done
-
-          # Ensure the main executable exists and is correctly linked
-          if [ ! -f "$out/bin/gemini" ]; then
-            echo "Creating main gemini executable symlink..."
-            mkdir -p $out/bin
-            ln -sf $out/lib/node_modules/@google/gemini-cli/bundle/gemini.js $out/bin/gemini
-          fi
-
-          echo "Gemini CLI post-install cleanup complete"
+          # Create wrapper script that ensures Node.js is available
+          makeWrapper ${pkgs.nodejs}/bin/node $out/bin/gemini \
+            --add-flags "$out/lib/gemini.js"
         '';
 
         meta = with lib; {
-          description = "CLI tool for Google's Gemini Generative AI API";
+          description = "CLI tool for Google's Gemini Generative AI API (Preview/Nightly Build)";
           homepage = "https://github.com/google-gemini/gemini-cli";
           license = licenses.asl20;
-          maintainers = [ marcosfpina ];
+          maintainers = [ "marcosfpina" ];
           platforms = platforms.all;
+          mainProgram = "gemini";
         };
       })
     ];

@@ -8,6 +8,9 @@
 {
   imports = [
     # Yazi configuration moved to home-manager: hosts/kernelcore/home/yazi.nix
+
+    # 🚀 Tailscale VPN - Auto-configured for laptop (client mode)
+    ../../modules/network/vpn/tailscale-laptop.nix
   ];
 
   # Shell configuration - Training session logger
@@ -286,7 +289,7 @@
         roo = {
           enable = true;
           projectRoot = "/home/kernelcore/dev";
-          configPath = "/home/kernelcore/.roo/mcp.json";
+          configPath = "/home/kernelcore/.config/Claude/.mcp.json";
           user = "kernelcore";
         };
 
@@ -340,14 +343,14 @@
     openssh = {
       enable = true;
       settings = {
-        PermitRootLogin = "no";
-        PasswordAuthentication = false;
+        PermitRootLogin = "yes";
+        PasswordAuthentication = true;
       };
     };
 
     # Offload build server - permite laptop buildar remotamente neste desktop
     offload-server = {
-      enable = false;
+      enable = true;
       cachePort = 5000; # nix-serve porta
       builderUser = "nix-builder";
       cacheKeyPath = "/var/cache-priv-key.pem";
@@ -492,6 +495,9 @@
       "mcp-shared" # For shared MCP knowledge DB access
     ];
     hashedPasswordFile = "/etc/nixos/sec/user-password";
+    openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILI2hXXo4noD779+oYXGTw7vCHZQhkAy0eAEvja1luE0 cypher@nixos"
+    ];
     packages = with pkgs; [
 
       obsidian
@@ -568,6 +574,19 @@
   };
 
   users.extraGroups.docker.members = [ "kernelcore" ];
+
+
+  programs.nemo = {
+    enable = true;
+    setDefaultFileManager = true;
+
+    # Já vem tudo habilitado por padrão, mas você pode desabilitar:
+    # plugins.preview = false;
+    # plugins.compare = false;
+    # plugins.terminal = false;
+    # plugins.admin = false;
+  };
+
 
   programs = {
     firefox.enable = true;
@@ -881,6 +900,28 @@
   #kernelcore.ml.offload.enable = false;
   #kernelcore.ml.offload.api.enable = false;
 
+  # ===== DISTRIBUTED BUILDS CONFIGURATION =====
+  # Offload heavy builds to desktop (192.168.15.7)
+  nix.buildMachines = [{
+    hostName = "192.168.15.7";
+    sshUser = "nix-builder";
+    sshKey = "/home/kernelcore/.ssh/id_ed25519";  # SSH key for remote builds
+    system = "x86_64-linux";
+    maxJobs = 8;              # Desktop has more cores
+    speedFactor = 2;          # Desktop is 2x faster
+    supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
+    mandatoryFeatures = [ ];
+  }];
+
+  nix.distributedBuilds = true;
+
+  nix.settings = {
+    builders-use-substitutes = true;  # Try desktop cache first
+    max-jobs = 4;                      # Allow local builds for small packages
+    cores = 0;                         # Use all available cores
+    fallback = true;                   # Build locally if desktop unavailable
+  };
+
   programs.vscodium-secure = {
     enable = true;
     extensions = with pkgs.vscode-extensions; [
@@ -888,5 +929,29 @@
     ];
   };
 
-  system.stateVersion = "25.05";
+  # Proton Pass - Secure password manager
+  programs.protonpass.enable = true;
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Tailscale Configuration - Using new modular system
+  # Config: modules/network/vpn/tailscale-laptop.nix (imported above)
+  # ═══════════════════════════════════════════════════════════════════
+  # OLD system disabled (was conflicting):
+  # kernelcore.network.proxy.tailscale-services.enable = true;
+  # kernelcore.network.monitoring.tailscale.enable = true;
+
+  # Monitor still works via new system
+  kernelcore.network.monitoring.tailscale.enable = true;
+
+  # Optional: Enable firewall zones
+  kernelcore.network.security.firewall-zones.enable = true;
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SSH Configuration - Declarative SSH client setup
+  # ═══════════════════════════════════════════════════════════════════
+  kernelcore.ssh.enable = true;
+
+
+
+  system.stateVersion = "26.05";
 }
