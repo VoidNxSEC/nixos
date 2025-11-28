@@ -14,6 +14,8 @@ import type {
 } from '../../types/extended-tools.js';
 
 export { SSHConnectionManager, sshConnectSchema } from './connection-manager.js';
+export { JumpHostManager, sshJumpHostSchema } from './jump-host-manager.js';
+export { SSHTunnelManager } from './tunnel-manager.js';
 
 // Global connection manager instance
 const connectionManager = new SSHConnectionManager();
@@ -199,7 +201,7 @@ export class SSHMaintenanceCheckTool {
       data: {
         connection_id,
         checks: results,
-        host: conn.host,
+        host: conn.config.host,
       },
       timestamp: new Date().toISOString(),
     };

@@ -48,5 +48,41 @@
     "gc" = "git commit -m";
     "gp" = "git push";
     "gl" = "git log --oneline -10";
+
+    # ============================================================
+    # ALIAS MANAGEMENT & DEBUGGING
+    # ============================================================
+
+    # Show all active aliases (sorted)
+    "aliases" = "alias | sort";
+
+    # Find where an alias is defined in NixOS config
+    "alias-find" = "grep -r --color=always -n -A 2 -B 1 --include='*.nix' -e '\"$1\"' /etc/nixos/modules/shell/aliases/ 2>/dev/null || echo 'Alias not found in config files'";
+
+    # Search for aliases matching a pattern
+    "alias-search" = "alias | grep --color=always -i";
+
+    # Show all alias definition files
+    "alias-files" = "find /etc/nixos/modules/shell/aliases -name '*.nix' -type f -exec echo '{}' \\; -exec head -1 '{}' \\; -exec echo '' \\;";
+
+    # List aliases by category
+    "alias-docker" = "grep -h '=' /etc/nixos/modules/shell/aliases/docker/*.nix 2>/dev/null | grep -v '^#' | sort";
+    "alias-k8s" = "grep -h '=' /etc/nixos/modules/shell/aliases/kubernetes/*.nix 2>/dev/null | grep -v '^#' | sort";
+    "alias-nix" = "grep -h '=' /etc/nixos/modules/shell/aliases/nix/*.nix 2>/dev/null | grep -v '^#' | sort";
+    "alias-nav" = "grep -h '=' /etc/nixos/modules/shell/aliases/system/navigation.nix 2>/dev/null | grep -v '^#' | sort";
+
+    # Show what command will actually run (resolves aliases)
+    "what" = "type -a";
+
+    # Count total aliases
+    "alias-count" = "alias | wc -l";
+
+    # Show most recently added aliases (from git)
+    "alias-recent" = "cd /etc/nixos && git log --all --oneline --grep='alias' -10 && cd -";
+
+    # Advanced alias inspector (interactive tool)
+    "ai" = "/etc/nixos/scripts/alias-inspector.sh";
+    "alias-info" = "/etc/nixos/scripts/alias-inspector.sh info";
+    "alias-trace" = "/etc/nixos/scripts/alias-inspector.sh trace";
   };
 }
