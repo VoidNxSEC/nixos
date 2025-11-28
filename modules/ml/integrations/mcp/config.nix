@@ -79,25 +79,48 @@ in
 
   config = mkIf cfg.enable {
     # Create shared group for knowledge DB access
+    # NOTE: Users must manually add themselves to mcp-shared group in their user configuration
+    # Example: extraGroups = [ "mcp-shared" ];
     users.groups.mcp-shared = { };
+
     # Setup knowledge database and agent configs
-    systemd.tmpfiles.rules = [
-      # Knowledge DB directory and file
-      "d /var/lib/mcp-knowledge 0770 root mcp-shared -"
-      "f ${cfg.knowledgeDbPath} 0660 root mcp-shared -"
-    ]
-    ++ (flatten (
-      mapAttrsToList (
-        name: agentCfg:
-        optionals agentCfg.enable [
-          # Create workspace directory
-          "d ${agentCfg.projectRoot} 0750 ${agentCfg.user} ${agentCfg.user} -"
+    systemd.tmpfiles.rules =
+      [
+        # Knowledge DB directory and file (create if missing)
+        "d /var/lib/mcp-knowledge 0770 root mcp-shared -"
+        "f ${cfg.knowledgeDbPath} 0660 root mcp-shared -"
+        # Fix ownership/permissions if the directory or DB already exist (handles legacy mcp-shar group)
+        "z /var/lib/mcp-knowledge 0770 root mcp-shared -"
+        "z ${cfg.knowledgeDbPath} 0660 root mcp-shared -"
+      ]
+      ++ (flatten (
+        mapAttrsToList (
+          name: agentCfg:
+          optionals agentCfg.enable [
+            # Create workspace directory
+            "d ${agentCfg.projectRoot} 0750 ${agentCfg.user} ${agentCfg.user} -"
           # Create config directory (extract directory from configPath)
           "d ${dirOf agentCfg.configPath} 0750 ${agentCfg.user} ${agentCfg.user} -"
           # Install mcp.json as symlink
           "L+ ${agentCfg.configPath} - - - - ${generateMcpConfig agentCfg.projectRoot}"
         ]
-      ) cfg.agents
-    ));
+          ) cfg.agents
+        ));
+
+    # Repair legacy permissions/ownership on activation (handles mcp-shar -> mcp-shared)
+    system.activationScripts.mcpKnowledgePerms = ''
+      set -e
+      db_dir=${dirOf cfg.knowledgeDbPath}
+      if [ -d "$db_dir" ]; then
+        chown root:mcp-shared "$db_dir" || true
+        chmod 0770 "$db_dir" || true
+      fi
+      for f in "${cfg.knowledgeDbPath}" "$db_dir/knowledge.db-wal" "$db_dir/knowledge.db-shm"; do
+        if [ -e "$f" ]; then
+          chown root:mcp-shared "$f" || true
+          chmod 0660 "$f" || true
+        fi
+      done
+    '';
   };
 }
