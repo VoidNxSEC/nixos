@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 # Este módulo apenas garante que o Yazi esteja instalado no sistema.
 # A configuração detalhada (keymap, settings) está no home-manager.

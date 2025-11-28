@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 # Configuração completa do Yazi file manager no home-manager.
 # Inclui atalhos customizados para triagem rápida de arquivos.
@@ -26,8 +31,8 @@ in
     settings = {
       manager = {
         show_hidden = false;
-        sort_by = "mtime";      # Ordenar por data de modificação (útil para ver o que chegou por último)
-        sort_reverse = true;    # Mais recentes primeiro
+        sort_by = "mtime"; # Ordenar por data de modificação (útil para ver o que chegou por último)
+        sort_reverse = true; # Mais recentes primeiro
         sort_sensitive = false;
       };
       preview = {

@@ -1,0 +1,132 @@
+name: 'Build NixOS Configuration'
+description: 'Build NixOS configuration with validation and caching'
+author: 'VoidNxSEC'
+
+inputs:
+  config-path:
+    description: 'Path to NixOS configuration (flake format)'
+    required: true
+    default: '.#nixosConfigurations.kernelcore.config.system.build.toplevel'
+  target:
+    description: 'Build target: toplevel, iso, vm-image'
+    required: false
+    default: 'toplevel'
+  enable-tests:
+    description: 'Run tests after build'
+    required: false
+    default: 'true'
+  show-trace:
+    description: 'Show detailed trace on errors'
+    required: false
+    default: 'true'
+  cachix-push:
+    description: 'Push to cachix after successful build'
+    required: false
+    default: 'false'
+
+outputs:
+  build-path:
+    description: 'Path to build result'
+    value: ${{ steps.build.outputs.path }}
+  closure-size:
+    description: 'Closure size in MB'
+    value: ${{ steps.analyze.outputs.size }}
+  build-time:
+    description: 'Build time in seconds'
+    value: ${{ steps.build.outputs.time }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate flake
+      shell: bash
+      run: |
+        echo "🔍 Validating flake..."
+        nix flake check ${{ inputs.show-trace == 'true' && '--show-trace' || '' }}
+        echo "✅ Flake validation passed"
+
+    - name: Build configuration
+      id: build
+      shell: bash
+      run: |
+        echo "🏗️  Building NixOS configuration..."
+        START_TIME=$(date +%s)
+        
+        BUILD_CMD="nix build ${{ inputs.config-path }}"
+        
+        if [ "${{ inputs.show-trace }}" == "true" ]; then
+          BUILD_CMD="$BUILD_CMD --show-trace"
+        fi
+        
+        BUILD_CMD="$BUILD_CMD --print-build-logs --no-link --print-out-paths"
+        
+        echo "Running: $BUILD_CMD"
+        BUILD_PATH=$($BUILD_CMD)
+        
+        END_TIME=$(date +%s)
+        BUILD_TIME=$((END_TIME - START_TIME))
+        
+        echo "path=$BUILD_PATH" >> $GITHUB_OUTPUT
+        echo "time=$BUILD_TIME" >> $GITHUB_OUTPUT
+        
+        echo "✅ Build completed in ${BUILD_TIME}s"
+        echo "📦 Build path: $BUILD_PATH"
+
+    - name: Analyze closure
+      id: analyze
+      shell: bash
+      run: |
+        echo "📊 Analyzing closure size..."
+        
+        CLOSURE_INFO=$(nix path-info -Sh ${{ steps.build.outputs.path }})
+        echo "$CLOSURE_INFO"
+        
+        # Extract size in MB
+        SIZE_MB=$(echo "$CLOSURE_INFO" | awk '{print $2}' | sed 's/[^0-9.]//g')
+        echo "size=$SIZE_MB" >> $GITHUB_OUTPUT
+        
+        # Check if size is reasonable (< 10GB)
+        if (( $(echo "$SIZE_MB > 10000" | bc -l) )); then
+          echo "⚠️  WARNING: Closure size is very large: ${SIZE_MB}MB"
+        fi
+        
+        echo "✅ Closure size: ${SIZE_MB}MB"
+
+    - name: Run tests
+      if: inputs.enable-tests == 'true'
+      shell: bash
+      run: |
+        echo "🧪 Running tests..."
+        
+        # Test if configuration can be evaluated
+        nix eval ${{ inputs.config-path }} --apply 'x: "ok"'
+        
+        # Check for eval warnings
+        nix eval ${{ inputs.config-path }} --show-trace 2>&1 | grep -i "warning" || true
+        
+        echo "✅ Tests passed"
+
+    - name: Push to Cachix
+      if: inputs.cachix-push == 'true'
+      shell: bash
+      run: |
+        echo "📤 Pushing to Cachix..."
+        
+        if command -v cachix &> /dev/null; then
+          cachix push $(cachix cache list | head -1) ${{ steps.build.outputs.path }}
+          echo "✅ Pushed to Cachix"
+        else
+          echo "⚠️  Cachix not available, skipping push"
+        fi
+
+    - name: Generate build report
+      shell: bash
+      run: |
+        echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Target**: ${{ inputs.target }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Build Time**: ${{ steps.build.outputs.time }}s" >> $GITHUB_STEP_SUMMARY
+        echo "- **Closure Size**: ${{ steps.analyze.outputs.size }}MB" >> $GITHUB_STEP_SUMMARY
+        echo "- **Build Path**: \`${{ steps.build.outputs.path }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Build completed successfully" >> $GITHUB_STEP_SUMMARY

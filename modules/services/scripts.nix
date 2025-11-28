@@ -14,7 +14,7 @@
     jup-ml = "docker run --rm --device=nvidia.com/gpu=all --ipc=host --ulimit stack=67108864 --shm-size=8g";
 
     # System Shortcuts
-    nx = "cd /etc/nixos";  # Quick jump to NixOS config
+    nx = "cd /etc/nixos"; # Quick jump to NixOS config
   };
 
   # Ensure aliases work in both bash and zsh
