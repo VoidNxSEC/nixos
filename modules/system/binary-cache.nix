@@ -80,7 +80,7 @@ with lib;
 
     # Optional: Set up local cache server using nix-serve
     services.nix-serve = mkIf config.kernelcore.system.binary-cache.local.enable {
-      enable = mkDefault false; # Only enable if you want to RUN the server on this machine
+      enable = mkDefault true; # Only enable if you want to RUN the server on this machine
       port = 5000;
       bindAddress = "0.0.0.0";
       secretKeyFile = "/var/cache-priv-key.pem";
