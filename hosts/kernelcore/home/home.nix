@@ -10,12 +10,12 @@
   # IMPORTS
   # ============================================================
   imports = [
-    ./shell        # Modern shell configuration with zsh + powerlevel10k
-    ./yazi.nix     # Yazi file manager configuration
+    ./shell # Modern shell configuration with zsh + powerlevel10k
+    ./yazi.nix # Yazi file manager configuration
     ./alacritty.nix # Alacritty terminal emulator (Zellij integration)
     ./hyprland.nix # Hyprland config (bindings + defaults)
-    ./git.nix      # Git configuration
-    ./tmux.nix     # Tmux configuration
+    ./git.nix # Git configuration
+    ./tmux.nix # Tmux configuration
     ./flameshot.nix # Screenshot tool
   ];
 

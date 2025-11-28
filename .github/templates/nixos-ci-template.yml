@@ -1,0 +1,169 @@
+# NixOS CI/CD Template
+# Copy this file to your project as .github/workflows/ci.yml
+
+name: NixOS CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Deploy after build'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  # CUSTOMIZE: Set your cachix cache name
+  CACHIX_NAME: your-cache-name
+  
+  # CUSTOMIZE: Set your NixOS configuration path
+  CONFIG_PATH: '.#nixosConfigurations.yourhost.config.system.build.toplevel'
+
+jobs:
+  # ============================================================================
+  # PR VALIDATION (runs on pull requests)
+  # ============================================================================
+  pr-validation:
+    name: Validate Pull Request
+    if: github.event_name == 'pull_request'
+    runs-on: [self-hosted, nixos]  # Or ubuntu-latest if using GitHub runners
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Nix Environment
+        uses: VoidNxSEC/nixos/.github/actions/setup-nix-env@main
+        with:
+          cachix-name: ${{ env.CACHIX_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Check Formatting
+        run: nix fmt -- --check .
+
+      - name: Validate Flake
+        run: nix flake check --show-trace
+
+      - name: Build Configuration
+        uses: VoidNxSEC/nixos/.github/actions/build-nixos@main
+        with:
+          config-path: ${{ env.CONFIG_PATH }}
+          enable-tests: true
+
+  # ============================================================================
+  # MAIN PIPELINE (runs on push to main/develop)
+  # ============================================================================
+  build:
+    name: Build Configuration
+    if: github.event_name == 'push'
+    runs-on: [self-hosted, nixos]
+    
+    outputs:
+      build-path: ${{ steps.build.outputs.build-path }}
+      closure-size: ${{ steps.build.outputs.closure-size }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Nix Environment
+        uses: VoidNxSEC/nixos/.github/actions/setup-nix-env@main
+        with:
+          cachix-name: ${{ env.CACHIX_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Build NixOS Configuration
+        id: build
+        uses: VoidNxSEC/nixos/.github/actions/build-nixos@main
+        with:
+          config-path: ${{ env.CONFIG_PATH }}
+          enable-tests: true
+          cachix-push: true
+
+  # ============================================================================
+  # DEPLOY (only on main branch)
+  # ============================================================================
+  deploy:
+    name: Deploy to Production
+    needs: build
+    if: |
+      github.event_name == 'push' && 
+      github.ref == 'refs/heads/main' &&
+      (github.event.inputs.deploy == 'true' || github.event_name == 'workflow_dispatch')
+    runs-on: [self-hosted, nixos]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy Configuration
+        run: |
+          echo "🚀 Deploying to production..."
+          # CUSTOMIZE: Adjust hostname to match your system
+          sudo nixos-rebuild switch --flake .#yourhost
+
+      - name: Verify Deployment
+        run: |
+          echo "🔍 Verifying deployment..."
+          systemctl --failed
+          journalctl -p err -n 20 --no-pager
+
+      - name: Notify Success
+        if: success()
+        uses: VoidNxSEC/nixos/.github/actions/notify@main
+        with:
+          status: success
+          title: "Production Deployment Successful"
+          message: "Commit ${{ github.sha }} deployed successfully"
+          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Notify Failure
+        if: failure()
+        uses: VoidNxSEC/nixos/.github/actions/notify@main
+        with:
+          status: failure
+          title: "Production Deployment Failed"
+          message: "Deployment failed! Manual intervention required."
+          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          create-issue-on-failure: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+# ==============================================================================
+# SETUP INSTRUCTIONS
+# ==============================================================================
+#
+# 1. Copy this file to: .github/workflows/ci.yml
+#
+# 2. Customize the environment variables:
+#    - CACHIX_NAME: Your cachix cache name
+#    - CONFIG_PATH: Path to your NixOS configuration
+#
+# 3. Add required secrets to your repository:
+#    Settings → Secrets and variables → Actions → New repository secret
+#    
+#    Required:
+#    - CACHIX_AUTH_TOKEN: Your cachix authentication token
+#    - AGE_SECRET_KEY: Your age secret key for SOPS (if using secrets)
+#    
+#    Optional:
+#    - DISCORD_WEBHOOK: Discord webhook URL for notifications
+#    - SLACK_WEBHOOK: Slack webhook URL for notifications
+#
+# 4. Adjust deployment section:
+#    - Change hostname: sudo nixos-rebuild switch --flake .#YOURHOST
+#    - Customize health checks as needed
+#
+# 5. Set up self-hosted runner:
+#    Follow: https://github.com/VoidNxSEC/nixos/blob/main/docs/GITHUB-ACTIONS-RUNNER-FIX.md
+#    Or use: runs-on: ubuntu-latest (with Nix installation step)
+#
+# 6. Test the workflow:
+#    - Create a test PR to trigger pr-validation
+#    - Push to develop branch to trigger build
+#    - Push to main to trigger build + deploy (with approval)
+#
+# ==============================================================================
