@@ -7,8 +7,15 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, rust-overlay, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      rust-overlay,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs {
@@ -16,7 +23,10 @@
         };
 
         rustToolchain = pkgs.rust-bin.stable.latest.default.override {
-          extensions = [ "rust-src" "rust-analyzer" ];
+          extensions = [
+            "rust-src"
+            "rust-analyzer"
+          ];
         };
 
         # Rust workspace build
@@ -63,7 +73,10 @@
           meta = with pkgs.lib; {
             description = "Secure LLM API proxy with enterprise-grade security";
             homepage = "https://github.com/securellm/bridge";
-            license = with licenses; [ mit asl20 ];
+            license = with licenses; [
+              mit
+              asl20
+            ];
             maintainers = [ "kernelcore" ];
           };
         };
@@ -113,7 +126,8 @@
           };
         };
 
-      in {
+      in
+      {
         packages = {
           default = rustPackage;
           rust = rustPackage;
@@ -122,7 +136,10 @@
           # Combined package with both Rust and MCP
           all = pkgs.symlinkJoin {
             name = "securellm-bridge-all";
-            paths = [ rustPackage mcpServer ];
+            paths = [
+              rustPackage
+              mcpServer
+            ];
           };
         };
 
