@@ -11,6 +11,3 @@ export * from './context-inference.js';
 export * from './proactive-actions.js';
 export * from './planning.js';
 export * from './nix-tools.js';
-export * from './extended-tools.js';
-export * from './ssh-advanced.js';
-export * from './infrastructure.js';
