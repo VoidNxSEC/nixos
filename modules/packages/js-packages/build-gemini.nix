@@ -12,7 +12,7 @@ pkgs.buildNpmPackage rec {
   };
 
   # Expected to fail - will be updated after first build
-  npmDepsHash = "";
+  npmDepsHash = "sha256-gwC/LjSm5+hWmMNg88xZ/C6DMtVeqYekdl742KQQ0EQ=";
 
   nodeLinker = "pnpm";
 
