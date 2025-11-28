@@ -1,0 +1,136 @@
+name: 'Setup Nix Environment'
+description: 'Configure Nix with flakes, cachix and optimizations'
+author: 'VoidNxSEC'
+
+inputs:
+  cachix-name:
+    description: 'Cachix cache name'
+    required: false
+    default: ''
+  cachix-token:
+    description: 'Cachix authentication token'
+    required: false
+    default: ''
+  enable-flakes:
+    description: 'Enable Nix flakes support'
+    required: false
+    default: 'true'
+  nix-conf-extra:
+    description: 'Extra nix.conf settings'
+    required: false
+    default: ''
+
+outputs:
+  nix-version:
+    description: 'Installed Nix version'
+    value: ${{ steps.check-nix.outputs.version }}
+  cache-hit:
+    description: 'Whether cache was hit'
+    value: ${{ steps.setup-cachix.outputs.cache-hit }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check Nix installation
+      id: check-nix
+      shell: bash
+      run: |
+        if command -v nix &> /dev/null; then
+          VERSION=$(nix --version | awk '{print $3}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "✅ Nix $VERSION already installed"
+        else
+          echo "❌ Nix not found"
+          exit 1
+        fi
+
+    - name: Configure Nix
+      shell: bash
+      run: |
+        echo "🔧 Configuring Nix..."
+        
+        # Create nix.conf if not exists
+        sudo mkdir -p /etc/nix
+        
+        # Base configuration
+        cat << 'EOF' | sudo tee -a /etc/nix/nix.conf
+        # GitHub Actions optimizations
+        max-jobs = auto
+        cores = 0
+        
+        # Flakes support
+        experimental-features = nix-command flakes
+        
+        # Build optimization
+        keep-outputs = true
+        keep-derivations = true
+        
+        # Substituters
+        substituters = https://cache.nixos.org https://nix-community.cachix.org
+        trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+        EOF
+        
+        # Add extra config if provided
+        if [ -n "${{ inputs.nix-conf-extra }}" ]; then
+          echo "${{ inputs.nix-conf-extra }}" | sudo tee -a /etc/nix/nix.conf
+        fi
+        
+        echo "✅ Nix configured"
+
+    - name: Setup Cachix
+      id: setup-cachix
+      if: inputs.cachix-name != ''
+      shell: bash
+      run: |
+        echo "📦 Setting up Cachix cache: ${{ inputs.cachix-name }}"
+        
+        # Install cachix if not available
+        if ! command -v cachix &> /dev/null; then
+          nix-env -iA nixpkgs.cachix
+        fi
+        
+        # Configure cachix
+        if [ -n "${{ inputs.cachix-token }}" ]; then
+          echo "${{ inputs.cachix-token }}" | cachix authtoken
+          echo "cache-hit=false" >> $GITHUB_OUTPUT
+        fi
+        
+        # Use cache
+        cachix use ${{ inputs.cachix-name }}
+        
+        echo "✅ Cachix configured"
+
+    - name: Verify Nix setup
+      shell: bash
+      run: |
+        echo "🔍 Verifying Nix setup..."
+        
+        # Check Nix version
+        echo "Nix version: $(nix --version)"
+        
+        # Check flakes support
+        if [ "${{ inputs.enable-flakes }}" == "true" ]; then
+          if nix flake --version &> /dev/null; then
+            echo "✅ Flakes support: enabled"
+          else
+            echo "❌ Flakes support: disabled"
+            exit 1
+          fi
+        fi
+        
+        # Check cachix
+        if [ -n "${{ inputs.cachix-name }}" ]; then
+          if cachix --version &> /dev/null; then
+            echo "✅ Cachix: $(cachix --version)"
+          else
+            echo "⚠️  Cachix not available"
+          fi
+        fi
+        
+        echo "✅ Nix environment ready"
+
+    - name: Print Nix info
+      shell: bash
+      run: |
+        echo "📋 Nix Configuration:"
+        nix show-config | grep -E "(experimental-features|substituters|max-jobs|cores)" || true
