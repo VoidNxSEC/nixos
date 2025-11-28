@@ -7,8 +7,15 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, rust-overlay, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      rust-overlay,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs {
@@ -17,24 +24,32 @@
         };
 
         rustToolchain = pkgs.rust-bin.stable.latest.default.override {
-          extensions = [ "rust-src" "rust-analyzer" ];
+          extensions = [
+            "rust-src"
+            "rust-analyzer"
+          ];
         };
 
         # Python environment with FastAPI
-        pythonEnv = pkgs.python3.withPackages (ps: with ps; [
-          fastapi
-          uvicorn
-          pydantic
-          # Standard library modules are included by default
-        ]);
+        pythonEnv = pkgs.python3.withPackages (
+          ps: with ps; [
+            fastapi
+            uvicorn
+            pydantic
+            # Standard library modules are included by default
+          ]
+        );
 
         # Feature flag for GPU support
         enableGpu = true;
 
         gpuBuildInputs = pkgs.lib.optionals enableGpu (
-          if system == "x86_64-linux" then [
-            pkgs.cudaPackages.cuda_nvml
-          ] else []
+          if system == "x86_64-linux" then
+            [
+              pkgs.cudaPackages.cuda_nvml
+            ]
+          else
+            [ ]
         );
 
         # Rust API server
@@ -52,16 +67,20 @@
             rustToolchain
           ];
 
-          buildInputs = with pkgs; [
-            openssl
-            sqlite
-          ] ++ gpuBuildInputs;
+          buildInputs =
+            with pkgs;
+            [
+              openssl
+              sqlite
+            ]
+            ++ gpuBuildInputs;
 
           buildPhase = ''
-            ${if enableGpu then
-              "cargo build --release --features gpu-support"
-            else
-              "cargo build --release --no-default-features"
+            ${
+              if enableGpu then
+                "cargo build --release --features gpu-support"
+              else
+                "cargo build --release --no-default-features"
             }
           '';
 
@@ -123,10 +142,14 @@
         # Combined package (Rust + Python)
         mlOffloadAll = pkgs.symlinkJoin {
           name = "ml-offload-all";
-          paths = [ rustApi pythonScripts ];
+          paths = [
+            rustApi
+            pythonScripts
+          ];
         };
 
-      in {
+      in
+      {
         packages = {
           default = mlOffloadAll;
           rust = rustApi;
@@ -162,32 +185,36 @@
         };
 
         devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            # Rust toolchain
-            rustToolchain
-            cargo-watch
-            cargo-edit
+          buildInputs =
+            with pkgs;
+            [
+              # Rust toolchain
+              rustToolchain
+              cargo-watch
+              cargo-edit
 
-            # Python environment
-            pythonEnv
-            python3Packages.pip
-            python3Packages.ipython
+              # Python environment
+              pythonEnv
+              python3Packages.pip
+              python3Packages.ipython
 
-            # Build dependencies
-            pkg-config
-            openssl
-            sqlite
+              # Build dependencies
+              pkg-config
+              openssl
+              sqlite
 
-            # GPU support
-          ] ++ gpuBuildInputs ++ [
+              # GPU support
+            ]
+            ++ gpuBuildInputs
+            ++ [
 
-            # Development tools
-            git
-            ripgrep
-            fd
-            jq
-            curl
-          ];
+              # Development tools
+              git
+              ripgrep
+              fd
+              jq
+              curl
+            ];
 
           shellHook = ''
             echo "🚀 ML Offload API Development Environment"
@@ -208,11 +235,16 @@
             echo "    nix build .#rust              - Build Rust API"
             echo "    nix build .#python            - Build Python scripts"
             echo "    nix build .#all               - Build both"
-            ${if enableGpu then ''
-              echo ""
-              echo "GPU Info:"
-              nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null || echo "  nvidia-smi not available"
-            '' else ""}
+            ${
+              if enableGpu then
+                ''
+                  echo ""
+                  echo "GPU Info:"
+                  nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null || echo "  nvidia-smi not available"
+                ''
+              else
+                ""
+            }
           '';
 
           # Environment variables for development

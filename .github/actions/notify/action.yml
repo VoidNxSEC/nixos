@@ -1,0 +1,222 @@
+name: 'Send Notification'
+description: 'Send notifications to Discord, Slack or other services'
+author: 'VoidNxSEC'
+
+inputs:
+  status:
+    description: 'Status: success, failure, warning, info'
+    required: true
+  title:
+    description: 'Notification title'
+    required: true
+  message:
+    description: 'Notification message'
+    required: false
+    default: ''
+  discord-webhook:
+    description: 'Discord webhook URL'
+    required: false
+    default: ''
+  slack-webhook:
+    description: 'Slack webhook URL'
+    required: false
+    default: ''
+  github-token:
+    description: 'GitHub token for creating issues/comments'
+    required: false
+    default: ''
+  create-issue-on-failure:
+    description: 'Create GitHub issue on failure'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Prepare notification
+      id: prepare
+      shell: bash
+      run: |
+        # Set color and emoji based on status
+        case "${{ inputs.status }}" in
+          success)
+            COLOR="3066993"  # Green
+            EMOJI="✅"
+            ;;
+          failure)
+            COLOR="15158332"  # Red
+            EMOJI="❌"
+            ;;
+          warning)
+            COLOR="16776960"  # Yellow
+            EMOJI="⚠️"
+            ;;
+          info)
+            COLOR="3447003"  # Blue
+            EMOJI="ℹ️"
+            ;;
+          *)
+            COLOR="9807270"  # Gray
+            EMOJI="📋"
+            ;;
+        esac
+        
+        echo "color=$COLOR" >> $GITHUB_OUTPUT
+        echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
+        
+        # Build message
+        MESSAGE="${{ inputs.message }}"
+        if [ -z "$MESSAGE" ]; then
+          MESSAGE="Build ${{ inputs.status }} for commit ${{ github.sha }}"
+        fi
+        echo "message=$MESSAGE" >> $GITHUB_OUTPUT
+
+    - name: Send Discord notification
+      if: inputs.discord-webhook != ''
+      shell: bash
+      run: |
+        echo "📤 Sending Discord notification..."
+        
+        PAYLOAD=$(cat <<EOF
+        {
+          "embeds": [{
+            "title": "${{ steps.prepare.outputs.emoji }} ${{ inputs.title }}",
+            "description": "${{ steps.prepare.outputs.message }}",
+            "color": ${{ steps.prepare.outputs.color }},
+            "fields": [
+              {
+                "name": "Repository",
+                "value": "${{ github.repository }}",
+                "inline": true
+              },
+              {
+                "name": "Branch",
+                "value": "${{ github.ref_name }}",
+                "inline": true
+              },
+              {
+                "name": "Commit",
+                "value": "[${GITHUB_SHA:0:7}](${{ github.event.head_commit.url }})",
+                "inline": true
+              },
+              {
+                "name": "Author",
+                "value": "${{ github.actor }}",
+                "inline": true
+              }
+            ],
+            "footer": {
+              "text": "GitHub Actions"
+            },
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+          }]
+        }
+        EOF
+        )
+        
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "$PAYLOAD" \
+             "${{ inputs.discord-webhook }}" || echo "⚠️  Discord notification failed"
+        
+        echo "✅ Discord notification sent"
+
+    - name: Send Slack notification
+      if: inputs.slack-webhook != ''
+      shell: bash
+      run: |
+        echo "📤 Sending Slack notification..."
+        
+        PAYLOAD=$(cat <<EOF
+        {
+          "blocks": [
+            {
+              "type": "header",
+              "text": {
+                "type": "plain_text",
+                "text": "${{ steps.prepare.outputs.emoji }} ${{ inputs.title }}"
+              }
+            },
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "${{ steps.prepare.outputs.message }}"
+              }
+            },
+            {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Repository:*\n${{ github.repository }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Branch:*\n${{ github.ref_name }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Author:*\n${{ github.actor }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Commit:*\n<${{ github.event.head_commit.url }}|${GITHUB_SHA:0:7}>"
+                }
+              ]
+            }
+          ]
+        }
+        EOF
+        )
+        
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "$PAYLOAD" \
+             "${{ inputs.slack-webhook }}" || echo "⚠️  Slack notification failed"
+        
+        echo "✅ Slack notification sent"
+
+    - name: Create GitHub issue on failure
+      if: inputs.create-issue-on-failure == 'true' && inputs.status == 'failure' && inputs.github-token != ''
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        echo "📝 Creating GitHub issue..."
+        
+        gh issue create \
+          --title "🚨 CI/CD Failure: ${{ inputs.title }}" \
+          --body "## Failure Details
+
+**Status**: ${{ inputs.status }}
+**Message**: ${{ steps.prepare.outputs.message }}
+
+**Build Information**:
+- **Repository**: ${{ github.repository }}
+- **Branch**: ${{ github.ref_name }}
+- **Commit**: ${{ github.sha }}
+- **Author**: ${{ github.actor }}
+- **Workflow**: ${{ github.workflow }}
+- **Run**: ${{ github.run_id }}
+
+[View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+**Action Required**: Please investigate and fix the issue.
+
+---
+*Auto-created by GitHub Actions*" \
+          --label "ci/cd,bug" || echo "⚠️  Failed to create issue"
+        
+        echo "✅ Issue created"
+
+    - name: Log notification
+      shell: bash
+      run: |
+        echo "## Notification Sent" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: ${{ inputs.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Title**: ${{ inputs.title }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Message**: ${{ steps.prepare.outputs.message }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Discord**: ${{ inputs.discord-webhook != '' && 'Sent' || 'Skipped' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Slack**: ${{ inputs.slack-webhook != '' && 'Sent' || 'Skipped' }}" >> $GITHUB_STEP_SUMMARY
