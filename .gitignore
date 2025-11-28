@@ -93,6 +93,3 @@ modules/packages/js-packages/storage/*/dist/
 modules/packages/js-packages/storage/*/build/
 modules/packages/js-packages/storage/*/.turbo/
 modules/packages/js-packages/storage/*/coverage/
-
-# Deb packages storage (large binary files)
-modules/packages/deb-packages/storage/
