@@ -137,9 +137,9 @@
     };
 
     services = {
-    users."codex-agent" = lib.mkIf (config.kernelcore.packages.tar.resolvedPackages ? codex) {
-    package = config.kernelcore.packages.tar.resolvedPackages.codex;
-    };
+      users."codex-agent" = lib.mkIf (config.kernelcore.packages.tar.resolvedPackages ? codex) {
+        package = config.kernelcore.packages.tar.resolvedPackages.codex;
+      };
     };
 
     hardware.wifi-optimization.enable = true;
@@ -309,8 +309,6 @@
         };
       };
     };
-
- 
 
     # Centralized ML/GPU user and group management
     system.ml-gpu-users.enable = true;
@@ -482,7 +480,7 @@
   users.users.kernelcore = {
     isNormalUser = true;
     description = "kernel";
-    shell = pkgs.zsh;  # Set zsh as default shell
+    shell = pkgs.zsh; # Set zsh as default shell
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -506,7 +504,7 @@
       starship
       terraform
       ghidra
-      awscli  # AWS CLI v1 (estável) - Para comandos aws bedrock, s3, etc
+      awscli # AWS CLI v1 (estável) - Para comandos aws bedrock, s3, etc
 
       invidious
 
@@ -891,7 +889,6 @@
       rooveterinaryinc.roo-cline
     ];
   };
-
 
   system.stateVersion = "25.05";
 }
