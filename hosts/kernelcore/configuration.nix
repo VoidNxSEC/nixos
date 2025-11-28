@@ -136,11 +136,11 @@
       enable = true;
     };
 
-    #services = {
-    #users."codex-agent" = lib.mkIf (config.kernelcore.packages.tar.resolvedPackages ? codex) {
-    #package = config.kernelcore.packages.tar.resolvedPackages.codex;
-    #};
-    #};
+    services = {
+    users."codex-agent" = lib.mkIf (config.kernelcore.packages.tar.resolvedPackages ? codex) {
+    package = config.kernelcore.packages.tar.resolvedPackages.codex;
+    };
+    };
 
     hardware.wifi-optimization.enable = true;
 
@@ -163,14 +163,14 @@
 
       # MEDIUM PRIORITY: CI/CD and code quality tools
       cicd = {
-        enable = false;
+        enable = true;
         platforms = {
-          github = false; # GitHub CLI and tools
+          github = true; # GitHub CLI and tools
           gitlab = false; # Use GitHub Actions instead of local GitLab runners
-          gitea = false; # Offload automation to GitHub hosted runners
+          gitea = true; # Offload automation to GitHub hosted runners
         };
         pre-commit = {
-          enable = false;
+          enable = true;
           formatCode = true; # Auto-format code before commits
           runTests = false; # Set to true when you have automated tests
           flakeCheckOnPush = false; # Offload validation to GitHub-hosted Actions
@@ -227,7 +227,7 @@
     services.github-runner = {
       # Self-hosted GitHub Actions runner
       # Requires secrets/github.yaml to be configured with registration token
-      enable = false; # ❌ DISABLED - CI/CD disabled as requested
+      enable = true; # ❌ DISABLED - CI/CD disabled as requested
       useSops = true; # SOPS for secure token management
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos"; # Repository URL
@@ -281,6 +281,8 @@
     # PROJECT_ROOT points to ~/dev/ for all agents (HOME-based development)
     ml.mcp = {
       enable = true;
+      # Shared knowledge DB path (enforced via tmpfiles + mcp-shared group)
+      knowledgeDbPath = "/var/lib/mcp-knowledge/knowledge.db";
       agents = {
         # Roo/Claude Code - USER workspace (HOME-based ~/dev/)
         roo = {
@@ -307,6 +309,8 @@
         };
       };
     };
+
+ 
 
     # Centralized ML/GPU user and group management
     system.ml-gpu-users.enable = true;
@@ -887,6 +891,7 @@
       rooveterinaryinc.roo-cline
     ];
   };
+
 
   system.stateVersion = "25.05";
 }

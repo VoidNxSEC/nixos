@@ -3,11 +3,11 @@
     "securellm-bridge": {
       "command": "node",
       "args": [
-        "modules/ml/integrations/mcp/server/src/index.ts"
+        "modules/ml/integrations/mcp/server/build/src/index.js"
       ],
       "env": {
-        "PROJECT_ROOT": "/etc/nixos",
-        "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
+        "PROJECT_ROOT": "/home/kernelcore/dev",
+        "KNOWLEDGE_DB_PATH": "modules/ml/integrations/mcp/server/knowledge.db",
         "ENABLE_KNOWLEDGE": "true"
       },
       "alwaysAllow": [
