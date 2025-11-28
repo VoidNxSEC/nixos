@@ -28,7 +28,7 @@ in
         };
 
         # Hash calculated from first build
-        npmDepsHash = "";
+        npmDepsHash = "sha256-gwC/LjSm5+hWmMNg88xZ/C6DMtVeqYekdl742KQQ0EQ=";
 
         nodeLinker = "pnpm";
 
