@@ -51,8 +51,8 @@ with lib;
           ];
 
           # Aggressive cleanup to save disk space
-          keep-derivations = true; # Don't keep build dependencies (saves space)
-          keep-outputs = true; # Don't keep build outputs (saves space)
+          keep-derivations = mkDefault false; # Don't keep build dependencies (saves space)
+          keep-outputs = mkDefault false; # Don't keep build outputs (saves space)
 
           # Auto-optimize store to save space via hardlinks
           auto-optimise-store = true;

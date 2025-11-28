@@ -14,6 +14,9 @@
     ./yazi.nix     # Yazi file manager configuration
     ./alacritty.nix # Alacritty terminal emulator (Zellij integration)
     ./hyprland.nix # Hyprland config (bindings + defaults)
+    ./git.nix      # Git configuration
+    ./tmux.nix     # Tmux configuration
+    ./flameshot.nix # Screenshot tool
   ];
 
   # ============================================================
@@ -32,7 +35,7 @@
   home = {
     username = "kernelcore";
     homeDirectory = "/home/kernelcore";
-    stateVersion = "26.05";
+    stateVersion = "25.05";
 
     # ========================================================
     # OPERATIONAL PACKAGES
@@ -70,7 +73,7 @@
       # ─────────────────────────────────────────────────────
       # Development Arsenal
       # ─────────────────────────────────────────────────────
-      git
+      # git (configured in git.nix)
       git-lfs
 
       qwen-code
@@ -83,15 +86,10 @@
       vscode
 
       # ─────────────────────────────────────────────────────
-      # Neovim Plugins
-      # ─────────────────────────────────────────────────────
-
-      # ─────────────────────────────────────────────────────
       # Package Managers & Python
       # ─────────────────────────────────────────────────────
       uv
       python313Packages.python
-      # python313Packages.torchWithCuda  # DISABLED: Use container version instead (faster rebuilds)
 
       # ─────────────────────────────────────────────────────
       # Build Tools
@@ -100,10 +98,11 @@
       gnumake
       cmake
       glibc
+
       # ─────────────────────────────────────────────────────
       # Navigation & Multiplexing
       # ─────────────────────────────────────────────────────
-      tmux
+      # tmux (configured in tmux.nix)
       fish
 
       # ─────────────────────────────────────────────────────
@@ -153,8 +152,6 @@
 
       # Secrets
       python313Packages.proton-keyring-linux
-
-      # VPN
 
       # Email
       thunderbird
@@ -242,109 +239,6 @@
     home-manager.enable = true;
 
     # ========================================================
-    # BASH Configuration - MANAGED BY SHELL MODULE
-    # ========================================================
-    # All shell configuration (bash/zsh) is now in ./shell/
-    # To switch shells, edit: myShell.defaultShell = "bash" or "zsh"
-
-    # ========================================================
-    # Git Configuration
-    # ========================================================
-    git = {
-      enable = true;
-      settings = {
-        user.name = "marcosfpina";
-        user.email = "sec@voidnxlabs.com";
-        init.defaultBranch = "main";
-        core.editor = "nvim";
-        pull.rebase = false;
-
-        # Security configurations
-        user.signingkey = "5606AB430E95F5AD";
-        commit.gpgsign = true;
-
-        # Performance optimizations
-        core.preloadindex = true;
-        core.fscache = true;
-        gc.auto = 256;
-
-        # Better diffs
-        diff.algorithm = "histogram";
-
-        # Colorful output
-        color.ui = true;
-
-        alias = {
-          st = "status";
-          co = "checkout";
-          br = "branch";
-          ci = "commit";
-          df = "diff";
-          lg = "log --oneline --graph --decorate --all";
-          lol = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-          unstage = "reset HEAD --";
-          last = "log -1 HEAD";
-          amend = "commit --amend --no-edit";
-          undo = "reset --soft HEAD^";
-        };
-      };
-    };
-    # ========================================================
-    # Tmux Configuration
-    # ========================================================
-    tmux = {
-      enable = false;
-      terminal = "screen-256color";
-      keyMode = "vi";
-      mouse = true;
-
-      extraConfig = ''
-        # Prefix key
-        unbind C-b
-        set -g prefix C-a
-        bind C-a send-prefix
-
-        # Split panes with intuitive keys
-        bind | split-window -h -c "#{pane_current_path}"
-        bind - split-window -v -c "#{pane_current_path}"
-
-        # Easy pane navigation
-        bind h select-pane -L
-        bind j select-pane -D
-        bind k select-pane -U
-        bind l select-pane -R
-
-        # Reload config
-        bind r source-file ~/.tmux.conf \; display-message "Config reloaded!"
-
-        # Status bar
-        set -g status-position bottom
-        set -g status-bg black
-        set -g status-fg white
-        set -g status-left '#[fg=green,bold]#H #[fg=blue]| '
-        set -g status-right '#[fg=yellow]#(uptime | cut -d "," -f 1) #[fg=white]| %H:%M'
-        set -g status-interval 60
-
-        # Window status
-        setw -g window-status-current-style 'fg=black bg=green bold'
-
-        # Start windows at 1, not 0
-        set -g base-index 1
-        setw -g pane-base-index 1
-      '';
-    };
-
-    # ========================================================
-    # Eza (Modern ls replacement) - MANAGED BY SHELL MODULE
-    # ========================================================
-    # Configuration moved to shell module
-
-    # ========================================================
-    # Fzf (Fuzzy finder) - MANAGED BY SHELL MODULE
-    # ========================================================
-    # Configuration moved to shell module
-
-    # ========================================================
     # Ripgrep (Better grep)
     # ========================================================
     ripgrep = {
@@ -357,33 +251,12 @@
         "--glob=!.git/*"
       ];
     };
-
-    # ========================================================
-    # Bat (Better cat with syntax highlighting) - MANAGED BY SHELL MODULE
-    # ========================================================
-    # Configuration moved to shell module
-
-    # ========================================================
-    # Zoxide (Smarter cd) - MANAGED BY SHELL MODULE
-    # ========================================================
-    # Configuration moved to shell module
   };
 
   # ============================================================
   # SERVICES
   # ============================================================
   services = {
-    # Flameshot (Screenshot tool)
-    flameshot = {
-      enable = true;
-      settings = {
-        General = {
-          disabledTrayIcon = false;
-          showStartupLaunchMessage = false;
-        };
-      };
-    };
-
     # GPG agent
     gpg-agent = {
       enable = true;

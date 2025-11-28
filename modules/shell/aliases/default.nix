@@ -36,7 +36,6 @@
     ./mcp.nix
     ./emergency.nix
     ./laptop-defense.nix
-    ./sync.nix  # Rsync laptop-desktop synchronization
     #./service-control.nix # GPU/ML service control & RAM optimization  # TEMP DISABLED
     #./nixos-explorer.nix # NixOS configuration explorer  # TEMP DISABLED
   ];

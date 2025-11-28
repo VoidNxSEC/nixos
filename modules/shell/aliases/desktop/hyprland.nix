@@ -25,7 +25,6 @@
     "waystyle" = "$EDITOR ~/.config/waybar/style.css";
 
     # Quick edits
-    "edit-hypr-aliases" = "sudo $EDITOR /etc/nixos/modules/shell/aliases/desktop/hyprland.nix";
-    "edit-hyprland-aliases" = "sudo $EDITOR /etc/nixos/modules/shell/aliases/desktop/hyprland.nix"; # alias longo
+    "aliases" = "sudo $EDITOR /etc/nixos/modules/shell/aliases/desktop/hyprland.nix";
   };
 }

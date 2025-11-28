@@ -42,7 +42,7 @@ with lib;
     # Server identity
     serverKey = mkOption {
       type = types.str;
-      default = "id_ed25519";  # ✅ Usar chave padrão que existe
+      default = "id_ed25519_server";
       description = "Server SSH key filename";
     };
 
@@ -53,11 +53,11 @@ with lib;
       description = "GitLab SSH key filename";
     };
 
-    # Desktop/builder details
+    # Internal server details
     serverHost = mkOption {
       type = types.str;
-      default = "192.168.15.7";  # ✅ Desktop IP correto
-      description = "Desktop/builder hostname/IP";
+      default = "192.168.15.9";
+      description = "Internal NixOS server hostname/IP";
     };
 
     serverUser = mkOption {
@@ -74,12 +74,11 @@ with lib;
     # ============================================================
 
     programs.ssh = {
-      # ⚠️ SSH agent disabled here - using GNOME GCR/GPG agent instead
-      # GNOME already provides gcr-ssh-agent or gpg-agent for SSH
-      startAgent = false;
+      # Enable SSH client
+      startAgent = true;
 
-      # SSH agent configuration (when using standalone agent)
-      # agentTimeout = "1h"; # Keys expire after 1 hour
+      # SSH agent configuration
+      agentTimeout = "1h"; # Keys expire after 1 hour
 
       # Extra configuration (applies to all hosts)
       extraConfig = ''
@@ -97,60 +96,6 @@ with lib;
         # Modern crypto only
         HostKeyAlgorithms ssh-ed25519,rsa-sha2-512,rsa-sha2-256
         PubkeyAcceptedKeyTypes ssh-ed25519,rsa-sha2-512,rsa-sha2-256
-
-        # ================================================================
-        # Host-specific configurations
-        # ================================================================
-
-        # Desktop/Builder - General access (VSCode Remote SSH)
-        Host desktop
-          HostName 192.168.15.7
-          User cypher
-          IdentityFile ~/.ssh/id_ed25519
-          IdentitiesOnly yes
-          Port 22
-          ForwardAgent yes
-          ForwardX11 yes
-          ServerAliveInterval 60
-          ServerAliveCountMax 3
-          # VSCode Remote SSH optimizations
-          ControlMaster auto
-          ControlPath ~/.ssh/sockets/%r@%h-%p
-          ControlPersist 600
-          # Prevent handshake timeout
-          ConnectTimeout 30
-          # Enable TCP forwarding (required for VSCode)
-          # RemoteForward line removed (invalid syntax)
-          # Compression for better performance
-          Compression yes
-
-        # Desktop/Builder - Nix remote builds
-        Host desktop-builder
-          HostName 192.168.15.7
-          User nix-builder
-          IdentityFile ~/.ssh/nix-builder
-          IdentitiesOnly yes
-          Port 22
-
-        # Alternative alias for nix builds (use accessible key)
-        Host nix-desktop
-          HostName 192.168.15.7
-          User nix-builder
-          IdentityFile ~/.ssh/nix-builder
-          IdentitiesOnly yes
-          StrictHostKeyChecking accept-new
-
-        # GitHub
-        Host github.com
-          User git
-          IdentityFile ~/.ssh/id_ed25519
-          IdentitiesOnly yes
-
-        # GitLab
-        Host gitlab.com
-          User git
-          IdentityFile ~/.ssh/id_ed25519
-          IdentitiesOnly yes
       '';
 
       # ============================================================
@@ -237,7 +182,7 @@ with lib;
             # Desktop Machine (Builder/Cache)
             # ────────────────────────────────────────────────────
             "desktop" = {
-              hostname = "192.168.15.6";
+              hostname = "192.168.15.9";
               user = "kernelcore";
               identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}";
               identitiesOnly = true;
