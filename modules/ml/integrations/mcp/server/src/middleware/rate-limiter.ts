@@ -347,7 +347,7 @@ export class SmartRateLimiter {
   }
 
   /**
-   * Get all metrics including cost savings
+   * Get all metrics
    */
   getAllMetrics(): Map<string, RateLimitMetrics> {
     const allMetrics = new Map<string, RateLimitMetrics>();
@@ -355,39 +355,6 @@ export class SmartRateLimiter {
       allMetrics.set(provider, collector.getMetrics());
     }
     return allMetrics;
-  }
-  
-  /**
-   * Get cost optimization statistics
-   */
-  getCostStats() {
-    const dedupStats = this.deduplicator.getStats();
-    
-    return {
-      ...this.costMetrics,
-      deduplication: dedupStats,
-      estimatedMonthlySavings: this.calculateMonthlySavings(),
-    };
-  }
-  
-  /**
-   * Calculate estimated monthly savings based on current metrics
-   */
-  private calculateMonthlySavings(): number {
-    // Assumptions:
-    // - Average API cost: $0.002 per request
-    // - Deduplicated requests saved completely
-    // - Fail-fast saved retry costs
-    const avgCostPerRequest = 0.002;
-    const savedRequests =
-      this.costMetrics.deduplicatedRequests +
-      this.costMetrics.estimatedCostSavings;
-    
-    const dailySavings = (savedRequests / this.costMetrics.totalRequests) *
-                         this.costMetrics.totalRequests *
-                         avgCostPerRequest;
-    
-    return dailySavings * 30; // Monthly estimate
   }
 
   /**
