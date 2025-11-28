@@ -24,7 +24,7 @@ with lib;
 
       builderKeyPath = mkOption {
         type = types.str;
-        default = "/etc/nix/builder_key";
+        default = "/home/kernelcore/.ssh/nix-builder";
         description = "Path to SSH private key for builder authentication";
       };
 
