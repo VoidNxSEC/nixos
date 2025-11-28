@@ -134,10 +134,12 @@ in
     "projf" = "eza --tree --level=4 --group-directories-first --color=always ${ezaIgnore} -I '.git'";
 
     # Show only source files (common patterns)
-    "src" = "eza --tree --level=3 --color=always ${ezaIgnore} -I '.git|*.lock|*.json|*.yaml|*.yml|*.toml|*.md'";
+    "src" =
+      "eza --tree --level=3 --color=always ${ezaIgnore} -I '.git|*.lock|*.json|*.yaml|*.yml|*.toml|*.md'";
 
     # Show only config files
-    "cfg" = "eza -lah --color=always --ignore-glob '*.rs' --ignore-glob '*.ts' --ignore-glob '*.js' --ignore-glob '*.py' | grep -E '\\.(nix|toml|yaml|yml|json|conf|config)$'";
+    "cfg" =
+      "eza -lah --color=always --ignore-glob '*.rs' --ignore-glob '*.ts' --ignore-glob '*.js' --ignore-glob '*.py' | grep -E '\\.(nix|toml|yaml|yml|json|conf|config)$'";
 
     # Show git-tracked files only
     "lsg" = "git ls-files | eza --stdin --color=always";
@@ -182,20 +184,24 @@ in
     # ============================================================
 
     # Find files excluding build artifacts
-    "ff" = "find . -type f -not -path '*/node_modules/*' -not -path '*/target/*' -not -path '*/build/*' -not -path '*/.git/*' -name";
+    "ff" =
+      "find . -type f -not -path '*/node_modules/*' -not -path '*/target/*' -not -path '*/build/*' -not -path '*/.git/*' -name";
 
     # Find directories excluding build artifacts
-    "fd" = "find . -type d -not -path '*/node_modules/*' -not -path '*/target/*' -not -path '*/build/*' -not -path '*/.git/*' -name";
+    "fd" =
+      "find . -type d -not -path '*/node_modules/*' -not -path '*/target/*' -not -path '*/build/*' -not -path '*/.git/*' -name";
 
     # Find recently modified files (last 24h)
-    "frecent" = "find . -type f -mtime -1 -not -path '*/node_modules/*' -not -path '*/target/*' -not -path '*/build/*' | eza --stdin --long --color=always";
+    "frecent" =
+      "find . -type f -mtime -1 -not -path '*/node_modules/*' -not -path '*/target/*' -not -path '*/build/*' | eza --stdin --long --color=always";
 
     # ============================================================
     # DEVELOPMENT HELPERS
     # ============================================================
 
     # Show all TypeScript files
-    "lsts" = "find . -name '*.ts' -not -path '*/node_modules/*' -not -path '*/build/*' | eza --stdin --color=always";
+    "lsts" =
+      "find . -name '*.ts' -not -path '*/node_modules/*' -not -path '*/build/*' | eza --stdin --color=always";
 
     # Show all Rust files
     "lsrs" = "find . -name '*.rs' -not -path '*/target/*' | eza --stdin --color=always";
@@ -204,10 +210,12 @@ in
     "lsnix" = "find . -name '*.nix' | eza --stdin --color=always";
 
     # Show all Python files
-    "lspy" = "find . -name '*.py' -not -path '*/__pycache__/*' -not -path '*/.venv/*' | eza --stdin --color=always";
+    "lspy" =
+      "find . -name '*.py' -not -path '*/__pycache__/*' -not -path '*/.venv/*' | eza --stdin --color=always";
 
     # Check if artifacts exist (for cleanup)
-    "artifacts" = "echo 'Checking for build artifacts...' && find . -type d \\( -name node_modules -o -name target -o -name build -o -name dist \\) -not -path '*/.git/*' 2>/dev/null";
+    "artifacts" =
+      "echo 'Checking for build artifacts...' && find . -type d \\( -name node_modules -o -name target -o -name build -o -name dist \\) -not -path '*/.git/*' 2>/dev/null";
 
     # Show artifact sizes
     "artifacts-size" = "du -sh **/node_modules **/target **/build **/dist 2>/dev/null | sort -hr";
