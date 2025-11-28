@@ -18,13 +18,13 @@ with lib;
 
       desktopIP = mkOption {
         type = types.str;
-        default = "192.168.15.6";
+        default = "192.168.15.9";
         description = "IP address of the desktop build server";
       };
 
       builderKeyPath = mkOption {
         type = types.str;
-        default = "/home/kernelcore/.ssh/nix-builder";
+        default = "/etc/nix/builder_key";
         description = "Path to SSH private key for builder authentication";
       };
 
