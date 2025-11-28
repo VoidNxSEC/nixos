@@ -57,9 +57,8 @@ with lib;
 
       # SSH keys will be added here
       openssh.authorizedKeys.keys = [
-        # Add laptop keys manually via:
-        # ssh-copy-id -i laptop-key.pub nix-builder@192.168.15.7
-        # Or add them declaratively here as strings
+        # Laptop builder key (kernelcore@nx)
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAz4PKacmpq4sftL/NtkqTgbrrBKE/ExT4hKDFjwH0xq nix-builder@nx"
       ];
     };
 
