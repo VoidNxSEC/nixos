@@ -3,7 +3,7 @@
     "securellm-bridge": {
       "command": "node",
       "args": [
-        "/etc/nixos/modules/ml/integrations/mcp/server/build/src/index.js"
+        "modules/ml/integrations/mcp/server/src/index.ts"
       ],
       "env": {
         "PROJECT_ROOT": "/etc/nixos",

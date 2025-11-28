@@ -55,20 +55,6 @@ import {
   handleDiscourseSearch,
   handleStackOverflowSearch,
 } from "./tools/web-search.js";
-import {
-  SSHConnectionManager,
-  sshConnectSchema,
-  JumpHostManager,
-  sshJumpHostSchema,
-} from './tools/ssh/index.js';
-import {
-  SSHTunnelManager,
-  sshTunnelSchema,
-} from './tools/ssh/tunnel-manager.js';
-import {
-  SessionManager,
-  sshSessionSchema,
-} from './tools/ssh/session-manager.js';
 
 const execAsync = promisify(exec);
 
@@ -129,10 +115,6 @@ class SecureLLMBridgeMCPServer {
   private packageConfigure!: PackageConfigureTool;
   private projectRoot: string = PROJECT_ROOT;
   private hostname: string = "default";
-  private sshConnectionManager!: SSHConnectionManager;
-  private sshTunnelManager!: SSHTunnelManager;
-  private sshJumpHostManager!: JumpHostManager;
-  private sshSessionManager!: SessionManager;
 
   constructor() {
     // Initialize smart rate limiter for API protection
@@ -161,15 +143,6 @@ class SecureLLMBridgeMCPServer {
     process.on("SIGINT", async () => {
       if (this.db) {
         this.db.close();
-      }
-      if (this.sshSessionManager) {
-        await this.sshSessionManager.cleanup();
-      }
-      if (this.sshConnectionManager) {
-        await this.sshConnectionManager.cleanup();
-      }
-      if (this.sshTunnelManager) {
-        await this.sshTunnelManager.cleanup();
       }
       await this.server.close();
       process.exit(0);
@@ -235,27 +208,6 @@ class SecureLLMBridgeMCPServer {
       if (ENABLE_KNOWLEDGE) {
         this.initKnowledge();
       }
-
-      // Initialize SSH managers
-      const sshDbPath = path.join(process.env.HOME || '.', '.local/share/securellm/ssh-sessions.db');
-      this.sshConnectionManager = new SSHConnectionManager(
-        ['localhost', '127.0.0.1'], // allowed hosts - configure via env
-        {
-          max_connections: 10,
-          max_idle_time_ms: 300000, // 5 min
-          health_check_interval_ms: 60000 // 1 min
-        }
-      );
-
-      this.sshTunnelManager = new SSHTunnelManager(this.sshConnectionManager);
-      this.sshJumpHostManager = new JumpHostManager(this.sshConnectionManager);
-      this.sshSessionManager = new SessionManager(
-        sshDbPath,
-        this.sshConnectionManager,
-        this.sshTunnelManager
-      );
-
-      console.error('[MCP] SSH tools initialized');
 
       console.log("MCP Server initialization complete.");
     } catch (error) {
@@ -564,41 +516,6 @@ class SecureLLMBridgeMCPServer {
         ...laptopDefenseTools,
         // Add Web Search tools
         ...webSearchTools,
-        // SSH Advanced Tools
-        {
-          name: "ssh_tunnel",
-          description: "Create SSH tunnel (local, remote, or dynamic SOCKS proxy)",
-          inputSchema: sshTunnelSchema.inputSchema
-        },
-        {
-          name: "ssh_jump_host",
-          description: "Connect through bastion/jump hosts to reach target server",
-          inputSchema: sshJumpHostSchema.inputSchema
-        },
-        {
-          name: "ssh_session_manager",
-          description: "Manage persistent SSH sessions with auto-recovery",
-          inputSchema: sshSessionSchema.inputSchema
-        },
-        {
-          name: "ssh_connection_pool",
-          description: "Manage SSH connection pool and monitor health",
-          inputSchema: {
-            type: "object",
-            properties: {
-              action: {
-                type: "string",
-                enum: ["status", "prune", "stats"],
-                description: "Pool management action"
-              },
-              max_idle_time_ms: {
-                type: "number",
-                description: "Max idle time for pruning (ms)"
-              }
-            },
-            required: ["action"]
-          }
-        },
       ],
     }));
 
@@ -687,16 +604,6 @@ class SecureLLMBridgeMCPServer {
             return await this.handleDiscourseSearch(args);
           case "stackoverflow_search":
             return await this.handleStackOverflowSearch(args);
-
-          // SSH Advanced Tool handlers
-          case "ssh_tunnel":
-            return await this.handleSSHTunnel(args);
-          case "ssh_jump_host":
-            return await this.handleSSHJumpHost(args);
-          case "ssh_session_manager":
-            return await this.handleSSHSessionManager(args);
-          case "ssh_connection_pool":
-            return await this.handleSSHConnectionPool(args);
 
           default:
             throw new McpError(
@@ -1930,139 +1837,6 @@ Generate server and client TLS certificates for secure communication.
     } catch (error: any) {
       return {
         content: [{ type: "text", text: JSON.stringify({ error: error.message }, null, 2) }],
-        isError: true
-      };
-    }
-  }
-
-  // ===== SSH ADVANCED TOOL HANDLERS =====
-
-  private async handleSSHTunnel(args: any) {
-    try {
-      const { type, ...config } = args;
-      
-      let result;
-      if (type === 'local') {
-        result = await this.sshTunnelManager.createLocalTunnel(config);
-      } else if (type === 'remote') {
-        result = await this.sshTunnelManager.createRemoteTunnel(config);
-      } else if (type === 'dynamic') {
-        result = await this.sshTunnelManager.createDynamicTunnel(config);
-      } else {
-        throw new Error(`Invalid tunnel type: ${type}`);
-      }
-      
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify(result, null, 2)
-        }]
-      };
-    } catch (error: any) {
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify({ success: false, error: error.message }, null, 2)
-        }],
-        isError: true
-      };
-    }
-  }
-
-  private async handleSSHJumpHost(args: any) {
-    try {
-      const result = await this.sshJumpHostManager.connectThroughJumps(args);
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify(result, null, 2)
-        }]
-      };
-    } catch (error: any) {
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify({ success: false, error: error.message }, null, 2)
-        }],
-        isError: true
-      };
-    }
-  }
-
-  private async handleSSHSessionManager(args: any) {
-    try {
-      const { action, ...params } = args;
-      
-      let result;
-      switch (action) {
-        case 'save':
-          result = await this.sshSessionManager.persistSession(params);
-          break;
-        case 'restore':
-          result = await this.sshSessionManager.restoreSession(params.session_id);
-          break;
-        case 'list':
-          result = await this.sshSessionManager.listSessions(params.active_only);
-          break;
-        case 'cleanup':
-          result = await this.sshSessionManager.cleanupExpiredSessions();
-          break;
-        case 'delete':
-          result = await this.sshSessionManager.deleteSession(params.session_id);
-          break;
-        default:
-          throw new Error(`Invalid action: ${action}`);
-      }
-      
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify(result, null, 2)
-        }]
-      };
-    } catch (error: any) {
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify({ success: false, error: error.message }, null, 2)
-        }],
-        isError: true
-      };
-    }
-  }
-
-  private async handleSSHConnectionPool(args: any) {
-    try {
-      const { action, max_idle_time_ms } = args;
-      
-      let result;
-      switch (action) {
-        case 'status':
-          result = this.sshConnectionManager.getPoolStatus();
-          break;
-        case 'prune':
-          const pruned = await this.sshConnectionManager.pruneIdleConnections(max_idle_time_ms);
-          result = { pruned, message: `Pruned ${pruned} idle connections` };
-          break;
-        case 'stats':
-          result = this.sshConnectionManager.getPoolStatistics();
-          break;
-        default:
-          throw new Error(`Invalid action: ${action}`);
-      }
-      
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify(result, null, 2)
-        }]
-      };
-    } catch (error: any) {
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify({ success: false, error: error.message }, null, 2)
-        }],
         isError: true
       };
     }
