@@ -8,10 +8,6 @@
 with lib;
 
 let
-  runnerVersion = "2.329.0";
-  runnerArchive = "actions-runner-linux-x64-${runnerVersion}.tar.gz";
-  runnerUrl = "https://github.com/actions/runner/releases/download/v${runnerVersion}/${runnerArchive}";
-
   cfg = config.kernelcore.services.github-runner;
 in
 {
@@ -24,6 +20,21 @@ in
       description = "Use SOPS for secret management (recommended)";
     };
 
+    runnerType = mkOption {
+      type = types.enum [
+        "self-hosted"
+        "organization"
+        "repository"
+      ];
+      default = "repository";
+      description = ''
+        Type of runner registration:
+        - repository: Register runner for a specific repository
+        - organization: Register runner for entire organization
+        - self-hosted: Use custom configuration
+      '';
+    };
+
     runnerName = mkOption {
       type = types.str;
       default = "nixos-self-hosted";
@@ -33,7 +44,11 @@ in
     repoUrl = mkOption {
       type = types.str;
       default = "https://github.com/VoidNxSEC/nixos";
-      description = "GitHub repository URL";
+      description = ''
+        GitHub repository or organization URL:
+        - Repository: https://github.com/owner/repo
+        - Organization: https://github.com/organization
+      '';
     };
 
     extraLabels = mkOption {
@@ -44,177 +59,76 @@ in
       ];
       description = "Additional labels for the runner";
     };
+
+    rotateRunner = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Enable runner rotation (remove and re-register on each start).
+        Useful for ephemeral runners or testing.
+        Requires fresh token on each start.
+      '';
+    };
+
+    ephemeral = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Run as ephemeral runner (automatically removed after each job).
+        Runner will be deleted from GitHub after completing one job.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
-    # Create a dedicated system user
-    users.users.actions = {
-      isSystemUser = true;
-      group = "actions";
-      createHome = true;
-      home = "/var/lib/actions-runner";
-      description = "GitHub Actions Runner user";
-      extraGroups = [ "wheel" ]; # Add "docker" if Docker access needed
-    };
+    # Use official NixOS GitHub Runner service
+    services.github-runners."${cfg.runnerName}" = {
+      enable = true;
+      url = cfg.repoUrl;
 
-    users.groups.actions = { };
+      # Token from SOPS
+      tokenFile =
+        if cfg.useSops then config.sops.secrets."github_runner_token".path else "/etc/github-runner-token";
+
+      name = cfg.runnerName;
+
+      extraLabels = cfg.extraLabels;
+
+      # Ephemeral mode
+      ephemeral = cfg.ephemeral;
+
+      # Runner package with all dependencies
+      package = pkgs.github-runner;
+
+      # Extra packages available to runner
+      extraPackages = with pkgs; [
+        git
+        nix
+        cachix
+        jq
+        curl
+        bash
+        coreutils
+      ];
+    };
 
     # SOPS secret for runner token
     sops.secrets = mkIf cfg.useSops {
       "github_runner_token" = {
         sopsFile = ../../../secrets/github.yaml;
-        owner = "actions";
-        group = "actions";
         mode = "0400";
-        restartUnits = [ "actions-runner.service" ];
+        restartUnits = [ "github-runner-${cfg.runnerName}.service" ];
       };
     };
 
-    # Environment file for runner configuration
-    # Non-sensitive values are here, sensitive token comes from SOPS
-    environment.etc."github-runner.env" = {
-      mode = "0644";
-      text = ''
-        RUNNER_URL="${cfg.repoUrl}"
-        RUNNER_NAME="${cfg.runnerName}"
-        RUNNER_WORK_DIR="/var/lib/actions-runner/_work"
-        RUNNER_LABELS="self-hosted,Linux,X64,${concatStringsSep "," cfg.extraLabels}"
-      '';
-    };
-
-    systemd.services.actions-runner = {
-      description = "GitHub Actions Runner (managed by NixOS)";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" ] ++ (optional cfg.useSops "sops-nix.service");
-      wants = [ "network-online.target" ];
-
-      serviceConfig = {
-        User = "actions";
-        Group = "actions";
-        WorkingDirectory = "/var/lib/actions-runner";
-        Restart = "always";
-        RestartSec = "10s";
-
-        # Increase timeout for downloading runner binary
-        TimeoutStartSec = "10min";
-
-        # Load non-sensitive environment variables
-        EnvironmentFile = [
-          "/etc/github-runner.env"
-        ];
-
-        # Fix: Add gzip to PATH for tar extraction
-        Environment = [
-          "PATH=${pkgs.gzip}/bin:${pkgs.gnutar}/bin:${pkgs.curl}/bin:${pkgs.coreutils}/bin:${pkgs.bash}/bin"
-        ];
-      };
-
-      # Download, extract, and configure runner
-      preStart = ''
-        set -euo pipefail
-
-        # Download and extract runner if not present
-        if [ ! -x /var/lib/actions-runner/run.sh ]; then
-          echo "Downloading GitHub Actions runner v${runnerVersion}..."
-          echo "Download URL: ${runnerUrl}"
-          mkdir -p /var/lib/actions-runner
-
-          # Download with progress and better error handling
-          if ! ${pkgs.curl}/bin/curl -fL --progress-bar -o /tmp/${runnerArchive} "${runnerUrl}"; then
-            echo "ERROR: Failed to download runner from ${runnerUrl}"
-            exit 1
-          fi
-
-          echo "Extracting runner..."
-          if ! ${pkgs.gnutar}/bin/tar xzf /tmp/${runnerArchive} -C /var/lib/actions-runner; then
-            echo "ERROR: Failed to extract runner archive"
-            rm -f /tmp/${runnerArchive}
-            exit 1
-          fi
-
-          rm /tmp/${runnerArchive}
-          chown -R actions:actions /var/lib/actions-runner
-          echo "Runner extracted successfully"
-        fi
-
-        # Configure runner if not already configured
-        if [ ! -f /var/lib/actions-runner/.runner ]; then
-          echo "Configuring runner..."
-
-          ${
-            if cfg.useSops then
-              let
-                tokenPath = config.sops.secrets."github_runner_token".path;
-              in
-              ''
-                # Read token from SOPS secret
-                if [ ! -f "${tokenPath}" ]; then
-                  echo "ERROR: SOPS secret not found at ${tokenPath}"
-                  echo "Please ensure secrets/github.yaml is encrypted and contains github_runner_token"
-                  exit 1
-                fi
-                RUNNER_TOKEN=$(cat "${tokenPath}")
-              ''
-            else
-              ''
-                # Manual token configuration (not recommended)
-                echo "WARNING: Using manual token configuration. Consider enabling SOPS."
-                if [ -z "''${RUNNER_TOKEN:-}" ]; then
-                  echo "ERROR: RUNNER_TOKEN environment variable not set"
-                  echo "Set it manually: echo 'RUNNER_TOKEN=your-token' >> /etc/github-runner.env"
-                  exit 1
-                fi
-              ''
-          }
-
-          if [ -z "''${RUNNER_URL:-}" ]; then
-            echo "ERROR: RUNNER_URL not set"
-            exit 1
-          fi
-
-          cd /var/lib/actions-runner
-
-          # Patch config.sh to use NixOS bash
-          ${pkgs.gnused}/bin/sed -i 's|#!/bin/bash|#!${pkgs.bash}/bin/bash|' config.sh || true
-
-          # Run configuration with explicit bash interpreter
-          ${pkgs.bash}/bin/bash ./config.sh \
-            --unattended \
-            --url "$RUNNER_URL" \
-            --token "$RUNNER_TOKEN" \
-            --name "$RUNNER_NAME" \
-            --work "$RUNNER_WORK_DIR" \
-            --labels "$RUNNER_LABELS"
-
-          echo "Runner configured successfully as: $RUNNER_NAME"
-        else
-          echo "Runner already configured"
-        fi
-      '';
-
-      script = ''
-        cd /var/lib/actions-runner
-
-        # Patch run.sh to use NixOS bash
-        ${pkgs.gnused}/bin/sed -i 's|#!/bin/bash|#!${pkgs.bash}/bin/bash|' run.sh || true
-
-        # Run with explicit bash interpreter
-        exec ${pkgs.bash}/bin/bash ./run.sh
-      '';
-
-      # Cleanup on stop
-      postStop = ''
-        echo "Runner service stopped"
-      '';
-    };
-
-    # Helpful packages for CI/CD
+    # Helpful packages for CI/CD (available system-wide)
     environment.systemPackages = with pkgs; [
       git
       curl
       jq
       nix
       cachix
+      gh # GitHub CLI
     ];
   };
 }
