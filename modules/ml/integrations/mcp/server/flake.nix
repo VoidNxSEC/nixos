@@ -6,8 +6,14 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs { inherit system; };
 
@@ -22,7 +28,7 @@
 
           nativeBuildInputs = with pkgs; [
             nodejs
-            python3  # Needed for better-sqlite3 native compilation
+            python3 # Needed for better-sqlite3 native compilation
             pkg-config
           ];
 
@@ -101,7 +107,8 @@
           };
         };
 
-      in {
+      in
+      {
         packages = {
           default = mcpServer;
           mcp = mcpServer;
@@ -138,7 +145,7 @@
             sqlite
 
             # MCP tools
-            jq  # For JSON manipulation
+            jq # For JSON manipulation
 
             # Development tools
             git

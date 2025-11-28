@@ -14,4 +14,3 @@
     # ./scheduler.nix  # TODO: Create central GPU scheduler
   ];
 }
-

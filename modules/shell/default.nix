@@ -49,7 +49,7 @@
     # ============================================================
 
     programs.zsh = {
-      enable = true;  # Required when users.users.*.shell = pkgs.zsh
+      enable = true; # Required when users.users.*.shell = pkgs.zsh
       enableCompletion = true;
       autosuggestions.enable = true;
       syntaxHighlighting.enable = true;
@@ -57,7 +57,13 @@
       # Oh-My-Zsh configuration
       ohMyZsh = {
         enable = true;
-        plugins = [ "git" "docker" "kubectl" "systemd" "sudo" ];
+        plugins = [
+          "git"
+          "docker"
+          "kubectl"
+          "systemd"
+          "sudo"
+        ];
         theme = "robbyrussell";
       };
     };

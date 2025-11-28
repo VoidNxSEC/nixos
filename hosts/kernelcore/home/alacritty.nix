@@ -8,7 +8,12 @@
 # - URL hints and clipboard integration
 # ============================================
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   programs.alacritty = {
@@ -20,7 +25,7 @@
       # ============================================
       general = {
         live_config_reload = true;
-        import = [];
+        import = [ ];
       };
 
       # ============================================
@@ -43,7 +48,7 @@
         dynamic_padding = true;
         decorations = "None";
         opacity = 0.94;
-        blur = true;  # Enable background blur (Wayland/compositor dependent)
+        blur = true; # Enable background blur (Wayland/compositor dependent)
         startup_mode = "Maximized";
         title = "Alacritty + Zellij";
         dynamic_title = true;
@@ -62,7 +67,7 @@
       # SCROLLING CONFIGURATION
       # ============================================
       scrolling = {
-        history = 50000;  # Large history for Zellij scrollback
+        history = 50000; # Large history for Zellij scrollback
         multiplier = 3;
       };
 
@@ -93,8 +98,14 @@
         };
 
         # Fine-tune glyph rendering
-        glyph_offset = { x = 0; y = 1; };
-        offset = { x = 0; y = 2; };
+        glyph_offset = {
+          x = 0;
+          y = 1;
+        };
+        offset = {
+          x = 0;
+          y = 2;
+        };
 
         # Better anti-aliasing
         builtin_box_drawing = true;
@@ -117,7 +128,7 @@
         thickness = 0.14;
         unfocused_hollow = false;
         blink_interval = 750;
-        blink_timeout = 0;  # Never stop blinking
+        blink_timeout = 0; # Never stop blinking
       };
 
       # ============================================
@@ -134,7 +145,7 @@
       bell = {
         animation = "EaseOutSine";
         duration = 120;
-        color = "#fb4934";  # Gruvbox red
+        color = "#fb4934"; # Gruvbox red
       };
 
       # ============================================
@@ -235,7 +246,11 @@
         # Shell configuration
         shell = {
           program = "/run/current-system/sw/bin/zellij";
-          args = [ "attach" "--create" "main" ];
+          args = [
+            "attach"
+            "--create"
+            "main"
+          ];
         };
       };
 
@@ -452,20 +467,20 @@
   # SYSTEMD SERVICE (optional)
   # ============================================
   # Auto-start Alacritty server for faster startup
-   systemd.user.services.alacritty-server = {
-     Unit = {
-       Description = "Alacritty Terminal Server";
-       After = [ "graphical-session-pre.target" ];
-       PartOf = [ "graphical-session.target" ];
-     };
-  
-     Service = {
-       ExecStart = "${pkgs.alacritty}/bin/alacritty --daemon";
-       Restart = "on-failure";
-     };
-  
-     Install = {
-       WantedBy = [ "graphical-session.target" ];
-     };
-   };
+  systemd.user.services.alacritty-server = {
+    Unit = {
+      Description = "Alacritty Terminal Server";
+      After = [ "graphical-session-pre.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+
+    Service = {
+      ExecStart = "${pkgs.alacritty}/bin/alacritty --daemon";
+      Restart = "on-failure";
+    };
+
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
 }

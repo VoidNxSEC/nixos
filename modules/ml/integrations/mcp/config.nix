@@ -84,28 +84,27 @@ in
     users.groups.mcp-shared = { };
 
     # Setup knowledge database and agent configs
-    systemd.tmpfiles.rules =
-      [
-        # Knowledge DB directory and file (create if missing)
-        "d /var/lib/mcp-knowledge 0770 root mcp-shared -"
-        "f ${cfg.knowledgeDbPath} 0660 root mcp-shared -"
-        # Fix ownership/permissions if the directory or DB already exist (handles legacy mcp-shar group)
-        "z /var/lib/mcp-knowledge 0770 root mcp-shared -"
-        "z ${cfg.knowledgeDbPath} 0660 root mcp-shared -"
-      ]
-      ++ (flatten (
-        mapAttrsToList (
-          name: agentCfg:
-          optionals agentCfg.enable [
-            # Create workspace directory
-            "d ${agentCfg.projectRoot} 0750 ${agentCfg.user} ${agentCfg.user} -"
+    systemd.tmpfiles.rules = [
+      # Knowledge DB directory and file (create if missing)
+      "d /var/lib/mcp-knowledge 0770 root mcp-shared -"
+      "f ${cfg.knowledgeDbPath} 0660 root mcp-shared -"
+      # Fix ownership/permissions if the directory or DB already exist (handles legacy mcp-shar group)
+      "z /var/lib/mcp-knowledge 0770 root mcp-shared -"
+      "z ${cfg.knowledgeDbPath} 0660 root mcp-shared -"
+    ]
+    ++ (flatten (
+      mapAttrsToList (
+        name: agentCfg:
+        optionals agentCfg.enable [
+          # Create workspace directory
+          "d ${agentCfg.projectRoot} 0750 ${agentCfg.user} ${agentCfg.user} -"
           # Create config directory (extract directory from configPath)
           "d ${dirOf agentCfg.configPath} 0750 ${agentCfg.user} ${agentCfg.user} -"
           # Install mcp.json as symlink
           "L+ ${agentCfg.configPath} - - - - ${generateMcpConfig agentCfg.projectRoot}"
         ]
-          ) cfg.agents
-        ));
+      ) cfg.agents
+    ));
 
     # Repair legacy permissions/ownership on activation (handles mcp-shar -> mcp-shared)
     system.activationScripts.mcpKnowledgePerms = ''
