@@ -238,13 +238,12 @@ export class BrowserInteractFormTool {
           case 'upload':
             const input = await page.$(action.selector);
             if (input && action.value) {
-              // @ts-ignore - uploadFile exists but type checking is strict
               await input.uploadFile(action.value);
             }
             break;
         }
 
-        await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between actions
+        await page.waitForTimeout(500); // Small delay between actions
       }
 
       if (submit_selector) {
@@ -310,7 +309,7 @@ export class BrowserMonitorChangesTool {
         }
 
         if (i < iterations - 1) {
-          await new Promise(resolve => setTimeout(resolve, interval_seconds * 1000));
+          await page.waitForTimeout(interval_seconds * 1000);
         }
       }
 

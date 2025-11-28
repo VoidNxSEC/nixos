@@ -15,7 +15,7 @@ with lib;
       enable = mkEnableOption "Enable local binary cache server";
       url = mkOption {
         type = types.str;
-        default = "http://192.168.15.6:5000";
+        default = "http://192.168.15.9:5000";
         description = "URL of the local binary cache server";
       };
       priority = mkOption {
@@ -80,7 +80,7 @@ with lib;
 
     # Optional: Set up local cache server using nix-serve
     services.nix-serve = mkIf config.kernelcore.system.binary-cache.local.enable {
-      enable = mkDefault true; # Only enable if you want to RUN the server on this machine
+      enable = mkDefault false; # Only enable if you want to RUN the server on this machine
       port = 5000;
       bindAddress = "0.0.0.0";
       secretKeyFile = "/var/cache-priv-key.pem";
