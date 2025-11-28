@@ -68,10 +68,7 @@
       nixosConfigurations = {
         kernelcore = nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = {
-            inherit inputs;
-            hostname = "kernelcore";
-          };
+          specialArgs = { inherit inputs; };
           modules = [
             # Apply overlays to NixOS configuration
             {
@@ -84,7 +81,7 @@
 
             # Services
             ./modules/services/offload-server.nix
-            ./modules/services/laptop-offload-client.nix # ENABLED: NFS + Binary Cache + Remote Builds
+            # ./modules/services/laptop-offload-client.nix # DISABLED: Causes remote build failures when desktop offline
             ./modules/services/default.nix
             ./modules/services/scripts.nix  # Shell aliases for ML containers (pytorch, tgi, etc)
             ./modules/services/users/default.nix
@@ -101,13 +98,11 @@
 
             # Packages (declarative .deb, flatpak, etc.)
             ./modules/packages
-            ./modules/packages/protonpass.nix
 
             # Programs
             #./modules/programs/default.nix
 
             ./modules/desktop/yazi/yazi.nix
-            ./modules/applications/nemo-full.nix
 
             # ML - Machine Learning Infrastructure (modular, see modules/ml/README.md)
             ./modules/ml
@@ -119,7 +114,6 @@
             ./modules/system/aliases.nix
             ./modules/system/ml-gpu-users.nix
             ./modules/system/binary-cache.nix
-            ./modules/system/ssh-config.nix  # Declarative SSH config
             ./modules/system/sudo-claude-code.nix
 
             # Hardware (GPU, Trezor, WiFi)
@@ -144,13 +138,6 @@
             ./modules/network/dns/default.nix
             ./modules/network/bridge.nix
             ./modules/network/vpn/nordvpn.nix
-            ./modules/network/vpn/tailscale.nix
-            ./modules/network/proxy/nginx-tailscale.nix
-            ./modules/network/proxy/tailscale-services.nix
-            ./modules/network/security/firewall-zones.nix
-            ./modules/network/monitoring/tailscale-monitor.nix
-            ./modules/secrets/tailscale.nix
-
 
             # Shell (includes professional alias structure)
             ./modules/shell/default.nix
