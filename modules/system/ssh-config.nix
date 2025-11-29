@@ -182,9 +182,20 @@ with lib;
             # Desktop Machine (Builder/Cache)
             # ────────────────────────────────────────────────────
             "desktop" = {
-              hostname = "192.168.15.9";
-              user = "kernelcore";
+              hostname = "192.168.15.7"; # IP do desktop
+              user = "cypher"; # Usuário do desktop
               identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}";
+              identitiesOnly = true;
+              port = 22;
+            };
+
+            # ────────────────────────────────────────────────────
+            # Laptop Machine (kernelcore)
+            # ────────────────────────────────────────────────────
+            "laptop" = {
+              hostname = "192.168.15.9"; # IP do laptop
+              user = "kernelcore"; # Usuário do laptop
+              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}"; # Supondo a mesma chave, ajuste se necessário
               identitiesOnly = true;
               port = 22;
             };
