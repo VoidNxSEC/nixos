@@ -73,6 +73,12 @@ in
           run = "peek";
           desc = "Espiar arquivo";
         }
+        # Atalho para enviar arquivo via SSH para o laptop
+        {
+          on = [ "<Leader>s" ];
+          run = "shell 'scp -p \"$YAZI_SELECTED\" cypher@192.168.15.9:~/ ' --confirm";
+          desc = "Enviar arquivo para Laptop via SSH";
+        }
       ];
     };
   };
