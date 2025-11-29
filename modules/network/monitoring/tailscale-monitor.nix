@@ -9,35 +9,35 @@ with lib;
 
 let
   cfg = config.kernelcore.network.monitoring.tailscale;
-
+  
   # Monitoring script
   monitorScript = pkgs.writeShellScript "tailscale-monitor" ''
     #!/usr/bin/env bash
     # Tailscale Connection Quality Monitor with Auto-Failover
-
+    
     set -euo pipefail
-
+    
     # Configuration
     CHECK_INTERVAL=''${CHECK_INTERVAL:-30}
     MAX_LATENCY=''${MAX_LATENCY:-200}  # milliseconds
     MAX_PACKET_LOSS=''${MAX_PACKET_LOSS:-5}  # percent
     ALERT_EMAIL=''${ALERT_EMAIL:-""}
     LOG_FILE="''${LOGS_DIRECTORY:-/var/log}/tailscale-monitor.log"
-
+    
     # Colors for terminal output
     RED='\033[0;31m'
     GREEN='\033[0;32m'
     YELLOW='\033[1;33m'
     BLUE='\033[0;34m'
     NC='\033[0m'
-
+    
     # Logging function
     log() {
       local level="$1"
       shift
       echo "[$(date +'%Y-%m-%d %H:%M:%S')] [$level] $*" | tee -a "$LOG_FILE"
     }
-
+    
     # Check Tailscale connectivity
     check_tailscale() {
       local status_output
@@ -55,7 +55,7 @@ let
       fi
       return 0
     }
-
+    
     # Wait for Tailscale authentication
     wait_for_tailscale_auth() {
       log "INFO" "Waiting for Tailscale authentication..."
@@ -84,7 +84,7 @@ let
       log "ERROR" "Timeout waiting for Tailscale authentication after ''${max_wait}s"
       return 1
     }
-
+    
     # Measure connection quality
     measure_quality() {
       local peer="$1"
@@ -106,7 +106,7 @@ let
       
       echo "$latency:$packet_loss"
     }
-
+    
     # Check service availability
     check_service() {
       local service="$1"
@@ -118,7 +118,7 @@ let
         return 1
       fi
     }
-
+    
     # Trigger failover
     trigger_failover() {
       log "WARN" "Triggering failover to local network"
@@ -132,7 +132,7 @@ let
           ${pkgs.mailutils}/bin/mail -s "Tailscale Failover Alert" "$ALERT_EMAIL" || true
       fi
     }
-
+    
     # Restore Tailscale connection
     restore_connection() {
       log "INFO" "Attempting to restore Tailscale connection"
@@ -152,7 +152,7 @@ let
         return 1
       fi
     }
-
+    
     # Main monitoring loop
     monitor_loop() {
       log "INFO" "Starting Tailscale connection monitor"
@@ -229,37 +229,37 @@ let
         sleep "$CHECK_INTERVAL"
       done
     }
-
+    
     # Handle signals
     trap 'log "INFO" "Monitor stopping"; exit 0' SIGTERM SIGINT
-
+    
     # Start monitoring
     monitor_loop
   '';
-
+  
   # Performance benchmark script
   benchmarkScript = pkgs.writeShellScript "tailscale-benchmark" ''
     #!/usr/bin/env bash
     # Tailscale Performance Benchmark Suite
-
+    
     set -euo pipefail
-
+    
     # Colors
     BLUE='\033[0;34m'
     GREEN='\033[0;32m'
     YELLOW='\033[1;33m'
     NC='\033[0m'
-
+    
     echo -e "''${BLUE}======================================="
     echo -e "  TAILSCALE PERFORMANCE BENCHMARK"
     echo -e "=======================================''${NC}"
     echo ""
-
+    
     # 1. Connection Quality
     echo -e "''${YELLOW}1. Network Quality Check''${NC}"
     ${pkgs.tailscale}/bin/tailscale netcheck
     echo ""
-
+    
     # 2. Latency Test
     echo -e "''${YELLOW}2. Latency Test (ping)''${NC}"
     local peer_ip
@@ -270,28 +270,28 @@ let
       echo "No peers available for latency test"
     fi
     echo ""
-
+    
     # 3. Bandwidth Test (requires iperf3 on both ends)
     echo -e "''${YELLOW}3. Bandwidth Test''${NC}"
     echo "Note: Requires iperf3 server on remote peer"
     echo "To run: iperf3 -c <peer-ip> -t 10"
     echo ""
-
+    
     # 4. Service Response Times
     echo -e "''${YELLOW}4. Service Response Times''${NC}"
-
+    
     # Test Ollama
     if ${pkgs.netcat}/bin/nc -z 127.0.0.1 11434 2>/dev/null; then
       echo -n "Ollama (11434): "
       time ${pkgs.curl}/bin/curl -s http://127.0.0.1:11434/api/tags > /dev/null || echo "Failed"
     fi
-
+    
     # Test LlamaCPP
     if ${pkgs.netcat}/bin/nc -z 127.0.0.1 8080 2>/dev/null; then
       echo -n "LlamaCPP (8080): "
       time ${pkgs.curl}/bin/curl -s http://127.0.0.1:8080/health > /dev/null || echo "Failed"
     fi
-
+    
     echo ""
     echo -e "''${GREEN}Benchmark complete!''${NC}"
   '';
@@ -299,55 +299,52 @@ in
 {
   options.kernelcore.network.monitoring.tailscale = {
     enable = mkEnableOption "Enable Tailscale connection monitoring and auto-failover";
-
+    
     checkInterval = mkOption {
       type = types.int;
       default = 30;
       description = "Interval between health checks in seconds";
     };
-
+    
     maxLatency = mkOption {
       type = types.int;
       default = 200;
       description = "Maximum acceptable latency in milliseconds";
     };
-
+    
     maxPacketLoss = mkOption {
       type = types.int;
       default = 5;
       description = "Maximum acceptable packet loss percentage";
     };
-
+    
     enableAutoFailover = mkOption {
       type = types.bool;
       default = true;
       description = "Enable automatic failover to local network on poor connectivity";
     };
-
+    
     alertEmail = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "Email address for failover alerts";
     };
-
+    
     enableBenchmarks = mkOption {
       type = types.bool;
       default = true;
       description = "Enable performance benchmarking tools";
     };
   };
-
+  
   config = mkIf cfg.enable {
     # Monitoring service
     systemd.services.tailscale-monitor = {
       description = "Tailscale Connection Quality Monitor";
-      after = [
-        "tailscaled.service"
-        "network-online.target"
-      ];
+      after = [ "tailscaled.service" "network-online.target" ];
       wants = [ "network-online.target" ];
       wantedBy = [ "multi-user.target" ];
-
+      
       environment = {
         CHECK_INTERVAL = toString cfg.checkInterval;
         MAX_LATENCY = toString cfg.maxLatency;
@@ -355,28 +352,28 @@ in
         ALERT_EMAIL = cfg.alertEmail or "";
         LOGS_DIRECTORY = "/var/log/tailscale-monitor";
       };
-
+      
       serviceConfig = {
         Type = "simple";
         ExecStart = "${monitorScript}";
         Restart = "always";
         RestartSec = "10s";
-
+        
         # Logging directory managed by systemd
         LogsDirectory = "tailscale-monitor";
-
+        
         # Security
         DynamicUser = true;
         PrivateTmp = true;
         ProtectSystem = "strict";
         ProtectHome = true;
-
+        
         # Resource limits
         MemoryMax = "128M";
         CPUQuota = "10%";
       };
     };
-
+    
     # Log rotation for systemd logs directory
     services.logrotate = {
       enable = true;
@@ -391,22 +388,17 @@ in
         };
       };
     };
-
+    
     # Benchmark tools
-    environment.systemPackages =
-      with pkgs;
-      [
-        iperf3
-        netcat
-        bc
-      ]
-      ++ optional cfg.enableBenchmarks (
-        pkgs.writeScriptBin "ts-benchmark" ''
-          #!${pkgs.bash}/bin/bash
-          ${benchmarkScript}
-        ''
-      );
-
+    environment.systemPackages = with pkgs; [
+      iperf3
+      netcat
+      bc
+    ] ++ optional cfg.enableBenchmarks (pkgs.writeScriptBin "ts-benchmark" ''
+      #!${pkgs.bash}/bin/bash
+      ${benchmarkScript}
+    '');
+    
     # Shell aliases
     environment.shellAliases = {
       ts-monitor-status = "systemctl status tailscale-monitor";
@@ -415,33 +407,33 @@ in
       ts-monitor-restart = "sudo systemctl restart tailscale-monitor";
       ts-quality = "${pkgs.tailscale}/bin/tailscale netcheck";
     };
-
+    
     # Monitoring check script
     environment.etc."tailscale/monitoring-check.sh" = {
       mode = "0755";
       text = ''
         #!/usr/bin/env bash
         # Quick Tailscale monitoring status
-
+        
         echo "======================================="
         echo "   TAILSCALE MONITORING STATUS"
         echo "======================================="
         echo ""
-
+        
         # Monitor service status
         if systemctl is-active --quiet tailscale-monitor; then
           echo "✓ Monitor Service: Running"
         else
           echo "✗ Monitor Service: Stopped"
         fi
-
+        
         # Recent log entries
         echo ""
         echo "Recent Events (last 10):"
         echo "------------------------"
         tail -n 10 /var/log/tailscale-monitor/tailscale-monitor.log 2>/dev/null || \
           journalctl -u tailscale-monitor -n 10 --no-pager || echo "No logs available"
-
+        
         echo ""
         echo "======================================="
       '';
