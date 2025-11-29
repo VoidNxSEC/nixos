@@ -14,49 +14,53 @@
   # Desktop-specific Tailscale configuration
   kernelcore.network.vpn.tailscale = {
     enable = true;
-    
+
     # Device Identity
-    hostname = "desktop-home";  # Nome bonito no Tailscale
-    
+    hostname = "desktop-home"; # Nome bonito no Tailscale
+
     # Network Mode: SUBNET ROUTER
     # Desktop compartilha rede local para devices remotos
     enableSubnetRouter = true;
-    
+
     # IMPORTANTE: Ajuste estas subnets para sua rede real!
     # Descubra com: ip route | grep "scope link"
     advertiseRoutes = [
-      "192.168.1.0/24"    # Subnet principal (ajuste conforme sua rede)
+      "192.168.1.0/24" # Subnet principal (ajuste conforme sua rede)
       # "192.168.2.0/24"  # Adicione outras subnets se necessário
       # "172.17.0.0/16"   # Rede Docker (se quiser compartilhar containers)
     ];
-    
+
     # Accept routes from other devices too
     acceptRoutes = true;
-    
+
     # DNS Configuration
-    acceptDNS = true;           # MagicDNS (usar hostnames)
+    acceptDNS = true; # MagicDNS (usar hostnames)
     enableMagicDNS = true;
-    
+
     # SSH over Tailscale
     enableSSH = true;
-    
+
     # Security
-    shieldsUp = false;          # Allow connections from laptop
-    
+    shieldsUp = false; # Allow connections from laptop
+
     # Performance
     enableConnectionPersistence = true;
     reconnectTimeout = 30;
-    
+
     # Firewall
     openFirewall = true;
     trustedInterface = true;
-    
+
     # Auto-start on boot (importante para subnet router!)
     autoStart = true;
-    
+
     # Optional: Add tags for ACL management
-    tags = [ "tag:desktop" "tag:subnet-router" "tag:home" ];
-    
+    tags = [
+      "tag:desktop"
+      "tag:subnet-router"
+      "tag:home"
+    ];
+
     # Extra flags if needed
     extraUpFlags = [
       # Add any extra flags here
@@ -91,16 +95,16 @@
       echo "" && \
       echo "💾 IP Forwarding: $(sysctl -n net.ipv4.ip_forward)"
     '';
-    
+
     # Show local network devices
     local-devices = ''
       echo "🏠 Local Network Scan (via arp):" && \
       ip neigh | grep -v FAILED | awk '{print "  " $1 " - " $5}' | sort
     '';
-    
+
     # Check if laptop can reach this desktop
     ping-laptop = "${pkgs.tailscale}/bin/tailscale ping laptop-kernelcore";
-    
+
     # Quick offload test (if using as build server)
     test-offload = ''
       echo "🔨 Testing remote build capability..." && \
@@ -112,22 +116,25 @@
   # Services specifically for subnet router role
   systemd.services.tailscale-subnet-check = {
     description = "Check Tailscale subnet router status on boot";
-    after = [ "tailscaled.service" "network-online.target" ];
+    after = [
+      "tailscaled.service"
+      "network-online.target"
+    ];
     wants = [ "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
-    
+
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
       ExecStart = pkgs.writeShellScript "tailscale-subnet-check" ''
         #!/usr/bin/env bash
-        
+
         # Wait for Tailscale to be ready
         sleep 10
-        
+
         # Check if routes are advertised
         echo "🔍 Checking Tailscale subnet router configuration..."
-        
+
         if ${pkgs.tailscale}/bin/tailscale status --json | ${pkgs.jq}/bin/jq -e '.Self.PrimaryRoutes | length > 0' > /dev/null 2>&1; then
           echo "✅ Subnet routes are being advertised"
           ${pkgs.tailscale}/bin/tailscale status --json | ${pkgs.jq}/bin/jq -r '.Self.PrimaryRoutes[]?' | while read route; do
@@ -138,7 +145,7 @@
           echo "   Make sure to approve routes in Tailscale dashboard:"
           echo "   https://login.tailscale.com/admin/machines"
         fi
-        
+
         # Check IP forwarding
         if [ "$(sysctl -n net.ipv4.ip_forward)" = "1" ]; then
           echo "✅ IP forwarding is enabled"
