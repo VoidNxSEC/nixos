@@ -40,10 +40,7 @@ in
       type = types.listOf types.str;
       default = [ ];
       description = "Subnets to advertise to the Tailscale network";
-      example = [
-        "192.168.15.0/24"
-        "10.0.0.0/24"
-      ];
+      example = [ "192.168.15.0/24" "10.0.0.0/24" ];
     };
 
     enableSubnetRouter = mkOption {
@@ -82,10 +79,7 @@ in
       type = types.listOf types.str;
       default = [ ];
       description = "Additional DNS servers to use alongside MagicDNS";
-      example = [
-        "1.1.1.1"
-        "8.8.8.8"
-      ];
+      example = [ "1.1.1.1" "8.8.8.8" ];
     };
 
     # Security Options
@@ -151,10 +145,7 @@ in
       type = types.listOf types.str;
       default = [ ];
       description = "Tailscale ACL tags for this device";
-      example = [
-        "tag:server"
-        "tag:prod"
-      ];
+      example = [ "tag:server" "tag:prod" ];
     };
 
     # Extra Arguments
@@ -212,27 +203,21 @@ in
           routeFlags = optionals (cfg.enableSubnetRouter && cfg.advertiseRoutes != [ ]) [
             "--advertise-routes=${concatStringsSep "," cfg.advertiseRoutes}"
           ];
-          exitNodeFlags =
-            optionals cfg.exitNode [
-              "--advertise-exit-node"
-            ]
-            ++ optionals (cfg.exitNode && cfg.exitNodeAllowLANAccess) [
-              "--exit-node-allow-lan-access"
-            ];
-          dnsFlags =
-            optionals cfg.acceptDNS [
-              "--accept-dns=true"
-            ]
-            ++ optionals (!cfg.acceptDNS) [
-              "--accept-dns=false"
-            ];
-          routeAcceptFlags =
-            optionals cfg.acceptRoutes [
-              "--accept-routes=true"
-            ]
-            ++ optionals (!cfg.acceptRoutes) [
-              "--accept-routes=false"
-            ];
+          exitNodeFlags = optionals cfg.exitNode [
+            "--advertise-exit-node"
+          ] ++ optionals (cfg.exitNode && cfg.exitNodeAllowLANAccess) [
+            "--exit-node-allow-lan-access"
+          ];
+          dnsFlags = optionals cfg.acceptDNS [
+            "--accept-dns=true"
+          ] ++ optionals (!cfg.acceptDNS) [
+            "--accept-dns=false"
+          ];
+          routeAcceptFlags = optionals cfg.acceptRoutes [
+            "--accept-routes=true"
+          ] ++ optionals (!cfg.acceptRoutes) [
+            "--accept-routes=false"
+          ];
           sshFlags = optionals cfg.enableSSH [
             "--ssh"
           ];
@@ -270,7 +255,7 @@ in
         ProtectSystem = "strict";
         ProtectHome = true;
         ReadWritePaths = [ cfg.stateDir ];
-
+        
         # Resource limits
         MemoryMax = "512M";
         TasksMax = 256;
@@ -278,7 +263,7 @@ in
         # Restart behavior for reliability
         Restart = mkIf cfg.enableConnectionPersistence "on-failure";
         RestartSec = mkIf cfg.enableConnectionPersistence cfg.reconnectTimeout;
-
+        
         # State directory
         StateDirectory = "tailscale";
       };
@@ -289,19 +274,19 @@ in
       (mkIf cfg.openFirewall {
         # Allow Tailscale UDP port
         allowedUDPPorts = [ cfg.port ];
-
+        
         # Trust Tailscale interface
         trustedInterfaces = mkIf cfg.trustedInterface [ cfg.interfaceName ];
-
+        
         # Allow forwarding for subnet router/exit node
         checkReversePath = mkIf (cfg.enableSubnetRouter || cfg.exitNode) "loose";
-
+        
         # Firewall rules for subnet routing
         extraCommands = mkIf (cfg.enableSubnetRouter || cfg.exitNode) ''
           # Allow forwarding from Tailscale interface
           iptables -A FORWARD -i ${cfg.interfaceName} -j ACCEPT
           iptables -A FORWARD -o ${cfg.interfaceName} -j ACCEPT
-
+          
           # NAT for exit node traffic
           ${optionalString cfg.exitNode ''
             iptables -t nat -A POSTROUTING -o ${cfg.interfaceName} -j MASQUERADE
@@ -312,7 +297,7 @@ in
           # Clean up forwarding rules
           iptables -D FORWARD -i ${cfg.interfaceName} -j ACCEPT 2>/dev/null || true
           iptables -D FORWARD -o ${cfg.interfaceName} -j ACCEPT 2>/dev/null || true
-
+          
           ${optionalString cfg.exitNode ''
             iptables -t nat -D POSTROUTING -o ${cfg.interfaceName} -j MASQUERADE 2>/dev/null || true
           ''}
@@ -345,12 +330,12 @@ in
       ts-up = "sudo systemctl start tailscaled && sleep 2 && sudo ${pkgs.tailscale}/bin/tailscale up";
       ts-down = "sudo ${pkgs.tailscale}/bin/tailscale down";
       ts-logs = "journalctl -u tailscaled -f";
-
+      
       # Useful info commands
       ts-hostname = "${pkgs.tailscale}/bin/tailscale status | grep $(hostname) | awk '{print $2}'";
       ts-url = "echo http://$(${pkgs.tailscale}/bin/tailscale ip -4)";
       ts-peers = "${pkgs.tailscale}/bin/tailscale status --peers";
-
+      
       # Docker + Tailscale helpers
       docker-ts-urls = ''
         echo "=== Docker Containers via Tailscale ===" && \
@@ -362,7 +347,7 @@ in
           fi
         done
       '';
-
+      
       my-ips = ''
         echo "╔═══════════════════════════════════════╗" && \
         echo "║       Network Information              ║" && \
@@ -436,12 +421,12 @@ in
     };
 
     # Warnings for configuration validation
-    warnings =
-      (optional (
-        cfg.exitNode && !cfg.enableSubnetRouter && cfg.advertiseRoutes != [ ]
-      ) "Exit node is enabled but subnet router is disabled. Routes will not be advertised.")
-      ++ (optional (
-        cfg.enableSubnetRouter && cfg.advertiseRoutes == [ ]
-      ) "Subnet router is enabled but no routes are configured in advertiseRoutes.");
+    warnings = 
+      (optional (cfg.exitNode && !cfg.enableSubnetRouter && cfg.advertiseRoutes != [ ])
+        "Exit node is enabled but subnet router is disabled. Routes will not be advertised."
+      ) ++
+      (optional (cfg.enableSubnetRouter && cfg.advertiseRoutes == [ ])
+        "Subnet router is enabled but no routes are configured in advertiseRoutes."
+      );
   };
 }
