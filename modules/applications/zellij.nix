@@ -70,8 +70,8 @@ let
             // Actions
             bind "Alt x" { CloseFocus; }
             bind "Alt f" { ToggleFocusFullscreen; }
-            bind "Alt s" { SwitchToMode "scroll"; }
-            bind "Alt c" { SwitchToMode "copy"; }
+            bind "Alt s" { SwitchToMode "Scroll"; }
+            bind "Alt c" { Copy; }
             bind "Alt r" { SwitchToMode "RenameTab"; TabNameInput 0; }
         }
 
@@ -84,19 +84,7 @@ let
             bind "u" { HalfPageScrollUp; }
             bind "PageDown" { PageScrollDown; }
             bind "PageUp" { PageScrollUp; }
-            bind "Space" { SwitchToMode "copy"; }
-        }
-
-        copy {
-            bind "Esc" { SwitchToMode "Normal"; }
-            bind "q" { SwitchToMode "Normal"; }
-            bind "j" "Down" { ScrollDown; }
-            bind "k" "Up" { ScrollUp; }
-            bind "d" { HalfPageScrollDown; }
-            bind "u" { HalfPageScrollUp; }
-            bind "v" { ToggleActiveSyncTab; }
-            bind "y" { Copy; SwitchToMode "Normal"; }
-            bind "Enter" { Copy; SwitchToMode "Normal"; }
+            bind "Space" { Copy; SwitchToMode "Normal"; }
         }
 
         renametab {
