@@ -1,12 +1,7 @@
 # Tailscale VPN Stack - Quick Start Configuration
 # Add this to your hosts/kernelcore/configuration.nix
 
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, pkgs, ... }:
 
 {
   # Import all Tailscale modules (add to your flake.nix imports)
@@ -22,13 +17,13 @@
   # ============================================
   # OPTION 1: Simple Setup (Everything Enabled)
   # ============================================
-
+  
   # Enable complete Tailscale stack with all services
   kernelcore.network.proxy.tailscale-services = {
     enable = true;
-    tailnetDomain = "your-tailnet-name.ts.net"; # CHANGE THIS
+    tailnetDomain = "your-tailnet-name.ts.net";  # CHANGE THIS
   };
-
+  
   # Enable monitoring with auto-failover
   kernelcore.network.monitoring.tailscale = {
     enable = true;
@@ -37,53 +32,53 @@
     maxPacketLoss = 5;
     enableAutoFailover = true;
   };
-
+  
   # Enable advanced firewall zones
   kernelcore.network.security.firewall-zones = {
     enable = true;
     defaultPolicy = "drop";
     enableLogging = true;
   };
-
+  
   # ============================================
   # OPTION 2: Granular Control (Manual Setup)
   # ============================================
-
+  
   # Uncomment and customize if you want more control:
-
+  
   # # Tailscale VPN
   # kernelcore.network.vpn.tailscale = {
   #   enable = true;
   #   authKeyFile = config.sops.secrets."tailscale-authkey".path;
-  #
+  #   
   #   # Subnet router
   #   enableSubnetRouter = true;
   #   advertiseRoutes = [ "192.168.15.0/24" ];
-  #
+  #   
   #   # Exit node
   #   exitNode = true;
   #   exitNodeAllowLANAccess = true;
-  #
+  #   
   #   # DNS
   #   acceptDNS = true;
   #   enableMagicDNS = true;
-  #
+  #   
   #   # Tags
   #   tags = [ "tag:server" "tag:desktop" ];
   # };
-
+  
   # # NGINX Proxy
   # kernelcore.network.proxy.nginx-tailscale = {
   #   enable = true;
   #   enableHTTP3 = true;
-  #
+  #   
   #   services = {
   #     ollama.enable = true;
   #     llamacpp.enable = true;
   #     postgresql.enable = false;  # Enable as needed
   #   };
   # };
-
+  
   # # Secrets
   # kernelcore.secrets.tailscale = {
   #   enable = true;
@@ -94,7 +89,7 @@
 # ============================================
 # SETUP CHECKLIST
 # ============================================
-#
+# 
 # [ ] 1. Get Tailscale auth key from https://login.tailscale.com/admin/settings/keys
 # [ ] 2. Create /etc/nixos/secrets/tailscale.yaml with your auth key
 # [ ] 3. Encrypt secrets: sudo sops -e -i /etc/nixos/secrets/tailscale.yaml
