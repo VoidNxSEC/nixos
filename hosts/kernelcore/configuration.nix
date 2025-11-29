@@ -196,6 +196,29 @@
       # Centralized VM registry (managed by modules/virtualization/vms.nix)
       vmBaseDir = "/srv/vms/images";
       sourceImageDir = "/var/lib/vm-images";
+
+      # macOS KVM - Virtual macOS for iOS development and CI/CD
+      # Commands: mvm, mfetch, mssh, msnap, mbench
+      # See: ~/Downloads/standalone-mac/MASTERPLAN.md
+      macos-kvm = {
+        enable = true;
+        autoDetectResources = true; # Uses 50% of host CPU/RAM
+        maxCores = 8;
+        maxMemoryGB = 32;
+        diskSizeGB = 256;
+        cpuModel = "Cascadelake-Server";
+        memoryPrealloc = true;
+        sshPort = 10022;
+        vncPort = 5900;
+        sshUser = "admin";
+        display.virtioGl = true;
+        enableQmpSocket = true;
+        enableMonitorSocket = true;
+        # GPU Passthrough (uncomment when needed)
+        # passthrough.enable = true;
+        # passthrough.gpuIds = [ "10de:xxxx" ];
+      };
+
       vms = {
         wazuh = {
           enable = false;
@@ -473,6 +496,11 @@
   # hardware.nvidia-container-toolkit.enable moved to modules/hardware/nvidia.nix
   #hardware.nvidia.datacenter.enable = true; # Conflicting with xserver drivers
 
+  services.udisks2.enable = true;
+  services.gvfs.enable = true;
+
+  services.tailscale.enable = true;
+
   services.xserver.screenSection = ''
     Option "metamodes" "nvidia-auto-select +0+0 (ForceFullCompositionPipeLIne=On)"
   '';
@@ -499,6 +527,11 @@
       obsidian
       sssd
       vscodium
+      gphoto2
+      mtpfs
+      libimobiledevice # Provides afc support
+      devenv # Added for development environments
+      tailscale # Added for VPN connectivity
       trezor-suite
       tmux
       starship
