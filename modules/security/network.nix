@@ -11,6 +11,9 @@
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
+      3389 # RDP
+      22 # SSH
+      873 # Rsync
       8888 # Jupyter
       8000 # ST
       8080 # Misc.

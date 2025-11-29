@@ -138,6 +138,7 @@
             ./modules/network/dns/default.nix
             ./modules/network/bridge.nix
             ./modules/network/vpn/nordvpn.nix
+            ./modules/network/monitoring/tailscale-monitor.nix
 
             # Shell (includes professional alias structure)
             ./modules/shell/default.nix
