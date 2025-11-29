@@ -11,5 +11,6 @@
   imports = [
     ./vms.nix
     ./vmctl.nix
+    ./macos-kvm.nix
   ];
 }
