@@ -400,7 +400,7 @@
             regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\\\\u0000-\\\\u001f\\\\u007f-\\\\u009f<>\"\\\\\\\\s{-}\\\\\\\\^⟨⟩`]+";
             hyperlinks = true;
             post_processing = true;
-            action = "Copy";
+            command = "Copy";
 
             mouse = {
               enabled = true;
@@ -415,7 +415,7 @@
           {
             # IP address detection
             regex = "\\\\b(?:[0-9]{1,3}\\\\.){3}[0-9]{1,3}\\\\b";
-            action = "Copy";
+            command = "Copy";
 
             mouse = {
               enabled = true;
@@ -430,7 +430,7 @@
           {
             # Path detection
             regex = "(/?[\\\\w.-]+)+";
-            action = "Copy";
+            command = "Copy";
 
             mouse = {
               enabled = true;

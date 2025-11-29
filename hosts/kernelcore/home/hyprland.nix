@@ -156,6 +156,9 @@
     bind = $mainMod, D, exec, wofi --show drun
     bind = $mainMod SHIFT, D, exec, wofi --show run
 
+    # SSH file transfer
+    bind = $mainMod SHIFT, S, exec, ${pkgs.alacritty}/bin/alacritty -e ${pkgs.zsh}/bin/zsh -c "read -p 'File to send: ' file_to_send; scp -p $file_to_send cypher@192.168.15.9:~/; zsh"
+
     # Window management
     bind = $mainMod, Q, killactive
     bind = $mainMod, M, exit
