@@ -182,6 +182,11 @@ in
         hypredit = "$EDITOR ~/.config/hypr/hyprland.conf";
         hyprconf = "cd ~/.config/hypr && ls -la";
 
+        t = "tree -a -L 2 -C --dirsfirst \
+            -P *.md|*.nix|*.txt|*.wordx|*.sh|*.pdf|*.zip|*.yaml|*.yml|*.py|*.toml|*.rs|*.sql|*.env|*.env.*|*.json|*.lock|*.gitignore|*.dockerignore|Dockerfile|*.dockerfile|tauri.conf.json|vite.config.*|svelte.config.*|next.config.*|astro.config.*|nuxt.config.*|wrangler.toml|deno.json|deno.jsonc|pyproject.toml|*.png|*.jpg|*.jpeg|*.gif|*.svg|*.webp|*.ico \
+            -I node_modules|.git|target|dist|build|out|.next|.svelte-kit|.vite|.nuxt|.vercel|.turbo|.cache|.parcel-cache|.esbuild|__pycache__|*.pyc|*.map|*.tsbuildinfo|.js|*.jsx|*.ts|*.tsx|*.mjs|*.cjs|*.d.ts|*.tsbuildinfo|.tauri/tmp|temp|.DS_Store|*.log|coverage|storybook-static \
+            --prune";
+
         # Waybar
         wayreload = "killall waybar && waybar &";
         wayedit = "$EDITOR ~/.config/waybar/config";

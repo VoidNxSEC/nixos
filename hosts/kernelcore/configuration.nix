@@ -138,6 +138,7 @@
 
     services = {
       users."codex-agent" = lib.mkIf (config.kernelcore.packages.tar.resolvedPackages ? codex) {
+        enable = true;
         package = config.kernelcore.packages.tar.resolvedPackages.codex;
       };
     };
@@ -381,7 +382,7 @@
 
     llamacpp = {
       enable = true;
-      model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
+      model = "/var/lib/llamacpp/models/unsloth_Qwen2.5-Coder-14B-Instruct-GGUF_Qwen2.5-Coder-14B-Instruct-Q4_K_M.gguf";
       port = 8080;
       n_threads = 40;
       n_gpu_layers = 32; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
@@ -391,13 +392,13 @@
     };
 
     ollama = {
-      enable = true;
+      enable = false;
       host = "127.0.0.1"; # Security: Bind to localhost only
       port = 11434; # Default port - Docker ollama uses 11435
       acceleration = "cuda";
       # GPU memory management: unload models after 5 minutes of inactivity
       environmentVariables = {
-        #OLLAMA_KEEP_ALIVE = "5m"; # Unload models after 5min idle to free VRAM
+        OLLAMA_KEEP_ALIVE = "5m"; # Unload models after 5min idle to free VRAM
       };
       # NOTE: Systemd ollama service uses port 11434
       # Docker ollama in ~/Dev/Docker.Base/sql/docker-compose.yml uses host port 11435
@@ -536,7 +537,7 @@
       tmux
       starship
       terraform
-      ghidra
+      #ghidra
       awscli # AWS CLI v1 (estável) - Para comandos aws bedrock, s3, etc
 
       invidious

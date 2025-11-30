@@ -46,6 +46,8 @@ with lib;
         allowedTCPPorts = [
           80
           443
+          22
+          53
         ];
 
         # Regra crítica: permite FORWARD entre interfaces
@@ -162,8 +164,8 @@ with lib;
             htop
             iftop
             tcpdump # ← debug de rede
-            #gemini-cli
-            #google-cloud-sdk
+            gemini-cli
+            google-cloud-sdk
           ];
 
           nixpkgs.config.allowUnfree = true;
