@@ -339,29 +339,56 @@
   };
 
   services = {
+    # ============================================
+    # GNOME SERVICES - DISABLED
+    # ============================================
     gnome.core-shell.enable = false;
     gnome.core-apps.enable = false;
+
+    # ============================================
+    # XSERVER - Minimal for NVIDIA drivers only
+    # ============================================
     xserver = {
-      enable = true;
+      enable = true; # Required for NVIDIA drivers on NixOS
       videoDrivers = [ "nvidia" ];
       xkb = {
         layout = "br";
         variant = "";
       };
+      # Disable default X11 session managers
+      displayManager.lightdm.enable = false;
     };
 
-    desktopManager.plasma6.enable = true;
+    # ============================================
+    # DESKTOP MANAGERS - ALL DISABLED
+    # ============================================
+    # Plasma 6 - DISABLED (conflicts with Hyprland)
+    desktopManager.plasma6.enable = false;
+
+    # ============================================
+    # DISPLAY MANAGER - GDM Wayland
+    # ============================================
     displayManager = {
       gdm = {
         enable = true;
         wayland = true;
+        # Auto-suspend disabled (causes issues with NVIDIA)
+        autoSuspend = false;
       };
-      #sessionPackages = [ pkgs.sway ];
+      # Disable SDDM
       sddm.enable = false;
+      # Default session is Hyprland
+      defaultSession = "hyprland";
     };
 
-    # Hyprland desktop environment
-    hyprland-desktop.enable = true;
+    # ============================================
+    # HYPRLAND DESKTOP - PRIMARY COMPOSITOR
+    # ============================================
+    # Pure Wayland Hyprland environment with glassmorphism
+    hyprland-desktop = {
+      enable = true;
+      nvidia = true; # Enable NVIDIA optimizations
+    };
 
     openssh = {
       enable = true;
@@ -384,10 +411,10 @@
       enable = true;
       model = "/var/lib/llamacpp/models/unsloth_Qwen2.5-Coder-14B-Instruct-GGUF_Qwen2.5-Coder-14B-Instruct-Q4_K_M.gguf";
       port = 8080;
-      n_threads = 40;
-      n_gpu_layers = 32; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
+      n_threads = 20;
+      n_gpu_layers = 16; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
       n_parallel = 1;
-      n_ctx = 4096; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
+      n_ctx = 2024; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
       # Total VRAM usage: ~2.9GB (allows coexistence with other GPU services)
     };
 
@@ -538,7 +565,7 @@
       starship
       terraform
       #ghidra
-      awscli # AWS CLI v1 (estável) - Para comandos aws bedrock, s3, etc
+      awscli # AWS CLI v1 (stable) - awscli2 has hash mismatch in prompt-toolkit
 
       invidious
 
@@ -584,8 +611,9 @@
       terraform-providers.carlpett_sops
       terraform-providers.hashicorp_vault
 
-      gnomeExtensions.gtile
-      gnomeExtensions.awesome-tiles
+      # GNOME extensions removed - not using GNOME desktop
+      # gnomeExtensions.gtile
+      # gnomeExtensions.awesome-tiles
     ];
   };
 
@@ -613,10 +641,11 @@
       enableSSHSupport = true;
     };
     ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
-    sway = {
-      enable = true;
-      wrapperFeatures.gtk = true;
-    };
+
+    # ============================================
+    # SWAY - DISABLED (using Hyprland exclusively)
+    # ============================================
+    sway.enable = false;
   };
 
   nixpkgs.config.allowUnfree = true;
