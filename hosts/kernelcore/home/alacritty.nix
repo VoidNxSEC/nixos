@@ -258,15 +258,9 @@
         # Full OSC52 support for clipboard
         osc52 = "CopyPaste";
 
-        # Shell configuration
-        shell = {
-          program = "/run/current-system/sw/bin/zellij";
-          args = [
-            "attach"
-            "--create"
-            "main"
-          ];
-        };
+        # Shell configuration - use user's default shell
+        # Zellij is launched via Hyprland keybindings, not auto-started
+        # This keeps alacritty as a standalone terminal emulator
       };
 
       # ============================================

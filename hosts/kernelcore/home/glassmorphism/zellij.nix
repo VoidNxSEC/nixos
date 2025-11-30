@@ -357,51 +357,11 @@ in
           "bind \"d\"" = {
             Detach = { };
           };
-          "bind \"w\"" = {
-            LaunchOrFocusPlugin = {
-              floating = true;
-              move_to_focused_tab = true;
-            };
-          };
+          # Plugin launcher removed - requires plugin path specification
         };
 
-        # Shared across modes
-        shared_except = {
-          "_name" = "locked";
-          "bind \"Ctrl g\"" = {
-            SwitchToMode = "Locked";
-          };
-          "bind \"Ctrl q\"" = {
-            Quit = { };
-          };
-          "bind \"Alt n\"" = {
-            NewPane = { };
-          };
-          "bind \"Alt h\" \"Alt Left\"" = {
-            MoveFocusOrTab = "Left";
-          };
-          "bind \"Alt l\" \"Alt Right\"" = {
-            MoveFocusOrTab = "Right";
-          };
-          "bind \"Alt j\" \"Alt Down\"" = {
-            MoveFocus = "Down";
-          };
-          "bind \"Alt k\" \"Alt Up\"" = {
-            MoveFocus = "Up";
-          };
-          "bind \"Alt +\" \"Alt =\"" = {
-            Resize = "Increase";
-          };
-          "bind \"Alt -\"" = {
-            Resize = "Decrease";
-          };
-          "bind \"Alt [\"" = {
-            PreviousSwapLayout = { };
-          };
-          "bind \"Alt ]\"" = {
-            NextSwapLayout = { };
-          };
-        };
+        # Note: shared_except removed due to KDL syntax issues with home-manager
+        # Keybindings are defined per-mode instead
       };
 
       # ============================================
@@ -409,9 +369,9 @@ in
       # ============================================
       themes = {
         glassmorphism = {
-          # UI frame colors (glass effect)
+          # UI frame colors (dark glassmorphism base)
           fg = colors.fg1;
-          bg = "transparent"; # Transparent for glass effect
+          bg = colors.bg0; # Use darkest background instead of transparent
 
           # Base colors
           black = colors.bg3;

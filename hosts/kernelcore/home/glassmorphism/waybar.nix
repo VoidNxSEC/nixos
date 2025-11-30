@@ -371,12 +371,6 @@ in
         background: rgba(255, 0, 170, 0.3);
         color: #ff00aa;
         border: 1px solid rgba(255, 0, 170, 0.5);
-        animation: pulse 1s infinite;
-      }
-
-      @keyframes pulse {
-        0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 170, 0.3); }
-        50% { box-shadow: 0 0 20px rgba(255, 0, 170, 0.5); }
       }
 
       /* ============================================
@@ -429,7 +423,6 @@ in
         background: linear-gradient(135deg, rgba(255, 0, 170, 0.2), rgba(18, 18, 26, 0.8));
         border-color: rgba(255, 0, 170, 0.4);
         color: #ff00aa;
-        animation: pulse 1s infinite;
       }
 
       #custom-gpu:hover {
@@ -522,7 +515,6 @@ in
         color: #ff00aa;
         background: rgba(255, 0, 170, 0.15);
         border-color: rgba(255, 0, 170, 0.4);
-        animation: pulse 1s infinite;
       }
 
       /* ============================================
@@ -586,27 +578,52 @@ in
         # ============================================
         # GPU Monitor Script for Waybar
         # Priority: Temp > VRAM > Utilization > Clock
+        # Robust error handling for waybar stability
         # ============================================
 
+        set -o pipefail
+
         get_gpu_stats() {
+          # Try multiple paths for nvidia-smi
+          local NVIDIA_SMI=""
+          for path in /run/current-system/sw/bin/nvidia-smi /usr/bin/nvidia-smi nvidia-smi; do
+            if command -v "$path" &> /dev/null; then
+              NVIDIA_SMI="$path"
+              break
+            fi
+          done
+
           # Check if nvidia-smi is available
-          if ! command -v nvidia-smi &> /dev/null; then
+          if [[ -z "$NVIDIA_SMI" ]]; then
             echo '{"text": "󰢮 N/A", "tooltip": "nvidia-smi not found", "class": "disabled"}'
             exit 0
           fi
 
-          # Get GPU stats
-          read -r TEMP VRAM_USED VRAM_TOTAL UTIL CLOCK <<< $(nvidia-smi --query-gpu=temperature.gpu,memory.used,memory.total,utilization.gpu,clocks.current.graphics --format=csv,noheader,nounits | head -1 | tr -d ' ')
+          # Get GPU stats with error handling
+          local GPU_OUTPUT
+          if ! GPU_OUTPUT=$("$NVIDIA_SMI" --query-gpu=temperature.gpu,memory.used,memory.total,utilization.gpu,clocks.current.graphics --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -d ' '); then
+            echo '{"text": "󰢮 ERR", "tooltip": "Failed to query GPU", "class": "warning"}'
+            exit 0
+          fi
+
+          # Parse the output safely
+          IFS=',' read -r TEMP VRAM_USED VRAM_TOTAL UTIL CLOCK <<< "$GPU_OUTPUT"
+
+          # Validate values - use defaults if empty
+          TEMP=''${TEMP:-0}
+          VRAM_USED=''${VRAM_USED:-0}
+          VRAM_TOTAL=''${VRAM_TOTAL:-1}
+          UTIL=''${UTIL:-0}
+          CLOCK=''${CLOCK:-0}
 
           # Calculate VRAM percentage
-          if [[ -n "$VRAM_TOTAL" && "$VRAM_TOTAL" -gt 0 ]]; then
+          local VRAM_PERCENT=0
+          if [[ "$VRAM_TOTAL" -gt 0 ]]; then
             VRAM_PERCENT=$(( (VRAM_USED * 100) / VRAM_TOTAL ))
-          else
-            VRAM_PERCENT=0
           fi
 
           # Determine class based on temperature
-          CLASS="normal"
+          local CLASS="normal"
           if [[ "$TEMP" -ge 85 ]]; then
             CLASS="critical"
           elif [[ "$TEMP" -ge 75 ]]; then
@@ -614,19 +631,21 @@ in
           fi
 
           # Format display: 󰢮 temp | vram% | util%
-          TEXT="󰢮 ''${TEMP}°C  ''${VRAM_PERCENT}%  ''${UTIL}%"
+          local TEXT="󰢮 ''${TEMP}°C  ''${VRAM_PERCENT}%  ''${UTIL}%"
 
           # Build tooltip
-          TOOLTIP="NVIDIA GPU Status\n━━━━━━━━━━━━━━━━━━━━━━\n"
+          local TOOLTIP="NVIDIA GPU Status\n━━━━━━━━━━━━━━━━━━━━━━\n"
           TOOLTIP+="󰔏 Temperature: ''${TEMP}°C\n"
           TOOLTIP+="󰍛 VRAM: ''${VRAM_USED}MiB / ''${VRAM_TOTAL}MiB (''${VRAM_PERCENT}%)\n"
           TOOLTIP+="󰓅 Utilization: ''${UTIL}%\n"
           TOOLTIP+="󰑮 Clock: ''${CLOCK} MHz"
 
-          # Output JSON for Waybar
-          echo "{\"text\": \"$TEXT\", \"tooltip\": \"$TOOLTIP\", \"class\": \"$CLASS\"}"
+          # Output JSON for Waybar (ensure valid JSON)
+          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$TEXT" "$TOOLTIP" "$CLASS"
         }
 
+        # Run with error trap
+        trap 'echo "{\"text\": \"󰢮 ERR\", \"tooltip\": \"Script error\", \"class\": \"warning\"}"' ERR
         get_gpu_stats
       '';
     };
