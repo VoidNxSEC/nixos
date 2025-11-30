@@ -11,6 +11,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    nix-colors.url = "github:misterio77/nix-colors";
   };
 
   outputs =
@@ -68,7 +69,10 @@
       nixosConfigurations = {
         kernelcore = nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
+          specialArgs = {
+            inherit inputs;
+            colors = inputs.nix-colors;
+          };
           modules = [
             # Apply overlays to NixOS configuration
             {
@@ -81,7 +85,7 @@
 
             # Services
             ./modules/services/offload-server.nix
-            # ./modules/services/laptop-offload-client.nix # DISABLED: Causes remote build failures when desktop offline
+            ./modules/services/laptop-offload-client.nix # DISABLED: Causes remote build failures when desktop offline
             ./modules/services/default.nix
             ./modules/services/scripts.nix # Shell aliases for ML containers (pytorch, tgi, etc)
             ./modules/services/users/default.nix
@@ -89,6 +93,7 @@
             ./modules/services/users/actions.nix
             ./modules/services/users/gitlab-runner.nix
             ./modules/services/gpu-orchestration.nix
+            #./modules/services/rsync-server.nix
 
             # Desktop environments
             ./modules/desktop
@@ -121,7 +126,7 @@
 
             # Development
             ./modules/development/environments.nix
-            #./modules/development/claude-profiles.nix  # TEMP DISABLED for troubleshooting
+            ./modules/development/claude-profiles.nix # TEMP DISABLED for troubleshooting
             ./modules/development/jupyter.nix
             ./modules/development/cicd.nix
 
@@ -139,6 +144,9 @@
             ./modules/network/bridge.nix
             ./modules/network/vpn/nordvpn.nix
             ./modules/network/monitoring/tailscale-monitor.nix
+            ./modules/network/vpn/tailscale.nix
+            ./modules/network/vpn/tailscale-laptop.nix
+            ./modules/network/vpn/tailscale-desktop.nix
 
             # Shell (includes professional alias structure)
             ./modules/shell/default.nix
@@ -164,6 +172,10 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = {
+                inherit inputs;
+                nix-colors = inputs.nix-colors;
+              };
               home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix;
               # Use custom backup command with timestamp to avoid conflicts
               home-manager.backupFileExtension = null;

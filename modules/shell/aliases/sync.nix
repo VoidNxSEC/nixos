@@ -21,17 +21,18 @@
     "sync-nixos" = "sync-to /etc/nixos --no-delete";
     "sync-projects" = "sync-to ~/projects";
     "sync-docs" = "sync-to ~/Documents";
-    "sync-home" = "sync-to ~ --exclude='*' --include='.*' --include='.config/' --include='.bashrc' --include='.zshrc'";
+    "sync-home" =
+      "sync-to ~ --exclude='*' --include='.*' --include='.config/' --include='.bashrc' --include='.zshrc'";
 
     # Bidirectional sync (careful!)
     "sync-both-nixos" = "sync-to /etc/nixos --no-delete && sync-from nixos --no-delete";
 
     # Dry-run helpers
-    "sync-test" = "sync-to";  # Add --dry-run manually
-    "sync-check" = "rsync -avzn";  # Manual dry-run
+    "sync-test" = "sync-to"; # Add --dry-run manually
+    "sync-check" = "rsync -avzn"; # Manual dry-run
 
     # Direct rsync commands for advanced usage
     "rsync-desktop" = "rsync -avz --progress";
-    "rsync-safe" = "rsync -avzn --progress";  # Always dry-run
+    "rsync-safe" = "rsync -avzn --progress"; # Always dry-run
   };
 }

@@ -27,20 +27,24 @@ in
       # Core Hyprland tools
       waybar # Status bar
       wofi # Application launcher
-      dunst # Notification daemon
-      swaylock # Screen locker
+      mako # Notification daemon (glassmorphism)
+      hyprlock # Lock screen (glassmorphism)
+      wlogout # Logout menu (glassmorphism)
       swayidle # Idle management
 
       # Screenshot and screen recording
       grim # Screenshot utility
       slurp # Screen area selection
+      swappy # Screenshot editor (glassmorphism)
       wl-clipboard # Clipboard utilities
       wf-recorder # Screen recorder
+      hyprpicker # Color picker
 
       # File manager and utilities
       nemo # File manager (Cinnamon)
       pavucontrol # Audio control
       networkmanagerapplet # Network manager applet
+      blueman # Bluetooth manager
 
       # Terminal (already have alacritty)
       kitty # Backup terminal
@@ -50,6 +54,12 @@ in
 
       # Media
       playerctl # Media player control
+
+      # Wallpaper
+      swaybg # Wallpaper utility
+
+      # Clipboard history
+      cliphist # Clipboard manager
 
       # Appearance
       qt5.qtwayland
