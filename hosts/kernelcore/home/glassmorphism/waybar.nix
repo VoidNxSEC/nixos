@@ -97,7 +97,7 @@ in
             "kitty" = "󰄛 Kitty";
             "org.wezfurlong.wezterm" = "󰆍 WezTerm";
             "foot" = "󰆍 Foot";
-            
+
             # Browsers
             "firefox" = "󰈹 Firefox";
             "brave-browser" = "󰖟 Brave";

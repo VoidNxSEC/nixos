@@ -268,7 +268,7 @@
         # Terminal transparency - Kitty (primary)
         "opacity 0.92 0.88, class:^(kitty)$"
         "animation slide, class:^(kitty)$"
-        
+
         # Terminal transparency - Alacritty (fallback)
         "opacity 0.90 0.85, class:^(Alacritty)$"
 
@@ -415,7 +415,7 @@
         # Plain terminals without multiplexer
         "$mainMod CTRL, Return, exec, ${pkgs.kitty}/bin/kitty"
         "$mainMod CTRL SHIFT, Return, exec, ${pkgs.alacritty}/bin/alacritty"
-        
+
         # ==========================================
         # APPLICATIONS
         # ==========================================

@@ -39,19 +39,19 @@
       background_opacity = "0.92";
       background_blur = 10;
       dynamic_background_opacity = true;
-      
+
       # Dim inactive windows
       dim_opacity = "0.85";
       inactive_text_alpha = "0.9";
 
       # Window padding for breathing room
       window_padding_width = 14;
-      
+
       # Decorations
       hide_window_decorations = true;
       window_border_width = "1pt";
       draw_minimal_borders = true;
-      
+
       # Confirm on close
       confirm_os_window_close = 0;
 
@@ -92,7 +92,7 @@
       # ==========================================
       # PERFORMANCE - 144Hz Optimizations
       # ==========================================
-      repaint_delay = 6;  # ~166fps cap (slightly above 144Hz)
+      repaint_delay = 6; # ~166fps cap (slightly above 144Hz)
       input_delay = 2;
       sync_to_monitor = true;
 
@@ -132,7 +132,7 @@
       tab_fade = "0.25 0.5 0.75 1";
       tab_separator = " ┇ ";
       tab_activity_symbol = "󰖲 ";
-      
+
       # Tab title format
       tab_title_max_length = 25;
       tab_title_template = "{fmt.fg.tab}{bell_symbol}{activity_symbol}{index}: {title}";
@@ -154,7 +154,7 @@
       shell_integration = "enabled";
       allow_hyperlinks = true;
       term = "xterm-kitty";
-      
+
       # Wayland specific
       wayland_titlebar_color = "background";
       linux_display_server = "wayland";

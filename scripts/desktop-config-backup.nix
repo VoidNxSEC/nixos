@@ -14,30 +14,30 @@ let
     };
 
     /*
-    security = {
-      hardening.enable = true;
-      sandbox-fallback = true;
-      audit.enable = true;
+      security = {
+        hardening.enable = true;
+        sandbox-fallback = true;
+        audit.enable = true;
 
-      # HIGH PRIORITY SECURITY ENHANCEMENTS
-      # File integrity monitoring - detects unauthorized file modifications
-      aide.enable = false;
+        # HIGH PRIORITY SECURITY ENHANCEMENTS
+        # File integrity monitoring - detects unauthorized file modifications
+        aide.enable = false;
 
-      # Antivirus scanning for malware detection
-      clamav.enable = true;
+        # Antivirus scanning for malware detection
+        clamav.enable = true;
 
-      # Enhanced SSH security hardening
-      ssh.enable = false;
+        # Enhanced SSH security hardening
+        ssh.enable = false;
 
-      # Kernel security hardening (sysctl, module blacklist)
-      kernel.enable = true;
+        # Kernel security hardening (sysctl, module blacklist)
+        kernel.enable = true;
 
-      # PAM (Pluggable Authentication Modules) hardening
-      pam.enable = true;
+        # PAM (Pluggable Authentication Modules) hardening
+        pam.enable = true;
 
-      # Install security audit and monitoring tools
-      packages.enable = true;
-    };
+        # Install security audit and monitoring tools
+        packages.enable = true;
+      };
     */
 
     network = {
@@ -46,23 +46,23 @@ let
         # DNSSEC desabilitado temporariamente - muitos domínios não têm DNSSEC configurado
         # Causa "DNSSEC validation failed: no-signature" em domínios populares (anthropic.com, npmjs.org, etc)
         # Para reabilitar: descomente a linha abaixo e faça rebuild
-         #enableDNSSEC = true;
-         enableDNSSEC = false; # Necessario mais desenvolvimento e estrategia para implementar o dnsec.
-         enableDNSCrypt = false; # OPÇÃO A: DNS sem criptografia (mais simples)
-         preferredServers = [
-           "1.1.1.1" # Cloudflare Primary
-           "1.0.0.1" # Cloudflare Secondary
-           "9.9.9.9" # Quad9 Primary (Privacy-focused, DNSSEC)
-           "149.112.112.112" # Quad9 Secondary
-           "8.8.8.8" # Google Primary
-           "8.8.4.4" # Google Secondary
-         ];
-         cacheTTL = 3600;
-       };
+        #enableDNSSEC = true;
+        enableDNSSEC = false; # Necessario mais desenvolvimento e estrategia para implementar o dnsec.
+        enableDNSCrypt = false; # OPÇÃO A: DNS sem criptografia (mais simples)
+        preferredServers = [
+          "1.1.1.1" # Cloudflare Primary
+          "1.0.0.1" # Cloudflare Secondary
+          "9.9.9.9" # Quad9 Primary (Privacy-focused, DNSSEC)
+          "149.112.112.112" # Quad9 Secondary
+          "8.8.8.8" # Google Primary
+          "8.8.4.4" # Google Secondary
+        ];
+        cacheTTL = 3600;
+      };
 
       bridge = {
         enable = false; # Ensure br0 exists via NetworkManager; uplink auto-detected if unset
-         uplinkInterface = ""; # set explicitly if auto-detect picks wrong device
+        uplinkInterface = ""; # set explicitly if auto-detect picks wrong device
         ipv6.enable = false;
       };
 
@@ -75,143 +75,143 @@ let
     };
 
     #nvidia = {
-     # enable = false;
-      #cudaSupport = false;
+    # enable = false;
+    #cudaSupport = false;
     #};
 
     #hardware.wifi-optimization.enable = false;
 
     #development = {
-      #rust.enable = true;
-      #go.enable = true;
-      #python.enable = true;
-      #nodejs.enable = true;
-      #nix.enable = true;
-      #jupyter = {
-        #enable = true;
-        #kernels = {
-          #python.enable = true;
-          #rust.enable = true;
-          #nodejs.enable = true;
-          #nix.enable = true; # ADDED: Nix kernel for Jupyter notebooks
-        #};
-        #extensions.enable = true;
-      #};
+    #rust.enable = true;
+    #go.enable = true;
+    #python.enable = true;
+    #nodejs.enable = true;
+    #nix.enable = true;
+    #jupyter = {
+    #enable = true;
+    #kernels = {
+    #python.enable = true;
+    #rust.enable = true;
+    #nodejs.enable = true;
+    #nix.enable = true; # ADDED: Nix kernel for Jupyter notebooks
+    #};
+    #extensions.enable = true;
+    #};
 
-      # MEDIUM PRIORITY: CI/CD and code quality tools
-      #cicd = {
-        #enable = false;
-        #platforms = {
-          #github = true; # GitHub CLI and tools
-          #gitlab = true; # GitLab CLI and tools
-          #gitea = true; # Gitea CLI (local git server integration)
-        #};
-        #pre-commit = {
-          #enable = false;
-          #formatCode = true; # Auto-format code before commits
-          #runTests = false; # Set to true when you have automated tests
-        #};
-      #};
+    # MEDIUM PRIORITY: CI/CD and code quality tools
+    #cicd = {
+    #enable = false;
+    #platforms = {
+    #github = true; # GitHub CLI and tools
+    #gitlab = true; # GitLab CLI and tools
+    #gitea = true; # Gitea CLI (local git server integration)
+    #};
+    #pre-commit = {
+    #enable = false;
+    #formatCode = true; # Auto-format code before commits
+    #runTests = false; # Set to true when you have automated tests
+    #};
+    #};
     #};
 
     #containers = {
-      #docker.enable = false;
-     # podman = {
-     #   enable = false; # Set to true to use Podman instead of/alongside Docker
-       # dockerCompat = false; # Enable Docker CLI compatibility (creates docker -> podman alias)
-       # enableNvidia = true; # NVIDIA GPU support for containers
-     # };
+    #docker.enable = false;
+    # podman = {
+    #   enable = false; # Set to true to use Podman instead of/alongside Docker
+    # dockerCompat = false; # Enable Docker CLI compatibility (creates docker -> podman alias)
+    # enableNvidia = true; # NVIDIA GPU support for containers
+    # };
     #  nixos.enable = false;
     #};
 
     #virtualization = {
-      #enable = false;
-      #virt-manager = true;
-      #libvirtdGroup = [ "cypher" ];
-      #virtiofs.enable = true;
-      # Centralized VM registry (managed by modules/virtualization/vms.nix)
-      #vmBaseDir = "/srv/vms/images";
-      #sourceImageDir = "/var/lib/vm-images";
-      #vms = {
-        #wazuh = {
-          #enable = false;
-          # Resolve under sourceImageDir unless absolute
-          #sourceImage = "wazuh-4.14.0.qcow2";
-          # Final image location (symlink created if missing)
-          #imageFile = null; # defaults to vmBaseDir/wazuh.qcow2
-          #memoryMiB = 4096;
-          #vcpus = 2;
-          #network = "nat"; # NAT networking via libvirt default network
-          #bridgeName = "br0";
-          #sharedDirs = [
-            #{
-              #path = "/srv/vms/shared";
-              #tag = "hostshare";
-              #driver = "virtiofs";
-              #readonly = false;
-              #create = true;
-            #}
-           #];
-          #autostart = false;
-          #extraVirtInstallArgs = [
-            #"--graphics type=vnc,listen=0.0.0.0"
-          #];
-        #};
-      #};
+    #enable = false;
+    #virt-manager = true;
+    #libvirtdGroup = [ "cypher" ];
+    #virtiofs.enable = true;
+    # Centralized VM registry (managed by modules/virtualization/vms.nix)
+    #vmBaseDir = "/srv/vms/images";
+    #sourceImageDir = "/var/lib/vm-images";
+    #vms = {
+    #wazuh = {
+    #enable = false;
+    # Resolve under sourceImageDir unless absolute
+    #sourceImage = "wazuh-4.14.0.qcow2";
+    # Final image location (symlink created if missing)
+    #imageFile = null; # defaults to vmBaseDir/wazuh.qcow2
+    #memoryMiB = 4096;
+    #vcpus = 2;
+    #network = "nat"; # NAT networking via libvirt default network
+    #bridgeName = "br0";
+    #sharedDirs = [
+    #{
+    #path = "/srv/vms/shared";
+    #tag = "hostshare";
+    #driver = "virtiofs";
+    #readonly = false;
+    #create = true;
+    #}
+    #];
+    #autostart = false;
+    #extraVirtInstallArgs = [
+    #"--graphics type=vnc,listen=0.0.0.0"
+    #];
+    #};
+    #};
     #};
 
     #services.github-runner = {
-      # OPTIONAL: Enable self-hosted GitHub Actions runner when needed
-      # Requires secrets/github.yaml to be configured with registration token
-      # Default: use GitHub-hosted runners (more reliable, no local resource usage)
-      #enable = false; # Set to true to enable self-hosted runner
-      #useSops = false; # SOPS fixed: now safe to enable when needed
-      #runnerName = "nixos-self-hosted";
-      #repoUrl = "https://github.com/voidnxSEC"; # Organization-level runner
-      #extraLabels = [
-        #"nixos"
-        #"nix"
-        #"linux"
-     # ];
+    # OPTIONAL: Enable self-hosted GitHub Actions runner when needed
+    # Requires secrets/github.yaml to be configured with registration token
+    # Default: use GitHub-hosted runners (more reliable, no local resource usage)
+    #enable = false; # Set to true to enable self-hosted runner
+    #useSops = false; # SOPS fixed: now safe to enable when needed
+    #runnerName = "nixos-self-hosted";
+    #repoUrl = "https://github.com/voidnxSEC"; # Organization-level runner
+    #extraLabels = [
+    #"nixos"
+    #"nix"
+    #"linux"
+    # ];
     #};
 
     #services.gpu-orchestration = {
-      #enable = false;
-      #defaultMode = "docker"; # Docker containers get GPU priority by default
+    #enable = false;
+    #defaultMode = "docker"; # Docker containers get GPU priority by default
     #};
 
     #services.gitlab-runner = {
-      #enable = false; # Set to true to enable GitLab CI/CD runner
-      #useSops = false; # Enable when you have secrets/gitlab.yaml configured
-      #runnerName = "nixos-gitlab-runner";
-      #url = "https://gitlab.com"; # Or your self-hosted GitLab instance
-      #executor = "shell"; # Options: shell, docker, docker+machine, kubernetes
-      #tags = [
-        #"nixos"
-        #"nix"
-        #"linux"
-      #];
-      #concurrent = 4;
+    #enable = false; # Set to true to enable GitLab CI/CD runner
+    #useSops = false; # Enable when you have secrets/gitlab.yaml configured
+    #runnerName = "nixos-gitlab-runner";
+    #url = "https://gitlab.com"; # Or your self-hosted GitLab instance
+    #executor = "shell"; # Options: shell, docker, docker+machine, kubernetes
+    #tags = [
+    #"nixos"
+    #"nix"
+    #"linux"
+    #];
+    #concurrent = 4;
     #};
 
     # MEDIUM PRIORITY: Standardized secrets management
     #secrets.sops = {
-      #enable = false;
-      #secretsPath = "/etc/nixos/secrets";
-      #ageKeyFile = "/var/lib/sops-nix/key.txt";
+    #enable = false;
+    #secretsPath = "/etc/nixos/secrets";
+    #ageKeyFile = "/var/lib/sops-nix/key.txt";
     #};
 
     #secrets.api-keys.enable = false; # Load decrypted API keys
 
     # MEDIUM PRIORITY: Standardized ML model storage
     #ml.models-storage = {
-      #enable = false;
-      #baseDirectory = "/var/lib/ml-models";
+    #enable = false;
+    #baseDirectory = "/var/lib/ml-models";
     #};
 
     # Centralized ML/GPU user and group management
     #system.ml-gpu-users.enable = false;
-    
+
     # Desktop Cache Server for Laptop Offloading
     #system.binary-cache.enable = true;
     #system.binary-cache.local.enable = true;
@@ -243,18 +243,18 @@ in
     #gnome.core-shell.enable = true;
     #gnome.core-apps.enable = true;
     #xserver = {
-      #enable = true;
-      #videoDrivers = [ "nvidia" ];
-      #xkb = {
-        #layout = "br";
-        #variant = "";
-      #};
+    #enable = true;
+    #videoDrivers = [ "nvidia" ];
+    #xkb = {
+    #layout = "br";
+    #variant = "";
+    #};
     #};
 
     #desktopManager.gnome.enable = true;
     #displayManager.gdm = {
-      #enable = true;
-      #wayland = true;
+    #enable = true;
+    #wayland = true;
     #};
 
     # Desktop Cache + Offload Server
@@ -292,7 +292,10 @@ in
       openFirewall = true;
       ports = [ 22 ];
       listenAddresses = [
-        { addr = "0.0.0.0"; port = 22; }
+        {
+          addr = "0.0.0.0";
+          port = 22;
+        }
       ];
       settings = {
         PermitRootLogin = "prohibit-password";
@@ -301,28 +304,28 @@ in
     };
 
     #llamacpp = {
-      #enable = false;
-      #model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
-      #port = 8080;
-      #n_threads = 40;
-      #n_gpu_layers = 32; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
-      #n_parallel = 1;
-      #n_ctx = 4096; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
-      # Total VRAM usage: ~2.9GB (allows coexistence with other GPU services)
+    #enable = false;
+    #model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
+    #port = 8080;
+    #n_threads = 40;
+    #n_gpu_layers = 32; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
+    #n_parallel = 1;
+    #n_ctx = 4096; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
+    # Total VRAM usage: ~2.9GB (allows coexistence with other GPU services)
     #};
 
     #ollama = {
-      #enable = true;
-      #host = "127.0.0.1"; # Security: Bind to localhost only
-      #port = 11434; # Default port - Docker ollama uses 11435
-     # acceleration = "cuda";
-      # GPU memory management: unload models after 5 minutes of inactivity
-     # environmentVariables = {
-     #   OLLAMA_KEEP_ALIVE = "5m"; # Unload models after 5min idle to free VRAM
-     # };
-      # NOTE: Systemd ollama service uses port 11434
-      # Docker ollama in ~/Dev/Docker.Base/sql/docker-compose.yml uses host port 11435
-      # To run ollama manually: OLLAMA_HOST=127.0.0.1:11435 ollama serve
+    #enable = true;
+    #host = "127.0.0.1"; # Security: Bind to localhost only
+    #port = 11434; # Default port - Docker ollama uses 11435
+    # acceleration = "cuda";
+    # GPU memory management: unload models after 5 minutes of inactivity
+    # environmentVariables = {
+    #   OLLAMA_KEEP_ALIVE = "5m"; # Unload models after 5min idle to free VRAM
+    # };
+    # NOTE: Systemd ollama service uses port 11434
+    # Docker ollama in ~/Dev/Docker.Base/sql/docker-compose.yml uses host port 11435
+    # To run ollama manually: OLLAMA_HOST=127.0.0.1:11435 ollama serve
     #};
 
     gitea = {
@@ -383,10 +386,9 @@ in
     };
 
     #etcd = {
-     # enable = false;
+    # enable = false;
     #  name = "etc";
-   # };
-
+    # };
 
     pulseaudio.enable = true;
     pipewire = {
@@ -443,9 +445,8 @@ in
   #hardware.nvidia.datacenter.enable = true; # Conflicting with xserver drivers
 
   #services.xserver.screenSection = ''
-    #Option "metamodes" "nvidia-auto-select +0+0 (ForceFullCompositionPipeLIne=On)"
+  #Option "metamodes" "nvidia-auto-select +0+0 (ForceFullCompositionPipeLIne=On)"
   #'';
-
 
   users.users.cypher = {
     isNormalUser = true;
@@ -696,19 +697,18 @@ in
       };
     };
 
-
-
   # Sudo passwordless for cypher
-  security.sudo.extraRules = [{ users = ["cypher"]; commands = [{ command = "ALL"; options = ["NOPASSWD"]; }]; }];
-
-  system.stateVersion = "25.05";
-}
-
-    }];
-  }];
-
-  # Sudo passwordless for cypher
-  security.sudo.extraRules = [{ users = ["cypher"]; commands = [{ command = "ALL"; options = ["NOPASSWD"]; }]; }];
+  security.sudo.extraRules = [
+    {
+      users = [ "cypher" ];
+      commands = [
+        {
+          command = "ALL";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
 
   system.stateVersion = "25.05";
 }
