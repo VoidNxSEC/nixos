@@ -41,8 +41,11 @@
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
         "nm-applet --indicator"
         "swayidle -w timeout 300 'hyprlock' timeout 600 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on'"
-        # Set wallpaper (user should customize path)
-        "swaybg -i ~/Pictures/wallpaper.png -m fill"
+        # Wallpaper is managed by systemd user service (wallpaper.nix)
+        # Run 'generate-glassmorphism-wallpaper' or 'download-glassmorphism-wallpaper' to set up
+        # Clipboard manager
+        "wl-paste --type text --watch cliphist store"
+        "wl-paste --type image --watch cliphist store"
       ];
 
       # ============================================
@@ -262,9 +265,12 @@
       # WINDOW RULES - Glassmorphism styling
       # ============================================
       windowrulev2 = [
-        # Terminal transparency
+        # Terminal transparency - Kitty (primary)
+        "opacity 0.92 0.88, class:^(kitty)$"
+        "animation slide, class:^(kitty)$"
+        
+        # Terminal transparency - Alacritty (fallback)
         "opacity 0.90 0.85, class:^(Alacritty)$"
-        "opacity 0.90 0.85, class:^(kitty)$"
 
         # Code editors - slightly less transparent
         "opacity 0.95 0.90, class:^(code-oss)$"
@@ -399,8 +405,20 @@
       "$mainMod" = "SUPER";
 
       bind = [
-        # Applications
-        "$mainMod, Return, exec, ${pkgs.alacritty}/bin/alacritty -e ${pkgs.zellij}/bin/zellij attach --create main"
+        # ==========================================
+        # TERMINAL LAUNCHERS
+        # ==========================================
+        # Primary: Kitty + Zellij (GPU-accelerated, graphics protocol)
+        "$mainMod, Return, exec, ${pkgs.kitty}/bin/kitty -e ${pkgs.zellij}/bin/zellij attach --create main"
+        # Secondary: Alacritty + Zellij (lightweight fallback)
+        "$mainMod SHIFT, Return, exec, ${pkgs.alacritty}/bin/alacritty -e ${pkgs.zellij}/bin/zellij attach --create alt"
+        # Plain terminals without multiplexer
+        "$mainMod CTRL, Return, exec, ${pkgs.kitty}/bin/kitty"
+        "$mainMod CTRL SHIFT, Return, exec, ${pkgs.alacritty}/bin/alacritty"
+        
+        # ==========================================
+        # APPLICATIONS
+        # ==========================================
         "$mainMod, E, exec, nemo"
         "$mainMod, D, exec, wofi --show drun"
         "$mainMod SHIFT, D, exec, wofi --show run"
