@@ -28,14 +28,34 @@ let
     cfg.configFile
   ];
 
-  execCommand = if cfg.execCommand == [ ] then defaultCommand else cfg.execCommand;
+  fallbackCommand = [
+    codexBinary
+    "mcp-server"
+  ];
 
-  commandString = concatStringsSep " " (map escapeShellArg execCommand);
+  commandString = cmds: concatStringsSep " " (map escapeShellArg cmds);
 
   runScript = pkgs.writeShellScript "codex-agent-service" ''
+    set -euo pipefail
+
     export CODEX_AGENT_HOME=${escapeShellArg cfg.homeDirectory}
     export CODEX_AGENT_WORKDIR=${escapeShellArg cfg.workDirectory}
-    exec ${commandString}
+
+    if [ "${boolToString (cfg.execCommand != [ ])}" = "true" ]; then
+      exec ${commandString cfg.execCommand}
+    fi
+
+    if ${codexBinary} --help 2>/dev/null | grep -Fq "agent serve"; then
+      exec ${commandString defaultCommand}
+    fi
+
+    if ${codexBinary} --help 2>/dev/null | grep -Fq "mcp-server"; then
+      echo "codex-agent: 'codex agent serve' unavailable, falling back to 'codex mcp-server'" >&2
+      exec ${commandString fallbackCommand}
+    fi
+
+    echo "codex-agent: no supported codex subcommand available (expected 'agent serve' or 'mcp-server')" >&2
+    exit 1
   '';
 in
 {
@@ -95,7 +115,8 @@ in
       default = [ ];
       description = ''
         Override the command executed by the Codex agent service.
-        Leave empty to use the built-in `codex agent serve --config …` invocation.
+        Leave empty to prefer `codex agent serve --config …` when available, or
+        fall back to `codex mcp-server` on newer Codex CLI versions.
       '';
     };
 
