@@ -3,7 +3,7 @@
 # ============================================
 # Declarative configuration for Alacritty terminal emulator
 # - Optimized for Zellij integration
-# - Gruvbox Dark theme
+# - Glassmorphism Dark theme with electric accents
 # - Performance tuning for modern systems
 # - URL hints and clipboard integration
 # ============================================
@@ -55,8 +55,8 @@
 
         # Window class for WM integration
         class = {
-          general = "Alacritty";
-          instance = "alacritty-main";
+          instance = "Alacritty";
+          general = "alacritty-main";
         };
 
         # Resize increments (helps with tiling WMs)
@@ -145,52 +145,55 @@
       bell = {
         animation = "EaseOutSine";
         duration = 120;
-        color = "#fb4934"; # Gruvbox red
+        color = "#ff00aa"; # Glassmorphism magenta
       };
 
       # ============================================
-      # COLOR SCHEME - Gruvbox Dark
+      # COLOR SCHEME - Glassmorphism Dark
+      # Electric cyan/magenta/violet accents
       # ============================================
       colors = {
-        # Primary colors
+        # Primary colors - Dark glassmorphism base
         primary = {
-          background = "#282828";
-          foreground = "#ebdbb2";
+          background = "#0a0a0f";
+          foreground = "#e4e4e7";
+          bright_foreground = "#ffffff";
+          dim_foreground = "#a1a1aa";
         };
 
-        # Cursor colors
+        # Cursor colors - Electric cyan
         cursor = {
-          text = "#282828";
-          cursor = "#ebdbb2";
+          text = "#0a0a0f";
+          cursor = "#00d4ff";
         };
 
         vi_mode_cursor = {
-          text = "#282828";
-          cursor = "#d79921";
+          text = "#0a0a0f";
+          cursor = "#7c3aed";
         };
 
-        # Selection colors
+        # Selection colors - Violet tint
         selection = {
-          text = "#282828";
-          background = "#ebdbb2";
+          text = "#ffffff";
+          background = "#7c3aed";
         };
 
-        # Search colors
+        # Search colors - Cyan highlight
         search = {
           matches = {
-            foreground = "#282828";
-            background = "#d79921";
+            foreground = "#0a0a0f";
+            background = "#00d4ff";
           };
           focused_match = {
-            foreground = "#282828";
-            background = "#fb4934";
+            foreground = "#0a0a0f";
+            background = "#ff00aa";
           };
         };
 
         # Footer bar colors
         footer_bar = {
-          background = "#3c3836";
-          foreground = "#ebdbb2";
+          background = "#12121a";
+          foreground = "#e4e4e7";
         };
 
         # Line indicator
@@ -199,40 +202,52 @@
           background = "None";
         };
 
-        # Normal colors
+        # Hints (URL detection)
+        hints = {
+          start = {
+            foreground = "#0a0a0f";
+            background = "#00d4ff";
+          };
+          end = {
+            foreground = "#0a0a0f";
+            background = "#7c3aed";
+          };
+        };
+
+        # Normal colors - Glassmorphism palette
         normal = {
-          black = "#3c3836";
-          red = "#cc241d";
-          green = "#98971a";
-          yellow = "#d79921";
-          blue = "#458588";
-          magenta = "#b16286";
-          cyan = "#689d6a";
-          white = "#a89984";
+          black = "#1a1a24"; # Dark surface
+          red = "#ff00aa"; # Magenta (error/danger)
+          green = "#22c55e"; # Success green
+          yellow = "#eab308"; # Warning yellow
+          blue = "#3b82f6"; # Info blue
+          magenta = "#7c3aed"; # Violet accent
+          cyan = "#00d4ff"; # Electric cyan (primary)
+          white = "#a1a1aa"; # Muted text
         };
 
-        # Bright colors
+        # Bright colors - Lighter variants
         bright = {
-          black = "#928374";
-          red = "#fb4934";
-          green = "#b8bb26";
-          yellow = "#fabd2f";
-          blue = "#83a598";
-          magenta = "#d3869b";
-          cyan = "#8ec07c";
-          white = "#ebdbb2";
+          black = "#22222e"; # Elevated surface
+          red = "#f472b6"; # Light magenta
+          green = "#4ade80"; # Bright green
+          yellow = "#facc15"; # Bright yellow
+          blue = "#60a5fa"; # Bright blue
+          magenta = "#a78bfa"; # Light violet
+          cyan = "#67e8f9"; # Light cyan
+          white = "#ffffff"; # Pure white
         };
 
-        # Dim colors
+        # Dim colors - Darker variants
         dim = {
-          black = "#1d2021";
-          red = "#9d0006";
-          green = "#79740e";
-          yellow = "#b57614";
-          blue = "#076678";
-          magenta = "#8f3f71";
-          cyan = "#427b58";
-          white = "#928374";
+          black = "#0a0a0f"; # Deepest background
+          red = "#be185d"; # Dark magenta
+          green = "#166534"; # Dark green
+          yellow = "#a16207"; # Dark yellow
+          blue = "#1e40af"; # Dark blue
+          magenta = "#5b21b6"; # Dark violet
+          cyan = "#0891b2"; # Dark cyan
+          white = "#71717a"; # Disabled text
         };
       };
 
@@ -463,24 +478,6 @@
     };
   };
 
-  # ============================================
-  # SYSTEMD SERVICE (optional)
-  # ============================================
-  # Auto-start Alacritty server for faster startup
-  systemd.user.services.alacritty-server = {
-    Unit = {
-      Description = "Alacritty Terminal Server";
-      After = [ "graphical-session-pre.target" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-
-    Service = {
-      ExecStart = "${pkgs.alacritty}/bin/alacritty --daemon";
-      Restart = "on-failure";
-    };
-
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
+  # Note: Alacritty doesn't support daemon mode, so no systemd service needed
+  # Terminal instances are launched on-demand via keybindings
 }
