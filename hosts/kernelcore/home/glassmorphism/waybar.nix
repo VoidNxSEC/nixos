@@ -92,8 +92,13 @@ in
           max-length = 40;
           separate-outputs = true;
           rewrite = {
-            "Alacritty" = "󰆍 Terminal";
-            "kitty" = "󰆍 Kitty";
+            # Terminal emulators
+            "Alacritty" = "󰆍 Alacritty";
+            "kitty" = "󰄛 Kitty";
+            "org.wezfurlong.wezterm" = "󰆍 WezTerm";
+            "foot" = "󰆍 Foot";
+            
+            # Browsers
             "firefox" = "󰈹 Firefox";
             "brave-browser" = "󰖟 Brave";
             "chromium-browser" = " Chromium";
