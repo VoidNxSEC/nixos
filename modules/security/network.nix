@@ -45,5 +45,7 @@
       "docker0"
       "br-+"
     ];
+    # Comandos adicionais para limpar as regras do iptables antes de aplicar novas
+    extraCommands = '''';
   };
 }
