@@ -170,6 +170,8 @@ in
         dev = "cd ~/dev";
         nx = "cd /etc/nixos/";
 
+        nxbd = "sudo nixos-rebuild switch --flake /etc/nixos\#kernelcore --cores 8 --max-jobs 8 --verbose --show-trace --upgrade";
+
         # Shell switching
         tobash = "chsh -s $(which bash) && exec bash";
         tozsh = "chsh -s $(which zsh) && exec zsh";
