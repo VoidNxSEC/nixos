@@ -29,7 +29,7 @@ with lib;
       enable = true;
       rules = [
         # Monitor execve syscalls
-        "-a exit,always -F arch=b64 -S execve"
+        #"-a exit,always -F arch=b64 -S execve"
 
         # Monitor critical file changes
         "-w /etc/passwd -p wa -k passwd_changes"
@@ -39,12 +39,15 @@ with lib;
         # Monitor login attempts
         "-w /var/log/lastlog -p wa -k logins"
         "-w /var/run/faillock -p wa -k logins"
+        "-w /var/log/audit/ -p wx -k audit_tampering"
 
         # Monitor unauthorized access attempts
         "-a always,exit -F arch=b64 -S open -F dir=/etc -F success=0 -k unauthed_access"
 
         # Monitor file deletions
-        "-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete"
+        #"-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete"
+
+        "-a always,exit -F arch=b64 -S init_module -S delete_module -k modules"
       ];
     };
 
