@@ -18,7 +18,7 @@ let
   # Wallpaper paths
   wallpaperDir = "${config.home.homeDirectory}/Pictures/wallpapers";
   defaultWallpaper = "${wallpaperDir}/glassmorphism-default.png";
-  
+
   # Glassmorphism color palette for wallpaper generation
   colors = {
     bg = "#0a0a0f";
@@ -84,7 +84,7 @@ let
       "$OUTPUT_FILE"
 
     echo "Wallpaper saved to: $OUTPUT_FILE"
-    
+
     # Optionally restart swaybg if running
     if pgrep -x swaybg > /dev/null; then
       echo "Refreshing swaybg..."
@@ -158,7 +158,7 @@ let
     # ============================================
 
     WALLPAPER="''${1:-${defaultWallpaper}}"
-    
+
     if [[ ! -f "$WALLPAPER" ]]; then
       echo "❌ Wallpaper not found: $WALLPAPER"
       echo "Run 'generate-glassmorphism-wallpaper' or 'download-glassmorphism-wallpaper' first"
@@ -166,15 +166,15 @@ let
     fi
 
     echo "󰋩 Setting wallpaper: $WALLPAPER"
-    
+
     # Kill existing swaybg
     pkill swaybg || true
     sleep 0.3
-    
+
     # Start swaybg with new wallpaper
     swaybg -i "$WALLPAPER" -m fill &
     disown
-    
+
     echo "󰄬 Wallpaper set!"
   '';
 
@@ -185,9 +185,9 @@ in
   # ============================================
   home.packages = with pkgs; [
     swaybg
-    imagemagick  # For wallpaper generation
-    curl         # For wallpaper download
-    
+    imagemagick # For wallpaper generation
+    curl # For wallpaper download
+
     # Custom scripts
     wallpaperGeneratorScript
     wallpaperDownloadScript
@@ -198,7 +198,7 @@ in
   # WALLPAPER DIRECTORY SETUP
   # ============================================
   home.file.".local/share/wallpapers/.gitkeep".text = "";
-  
+
   # Create wallpapers directory
   home.activation.createWallpaperDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     mkdir -p ${wallpaperDir}
@@ -213,7 +213,7 @@ in
       PartOf = [ "graphical-session.target" ];
       After = [ "graphical-session.target" ];
     };
-    
+
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.swaybg}/bin/swaybg -i ${defaultWallpaper} -m fill";
@@ -221,7 +221,7 @@ in
       Restart = "on-failure";
       RestartSec = 1;
     };
-    
+
     Install = {
       WantedBy = [ "graphical-session.target" ];
     };
