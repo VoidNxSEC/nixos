@@ -1,257 +1,541 @@
-{ lib, pkgs, ... }:
+# ============================================
+# Hyprland Configuration - Glassmorphism Edition
+# ============================================
+# Premium 144Hz GPU-accelerated config with:
+# - Frosted glass blur effects
+# - Electric cyan/magenta/violet accents
+# - Optimized animations for 144fps
+# - NVIDIA-specific optimizations
+# ============================================
 
 {
-  # Hyprland configuration managed via Home Manager to keep keybinds in sync with Nix.
-  home.file.".config/hypr/hyprland.conf".text = lib.mkDefault ''
-    # ============================================
-    # Hyprland Configuration
-    # Optimized for NVIDIA + Alacritty + Zellij
-    # ============================================
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 
-    # Monitor configuration
-    monitor=,preferred,auto,1
+{
+  wayland.windowManager.hyprland = {
+    enable = true;
+    package = pkgs.hyprland;
+    xwayland.enable = true;
+    systemd.enable = true;
 
-    # ============================================
-    # AUTOSTART
-    # ============================================
-    exec-once = waybar
-    exec-once = dunst
-    exec-once = /nix/store/$(ls /nix/store | grep polkit-gnome | head -1)/libexec/polkit-gnome-authentication-agent-1
-    exec-once = nm-applet --indicator
-    exec-once = swayidle -w timeout 300 'swaylock -f' timeout 600 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on'
+    settings = {
+      # ============================================
+      # MONITOR - 1920x1080 @ 144Hz with VRR
+      # ============================================
+      monitor = [
+        ",1920x1080@144,auto,1"
+        # Fallback for any other monitor
+        ",preferred,auto,1"
+      ];
 
-    # ============================================
-    # ENVIRONMENT VARIABLES (NVIDIA)
-    # ============================================
-    env = LIBVA_DRIVER_NAME,nvidia
-    env = XDG_SESSION_TYPE,wayland
-    env = GBM_BACKEND,nvidia-drm
-    env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-    env = WLR_NO_HARDWARE_CURSORS,1
-    env = NIXOS_OZONE_WL,1
-    env = QT_QPA_PLATFORM,wayland
-    env = QT_WAYLAND_DISABLE_WINDOWDECORATION,1
-    env = GDK_BACKEND,wayland,x11
+      # ============================================
+      # AUTOSTART - Glassmorphism components
+      # ============================================
+      exec-once = [
+        "waybar"
+        "mako"
+        "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
+        "nm-applet --indicator"
+        "swayidle -w timeout 300 'hyprlock' timeout 600 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on'"
+        # Set wallpaper (user should customize path)
+        "swaybg -i ~/Pictures/wallpaper.png -m fill"
+      ];
 
-    # ============================================
-    # INPUT CONFIGURATION
-    # ============================================
-    input {
-        kb_layout = br
-        kb_variant =
-        kb_model =
-        kb_options =
-        kb_rules =
+      # ============================================
+      # ENVIRONMENT VARIABLES - NVIDIA + Wayland
+      # ============================================
+      env = [
+        # NVIDIA Wayland support
+        "LIBVA_DRIVER_NAME,nvidia"
+        "XDG_SESSION_TYPE,wayland"
+        "GBM_BACKEND,nvidia-drm"
+        "__GLX_VENDOR_LIBRARY_NAME,nvidia"
+        "WLR_NO_HARDWARE_CURSORS,1"
+        "WLR_DRM_NO_ATOMIC,1"
 
-        follow_mouse = 1
-        sensitivity = 1.0
-        accel_profile = flat
+        # NVIDIA anti-flicker and direct scanout
+        "__GL_GSYNC_ALLOWED,1"
+        "__GL_VRR_ALLOWED,1"
 
-        touchpad {
-            natural_scroll = false
-        }
-    }
+        # Qt/GTK Wayland
+        "NIXOS_OZONE_WL,1"
+        "QT_QPA_PLATFORM,wayland"
+        "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
+        "GDK_BACKEND,wayland,x11"
+        "SDL_VIDEODRIVER,wayland"
+        "CLUTTER_BACKEND,wayland"
 
-    # ============================================
-    # GENERAL SETTINGS
-    # ============================================
-    general {
-        gaps_in = 5
-        gaps_out = 10
-        border_size = 2
-        col.active_border = rgba(7aa2f7ee) rgba(7fdbcaee) 45deg
-        col.inactive_border = rgba(29323aaa)
+        # Cursor
+        "XCURSOR_SIZE,24"
+        "XCURSOR_THEME,Catppuccin-Macchiato-Blue"
+      ];
 
-        layout = dwindle
+      # ============================================
+      # INPUT CONFIGURATION
+      # ============================================
+      input = {
+        kb_layout = "br";
+        follow_mouse = 1;
+        sensitivity = 1.0;
+        accel_profile = "flat";
+        touchpad = {
+          natural_scroll = false;
+          disable_while_typing = true;
+          tap-to-click = true;
+        };
+      };
 
-        allow_tearing = false
-    }
+      # ============================================
+      # GENERAL - Glassmorphism borders
+      # ============================================
+      general = {
+        gaps_in = 8;
+        gaps_out = 16;
+        border_size = 1;
 
-    # ============================================
-    # DECORATIONS
-    # ============================================
-    decoration {
-        rounding = 8
+        # Glassmorphism gradient border - cyan to violet
+        "col.active_border" = "rgba(00d4ffff) rgba(7c3aedff) 45deg";
+        "col.inactive_border" = "rgba(22222e88)";
 
-        blur {
-            enabled = true
-            size = 5
-            passes = 2
-            new_optimizations = true
-            xray = false
-            ignore_opacity = true
-        }
+        layout = "dwindle";
+        allow_tearing = false;
+        resize_on_border = true;
+      };
 
-        active_opacity = 0.96
-        inactive_opacity = 0.88
-        fullscreen_opacity = 1.0
-    }
+      # ============================================
+      # DECORATIONS - Premium glassmorphism blur
+      # ============================================
+      decoration = {
+        rounding = 12;
 
-    # ============================================
-    # ANIMATIONS
-    # ============================================
-    animations {
-        enabled = true
+        # Enhanced blur for frosted glass effect
+        blur = {
+          enabled = true;
+          size = 10;
+          passes = 3;
+          new_optimizations = true;
+          xray = true;
+          ignore_opacity = false;
+          noise = 0.02;
+          contrast = 0.9;
+          brightness = 0.8;
+          vibrancy = 0.2;
+          vibrancy_darkness = 0.5;
+          special = true;
+          popups = true;
+        };
 
-        bezier = myBezier, 0.05, 0.9, 0.1, 1.05
-        bezier = smoothOut, 0.36, 0, 0.66, -0.56
-        bezier = smoothIn, 0.25, 1, 0.5, 1
+        # Window opacity for glass effect
+        active_opacity = 0.92;
+        inactive_opacity = 0.88;
+        fullscreen_opacity = 1.0;
 
-        animation = windows, 1, 5, myBezier, slide
-        animation = windowsOut, 1, 4, smoothOut, slide
-        animation = windowsMove, 1, 4, default
-        animation = border, 1, 10, default
-        animation = borderangle, 1, 8, default
-        animation = fade, 1, 7, smoothIn
-        animation = workspaces, 1, 6, default, slide
-    }
+        # Shadow settings (using new shadow section)
+        shadow = {
+          enabled = true;
+          range = 20;
+          render_power = 3;
+          offset = "0 4";
+          color = "rgba(00000066)";
+          color_inactive = "rgba(00000044)";
+        };
 
-    # ============================================
-    # LAYOUTS
-    # ============================================
+        # Dim inactive windows slightly
+        dim_inactive = true;
+        dim_strength = 0.15;
+      };
 
-    # Dwindle layout (similar to bspwm)
-    dwindle {
-        pseudotile = true
-        preserve_split = true
-        force_split = 2
-    }
+      # ============================================
+      # ANIMATIONS - Smooth 144fps bezier curves
+      # ============================================
+      animations = {
+        enabled = true;
 
-    # Master layout
-    master {
-        new_status = master
-    }
+        # Custom bezier curves optimized for 144Hz
+        bezier = [
+          # Smooth ease-out for general movement
+          "smoothOut, 0.4, 0, 0.2, 1"
+          # Quick start for snappy feel
+          "snappy, 0.2, 0.8, 0.2, 1"
+          # Bounce for playful elements
+          "bounce, 0.68, -0.55, 0.265, 1.55"
+          # Gentle for subtle transitions
+          "gentle, 0.4, 0.14, 0.3, 1"
+          # Linear for fade effects
+          "linear, 0, 0, 1, 1"
+          # Fast for quick actions
+          "fast, 0.2, 1, 0.3, 1"
+          # Workspace slide
+          "slide, 0.3, 0, 0.2, 1"
+        ];
 
-    # ============================================
-    # WINDOW RULES
-    # ============================================
-    windowrulev2 = float, class:^(pavucontrol)$
-    windowrulev2 = float, class:^(nm-connection-editor)$
-    windowrulev2 = float, class:^(thunar)$
-    windowrulev2 = opacity 0.94 0.94, class:^(Alacritty)$
-    windowrulev2 = opacity 0.94 0.94, class:^(kitty)$
+        animation = [
+          # Window open/close
+          "windowsIn, 1, 4, snappy, slide"
+          "windowsOut, 1, 3, smoothOut, slide"
+          "windowsMove, 1, 4, snappy"
 
-    # ============================================
-    # MISC SETTINGS
-    # ============================================
-    misc {
-        force_default_wallpaper = 0
-        disable_hyprland_logo = true
-        disable_splash_rendering = true
-        mouse_move_enables_dpms = true
-        key_press_enables_dpms = true
-        vrr = 1
-    }
+          # Fade effects
+          "fadeIn, 1, 3, gentle"
+          "fadeOut, 1, 3, gentle"
+          "fadeSwitch, 1, 4, smoothOut"
+          "fadeShadow, 1, 4, smoothOut"
+          "fadeDim, 1, 4, smoothOut"
 
-    # ============================================
-    # KEYBINDINGS
-    # ============================================
+          # Border color animation
+          "border, 1, 8, gentle"
+          "borderangle, 1, 50, linear, loop"
 
-    # Main modifier
-    $mainMod = SUPER
+          # Workspace transitions (smooth slide)
+          "workspaces, 1, 5, slide, slide"
+          "specialWorkspace, 1, 4, snappy, slidevert"
 
-    # Applications
-    bind = $mainMod, Return, exec, ${pkgs.alacritty}/bin/alacritty -e ${pkgs.zellij}/bin/zellij attach --create main
-    bind = $mainMod, E, exec, nemo
-    bind = $mainMod, D, exec, wofi --show drun
-    bind = $mainMod SHIFT, D, exec, wofi --show run
+          # Layers (waybar, notifications)
+          "layers, 1, 3, snappy, fade"
+          "layersIn, 1, 3, snappy, fade"
+          "layersOut, 1, 3, gentle, fade"
+        ];
+      };
 
-    # SSH file transfer
-    bind = $mainMod SHIFT, S, exec, ${pkgs.alacritty}/bin/alacritty -e ${pkgs.zsh}/bin/zsh -c "read -p 'File to send: ' file_to_send; scp -p $file_to_send cypher@192.168.15.9:~/; zsh"
+      # ============================================
+      # LAYOUTS
+      # ============================================
+      dwindle = {
+        pseudotile = true;
+        preserve_split = true;
+        force_split = 2;
+        smart_split = true;
+        smart_resizing = true;
+      };
 
-    # Window management
-    bind = $mainMod, Q, killactive
-    bind = $mainMod, M, exit
-    bind = $mainMod, F, fullscreen, 0
-    bind = $mainMod, V, togglefloating
-    bind = $mainMod, P, pseudo
-    bind = $mainMod, J, togglesplit
+      master = {
+        new_status = "master";
+        mfact = 0.55;
+      };
 
-    # Move focus with mainMod + arrow keys
-    bind = $mainMod, left, movefocus, l
-    bind = $mainMod, right, movefocus, r
-    bind = $mainMod, up, movefocus, u
-    bind = $mainMod, down, movefocus, d
+      # ============================================
+      # LAYER RULES - Blur for glassmorphism
+      # ============================================
+      layerrule = [
+        # Waybar - full blur
+        "blur, waybar"
+        "blurpopups, waybar"
+        "ignorezero, waybar"
+        "ignorealpha 0.3, waybar"
 
-    # Move focus with mainMod + hjkl (vim-style)
-    bind = $mainMod, h, movefocus, l
-    bind = $mainMod, l, movefocus, r
-    bind = $mainMod, k, movefocus, u
-    bind = $mainMod, j, movefocus, d
+        # Mako notifications - blur
+        "blur, notifications"
+        "ignorezero, notifications"
+        "ignorealpha 0.3, notifications"
 
-    # Move windows with mainMod + SHIFT + arrow keys
-    bind = $mainMod SHIFT, left, movewindow, l
-    bind = $mainMod SHIFT, right, movewindow, r
-    bind = $mainMod SHIFT, up, movewindow, u
-    bind = $mainMod SHIFT, down, movewindow, d
+        # Wofi launcher - blur
+        "blur, wofi"
+        "ignorezero, wofi"
+        "ignorealpha 0.3, wofi"
 
-    # Move windows with mainMod + SHIFT + hjkl
-    bind = $mainMod SHIFT, h, movewindow, l
-    bind = $mainMod SHIFT, l, movewindow, r
-    bind = $mainMod SHIFT, k, movewindow, u
-    bind = $mainMod SHIFT, j, movewindow, d
+        # Swappy screenshot editor - blur
+        "blur, swappy"
+        "ignorezero, swappy"
 
-    # Resize windows with mainMod + CTRL + arrow keys
-    binde = $mainMod CTRL, left, resizeactive, -50 0
-    binde = $mainMod CTRL, right, resizeactive, 50 0
-    binde = $mainMod CTRL, up, resizeactive, 0 -50
-    binde = $mainMod CTRL, down, resizeactive, 0 50
+        # Wlogout - blur
+        "blur, logout_dialog"
+        "ignorezero, logout_dialog"
 
-    # Resize windows with mainMod + CTRL + hjkl
-    binde = $mainMod CTRL, h, resizeactive, -50 0
-    binde = $mainMod CTRL, l, resizeactive, 50 0
-    binde = $mainMod CTRL, k, resizeactive, 0 -50
-    binde = $mainMod CTRL, j, resizeactive, 0 50
+        # Hyprlock - blur
+        "blur, hyprlock"
+        "ignorezero, hyprlock"
 
-    # Switch workspaces with mainMod + [0-9]
-    bind = $mainMod, 1, workspace, 1
-    bind = $mainMod, 2, workspace, 2
-    bind = $mainMod, 3, workspace, 3
-    bind = $mainMod, 4, workspace, 4
-    bind = $mainMod, 5, workspace, 5
-    bind = $mainMod, 6, workspace, 6
-    bind = $mainMod, 7, workspace, 7
-    bind = $mainMod, 8, workspace, 8
-    bind = $mainMod, 9, workspace, 9
-    bind = $mainMod, 0, workspace, 10
+        # Rofi (fallback) - blur
+        "blur, rofi"
+        "ignorezero, rofi"
 
-    # Move active window to workspace with mainMod + SHIFT + [0-9]
-    bind = $mainMod SHIFT, 1, movetoworkspace, 1
-    bind = $mainMod SHIFT, 2, movetoworkspace, 2
-    bind = $mainMod SHIFT, 3, movetoworkspace, 3
-    bind = $mainMod SHIFT, 4, movetoworkspace, 4
-    bind = $mainMod SHIFT, 5, movetoworkspace, 5
-    bind = $mainMod SHIFT, 6, movetoworkspace, 6
-    bind = $mainMod SHIFT, 7, movetoworkspace, 7
-    bind = $mainMod SHIFT, 8, movetoworkspace, 8
-    bind = $mainMod SHIFT, 9, movetoworkspace, 9
-    bind = $mainMod SHIFT, 0, movetoworkspace, 10
+        # GTK layer shell
+        "blur, gtk-layer-shell"
+        "ignorezero, gtk-layer-shell"
+      ];
 
-    # Scroll through workspaces with mainMod + scroll
-    bind = $mainMod, mouse_down, workspace, e+1
-    bind = $mainMod, mouse_up, workspace, e-1
+      # ============================================
+      # WINDOW RULES - Glassmorphism styling
+      # ============================================
+      windowrulev2 = [
+        # Terminal transparency
+        "opacity 0.90 0.85, class:^(Alacritty)$"
+        "opacity 0.90 0.85, class:^(kitty)$"
 
-    # Move/resize windows with mainMod + LMB/RMB and dragging
-    bindm = $mainMod, mouse:272, movewindow
-    bindm = $mainMod, mouse:273, resizewindow
+        # Code editors - slightly less transparent
+        "opacity 0.95 0.90, class:^(code-oss)$"
+        "opacity 0.95 0.90, class:^(Code)$"
+        "opacity 0.95 0.90, class:^(VSCodium)$"
+        "opacity 0.95 0.90, class:^(codium)$"
 
-    # Screenshot utilities
-    bind = , Print, exec, grim -g "$(slurp)" - | wl-copy
-    bind = SHIFT, Print, exec, grim - | wl-copy
-    bind = CTRL, Print, exec, grim -g "$(slurp)" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
+        # Browsers - near opaque for readability
+        "opacity 0.98 0.95, class:^(firefox)$"
+        "opacity 0.98 0.95, class:^(brave-browser)$"
+        "opacity 0.98 0.95, class:^(chromium)$"
 
-    # Media controls
-    bind = , XF86AudioPlay, exec, playerctl play-pause
-    bind = , XF86AudioNext, exec, playerctl next
-    bind = , XF86AudioPrev, exec, playerctl previous
-    bind = , XF86AudioStop, exec, playerctl stop
+        # File managers - float
+        "float, class:^(nemo)$"
+        "size 1200 700, class:^(nemo)$"
+        "center, class:^(nemo)$"
+        "opacity 0.92 0.88, class:^(nemo)$"
 
-    # Volume controls
-    binde = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
-    binde = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-    bind = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+        # System utilities - float
+        "float, class:^(pavucontrol)$"
+        "size 800 500, class:^(pavucontrol)$"
+        "center, class:^(pavucontrol)$"
 
-    # Lock screen
-    bind = $mainMod, L, exec, swaylock -f
-  '';
+        "float, class:^(nm-connection-editor)$"
+        "size 600 400, class:^(nm-connection-editor)$"
+        "center, class:^(nm-connection-editor)$"
+
+        "float, class:^(blueman-manager)$"
+        "size 600 400, class:^(blueman-manager)$"
+        "center, class:^(blueman-manager)$"
+
+        # Image viewers - float and larger
+        "float, class:^(imv)$"
+        "size 1400 900, class:^(imv)$"
+        "center, class:^(imv)$"
+
+        "float, class:^(feh)$"
+        "size 1400 900, class:^(feh)$"
+        "center, class:^(feh)$"
+
+        # Media players
+        "float, class:^(mpv)$"
+        "size 1280 720, class:^(mpv)$"
+        "center, class:^(mpv)$"
+
+        # Dialogs
+        "float, title:^(Open File)$"
+        "float, title:^(Save File)$"
+        "float, title:^(Choose Files)$"
+        "float, title:^(Confirm)$"
+
+        # Swappy screenshot editor
+        "float, class:^(swappy)$"
+        "size 1000 700, class:^(swappy)$"
+        "center, class:^(swappy)$"
+        "opacity 0.95 0.90, class:^(swappy)$"
+
+        # Picture-in-picture
+        "float, title:^(Picture-in-Picture)$"
+        "pin, title:^(Picture-in-Picture)$"
+        "size 400 225, title:^(Picture-in-Picture)$"
+        "move 100%-420 100%-245, title:^(Picture-in-Picture)$"
+
+        # KeepassXC
+        "float, class:^(org.keepassxc.KeePassXC)$"
+        "size 1000 700, class:^(org.keepassxc.KeePassXC)$"
+        "center, class:^(org.keepassxc.KeePassXC)$"
+
+        # Discord/communication
+        "opacity 0.95 0.92, class:^(discord)$"
+
+        # Obsidian
+        "opacity 0.95 0.92, class:^(obsidian)$"
+      ];
+
+      # ============================================
+      # MISC SETTINGS - 144Hz optimizations
+      # ============================================
+      misc = {
+        force_default_wallpaper = 0;
+        disable_hyprland_logo = true;
+        disable_splash_rendering = true;
+
+        # Power management
+        mouse_move_enables_dpms = true;
+        key_press_enables_dpms = true;
+
+        # VRR (Variable Refresh Rate) for 144Hz
+        vrr = 1;
+
+        # Performance
+        vfr = true;
+
+        # Focus
+        focus_on_activate = true;
+
+        # Animation
+        animate_manual_resizes = true;
+        animate_mouse_windowdragging = true;
+
+        # New window behavior
+        new_window_takes_over_fullscreen = 2;
+      };
+
+      # ============================================
+      # CURSOR - Smooth movement
+      # ============================================
+      cursor = {
+        no_hardware_cursors = true;
+        enable_hyprcursor = true;
+        hide_on_key_press = true;
+        inactive_timeout = 5;
+      };
+
+      # ============================================
+      # RENDER - NVIDIA optimizations
+      # ============================================
+      # Note: explicit_sync and direct_scanout options removed
+      # as they don't exist in current Hyprland version
+
+      # ============================================
+      # DEBUG - Disable for production
+      # ============================================
+      debug = {
+        disable_logs = true;
+        disable_time = true;
+      };
+
+      # ============================================
+      # KEYBINDINGS
+      # ============================================
+      "$mainMod" = "SUPER";
+
+      bind = [
+        # Applications
+        "$mainMod, Return, exec, ${pkgs.alacritty}/bin/alacritty -e ${pkgs.zellij}/bin/zellij attach --create main"
+        "$mainMod, E, exec, nemo"
+        "$mainMod, D, exec, wofi --show drun"
+        "$mainMod SHIFT, D, exec, wofi --show run"
+
+        # Window management
+        "$mainMod, Q, killactive"
+        "$mainMod, M, exit"
+        "$mainMod, F, fullscreen, 0"
+        "$mainMod SHIFT, F, fullscreen, 1"
+        "$mainMod, V, togglefloating"
+        "$mainMod, P, pseudo"
+        "$mainMod, J, togglesplit"
+        "$mainMod, G, togglegroup"
+        "$mainMod, Tab, changegroupactive, f"
+        "$mainMod SHIFT, Tab, changegroupactive, b"
+
+        # Move focus with arrow keys
+        "$mainMod, left, movefocus, l"
+        "$mainMod, right, movefocus, r"
+        "$mainMod, up, movefocus, u"
+        "$mainMod, down, movefocus, d"
+
+        # Move focus with vim keys (hjkl)
+        "$mainMod, h, movefocus, l"
+        "$mainMod, l, movefocus, r"
+        "$mainMod, k, movefocus, u"
+        "$mainMod, semicolon, movefocus, d"
+
+        # Move windows with arrow keys
+        "$mainMod SHIFT, left, movewindow, l"
+        "$mainMod SHIFT, right, movewindow, r"
+        "$mainMod SHIFT, up, movewindow, u"
+        "$mainMod SHIFT, down, movewindow, d"
+
+        # Move windows with vim keys
+        "$mainMod SHIFT, h, movewindow, l"
+        "$mainMod SHIFT, l, movewindow, r"
+        "$mainMod SHIFT, k, movewindow, u"
+        "$mainMod SHIFT, j, movewindow, d"
+
+        # Workspaces
+        "$mainMod, 1, workspace, 1"
+        "$mainMod, 2, workspace, 2"
+        "$mainMod, 3, workspace, 3"
+        "$mainMod, 4, workspace, 4"
+        "$mainMod, 5, workspace, 5"
+        "$mainMod, 6, workspace, 6"
+        "$mainMod, 7, workspace, 7"
+        "$mainMod, 8, workspace, 8"
+        "$mainMod, 9, workspace, 9"
+        "$mainMod, 0, workspace, 10"
+
+        # Move to workspace
+        "$mainMod SHIFT, 1, movetoworkspace, 1"
+        "$mainMod SHIFT, 2, movetoworkspace, 2"
+        "$mainMod SHIFT, 3, movetoworkspace, 3"
+        "$mainMod SHIFT, 4, movetoworkspace, 4"
+        "$mainMod SHIFT, 5, movetoworkspace, 5"
+        "$mainMod SHIFT, 6, movetoworkspace, 6"
+        "$mainMod SHIFT, 7, movetoworkspace, 7"
+        "$mainMod SHIFT, 8, movetoworkspace, 8"
+        "$mainMod SHIFT, 9, movetoworkspace, 9"
+        "$mainMod SHIFT, 0, movetoworkspace, 10"
+
+        # Scroll workspaces
+        "$mainMod, mouse_down, workspace, e+1"
+        "$mainMod, mouse_up, workspace, e-1"
+
+        # Special workspace (scratchpad)
+        "$mainMod, S, togglespecialworkspace, magic"
+        "$mainMod SHIFT, S, movetoworkspace, special:magic"
+
+        # Screenshot with swappy - region select
+        ", Print, exec, grim -g \"$(slurp)\" - | swappy -f -"
+        # Screenshot - fullscreen to swappy
+        "SHIFT, Print, exec, grim - | swappy -f -"
+        # Screenshot - region to file
+        "CTRL, Print, exec, grim -g \"$(slurp)\" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png"
+        # Screenshot - fullscreen to file
+        "CTRL SHIFT, Print, exec, grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png"
+        # Screenshot - copy region to clipboard
+        "$mainMod, Print, exec, grim -g \"$(slurp)\" - | wl-copy"
+
+        # Color picker
+        "$mainMod SHIFT, C, exec, hyprpicker -a"
+
+        # Media controls
+        ", XF86AudioPlay, exec, playerctl play-pause"
+        ", XF86AudioNext, exec, playerctl next"
+        ", XF86AudioPrev, exec, playerctl previous"
+        ", XF86AudioStop, exec, playerctl stop"
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+
+        # Lock screen
+        "$mainMod CTRL, L, exec, hyprlock"
+
+        # Logout menu
+        "$mainMod, Escape, exec, wlogout -p layer-shell"
+
+        # Notification center
+        "$mainMod, N, exec, makoctl dismiss"
+        "$mainMod SHIFT, N, exec, makoctl dismiss --all"
+
+        # Reload waybar
+        "$mainMod SHIFT, W, exec, killall waybar; waybar &"
+      ];
+
+      # Repeating binds
+      binde = [
+        # Resize with arrow keys
+        "$mainMod CTRL, left, resizeactive, -50 0"
+        "$mainMod CTRL, right, resizeactive, 50 0"
+        "$mainMod CTRL, up, resizeactive, 0 -50"
+        "$mainMod CTRL, down, resizeactive, 0 50"
+
+        # Resize with vim keys
+        "$mainMod CTRL, h, resizeactive, -50 0"
+        "$mainMod CTRL, l, resizeactive, 50 0"
+        "$mainMod CTRL, k, resizeactive, 0 -50"
+        "$mainMod CTRL, j, resizeactive, 0 50"
+
+        # Volume
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+
+        # Brightness
+        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
+        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+      ];
+
+      # Mouse bindings
+      bindm = [
+        "$mainMod, mouse:272, movewindow"
+        "$mainMod, mouse:273, resizewindow"
+      ];
+    };
+  };
 }

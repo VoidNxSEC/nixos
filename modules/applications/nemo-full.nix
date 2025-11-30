@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -21,7 +26,7 @@ in
       default = with pkgs; [
         # Core Nemo package already includes basic extensions
         # Additional functionality
-        sushi                         # File previewer (spacebar preview)
+        sushi # File previewer (spacebar preview)
       ];
       description = "List of Nemo extensions to install";
     };
@@ -30,21 +35,21 @@ in
       type = types.listOf types.package;
       default = with pkgs; [
         # Thumbnails and previews
-        ffmpegthumbnailer            # Video thumbnails
-        imagemagick                  # Image processing
-        libgsf                       # ODF thumbnails
-        poppler                      # PDF thumbnails
-        
+        ffmpegthumbnailer # Video thumbnails
+        imagemagick # Image processing
+        libgsf # ODF thumbnails
+        poppler # PDF thumbnails
+
         # Archive support
-        file-roller                  # GUI archive manager
-        p7zip                        # 7z support
-        unrar                        # RAR support
-        unzip                        # ZIP support
-        zip                          # ZIP creation
-        
+        file-roller # GUI archive manager
+        p7zip # 7z support
+        unrar # RAR support
+        unzip # ZIP support
+        zip # ZIP creation
+
         # Media info
-        mediainfo                    # Media file information
-        exiftool                     # EXIF data reading
+        mediainfo # Media file information
+        exiftool # EXIF data reading
       ];
       description = "Additional packages to support Nemo features";
     };
@@ -56,20 +61,30 @@ in
     };
 
     plugins = {
-      preview = mkEnableOption "Enable file preview (sushi)" // { default = true; };
-      compare = mkEnableOption "Enable file comparison tools" // { default = true; };
-      terminal = mkEnableOption "Enable 'Open in Terminal' action" // { default = true; };
-      admin = mkEnableOption "Enable 'Open as Administrator' action" // { default = true; };
+      preview = mkEnableOption "Enable file preview (sushi)" // {
+        default = true;
+      };
+      compare = mkEnableOption "Enable file comparison tools" // {
+        default = true;
+      };
+      terminal = mkEnableOption "Enable 'Open in Terminal' action" // {
+        default = true;
+      };
+      admin = mkEnableOption "Enable 'Open as Administrator' action" // {
+        default = true;
+      };
     };
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ cfg.package ]
-      ++ cfg.extensions
-      ++ cfg.extraPackages
-      ++ optional cfg.plugins.compare pkgs.meld
-      ++ optional cfg.plugins.terminal pkgs.gnome-terminal
-      ++ optional cfg.plugins.admin pkgs.polkit;
+    environment.systemPackages = [
+      cfg.package
+    ]
+    ++ cfg.extensions
+    ++ cfg.extraPackages
+    ++ optional cfg.plugins.compare pkgs.meld
+    ++ optional cfg.plugins.terminal pkgs.gnome-terminal
+    ++ optional cfg.plugins.admin pkgs.polkit;
 
     # GIO modules for proper integration
     services.gvfs = {
@@ -99,10 +114,11 @@ in
     environment.sessionVariables = {
       # Ensure Nemo uses correct backend
       GIO_MODULE_DIR = "${pkgs.gvfs}/lib/gio/modules";
-      
+
       # Enable additional features
       NEMO_ACTION_VERBOSE = "1";
-    } // optionalAttrs cfg.setDefaultFileManager {
+    }
+    // optionalAttrs cfg.setDefaultFileManager {
       # Set as default file manager
       XDG_CURRENT_DESKTOP = mkDefault "X-Cinnamon";
     };
@@ -121,11 +137,12 @@ in
     ];
 
     # User-level configuration hints (displayed as warning)
-    warnings = optional (!config.services.xserver.enable && !config.services.displayManager.enable)
-      "Nemo works best with a display manager. Consider enabling services.xserver.enable or services.displayManager.enable";
+    warnings =
+      optional (!config.services.xserver.enable && !config.services.displayManager.enable)
+        "Nemo works best with a display manager. Consider enabling services.xserver.enable or services.displayManager.enable";
   };
 
   meta = {
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [ marcosfpina ];
   };
 }

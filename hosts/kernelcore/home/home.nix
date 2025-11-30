@@ -16,7 +16,8 @@
     ./hyprland.nix # Hyprland config (bindings + defaults)
     ./git.nix # Git configuration
     ./tmux.nix # Tmux configuration
-    ./flameshot.nix # Screenshot tool
+    ./flameshot.nix # Screenshot tool (legacy - swappy preferred)
+    ./glassmorphism # Glassmorphism design system (replaces theme.nix)
   ];
 
   # ============================================================
@@ -302,36 +303,6 @@
   };
 
   xdg.configFile."mimeapps.list".force = true;
-
-  # ============================================================
-  # GTK THEME
-  # ============================================================
-  gtk = {
-    enable = true;
-
-    theme = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
-    };
-
-    iconTheme = {
-      name = "Adwaita";
-      package = pkgs.adwaita-icon-theme;
-    };
-
-    font = {
-      name = "JetBrainsMono Nerd Font";
-      size = 12;
-    };
-
-    gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
-
-    gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
-  };
 
   # ============================================================
   # FONTS
