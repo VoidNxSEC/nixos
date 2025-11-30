@@ -409,12 +409,15 @@
         # TERMINAL LAUNCHERS
         # ==========================================
         # Primary: Kitty + Zellij (GPU-accelerated, graphics protocol)
-        "$mainMod, Return, exec, ${pkgs.kitty}/bin/kitty -e ${pkgs.zellij}/bin/zellij attach --create main"
+        # Using PATH-resolved commands for better compatibility
+        "$mainMod, Return, exec, kitty -e zellij attach --create main"
         # Secondary: Alacritty + Zellij (lightweight fallback)
-        "$mainMod SHIFT, Return, exec, ${pkgs.alacritty}/bin/alacritty -e ${pkgs.zellij}/bin/zellij attach --create alt"
+        "$mainMod SHIFT, Return, exec, alacritty -e zellij attach --create alt"
         # Plain terminals without multiplexer
-        "$mainMod CTRL, Return, exec, ${pkgs.kitty}/bin/kitty"
-        "$mainMod CTRL SHIFT, Return, exec, ${pkgs.alacritty}/bin/alacritty"
+        "$mainMod CTRL, Return, exec, kitty"
+        "$mainMod CTRL SHIFT, Return, exec, alacritty"
+        # Minimal emergency terminal (Foot with plain bash)
+        "$mainMod ALT, Return, exec, foot"
 
         # ==========================================
         # APPLICATIONS
