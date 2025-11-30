@@ -105,6 +105,7 @@
       # ─────────────────────────────────────────────────────
       # tmux (configured in tmux.nix)
       fish
+      foot # Minimal Wayland terminal for emergency fallback
 
       # ─────────────────────────────────────────────────────
       # Environment Management
