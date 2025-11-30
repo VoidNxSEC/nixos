@@ -215,7 +215,7 @@ with lib;
       iptables -A INPUT -m state --state INVALID -j DROP
 
       # Prevent port scanning
-      iptables -N port-scanning
+      iptables -N port-scanning || iptables -F port-scanning
       iptables -A port-scanning -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 1/s --limit-burst 2 -j RETURN
       iptables -A port-scanning -j DROP
     '';
