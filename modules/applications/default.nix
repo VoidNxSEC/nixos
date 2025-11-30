@@ -20,5 +20,6 @@
 
     # Terminal
     ./zellij.nix
+    ./nemo-full.nix
   ];
 }
