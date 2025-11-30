@@ -24,9 +24,9 @@
 {
   imports = [
     ./colors.nix
-    ./kitty.nix      # NEW - Kitty terminal with glassmorphism theme
-    ./zellij.nix     # NEW - Zellij multiplexer with glassmorphism KDL theme
-    ./wallpaper.nix  # NEW - Wallpaper management with swaybg service
+    ./kitty.nix # NEW - Kitty terminal with glassmorphism theme
+    ./zellij.nix # NEW - Zellij multiplexer with glassmorphism KDL theme
+    ./wallpaper.nix # NEW - Wallpaper management with swaybg service
     ./waybar.nix
     ./mako.nix
     ./wofi.nix

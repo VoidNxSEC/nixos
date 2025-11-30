@@ -1,3 +1,13 @@
+# ============================================
+# Hyprland Desktop Environment - Pure Wayland
+# ============================================
+# 100% Wayland configuration with:
+# - xdg-desktop-portal-hyprland (per wiki)
+# - NVIDIA optimizations
+# - Glassmorphism integration
+# - No X11/Plasma/Sway conflicts
+# ============================================
+
 {
   config,
   lib,
@@ -13,73 +23,152 @@ in
 {
   options.services.hyprland-desktop = {
     enable = mkEnableOption "Hyprland desktop environment";
+
+    # Option to enable NVIDIA optimizations
+    nvidia = mkOption {
+      type = types.bool;
+      default = config.kernelcore.nvidia.enable or false;
+      description = "Enable NVIDIA-specific Wayland optimizations";
+    };
   };
 
   config = mkIf cfg.enable {
-    # Enable Hyprland
+    # ============================================
+    # HYPRLAND COMPOSITOR
+    # ============================================
     programs.hyprland = {
       enable = true;
       xwayland.enable = true;
+      # Use the Hyprland package from nixpkgs (stable)
+      package = pkgs.hyprland;
     };
 
-    # Essential Wayland and Hyprland packages
+    # ============================================
+    # XDG DESKTOP PORTAL - Per Hyprland Wiki
+    # https://wiki.hypr.land/Hypr-Ecosystem/xdg-desktop-portal-hyprland/
+    # ============================================
+    xdg.portal = {
+      enable = true;
+
+      # Portal packages
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-hyprland # For Hyprland-specific features
+        xdg-desktop-portal-gtk # For file pickers and other GTK dialogs
+      ];
+
+      # CRITICAL: Portal configuration per wiki
+      # This tells the system which portal handles which interface
+      config = {
+        common = {
+          # Default to gtk for most interfaces
+          default = [ "gtk" ];
+        };
+
+        hyprland = {
+          # Use hyprland portal for these specific interfaces
+          default = [
+            "hyprland"
+            "gtk"
+          ];
+
+          # Screenshot interface - use Hyprland
+          "org.freedesktop.impl.portal.Screenshot" = [ "hyprland" ];
+
+          # Screen sharing - use Hyprland
+          "org.freedesktop.impl.portal.Screencast" = [ "hyprland" ];
+
+          # File chooser - use GTK (better integration)
+          "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+
+          # App chooser - use GTK
+          "org.freedesktop.impl.portal.AppChooser" = [ "gtk" ];
+
+          # Settings - use GTK
+          "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
+
+          # Inhibit (screen lock prevention) - use Hyprland
+          "org.freedesktop.impl.portal.Inhibit" = [ "hyprland" ];
+
+          # Access (permission dialogs) - use GTK
+          "org.freedesktop.impl.portal.Access" = [ "gtk" ];
+
+          # Notification - use GTK
+          "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
+        };
+      };
+
+      # Use xdg-desktop-portal-wlr for wlroots-based features
+      wlr.enable = false; # Disabled - we use hyprland portal instead
+    };
+
+    # ============================================
+    # ESSENTIAL WAYLAND PACKAGES
+    # ============================================
     environment.systemPackages = with pkgs; [
-      # Core Hyprland tools
+      # Core Hyprland Ecosystem
+      hyprland # The compositor itself
+      hyprlock # Lock screen (glassmorphism compatible)
+      hypridle # Idle daemon (replacement for swayidle)
+      hyprpicker # Color picker
+      hyprpaper # Wallpaper (alternative to swaybg)
+
+      # Status bar and launcher
       waybar # Status bar
       wofi # Application launcher
-      mako # Notification daemon (glassmorphism)
-      hyprlock # Lock screen (glassmorphism)
-      wlogout # Logout menu (glassmorphism)
-      swayidle # Idle management
 
-      # Screenshot and screen recording
+      # Notifications
+      mako # Notification daemon (glassmorphism)
+      libnotify # notify-send command
+
+      # Screenshot and recording
       grim # Screenshot utility
       slurp # Screen area selection
       swappy # Screenshot editor (glassmorphism)
-      wl-clipboard # Clipboard utilities
       wf-recorder # Screen recorder
-      hyprpicker # Color picker
+      wl-clipboard # Clipboard utilities
+      cliphist # Clipboard history
 
-      # File manager and utilities
-      nemo # File manager (Cinnamon)
-      pavucontrol # Audio control
-      networkmanagerapplet # Network manager applet
-      blueman # Bluetooth manager
-
-      # Terminal (already have alacritty)
-      kitty # Backup terminal
-
-      # System monitoring
-      btop # System monitor
-
-      # Media
-      playerctl # Media player control
+      # Session management
+      wlogout # Logout menu (glassmorphism)
 
       # Wallpaper
       swaybg # Wallpaper utility
 
-      # Clipboard history
-      cliphist # Clipboard manager
+      # File manager
+      nemo # File manager (Cinnamon)
 
-      # Appearance
+      # Audio/Bluetooth/Network
+      pavucontrol # Audio control
+      networkmanagerapplet # Network manager applet
+      blueman # Bluetooth manager
+
+      # System monitoring
+      btop # System monitor
+
+      # Media control
+      playerctl # Media player control
+      brightnessctl # Brightness control
+
+      # Qt Wayland support
       qt5.qtwayland
       qt6.qtwayland
       libsForQt5.qtstyleplugins
       adwaita-qt
       adwaita-qt6
+
+      # GTK theming for portals
+      gtk3
+      gtk4
+
+      # Cursor themes
+      catppuccin-cursors.macchiatoBlue
     ];
 
-    # XDG portal for screen sharing and file pickers
-    xdg.portal = {
-      enable = true;
-      extraPortals = with pkgs; [
-        xdg-desktop-portal-hyprland
-        xdg-desktop-portal-gtk
-      ];
-    };
-
-    # Polkit authentication agent
+    # ============================================
+    # POLKIT AUTHENTICATION
+    # ============================================
     security.polkit.enable = true;
+
     systemd.user.services.polkit-gnome-authentication-agent-1 = {
       description = "polkit-gnome-authentication-agent-1";
       wantedBy = [ "graphical-session.target" ];
@@ -94,14 +183,92 @@ in
       };
     };
 
-    # NVIDIA-specific settings for Hyprland
-    environment.sessionVariables = mkIf config.kernelcore.nvidia.enable {
-      LIBVA_DRIVER_NAME = "nvidia";
-      XDG_SESSION_TYPE = "wayland";
-      GBM_BACKEND = "nvidia-drm";
-      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-      WLR_NO_HARDWARE_CURSORS = "1";
-      NIXOS_OZONE_WL = "1";
-    };
+    # ============================================
+    # ENVIRONMENT VARIABLES - Wayland Native
+    # ============================================
+    environment.sessionVariables = mkMerge [
+      # Core Wayland settings (always applied)
+      {
+        XDG_SESSION_TYPE = "wayland";
+        XDG_CURRENT_DESKTOP = "Hyprland";
+        XDG_SESSION_DESKTOP = "Hyprland";
+
+        # Qt Wayland
+        QT_QPA_PLATFORM = "wayland;xcb";
+        QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+        QT_AUTO_SCREEN_SCALE_FACTOR = "1";
+
+        # GTK
+        GDK_BACKEND = "wayland,x11";
+
+        # Electron/Chromium apps
+        NIXOS_OZONE_WL = "1";
+        ELECTRON_OZONE_PLATFORM_HINT = "auto";
+
+        # SDL
+        SDL_VIDEODRIVER = "wayland";
+
+        # Clutter
+        CLUTTER_BACKEND = "wayland";
+
+        # Mozilla
+        MOZ_ENABLE_WAYLAND = "1";
+
+        # Cursor
+        XCURSOR_SIZE = "24";
+        XCURSOR_THEME = "catppuccin-macchiato-blue-cursors";
+      }
+
+      # NVIDIA-specific environment variables (conditional)
+      (mkIf cfg.nvidia {
+        # NVIDIA driver settings
+        LIBVA_DRIVER_NAME = "nvidia";
+        GBM_BACKEND = "nvidia-drm";
+        __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+
+        # Disable hardware cursors (NVIDIA issue)
+        WLR_NO_HARDWARE_CURSORS = "1";
+
+        # VRR support
+        __GL_GSYNC_ALLOWED = "1";
+        __GL_VRR_ALLOWED = "1";
+
+        # Direct rendering
+        WLR_DRM_NO_ATOMIC = "1";
+      })
+    ];
+
+    # ============================================
+    # DBUS & SYSTEMD INTEGRATION
+    # ============================================
+    # Ensure dbus is available for portals
+    services.dbus.enable = true;
+
+    # Enable gvfs for file manager features
+    services.gvfs.enable = true;
+
+    # Enable udisks for disk management
+    services.udisks2.enable = true;
+
+    # ============================================
+    # FONTS FOR WAYLAND
+    # ============================================
+    fonts.packages = with pkgs; [
+      noto-fonts
+      noto-fonts-color-emoji # renamed from noto-fonts-emoji
+      liberation_ttf
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.fira-code
+    ];
+
+    # ============================================
+    # ASSERTIONS - Prevent Conflicts
+    # ============================================
+    assertions = [
+      {
+        assertion = !config.services.xserver.desktopManager.gnome.enable;
+        message = "Hyprland conflicts with GNOME desktop. Please disable services.xserver.desktopManager.gnome.enable";
+      }
+    ];
   };
 }
