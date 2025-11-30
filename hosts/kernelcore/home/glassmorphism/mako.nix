@@ -126,6 +126,10 @@
       border-color=#00d4ff
 
       [app-name="kitty"]
+      border-color=#67e8f9
+
+      # Zellij notifications
+      [app-name="zellij"]
       border-color=#00d4ff
 
       # System notifications
