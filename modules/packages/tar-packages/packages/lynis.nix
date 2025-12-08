@@ -1,6 +1,10 @@
 # Lynis - Security Auditing Tool
 # Version: 3.1.6
 # Purpose: Custom management outside nixpkgs for more control
+{ pkgs, ... }:
+let
+  inherit (pkgs) lib;
+in
 {
   lynis = {
     enable = true;
@@ -19,6 +23,24 @@
     wrapper = {
       executable = "lynis/lynis";
       environmentVariables = {
+        # Inject standard tools into PATH so lynis doesn't fail with busybox or missing bins
+        PATH = lib.makeBinPath [
+          pkgs.coreutils
+          pkgs.gnugrep
+          pkgs.gnused
+          pkgs.gawk
+          pkgs.findutils
+          pkgs.procps
+          pkgs.nettools
+          pkgs.git
+          pkgs.systemd
+          pkgs.kmod
+          pkgs.which
+          pkgs.gzip
+          pkgs.curl
+          pkgs.hostname
+          pkgs.iproute2
+        ];
         # LYNIS_HOME will be set by builder to point to extracted directory
       };
     };
