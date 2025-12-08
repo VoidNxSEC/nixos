@@ -161,7 +161,13 @@ let
           export PATH="${extracted}/bin:${extracted}/usr/bin:${extracted}/usr/local/bin:$PATH"
           export LD_LIBRARY_PATH="${extracted}/lib:${extracted}/usr/lib:${extracted}/usr/local/lib:$LD_LIBRARY_PATH"
           ${concatStringsSep "\n" (
-            mapAttrsToList (name: value: "export ${name}='${value}'") pkg.wrapper.environmentVariables
+            mapAttrsToList (
+              name: value:
+              if name == "PATH" then
+                "export PATH=\"${value}:\$PATH\"" # Special handling for PATH
+              else
+                "export ${name}='${value}'"
+            ) pkg.wrapper.environmentVariables
           )}
         '';
 
@@ -263,10 +269,15 @@ let
           pkgs.writeShellScriptBin name ''
             # Set base directory for tools that need to find their files
             export PACKAGE_BASE_DIR="${patchedBinaries}"
+            export LYNIS_HOME="${patchedBinaries}"
 
             # Set tool-specific environment variables
             ${concatStringsSep "\n" (
-              mapAttrsToList (name: value: "export ${name}='${value}'") pkg.wrapper.environmentVariables
+              mapAttrsToList (
+                name: value:
+                # Special handling for PATH to allow appending to existing PATH
+                if name == "PATH" then "export PATH=\"${value}:\$PATH\"" else "export ${name}='${value}'"
+              ) pkg.wrapper.environmentVariables
             )}
 
             # For tools like lynis that need to find include directories
