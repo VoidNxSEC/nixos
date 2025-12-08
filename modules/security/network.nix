@@ -11,31 +11,31 @@
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
-      3389 # RDP
+      3389 # RDP (remote desktop)
       22 # SSH
-      873 # Rsync
-      8888 # Jupyter
-      8000 # ST
-      8080 # Misc.
-      6006 # TensorBoard
-      7860 # Gradio (Stable Diffusion WebUI)
-      8000 # FastAPI/dev servers
-      9000 # AI Audio
-      9090
-      9100
-      9400
-      9999
-      5000 # Flask
-      5002 # AI TTS
-      5432 # PostGresql Docker Hardened
-      6379 # Redis Docker
-      16686 # Jaeger Observatility Trace
-      14268 # Jaeger UI
-      3000 # React dev server
-      11434 # Ollama API
-      443
-      80
-      53
+      # 873 # Rsync (often used for backups, better over SSH or Tailscale)
+      # 8888 # Jupyter
+      # 8000 # ST
+      # 8080 # Misc. dev servers
+      # 6006 # TensorBoard
+      # 7860 # Gradio (Stable Diffusion WebUI)
+      # 8000 # FastAPI/dev servers
+      # 9000 # AI Audio
+      # 9090
+      # 9100
+      # 9400
+      # 9999
+      # 5000 # Flask
+      # 5002 # AI TTS
+      # 5432 # PostGresql Docker Hardened
+      # 6379 # Redis Docker
+      # 16686 # Jaeger Observability Trace
+      # 14268 # Jaeger UI
+      # 3000 # React dev server
+      # 11434 # Ollama API
+      443 # HTTPS (essential for web access)
+      80 # HTTP (essential for web access, often redirects to 443)
+      # 53 # DNS (not needed for outbound requests, handled by systemd-resolved)
     ];
 
     # Trusted interfaces (Docker bridges)
