@@ -101,7 +101,7 @@
 
     # Bluetooth support
     bluetooth = {
-      enable = true;
+      enable = false;
     };
 
     # Applications
@@ -109,7 +109,7 @@
       enable = true;
       autoCleanup = true;
       cleanupInterval = "daily";
-      maxCacheSizeMB = 50;
+      maxCacheSizeMB = 5;
     };
 
     # Package managers for binaries not in nixpkgs or testing upstream
@@ -124,7 +124,7 @@
       packages = lib.mkMerge [
         (import ../../modules/packages/tar-packages/packages/codex.nix)
         (import ../../modules/packages/tar-packages/packages/zellij.nix)
-        (import ../../modules/packages/tar-packages/packages/lynis.nix)
+        (import ../../modules/packages/tar-packages/packages/lynis.nix { inherit pkgs; })
       ];
     };
 
@@ -173,8 +173,8 @@
         pre-commit = {
           enable = true;
           formatCode = true; # Auto-format code before commits
-          runTests = false; # Set to true when you have automated tests
-          flakeCheckOnPush = false; # Offload validation to GitHub-hosted Actions
+          runTests = true; # Set to true when you have automated tests
+          flakeCheckOnPush = true; # Offload validation to GitHub-hosted Actions
         };
       };
     };
@@ -222,15 +222,16 @@
 
       vms = {
         wazuh = {
-          enable = false;
+          enable = true;
           # Resolve under sourceImageDir unless absolute
-          sourceImage = "wazuh-4.14.0.qcow2";
+          sourceImage = "wazuh.qcow2";
           # Final image location (symlink created if missing)
           imageFile = null; # defaults to vmBaseDir/wazuh.qcow2
           memoryMiB = 4096;
           vcpus = 2;
           network = "nat"; # NAT networking via libvirt default network
           bridgeName = "br0";
+          enableClipboard = true; # Enable SPICE clipboard sharing
           sharedDirs = [
             {
               path = "/srv/vms/shared";
@@ -241,9 +242,26 @@
             }
           ];
           autostart = false;
-          extraVirtInstallArgs = [
-            "--graphics type=vnc,listen=0.0.0.0"
+        };
+
+        nx = {
+          enable = true;
+          sourceImage = "voidnx.qcow2"; # Will auto-discover in /var/lib/libvirt/images
+          memoryMiB = 4096;
+          vcpus = 2;
+          network = "nat";
+          bridgeName = "br0";
+          autostart = false;
+          sharedDirs = [
+            {
+              path = "/srv/vms/shared";
+              tag = "hostshare";
+              driver = "virtiofs";
+              readonly = false;
+              create = true;
+            }
           ];
+          enableClipboard = true;
         };
       };
     };
@@ -259,6 +277,26 @@
         "nixos"
         "nix"
         "linux"
+      ];
+    };
+
+    # Mosh server for mobile shell connections (Blink Shell iOS)
+    services.mosh = {
+      enable = true;
+      openFirewall = true; # Automatically open UDP ports 60000-61000
+      enableMotd = true; # Display welcome message
+    };
+
+    # Mobile workspace - Isolated environment for iPhone/tablet access
+    services.mobile-workspace = {
+      enable = true;
+      username = "mobile";
+      workspaceDir = "/srv/mobile-workspace";
+      enableGitAccess = true; # Allow git with SSH agent forwarding
+
+      # iPhone SSH key (moved from kernelcore user)
+      sshKeys = [
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG5StF4nUzkEsUei88BstktP/Q/g8BvlHeWnEDD+ii/jB7Fs4v4imG05tJU/jC8/ax2FFRSwoBRt7tH6RDp4Dys= user@iphone"
       ];
     };
 
@@ -338,6 +376,20 @@
     system.ml-gpu-users.enable = true;
   };
 
+  #services.llama-swap = {
+  #enable = true;
+  #port = 8080;
+  #};
+  #models = {
+  # O "alias" que você chama na API = O caminho do arquivo real
+  #"Coder-7B-Instruct-GGUF_qwen2" = " "/var/lib/llamacpp/models/Qwen_Qwen2.5-Coder-7B-Instruct-GGUF_qwen2.5-coder-7b-instruct-q6_k-00001-of-00002.gguf"";
+  #"Coder-7B-Instruct-GGUF_qwen2" = " "/var/lib/llamacpp/models/Qwen_Qwen2.5-Coder-7B-Instruct-GGUF_qwen2.5-coder-7b-instruct-q6_k-00002-of-00002.gguf"";
+  #"deepseek" = "/caminho/para/deepseek.gguf";
+  #};
+  # Argumentos padrão para todos (ex: forçar GPU)
+  #extraFlags = [ "-ngl 999" "-c 4096" ];
+  #};
+
   services = {
     # ============================================
     # GNOME SERVICES - DISABLED
@@ -404,25 +456,25 @@
       cachePort = 5000; # nix-serve porta
       builderUser = "nix-builder";
       cacheKeyPath = "/var/cache-priv-key.pem";
-      enableNFS = false; # Pode habilitar se quiser compartilhar /nix/store via NFS
+      enableNFS = true; # Pode habilitar se quiser compartilhar /nix/store via NFS
     };
 
     llamacpp = {
       enable = true;
-      model = "/var/lib/llamacpp/models/unsloth_Qwen2.5-Coder-14B-Instruct-GGUF_Qwen2.5-Coder-14B-Instruct-Q4_K_M.gguf";
+      model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
       port = 8080;
-      n_threads = 20;
-      n_gpu_layers = 16; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
+      n_threads = 40;
+      n_gpu_layers = 27; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
       n_parallel = 1;
-      n_ctx = 2024; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
+      n_ctx = 2048; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
       # Total VRAM usage: ~2.9GB (allows coexistence with other GPU services)
     };
 
     ollama = {
       enable = false;
+      package = pkgs.ollama-cuda; # Use CUDA-enabled package
       host = "127.0.0.1"; # Security: Bind to localhost only
       port = 11434; # Default port - Docker ollama uses 11435
-      acceleration = "cuda";
       # GPU memory management: unload models after 5 minutes of inactivity
       environmentVariables = {
         OLLAMA_KEEP_ALIVE = "5m"; # Unload models after 5min idle to free VRAM
@@ -550,6 +602,13 @@
       "mcp-shared" # For shared MCP knowledge DB access
     ];
     hashedPasswordFile = "/etc/nixos/sec/user-password";
+
+    # SSH keys for remote access
+    openssh.authorizedKeys.keys = [
+      # iPhone (Blink Shell) - ECDSA key - Full system access
+      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG5StF4nUzkEsUei88BstktP/Q/g8BvlHeWnEDD+ii/jB7Fs4v4imG05tJU/jC8/ax2FFRSwoBRt7tH6RDp4Dys= user@iphone"
+    ];
+
     packages = with pkgs; [
 
       obsidian
@@ -941,6 +1000,127 @@
           ;;
       esac
     '')
+
+    (writeShellScriptBin "audit-system" ''
+      #!/usr/bin/env bash
+      # Wrapper seguro para o Lynis em NixOS Hardened
+
+      # Cores ANSI
+      RED='\033[0;31m'
+      GREEN='\033[0;32m'
+      YELLOW='\033[1;33m'
+      BLUE='\033[0;34m'
+      MAGENTA='\033[0;35m'
+      CYAN='\033[0;36m'
+      WHITE='\033[1;37m'
+      NC='\033[0m' # No Color
+
+      echo -e "''${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━''${NC}"
+      echo -e "''${WHITE}🛡️  AUDITORIA DE SEGURANÇA - NixOS Hardened''${NC}"
+      echo -e "''${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━''${NC}"
+      echo ""
+
+      # Cria diretório temporário para relatórios
+      AUDIT_DIR="/tmp/lynis-audit"
+      mkdir -p "$AUDIT_DIR"
+
+      # Se não for root, avisa
+      if [ "$EUID" -ne 0 ]; then
+        echo -e "''${YELLOW}⚠️  Modo não-privilegiado detectado''${NC}"
+        echo -e "   Use ''${WHITE}sudo audit-system''${NC} para varredura completa"
+        FLAGS="--pentest"
+      else
+        echo -e "''${GREEN}✓ Modo root ativado - varredura completa''${NC}"
+        FLAGS=""
+      fi
+
+      echo ""
+      echo -e "''${BLUE}[*] Iniciando Lynis Security Audit...''${NC}"
+      echo ""
+
+      # Executa Lynis com cores habilitadas e pipe para colorização customizada
+      ${pkgs.coreutils}/bin/env lynis audit system \
+        $FLAGS \
+        --log-file "$AUDIT_DIR/lynis.log" \
+        --report-file "$AUDIT_DIR/report.dat" \
+        "$@" | while IFS= read -r line; do
+          # Colorização customizada de outputs
+          if [[ "$line" =~ "WARNING" ]] || [[ "$line" =~ "warning" ]]; then
+            echo -e "''${YELLOW}$line''${NC}"
+          elif [[ "$line" =~ "SUGGESTION" ]] || [[ "$line" =~ "suggestion" ]]; then
+            echo -e "''${CYAN}$line''${NC}"
+          elif [[ "$line" =~ "ERROR" ]] || [[ "$line" =~ "error" ]]; then
+            echo -e "''${RED}$line''${NC}"
+          elif [[ "$line" =~ "OK" ]] || [[ "$line" =~ "DONE" ]] || [[ "$line" =~ "\[OK\]" ]]; then
+            echo -e "''${GREEN}$line''${NC}"
+          elif [[ "$line" =~ "Performing test" ]] || [[ "$line" =~ "Test:" ]]; then
+            echo -e "''${BLUE}$line''${NC}"
+          else
+            echo "$line"
+          fi
+        done
+
+      echo ""
+      echo -e "''${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━''${NC}"
+      echo -e "''${GREEN}✅ Auditoria concluída com sucesso!''${NC}"
+      echo -e "''${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━''${NC}"
+      echo ""
+      echo -e "''${WHITE}📊 Relatórios gerados:''${NC}"
+      echo -e "   📄 Report: ''${CYAN}$AUDIT_DIR/report.dat''${NC}"
+      echo -e "   📝 Log:    ''${CYAN}$AUDIT_DIR/lynis.log''${NC}"
+      echo ""
+
+      # Extrai estatísticas do relatório
+      if [ -f "$AUDIT_DIR/report.dat" ]; then
+        WARNINGS=$(grep -c "^warning\[\]=" "$AUDIT_DIR/report.dat" 2>/dev/null || echo "0")
+        SUGGESTIONS=$(grep -c "^suggestion\[\]=" "$AUDIT_DIR/report.dat" 2>/dev/null || echo "0")
+
+        echo -e "''${WHITE}📈 Resumo da Auditoria:''${NC}"
+        echo -e "   ''${YELLOW}⚠️  Warnings:    $WARNINGS''${NC}"
+        echo -e "   ''${CYAN}💡 Suggestions: $SUGGESTIONS''${NC}"
+        echo ""
+      fi
+
+      echo -e "''${MAGENTA}💡 Dica: Execute 'lynis-report' para gerar relatório HTML interativo''${NC}"
+      echo ""
+    '')
+
+    # Gerador de relatórios HTML interativos do Lynis
+    (writeShellScriptBin "lynis-report" ''
+      #!/usr/bin/env bash
+      # Gera relatório HTML interativo a partir dos logs do Lynis
+
+      # Cores ANSI
+      GREEN='\033[0;32m'
+      BLUE='\033[0;34m'
+      CYAN='\033[0;36m'
+      NC='\033[0m'
+
+      REPORT_PATH="''${1:-/tmp/lynis-audit/report.dat}"
+      OUTPUT_PATH="''${2:-/tmp/lynis-audit/report.html}"
+
+      if [ ! -f "$REPORT_PATH" ]; then
+        echo -e "''${RED}❌ Erro: Relatório não encontrado em $REPORT_PATH''${NC}"
+        echo -e "''${CYAN}💡 Execute 'sudo audit-system' primeiro para gerar o relatório''${NC}"
+        exit 1
+      fi
+
+      echo -e "''${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━''${NC}"
+      echo -e "''${BLUE}📊 Gerando Relatório HTML Interativo...''${NC}"
+      echo -e "''${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━''${NC}"
+      echo ""
+
+      # Executa o gerador Python
+      ${pkgs.python3}/bin/python3 /etc/nixos/scripts/lynis-report-generator.py "$REPORT_PATH" "$OUTPUT_PATH"
+
+      echo ""
+      echo -e "''${GREEN}✅ Relatório HTML gerado com sucesso!''${NC}"
+      echo ""
+      echo -e "''${CYAN}🌐 Abra o relatório com:''${NC}"
+      echo -e "   firefox $OUTPUT_PATH"
+      echo -e "   chromium $OUTPUT_PATH"
+      echo ""
+    '')
   ];
 
   #kernelcore.ml.offload.enable = false;
@@ -953,5 +1133,25 @@
     ];
   };
 
-  system.stateVersion = "25.05";
+  boot.initrd.prepend = [
+    "${
+      pkgs.runCommand "acpi-override"
+        {
+          nativeBuildInputs = [
+            pkgs.cpio
+            pkgs.findutils
+          ];
+        }
+        ''
+          mkdir -p $out/kernel/firmware/acpi
+          # Copie o seu arquivo compilado para dentro da estrutura que o Kernel espera
+          cp ${./acpi-fix/dsdt.aml} $out/kernel/firmware/acpi/dsdt.aml
+
+          # Cria o arquivo CPIO
+          find $out -print0 | cpio -o -H newc --reproducible -0 > $out/acpi_override.cpio
+        ''
+    }/acpi_override.cpio"
+  ];
+
+  system.stateVersion = "26.05";
 }
