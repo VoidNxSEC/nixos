@@ -31,20 +31,23 @@ on:
 
 env:
   CACHIX_NAME: kernelcore
-  GIT_LFS_SKIP_SMUDGE: '1'
-  GIT_SKIP_SMUDGE: '1'
 
 jobs:
   format-check:
     name: Check Formatting
     runs-on: [self-hosted, nixos]
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Ensure Git tracking for Nix
         run: |
@@ -81,12 +84,17 @@ jobs:
     name: Validate Flake
     runs-on: [self-hosted, nixos]
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Ensure Git tracking for Nix
         run: |
@@ -122,12 +130,17 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: [format-check, flake-check]
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Ensure Git tracking for Nix
         run: |
@@ -172,12 +185,17 @@ jobs:
     needs: build-test
     continue-on-error: true
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Ensure Git tracking for Nix
         run: |
