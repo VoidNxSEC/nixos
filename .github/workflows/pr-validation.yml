@@ -122,15 +122,17 @@ jobs:
         run: |
           echo "📊 Analyzing closure size..."
           nix path-info -Sh ${{ inputs.config-path }} | tee closure-size.txt
-          
+
           # Extract size and check if reasonable
           SIZE=$(cat closure-size.txt | awk '{print $2}')
           echo "Closure size: $SIZE"
-          
-          # Warning if > 8GB
+
+          # Warning if > 8GB (pure bash arithmetic)
           if [[ "$SIZE" == *"G"* ]]; then
             SIZE_NUM=$(echo $SIZE | sed 's/[^0-9.]//g')
-            if (( $(echo "$SIZE_NUM > 8" | bc -l) )); then
+            SIZE_INT=$(echo $SIZE_NUM | awk '{print int($1)}')
+
+            if [[ "$SIZE_INT" -gt 8 ]]; then
               echo "⚠️  WARNING: Large closure size detected: $SIZE"
             fi
           fi

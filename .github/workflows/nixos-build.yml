@@ -174,10 +174,12 @@ jobs:
     name: Deploy to NixOS
     runs-on: [self-hosted, nixos]
     needs: [setup-secrets, build, test-modules, security, format]
+    # Deploy on:
+    # 1. Push to main (automatic)
+    # 2. Manual workflow_dispatch with deploy=true
     if: |
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
-      (github.event.inputs.deploy == 'true' || github.event_name == 'workflow_dispatch')
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

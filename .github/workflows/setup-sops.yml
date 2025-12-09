@@ -114,13 +114,17 @@ jobs:
         run: |
           echo "Secret verification:"
           if [[ -n "${{ steps.decrypt.outputs.cachix_token }}" ]]; then
-            echo "  ✅ Cachix token: Available (${#${{ steps.decrypt.outputs.cachix_token }}} chars)"
+            CACHIX_TOKEN="${{ steps.decrypt.outputs.cachix_token }}"
+            CACHIX_LEN="${#CACHIX_TOKEN}"
+            echo "  ✅ Cachix token: Available (${CACHIX_LEN} chars)"
           else
             echo "  ⚠️  Cachix token: Not available"
           fi
 
           if [[ -n "${{ steps.decrypt.outputs.github_token }}" ]]; then
-            echo "  ✅ GitHub token: Available (${#${{ steps.decrypt.outputs.github_token }}} chars)"
+            GITHUB_TOKEN="${{ steps.decrypt.outputs.github_token }}"
+            GITHUB_LEN="${#GITHUB_TOKEN}"
+            echo "  ✅ GitHub token: Available (${GITHUB_LEN} chars)"
           else
             echo "  ⚠️  GitHub token: Not available"
           fi
