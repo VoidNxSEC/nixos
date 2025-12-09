@@ -28,6 +28,24 @@ with lib;
     services.openssh = {
       enable = true;
 
+      # Host keys (including ECDSA for mobile client compatibility)
+      hostKeys = [
+        {
+          path = "/etc/ssh/ssh_host_ed25519_key";
+          type = "ed25519";
+        }
+        {
+          path = "/etc/ssh/ssh_host_rsa_key";
+          type = "rsa";
+          bits = 4096;
+        }
+        {
+          path = "/etc/ssh/ssh_host_ecdsa_key";
+          type = "ecdsa";
+          bits = 256;
+        }
+      ];
+
       settings = {
         # Authentication
         PermitRootLogin = "no";
@@ -50,11 +68,11 @@ with lib;
       };
 
       extraConfig = ''
-        # Cryptographic hardening
+        # Cryptographic hardening (with mobile client compatibility)
         Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
         MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
-        KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org
-        HostKeyAlgorithms ssh-ed25519,rsa-sha2-512,rsa-sha2-256
+        KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521
+        HostKeyAlgorithms ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256
 
         # Logging
         LogLevel VERBOSE
