@@ -11,9 +11,7 @@ jobs:
 
     steps:
       - name: Setup Git LFS
-        run: |
-          nix run nixpkgs\#git-lfs -- install
-          nix run nixpkgs\#git-lfs -- version
+        run: nix run nixpkgs\#git-lfs
 
       - name: Checkout code
         uses: actions/checkout@v4
