@@ -17,6 +17,10 @@ on:
         description: "Decrypted GitHub personal access token"
         value: ${{ jobs.decrypt.outputs.github_token }}
 
+env:
+  GIT_LFS_SKIP_SMUDGE: '1'
+  GIT_SKIP_SMUDGE: '1'
+
 jobs:
   decrypt:
     runs-on: [self-hosted, nixos]
@@ -25,15 +29,8 @@ jobs:
       github_token: ${{ steps.decrypt.outputs.github_token }}
 
     steps:
-      - name: Disable Git LFS globally
-        run: |
-          git config --global --unset filter.lfs.clean || true
-          git config --global --unset filter.lfs.smudge || true
-          git config --global --unset filter.lfs.process || true
-          git config --global --unset filter.lfs.required || true
-
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           lfs: false
           fetch-depth: 0
