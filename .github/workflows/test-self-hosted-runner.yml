@@ -10,11 +10,11 @@ jobs:
     runs-on: [self-hosted, nixos]
 
     steps:
-      - name: Ensure Nix daemon is running
-        run: systemctl is-active --quiet nix-daemon || sudo systemctl restart nix-daemon
-
       - name: Setup Git LFS
-        run: nix run nixpkgs\#git-lfs
+        run: |
+          # git-lfs is available in PATH via extraPackages
+          # Initialize LFS for checkout
+          git lfs install --skip-repo
 
       - name: Checkout code
         uses: actions/checkout@v4
