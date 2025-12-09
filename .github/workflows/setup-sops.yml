@@ -59,14 +59,7 @@ jobs:
 
       - name: Verify SOPS installation
         run: |
-          set -euo pipefail
-
-          # Check SOPS is available
-          if ! command -v sops &> /dev/null; then
-            echo "📦 Installing SOPS..."
-            nix-env -iA nixpkgs.sops
-          fi
-
+          # sops is available via extraPackages
           sops --version
           echo "✅ SOPS is available"
 
@@ -86,11 +79,11 @@ jobs:
           if [[ -f secrets/github.yaml ]]; then
             # Extract Cachix token
             CACHIX_TOKEN=$(sops -d secrets/github.yaml | \
-              nix run nixpkgs#yq -- -r '.github.cachix_auth_token // empty')
+              yq -r '.github.cachix_auth_token // empty')
 
             # Extract GitHub PAT
             GITHUB_PAT=$(sops -d secrets/github.yaml | \
-              nix run nixpkgs#yq -- -r '.github.personal_access_token // empty')
+              yq -r '.github.personal_access_token // empty')
 
             # Set outputs (masked)
             if [[ -n "$CACHIX_TOKEN" ]]; then
