@@ -8,12 +8,19 @@ on:
 jobs:
   test-runner:
     runs-on: [self-hosted, nixos]
-    
+
     steps:
+      - name: Clean workspace
+        run: |
+          # Remove any leftover files from previous runs
+          rm -rf ./* .git 2>/dev/null || true
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           lfs: false
+          fetch-depth: 0
+          clean: true
       
       - name: System Information
         run: |
