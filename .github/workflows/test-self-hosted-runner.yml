@@ -10,6 +10,9 @@ jobs:
     runs-on: [self-hosted, nixos]
 
     steps:
+      - name: Ensure Nix daemon is running
+        run: systemctl is-active --quiet nix-daemon || sudo systemctl restart nix-daemon
+
       - name: Setup Git LFS
         run: nix run nixpkgs\#git-lfs
 
