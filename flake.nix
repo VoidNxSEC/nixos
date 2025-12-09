@@ -93,6 +93,8 @@
             ./modules/services/users/actions.nix
             ./modules/services/users/gitlab-runner.nix
             ./modules/services/gpu-orchestration.nix
+            ./modules/services/mosh.nix # Mosh server for mobile shell (Blink Shell iOS)
+            ./modules/services/mobile-workspace.nix # Isolated workspace for mobile access
             #./modules/services/rsync-server.nix
 
             # Desktop environments
