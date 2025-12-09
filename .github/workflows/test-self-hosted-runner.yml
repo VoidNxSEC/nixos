@@ -12,9 +12,8 @@ jobs:
     steps:
       - name: Setup Git LFS
         run: |
-          # git-lfs is available in PATH via extraPackages
-          # Initialize LFS for checkout
-          git lfs install --skip-repo
+          # Force LFS setup to overwrite existing hooks
+          git lfs install --force
 
       - name: Checkout code
         uses: actions/checkout@v4
