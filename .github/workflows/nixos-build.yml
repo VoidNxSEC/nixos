@@ -28,11 +28,10 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: setup-secrets
     steps:
-      - name: Install Git LFS
-        run: nix-env -iA nixpkgs.git-lfs
-
-      - name: Initialize Git LFS
-        run: git lfs install
+      - name: Setup Git LFS
+        run: |
+          nix run nixpkgs#git-lfs -- install
+          nix run nixpkgs#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -70,11 +69,10 @@ jobs:
       matrix:
         target: [toplevel, iso, vm-image]
     steps:
-      - name: Install Git LFS
-        run: nix-env -iA nixpkgs.git-lfs
-
-      - name: Initialize Git LFS
-        run: git lfs install
+      - name: Setup Git LFS
+        run: |
+          nix run nixpkgs#git-lfs -- install
+          nix run nixpkgs#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -132,11 +130,10 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: [setup-secrets, check]
     steps:
-      - name: Install Git LFS
-        run: nix-env -iA nixpkgs.git-lfs
-
-      - name: Initialize Git LFS
-        run: git lfs install
+      - name: Setup Git LFS
+        run: |
+          nix run nixpkgs#git-lfs -- install
+          nix run nixpkgs#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -176,11 +173,10 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: build
     steps:
-      - name: Install Git LFS
-        run: nix-env -iA nixpkgs.git-lfs
-
-      - name: Initialize Git LFS
-        run: git lfs install
+      - name: Setup Git LFS
+        run: |
+          nix run nixpkgs#git-lfs -- install
+          nix run nixpkgs#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -215,11 +211,10 @@ jobs:
     name: Check formatting
     runs-on: [self-hosted, nixos]
     steps:
-      - name: Install Git LFS
-        run: nix-env -iA nixpkgs.git-lfs
-
-      - name: Initialize Git LFS
-        run: git lfs install
+      - name: Setup Git LFS
+        run: |
+          nix run nixpkgs#git-lfs -- install
+          nix run nixpkgs#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -241,11 +236,10 @@ jobs:
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true')
     steps:
-      - name: Install Git LFS
-        run: nix-env -iA nixpkgs.git-lfs
-
-      - name: Initialize Git LFS
-        run: git lfs install
+      - name: Setup Git LFS
+        run: |
+          nix run nixpkgs#git-lfs -- install
+          nix run nixpkgs#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
