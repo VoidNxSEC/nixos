@@ -11,7 +11,9 @@
 {
   imports = [
     ./llama-cpp.nix
+    #./llama-cpp-swap.nix
     ./ollama
+
     # ./vllm.nix  # TODO: Future
   ];
 }
