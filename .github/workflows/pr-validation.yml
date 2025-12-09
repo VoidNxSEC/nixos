@@ -205,7 +205,7 @@ jobs:
           fi
 
       - name: Notify on failure
-        if: failure() && secrets.DISCORD_WEBHOOK != ''
+        if: failure()
         uses: ./.github/actions/notify
         with:
           status: failure
