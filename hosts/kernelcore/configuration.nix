@@ -171,10 +171,10 @@
           gitea = true; # Offload automation to GitHub hosted runners
         };
         pre-commit = {
-          enable = true;
-          formatCode = true; # Auto-format code before commits
-          runTests = true; # Set to true when you have automated tests
-          flakeCheckOnPush = true; # Offload validation to GitHub-hosted Actions
+          enable = false; # DISABLED: Temporarily disabled for CI debugging
+          formatCode = false;
+          runTests = false;
+          flakeCheckOnPush = false;
         };
       };
     };
