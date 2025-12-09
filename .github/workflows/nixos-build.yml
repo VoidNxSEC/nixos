@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: false
 
       - name: Setup Cachix
         uses: cachix/cachix-action@v15
@@ -58,6 +60,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: false
 
       - name: Setup Cachix
         uses: cachix/cachix-action@v15
@@ -106,6 +110,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: false
 
       - name: Setup Cachix
         uses: cachix/cachix-action@v15
@@ -136,6 +142,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: false
 
       - name: Check for known vulnerabilities
         run: |
@@ -166,6 +174,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: false
 
       - name: Check Nix formatting
         run: nix fmt -- --check .
@@ -183,6 +193,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: false
 
       - name: Setup Cachix
         uses: cachix/cachix-action@v15
