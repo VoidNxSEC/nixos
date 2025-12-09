@@ -13,7 +13,7 @@ in
 {
   options.kernelcore.virtualization.vmctl = {
     enable = mkEnableOption "Install the vmctl helper CLI for managing declarative VMs" // {
-      default = true;
+      default = false;
     };
 
     # Nova opção: logging verboso
