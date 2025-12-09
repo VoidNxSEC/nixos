@@ -30,8 +30,8 @@ jobs:
     steps:
       - name: Setup Git LFS
         run: |
-          nix run nixpkgs#git-lfs -- install
-          nix run nixpkgs#git-lfs -- version
+          nix run nixpkgs\#git-lfs -- install
+          nix run nixpkgs\#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -71,8 +71,8 @@ jobs:
     steps:
       - name: Setup Git LFS
         run: |
-          nix run nixpkgs#git-lfs -- install
-          nix run nixpkgs#git-lfs -- version
+          nix run nixpkgs\#git-lfs -- install
+          nix run nixpkgs\#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -132,8 +132,8 @@ jobs:
     steps:
       - name: Setup Git LFS
         run: |
-          nix run nixpkgs#git-lfs -- install
-          nix run nixpkgs#git-lfs -- version
+          nix run nixpkgs\#git-lfs -- install
+          nix run nixpkgs\#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -175,8 +175,8 @@ jobs:
     steps:
       - name: Setup Git LFS
         run: |
-          nix run nixpkgs#git-lfs -- install
-          nix run nixpkgs#git-lfs -- version
+          nix run nixpkgs\#git-lfs -- install
+          nix run nixpkgs\#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -238,8 +238,8 @@ jobs:
     steps:
       - name: Setup Git LFS
         run: |
-          nix run nixpkgs#git-lfs -- install
-          nix run nixpkgs#git-lfs -- version
+          nix run nixpkgs\#git-lfs -- install
+          nix run nixpkgs\#git-lfs -- version
 
       - name: Checkout repository
         uses: actions/checkout@v4
