@@ -1136,6 +1136,13 @@
     ];
   };
 
+
+
+  programs.git.lfs = {
+    enable = true;
+  };
+
+
   boot.initrd.prepend = [
     "${
       pkgs.runCommand "acpi-override"
