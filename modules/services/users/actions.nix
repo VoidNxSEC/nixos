@@ -110,6 +110,12 @@ in
         bash
         coreutils
         git-lfs
+        inetutils # hostname
+        procps # free, ps, top
+        gnugrep
+        gnused
+        gawk
+        findutils
       ];
 
       # Relax systemd hardening to allow Nix daemon access
