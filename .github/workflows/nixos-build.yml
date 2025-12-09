@@ -15,8 +15,6 @@ on:
 
 env:
   CACHIX_CACHE_NAME: kernelcore
-  GIT_LFS_SKIP_SMUDGE: '1'
-  GIT_SKIP_SMUDGE: '1'
 
 jobs:
   # SOPS: Decrypt secrets first
@@ -30,12 +28,17 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: setup-secrets
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Ensure Git tracking for Nix
         run: |
@@ -67,12 +70,17 @@ jobs:
       matrix:
         target: [toplevel, iso, vm-image]
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Ensure Git tracking for Nix
         run: |
@@ -124,12 +132,17 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: [setup-secrets, check]
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Ensure Git tracking for Nix
         run: |
@@ -163,10 +176,17 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: build
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
+          fetch-depth: 0
 
       - name: Check for known vulnerabilities
         run: |
@@ -195,10 +215,17 @@ jobs:
     name: Check formatting
     runs-on: [self-hosted, nixos]
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
+          fetch-depth: 0
 
       - name: Check Nix formatting
         run: nix fmt -- --check .
@@ -214,12 +241,17 @@ jobs:
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true')
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Ensure Git tracking for Nix
         run: |

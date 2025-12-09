@@ -5,26 +5,22 @@ on:
     branches: [ main ]
   workflow_dispatch: # Permite executar manualmente
 
-env:
-  GIT_LFS_SKIP_SMUDGE: '1'
-  GIT_SKIP_SMUDGE: '1'
-
 jobs:
   test-runner:
     runs-on: [self-hosted, nixos]
 
     steps:
-      - name: Clean workspace
-        run: |
-          # Remove any leftover files from previous runs
-          rm -rf ./* .git 2>/dev/null || true
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
       
       - name: System Information
         run: |
