@@ -1136,12 +1136,9 @@
     ];
   };
 
-
-
   programs.git.lfs = {
     enable = true;
   };
-
 
   boot.initrd.prepend = [
     "${
