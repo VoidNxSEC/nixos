@@ -77,20 +77,32 @@ runs:
       shell: bash
       run: |
         echo "📊 Analyzing closure size..."
-        
+
         CLOSURE_INFO=$(nix path-info -Sh ${{ steps.build.outputs.path }})
         echo "$CLOSURE_INFO"
-        
-        # Extract size in MB
-        SIZE_MB=$(echo "$CLOSURE_INFO" | awk '{print $2}' | sed 's/[^0-9.]//g')
-        echo "size=$SIZE_MB" >> $GITHUB_OUTPUT
-        
-        # Check if size is reasonable (< 10GB)
-        if (( $(echo "$SIZE_MB > 10000" | bc -l) )); then
-          echo "⚠️  WARNING: Closure size is very large: ${SIZE_MB}MB"
+
+        # Extract size (handles MB, GB, etc.)
+        SIZE_RAW=$(echo "$CLOSURE_INFO" | awk '{print $2}')
+        echo "size=$SIZE_RAW" >> $GITHUB_OUTPUT
+
+        # Convert to MB for comparison (handle G suffix for GB)
+        if [[ "$SIZE_RAW" == *G ]]; then
+          # Convert GB to MB
+          SIZE_NUM=$(echo "$SIZE_RAW" | sed 's/[^0-9.]//g')
+          SIZE_MB=$(awk "BEGIN {print int($SIZE_NUM * 1024)}")
+
+          if [[ "$SIZE_MB" -gt 10000 ]]; then
+            echo "⚠️  WARNING: Closure size is very large: ${SIZE_RAW} (${SIZE_MB}MB)"
+          fi
+        elif [[ "$SIZE_RAW" == *M ]]; then
+          SIZE_MB=$(echo "$SIZE_RAW" | sed 's/[^0-9.]//g' | awk '{print int($1)}')
+
+          if [[ "$SIZE_MB" -gt 10000 ]]; then
+            echo "⚠️  WARNING: Closure size is very large: ${SIZE_RAW}"
+          fi
         fi
-        
-        echo "✅ Closure size: ${SIZE_MB}MB"
+
+        echo "✅ Closure size: ${SIZE_RAW}"
 
     - name: Run tests
       if: inputs.enable-tests == 'true'
