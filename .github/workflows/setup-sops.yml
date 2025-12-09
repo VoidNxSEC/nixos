@@ -17,10 +17,6 @@ on:
         description: "Decrypted GitHub personal access token"
         value: ${{ jobs.decrypt.outputs.github_token }}
 
-env:
-  GIT_LFS_SKIP_SMUDGE: '1'
-  GIT_SKIP_SMUDGE: '1'
-
 jobs:
   decrypt:
     runs-on: [self-hosted, nixos]
@@ -29,12 +25,17 @@ jobs:
       github_token: ${{ steps.decrypt.outputs.github_token }}
 
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Setup AGE key for SOPS
         env:
