@@ -65,9 +65,16 @@ runs:
         keep-outputs = true
         keep-derivations = true
         
-        # Substituters
-        substituters = https://cache.nixos.org https://nix-community.cachix.org
+        # Substituters (with self-hosted cache)
+        substituters = http://192.168.15.9:5000 https://cache.nixos.org https://nix-community.cachix.org
         trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+
+        # Allow self-hosted cache
+        trusted-substituters = http://192.168.15.9:5000
+
+        # Cache connection settings
+        connect-timeout = 2
+        fallback = true
         EOF
         
         # Add extra config if provided
