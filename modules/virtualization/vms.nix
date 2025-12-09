@@ -119,6 +119,48 @@ with lib;
                 default = [ ];
                 description = "Host directories exposed to the guest via virtiofs or 9p.";
               };
+              enableClipboard = mkOption {
+                type = types.bool;
+                default = true;
+                description = "Enable clipboard sharing between host and guest via SPICE";
+              };
+              additionalDisks = mkOption {
+                type = types.listOf (
+                  types.submodule {
+                    options = {
+                      path = mkOption {
+                        type = types.str;
+                        description = "Path to the additional disk image";
+                      };
+                      size = mkOption {
+                        type = types.nullOr types.str;
+                        default = null;
+                        description = "Size of the disk (e.g., '20G', '50G'). If null, assumes disk already exists.";
+                      };
+                      format = mkOption {
+                        type = types.enum [
+                          "qcow2"
+                          "raw"
+                        ];
+                        default = "qcow2";
+                        description = "Disk format";
+                      };
+                      bus = mkOption {
+                        type = types.enum [
+                          "virtio"
+                          "scsi"
+                          "sata"
+                          "ide"
+                        ];
+                        default = "virtio";
+                        description = "Disk bus type";
+                      };
+                    };
+                  }
+                );
+                default = [ ];
+                description = "Additional disk images to attach to the VM";
+              };
               extraVirtInstallArgs = mkOption {
                 type = types.listOf types.str;
                 default = [ ];
@@ -148,6 +190,15 @@ with lib;
 
           # VirtioFS enabled conditionally
           vhostUserPackages = mkIf config.kernelcore.virtualization.virtiofs.enable [ pkgs.virtiofsd ];
+
+          # CRITICAL: Enable shared memory for VirtioFS support
+          verbatimConfig = ''
+            # VirtioFS requires shared memory
+            memory_backing_dir = "/dev/shm"
+
+            # Fix core dump limit error
+            max_core = "unlimited"
+          '';
         };
 
         # Allow libvirt group members to manage VMs
@@ -158,6 +209,13 @@ with lib;
       };
 
       spiceUSBRedirection.enable = true;
+    };
+
+    # Fix libvirtd systemd limits
+    systemd.services.libvirtd.serviceConfig = {
+      LimitNOFILE = "infinity";
+      LimitCORE = "infinity";
+      LimitMEMLOCK = "infinity";
     };
 
     # PolicyKit rules for non-root VM management
@@ -202,12 +260,85 @@ with lib;
       ]
     );
 
-    # Ensure base directories exist
+    # Ensure base directories exist with WRITE permissions for libvirtd group
     systemd.tmpfiles.rules = [
-      "d /srv/vms/shared 0755 root libvirtd -"
-      "d ${config.kernelcore.virtualization.vmBaseDir} 0755 root libvirtd -"
-      "d ${config.kernelcore.virtualization.sourceImageDir} 0750 root libvirtd -"
+      "d /srv/vms/shared 0775 root libvirtd -"
+      "d ${config.kernelcore.virtualization.vmBaseDir} 0775 root libvirtd -"
+      "d ${config.kernelcore.virtualization.sourceImageDir} 0770 root libvirtd -"
+      "d /var/lib/libvirt/images 0770 root libvirtd -"
+      # Fix existing directories and files permissions recursively
+      "Z /srv/vms/shared 0775 root libvirtd -"
+      "Z ${config.kernelcore.virtualization.vmBaseDir} 0775 root libvirtd -"
+      "Z ${config.kernelcore.virtualization.sourceImageDir} 0770 root libvirtd -"
+      "Z /var/lib/libvirt/images 0770 root libvirtd -"
+      # Files in VM images need to be readable by qemu-libvirtd (uid:301)
+      "z /var/lib/libvirt/images/*.qcow2 0660 root libvirtd -"
+      "z /var/lib/libvirt/images/*.img 0660 root libvirtd -"
+      "z /var/lib/libvirt/images/*.raw 0660 root libvirtd -"
+      "z ${config.kernelcore.virtualization.vmBaseDir}/*.qcow2 0660 root libvirtd -"
+      "z ${config.kernelcore.virtualization.vmBaseDir}/*.img 0660 root libvirtd -"
+      "z ${config.kernelcore.virtualization.vmBaseDir}/*.raw 0660 root libvirtd -"
     ];
+
+    # Comprehensive libvirt initialization (network, storage, etc)
+    systemd.services.libvirtd-setup = {
+      description = "Initialize libvirt default resources (network, storage pool)";
+      after = [ "libvirtd.service" ];
+      wants = [ "libvirtd.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+                sleep 2  # Give libvirtd time to fully start
+
+                echo "[libvirt-setup] Initializing libvirt resources..."
+
+                # ═══ 1. Default Network ═══
+                if ! ${pkgs.libvirt}/bin/virsh net-info default &>/dev/null; then
+                  echo "[libvirt-setup] Creating default network..."
+                  ${pkgs.libvirt}/bin/virsh net-define /dev/stdin <<'EOF'
+        <network>
+          <name>default</name>
+          <forward mode='nat'/>
+          <bridge name='virbr0' stp='on' delay='0'/>
+          <ip address='192.168.122.1' netmask='255.255.255.0'>
+            <dhcp>
+              <range start='192.168.122.2' end='192.168.122.254'/>
+            </dhcp>
+          </ip>
+        </network>
+        EOF
+                fi
+                ${pkgs.libvirt}/bin/virsh net-start default 2>/dev/null || true
+                ${pkgs.libvirt}/bin/virsh net-autostart default 2>/dev/null || true
+                echo "[libvirt-setup] ✓ Default network ready"
+
+                # ═══ 2. Default Storage Pool ═══
+                if ! ${pkgs.libvirt}/bin/virsh pool-info default &>/dev/null; then
+                  echo "[libvirt-setup] Creating default storage pool..."
+                  ${pkgs.libvirt}/bin/virsh pool-define /dev/stdin <<'EOF'
+        <pool type='dir'>
+          <name>default</name>
+          <target>
+            <path>/var/lib/libvirt/images</path>
+            <permissions>
+              <mode>0770</mode>
+              <owner>0</owner>
+              <group>$(getent group libvirtd | cut -d: -f3)</group>
+            </permissions>
+          </target>
+        </pool>
+        EOF
+                fi
+                ${pkgs.libvirt}/bin/virsh pool-start default 2>/dev/null || true
+                ${pkgs.libvirt}/bin/virsh pool-autostart default 2>/dev/null || true
+                echo "[libvirt-setup] ✓ Default storage pool ready"
+
+                echo "[libvirt-setup] ✅ Libvirt initialization complete"
+      '';
+    };
 
     # Build VM registry JSON for scripts/activation
     environment.etc."vm-registry.json".text =
@@ -225,6 +356,8 @@ with lib;
           macAddress = v.macAddress;
           autostart = v.autostart;
           sharedDirs = v.sharedDirs;
+          enableClipboard = v.enableClipboard;
+          additionalDisks = v.additionalDisks;
           extraVirtInstallArgs = v.extraVirtInstallArgs;
         }) config.kernelcore.virtualization.vms;
       in
@@ -268,8 +401,28 @@ with lib;
             fi
           fi
 
+          # Fix permissions on image file (must be root:libvirtd 0660 for qemu-libvirtd uid:301)
+          if [ -e "$IMG" ]; then
+            # Get the real file (follow symlinks)
+            REAL_IMG=$(readlink -f "$IMG")
+            if [ -n "$REAL_IMG" ] && [ -f "$REAL_IMG" ]; then
+              echo "[vm-center] fixing permissions on $REAL_IMG"
+              chgrp libvirtd "$REAL_IMG" 2>/dev/null || true
+              chmod 0660 "$REAL_IMG" 2>/dev/null || true
+            fi
+          else
+            echo "[vm-center] image not found for $NAME: $IMG" >&2
+          fi
+
           # Define VM if missing
           if ! ${pkgs.libvirt}/bin/virsh dominfo "$NAME" >/dev/null 2>&1; then
+            # Use real path (follow symlinks) for virt-install
+            REAL_IMG=$(readlink -f "$IMG" 2>/dev/null || echo "$IMG")
+            if [ ! -f "$REAL_IMG" ]; then
+              echo "[vm-center] cannot find image file: $IMG" >&2
+              continue
+            fi
+
             MEM=$(${pkgs.jq}/bin/jq -r '.memoryMiB' <<<"$JSON")
             VCPUS=$(${pkgs.jq}/bin/jq -r '.vcpus' <<<"$JSON")
             NET=$(${pkgs.jq}/bin/jq -r '.network' <<<"$JSON")
@@ -294,31 +447,45 @@ with lib;
               fi
             done
 
-            NETARG="--network network=default"
+            # Build network arg
+            NETARG_VALUE="network=default"
             if [ "$NET" = "bridge" ]; then
-              NETARG="--network bridge=$BR"
+              NETARG_VALUE="bridge=$BR"
             fi
             if [ -n "$MAC" ]; then
-              NETARG="$NETARG,mac=$MAC"
+              NETARG_VALUE="$NETARG_VALUE,mac=$MAC"
             fi
 
-            if [ ! -e "$IMG" ]; then
-              echo "[vm-center] image not found for $NAME: $IMG" >&2
-              continue
+            # Graphics configuration - SPICE with clipboard support
+            ENABLE_CLIP=$(${pkgs.jq}/bin/jq -r '.enableClipboard // true' <<<"$JSON")
+            GRAPHICS_ARGS=()
+            if [ "$ENABLE_CLIP" = "true" ]; then
+              # SPICE graphics with clipboard sharing enabled
+              GRAPHICS_ARGS+=("--graphics" "spice,listen=127.0.0.1")
+              GRAPHICS_ARGS+=("--video" "qxl")
+              GRAPHICS_ARGS+=("--channel" "spicevmc,target_type=virtio,name=com.redhat.spice.0")
             fi
 
-            echo "[vm-center] defining VM $NAME from $IMG"
+            # Memory backing for VirtioFS
+            MEM_BACKING=()
+            if [ "''${#FS_ARGS[@]}" -gt 0 ]; then
+              MEM_BACKING=("--memorybacking" "source.type=memfd,access.mode=shared")
+            fi
+
+            echo "[vm-center] defining VM $NAME from $REAL_IMG"
             ${pkgs.virt-manager}/bin/virt-install \
               --name "$NAME" \
               --memory "$MEM" \
               --vcpus "$VCPUS" \
-              --disk path="$IMG",format=qcow2,bus=virtio \
-              "$NETARG" \
+              "''${MEM_BACKING[@]}" \
+              --disk path="$REAL_IMG",format=qcow2,bus=virtio \
+              --network "$NETARG_VALUE" \
               --os-variant detect=on,require=off \
               --import \
               --noautoconsole \
-              "${"$"}{FS_ARGS[@]}" \
-              "${"$"}{EXTRA[@]}" || true
+              "''${FS_ARGS[@]}" \
+              "''${GRAPHICS_ARGS[@]}" \
+              "''${EXTRA[@]}" || true
           fi
 
           # Autostart flag

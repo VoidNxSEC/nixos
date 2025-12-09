@@ -36,7 +36,7 @@
   home = {
     username = "kernelcore";
     homeDirectory = "/home/kernelcore";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
 
     # ========================================================
     # OPERATIONAL PACKAGES
