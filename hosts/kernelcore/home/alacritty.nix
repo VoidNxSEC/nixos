@@ -406,7 +406,8 @@
         enabled = [
           {
             # URL detection and opening
-            regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\\\\u0000-\\\\u001f\\\\u007f-\\\\u009f<>\"\\\\\\\\s{-}\\\\\\\\^⟨⟩`]+";
+            # Fixed: Removed Unicode ranges to be compatible with Alacritty's DFA regex engine
+            regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\\\\s<>\"{}|\\\\\\\\^`]+";
             hyperlinks = true;
             post_processing = true;
             command = "Copy";
@@ -423,7 +424,8 @@
           }
           {
             # IP address detection
-            regex = "\\\\b(?:[0-9]{1,3}\\\\.){3}[0-9]{1,3}\\\\b";
+            # Fixed: Removed Unicode word boundaries (\b) for DFA compatibility
+            regex = "(?:[0-9]{1,3}\\\\.){3}[0-9]{1,3}";
             command = "Copy";
 
             mouse = {
@@ -438,7 +440,8 @@
           }
           {
             # Path detection
-            regex = "(/?[\\\\w.-]+)+";
+            # Fixed: Replaced \w with ASCII-only character class for DFA compatibility
+            regex = "(/?[a-zA-Z0-9_.-]+)+";
             command = "Copy";
 
             mouse = {

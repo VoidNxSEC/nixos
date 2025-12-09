@@ -633,6 +633,9 @@
       kubernetes
       kubernetes-polaris
       kubernetes-helm
+      git-lfs
+      appflowy
+      promptfoo
 
       libreoffice
       onlyoffice-desktopeditors
