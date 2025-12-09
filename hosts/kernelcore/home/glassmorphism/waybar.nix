@@ -19,6 +19,7 @@ let
   # Script paths
   gpuMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/gpu-monitor.sh";
   sshSessions = "${config.home.homeDirectory}/.config/waybar/scripts/ssh-sessions.sh";
+  diskMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/disk-monitor.sh";
 in
 {
   programs.waybar = {
@@ -47,6 +48,7 @@ in
 
         modules-right = [
           "custom/gpu"
+          "custom/disk"
           "custom/ssh"
           "network"
           "bluetooth"
@@ -154,6 +156,16 @@ in
           format = "{}";
           tooltip = true;
           on-click = "nvidia-settings";
+        };
+
+        # Disk Space Monitor
+        "custom/disk" = {
+          exec = diskMonitor;
+          return-type = "json";
+          interval = 30;
+          format = "{}";
+          tooltip = true;
+          on-click = "gparted";
         };
 
         # SSH Sessions Indicator
@@ -306,6 +318,7 @@ in
       #window,
       #clock,
       #custom-gpu,
+      #custom-disk,
       #custom-ssh,
       #network,
       #bluetooth,
@@ -327,6 +340,7 @@ in
       #window:hover,
       #clock:hover,
       #custom-gpu:hover,
+      #custom-disk:hover,
       #custom-ssh:hover,
       #network:hover,
       #bluetooth:hover,
@@ -427,6 +441,32 @@ in
 
       #custom-gpu:hover {
         background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(0, 212, 255, 0.15));
+        border-color: rgba(0, 212, 255, 0.4);
+      }
+
+      /* ============================================
+       * DISK MODULE
+       * ============================================ */
+      #custom-disk {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(18, 18, 26, 0.8));
+        border-color: rgba(124, 58, 237, 0.2);
+        color: #a78bfa;
+      }
+
+      #custom-disk.warning {
+        background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(18, 18, 26, 0.8));
+        border-color: rgba(234, 179, 8, 0.4);
+        color: #eab308;
+      }
+
+      #custom-disk.critical {
+        background: linear-gradient(135deg, rgba(255, 0, 170, 0.2), rgba(18, 18, 26, 0.8));
+        border-color: rgba(255, 0, 170, 0.4);
+        color: #ff00aa;
+      }
+
+      #custom-disk:hover {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(0, 212, 255, 0.15));
         border-color: rgba(0, 212, 255, 0.4);
       }
 
@@ -571,6 +611,65 @@ in
 
   # Create scripts directory and monitoring scripts
   home.file = {
+    ".config/waybar/scripts/disk-monitor.sh" = {
+      executable = true;
+      text = ''
+        #!/usr/bin/env bash
+        # ============================================
+        # Disk Space Monitor Script for Waybar
+        # Monitors root filesystem usage
+        # ============================================
+
+        set -o pipefail
+
+        get_disk_stats() {
+          # Get disk usage for root filesystem
+          local DF_OUTPUT
+          if ! DF_OUTPUT=$(df -h / 2>/dev/null | tail -1); then
+            echo '{"text": "󰋊 ERR", "tooltip": "Failed to query disk", "class": "warning"}'
+            exit 0
+          fi
+
+          # Parse df output: Filesystem Size Used Avail Use% Mounted
+          read -r FILESYSTEM SIZE USED AVAIL PERCENT MOUNTED <<< "$DF_OUTPUT"
+
+          # Remove % sign from percentage
+          PERCENT_NUM=''${PERCENT%\%}
+
+          # Validate percentage
+          if [[ ! "$PERCENT_NUM" =~ ^[0-9]+$ ]]; then
+            PERCENT_NUM=0
+          fi
+
+          # Determine class based on usage
+          local CLASS="normal"
+          if [[ "$PERCENT_NUM" -ge 90 ]]; then
+            CLASS="critical"
+          elif [[ "$PERCENT_NUM" -ge 80 ]]; then
+            CLASS="warning"
+          fi
+
+          # Format display: 󰋊 used/total (percent%)
+          local TEXT="󰋊 ''${USED}/''${SIZE} (''${PERCENT})"
+
+          # Build tooltip
+          local TOOLTIP="Disk Usage (Root)\n━━━━━━━━━━━━━━━━━━━━━━\n"
+          TOOLTIP+="󰋊 Filesystem: ''${FILESYSTEM}\n"
+          TOOLTIP+="󰆼 Total: ''${SIZE}\n"
+          TOOLTIP+="󰆴 Used: ''${USED} (''${PERCENT})\n"
+          TOOLTIP+="󰆣 Available: ''${AVAIL}\n"
+          TOOLTIP+="󰉖 Mounted: ''${MOUNTED}"
+
+          # Output JSON for Waybar
+          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$TEXT" "$TOOLTIP" "$CLASS"
+        }
+
+        # Run with error trap
+        trap 'echo "{\"text\": \"󰋊 ERR\", \"tooltip\": \"Script error\", \"class\": \"warning\"}"' ERR
+        get_disk_stats
+      '';
+    };
+
     ".config/waybar/scripts/gpu-monitor.sh" = {
       executable = true;
       text = ''
