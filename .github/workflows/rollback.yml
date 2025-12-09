@@ -16,21 +16,22 @@ on:
         default: 'true'
         type: boolean
 
-env:
-  GIT_LFS_SKIP_SMUDGE: '1'
-  GIT_SKIP_SMUDGE: '1'
-
 jobs:
   rollback:
     name: Execute Rollback
     runs-on: [self-hosted, nixos]
     steps:
+      - name: Install Git LFS
+        run: nix-env -iA nixpkgs.git-lfs
+
+      - name: Initialize Git LFS
+        run: git lfs install
+
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          lfs: false
+          lfs: true
           fetch-depth: 0
-          clean: true
 
       - name: Identify rollback target
         id: identify
