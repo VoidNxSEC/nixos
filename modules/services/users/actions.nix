@@ -109,7 +109,26 @@ in
         curl
         bash
         coreutils
+        git-lfs
       ];
+
+      # Relax systemd hardening to allow Nix daemon access
+      # DynamicUser + PrivateUsers blocks socket access to /nix/var/nix/daemon-socket/socket
+      serviceOverrides = {
+        # Allow access to Nix daemon socket
+        PrivateUsers = false;
+        # Allow access to /nix filesystem
+        ReadWritePaths = [
+          "/nix/var/nix/daemon-socket"
+          "/nix/store"
+        ];
+        # Required for nix to work properly
+        BindReadOnlyPaths = [
+          "/etc/nix"
+          "/nix/var/nix/db"
+          "/nix/var/nix/profiles"
+        ];
+      };
     };
 
     # SOPS secret for runner token
