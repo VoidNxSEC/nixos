@@ -42,16 +42,41 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Validate secret is not empty
+          if [[ -z "$AGE_SECRET_KEY" ]]; then
+            echo "❌ AGE_SECRET_KEY is empty"
+            exit 1
+          fi
+
           # Create SOPS AGE directory
           mkdir -p ~/.config/sops/age
 
-          # Write AGE private key
-          echo "$AGE_SECRET_KEY" > ~/.config/sops/age/keys.txt
+          # Write AGE private key (preserving all lines including comments)
+          printf '%s\n' "$AGE_SECRET_KEY" > ~/.config/sops/age/keys.txt
           chmod 600 ~/.config/sops/age/keys.txt
 
+          # Debug: show file structure (not content)
+          echo "📝 AGE key file structure:"
+          echo "   Lines: $(wc -l < ~/.config/sops/age/keys.txt)"
+          echo "   Size: $(wc -c < ~/.config/sops/age/keys.txt) bytes"
+          echo "   First 20 chars: $(head -c 20 ~/.config/sops/age/keys.txt)..."
+
+          # Check each line type
+          while IFS= read -r line; do
+            if [[ "$line" =~ ^#.* ]]; then
+              echo "   - Comment line detected"
+            elif [[ "$line" =~ ^AGE-SECRET-KEY-1.* ]]; then
+              echo "   - Valid AGE secret key detected"
+            elif [[ -z "$line" ]]; then
+              echo "   - Empty line detected"
+            else
+              echo "   - Unknown line type: ${line:0:20}..."
+            fi
+          done < ~/.config/sops/age/keys.txt
+
           # Verify key format
-          if ! grep -q "AGE-SECRET-KEY" ~/.config/sops/age/keys.txt; then
-            echo "❌ Invalid AGE key format"
+          if ! grep -q "AGE-SECRET-KEY-1" ~/.config/sops/age/keys.txt; then
+            echo "❌ No valid AGE secret key found"
             exit 1
           fi
 
@@ -72,43 +97,62 @@ jobs:
 
           # Copy AGE key to workspace for SOPS
           cp ~/.config/sops/age/keys.txt "$SOPS_AGE_KEY_FILE"
+          chmod 600 "$SOPS_AGE_KEY_FILE"
 
           echo "🔓 Decrypting secrets..."
 
-          # Decrypt github.yaml and extract tokens
-          if [[ -f secrets/github.yaml ]]; then
-            # Extract Cachix token
-            CACHIX_TOKEN=$(sops -d secrets/github.yaml | \
-              yq -r '.github.cachix_auth_token // empty')
-
-            # Extract GitHub PAT
-            GITHUB_PAT=$(sops -d secrets/github.yaml | \
-              yq -r '.github.personal_access_token // empty')
-
-            # Set outputs (masked)
-            if [[ -n "$CACHIX_TOKEN" ]]; then
-              echo "::add-mask::$CACHIX_TOKEN"
-              echo "cachix_token=$CACHIX_TOKEN" >> $GITHUB_OUTPUT
-              echo "✅ Cachix token decrypted"
-            fi
-
-            if [[ -n "$GITHUB_PAT" ]]; then
-              echo "::add-mask::$GITHUB_PAT"
-              echo "github_token=$GITHUB_PAT" >> $GITHUB_OUTPUT
-              echo "✅ GitHub PAT decrypted"
-            fi
-          else
-            echo "⚠️  secrets/github.yaml not found"
+          # Verify secrets file exists
+          if [[ ! -f secrets/github.yaml ]]; then
+            echo "❌ secrets/github.yaml not found"
+            exit 1
           fi
 
-          echo "✅ Secrets decrypted successfully"
+          # Test SOPS decryption first
+          echo "🔍 Testing SOPS decryption..."
+          if ! sops -d secrets/github.yaml > /tmp/decrypted.yaml 2>&1; then
+            echo "❌ SOPS decryption failed:"
+            cat /tmp/decrypted.yaml
+            rm -f /tmp/decrypted.yaml
+            exit 1
+          fi
+
+          echo "✅ SOPS decryption successful"
+
+          # Extract Cachix token
+          CACHIX_TOKEN=$(yq eval '.github.cachix_auth_token // ""' /tmp/decrypted.yaml)
+
+          # Extract GitHub PAT
+          GITHUB_PAT=$(yq eval '.github.personal_access_token // ""' /tmp/decrypted.yaml)
+
+          # Clean up decrypted file
+          rm -f /tmp/decrypted.yaml
+
+          # Set outputs (masked)
+          if [[ -n "$CACHIX_TOKEN" ]]; then
+            echo "::add-mask::$CACHIX_TOKEN"
+            echo "cachix_token=$CACHIX_TOKEN" >> $GITHUB_OUTPUT
+            echo "✅ Cachix token extracted (${#CACHIX_TOKEN} chars)"
+          else
+            echo "⚠️  Cachix token not found or empty"
+          fi
+
+          if [[ -n "$GITHUB_PAT" ]]; then
+            echo "::add-mask::$GITHUB_PAT"
+            echo "github_token=$GITHUB_PAT" >> $GITHUB_OUTPUT
+            echo "✅ GitHub PAT extracted (${#GITHUB_PAT} chars)"
+          else
+            echo "⚠️  GitHub PAT not found or empty"
+          fi
+
+          echo "✅ Secrets processing complete"
 
       - name: Cleanup sensitive files
         if: always()
         run: |
-          # Remove AGE keys
+          # Remove AGE keys and temporary files
           rm -f ~/.config/sops/age/keys.txt
           rm -f "${{ github.workspace }}/.sops-age-key"
+          rm -f /tmp/decrypted.yaml
           echo "🧹 Cleanup complete"
 
       - name: Verify secrets (without exposing values)
