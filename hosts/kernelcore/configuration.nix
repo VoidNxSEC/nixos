@@ -17,17 +17,16 @@
     maxLogSize = "1G";
   };
 
-  kernelcore = {
-    system = {
-      memory.optimizations.enable = true;
-      nix.optimizations.enable = true;
-      nix.experimental-features.enable = true;
-      sudo-claude-code.enable = true; # Passwordless sudo for Claude Code operations
-    };
+      kernelcore = {
+      system = {
+        memory.optimizations.enable = true;
+        nix.optimizations.enable = true;
+        nix.experimental-features.enable = true;
+        # sudo-claude-code.enable = true; # REMOVED: Insecure module moved to knowledge/
+      };
 
-    security = {
-      hardening.enable = true;
-      sandbox-fallback = false;
+      security = {
+        hardening.enable = true;      sandbox-fallback = false;
       audit.enable = true;
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
@@ -136,12 +135,7 @@
       enable = true;
     };
 
-    services = {
-      users."codex-agent" = lib.mkIf (config.kernelcore.packages.tar.resolvedPackages ? codex) {
-        enable = true;
-        package = config.kernelcore.packages.tar.resolvedPackages.codex;
-      };
-    };
+    # services.users."codex-agent" removed for security hardening
 
     hardware.wifi-optimization.enable = true;
 
@@ -305,9 +299,7 @@
       defaultMode = "docker"; # Docker containers get GPU priority by default
     };
 
-    services.users.gemini-agent = {
-      enable = true;
-    };
+    # services.users.gemini-agent removed for security hardening
 
     services.gitlab-runner = {
       enable = false; # Set to true to enable GitLab CI/CD runner
@@ -679,19 +671,8 @@
     ];
   };
 
-  # Guest user with nvidia group access for testing
-  users.users.guest = {
-    isNormalUser = true;
-    description = "Guest User";
-    extraGroups = [
-      "video"
-      "audio"
-      "nvidia"
-      "render"
-    ];
-    # Guest user with a simple password (change this!)
-    initialPassword = "guest";
-  };
+  # Guest user removed for security hardening
+
 
   users.extraGroups.docker.members = [ "kernelcore" ];
 
@@ -1159,6 +1140,9 @@
         ''
     }/acpi_override.cpio"
   ];
+
+  services.i915-governor.enable = true;
+
 
   system.stateVersion = "26.05";
 }

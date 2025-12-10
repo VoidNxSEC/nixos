@@ -1,0 +1,14 @@
+name: Terraform Nix Test
+on: [push, pull_request]
+
+jobs:
+  nix-terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v26
+      - name: Configure cache remoto
+        run: |
+          echo "substituters = https://cache.nixos.org https://<seu-servidor-cache>" | sudo tee -a /etc/nix/nix.conf
+      - name: Rodar Terraform deploy
+        run: nix run
