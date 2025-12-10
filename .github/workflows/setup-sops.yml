@@ -51,8 +51,9 @@ jobs:
           # Create SOPS AGE directory
           mkdir -p ~/.config/sops/age
 
-          # Write AGE private key (preserving all lines including comments)
-          printf '%s\n' "$AGE_SECRET_KEY" > ~/.config/sops/age/keys.txt
+          # Write AGE private key with trimmed lines (remove leading/trailing spaces)
+          # The secret might have been copied with indentation
+          echo "$AGE_SECRET_KEY" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' > ~/.config/sops/age/keys.txt
           chmod 600 ~/.config/sops/age/keys.txt
 
           # Debug: show file structure (not content)
