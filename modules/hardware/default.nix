@@ -16,5 +16,6 @@
     ./trezor.nix
     ./wifi-optimization.nix
     ./bluetooth.nix
+    ./i915-governor
   ];
 }
