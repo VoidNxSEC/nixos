@@ -1,0 +1,41 @@
+# ============================================================================
+# Systemd Service para Cache API Server
+# /etc/nixos/cache-api-server.service
+# ============================================================================
+
+[Unit]
+Description=NixOS Cache Server API
+Documentation=file:///etc/nixos/README-cache-server.md
+After=network.target nix-serve.service nginx.service
+Wants=nix-serve.service nginx.service
+
+[Service]
+Type=simple
+ExecStart=/etc/nixos/scripts/cache-api-server.sh 8080
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=cache-api
+
+# Security
+User=nobody
+Group=nogroup
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/nix/store
+ReadWritePaths=/var/log
+
+# Resource limits
+MemoryMax=256M
+TasksMax=10
+
+# Network
+RestrictAddressFamilies=AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target
