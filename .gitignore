@@ -93,3 +93,4 @@ modules/packages/js-packages/storage/*/dist/
 modules/packages/js-packages/storage/*/build/
 modules/packages/js-packages/storage/*/.turbo/
 modules/packages/js-packages/storage/*/coverage/
+arch/
