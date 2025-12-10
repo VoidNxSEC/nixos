@@ -9,6 +9,9 @@
 with lib;
 
 let
+  # Import shared builders
+  builders = import ../lib/builders.nix { inherit pkgs lib; };
+
   # Fetch or use local tar.gz file
   fetchTarball =
     name: source:
@@ -103,190 +106,6 @@ let
     else
       "unknown";
 
-  # Build using FHS User Environment (for complex binaries)
-  buildFHS =
-    name: pkg: extracted:
-    let
-      # Determine blocked devices for bubblewrap
-      blockDevices = concatStringsSep " " (
-        map (hw: "--dev-bind-try /dev/null /dev/${hw}") pkg.sandbox.blockHardware
-      );
-
-      # Build allowed paths arguments
-      allowedPathsArgs = concatStringsSep " " (
-        map (path: "--bind ${path} ${path}") pkg.sandbox.allowedPaths
-      );
-
-      fhsEnv = pkgs.buildFHSEnv {
-        name = "${name}-fhs";
-
-        # Common FHS directories for binary compatibility
-        targetPkgs =
-          ps: with ps; [
-            bash
-            coreutils
-            gnugrep
-            gnused
-            gawk
-            findutils
-            which
-            stdenv.cc.cc.lib
-            zlib
-            glib
-            gtk3
-            cairo
-            pango
-            atk
-            gdk-pixbuf
-            libGL
-            libglvnd
-            xorg.libX11
-            xorg.libXext
-            xorg.libXrender
-            xorg.libXcursor
-            xorg.libXi
-            xorg.libXrandr
-            xorg.libXfixes
-            dbus
-            glibc
-            # Add bubblewrap for sandboxing
-            bubblewrap
-            # Crypto and SSL libraries (commonly needed by binaries)
-            openssl
-            openssl.dev
-          ];
-
-        # Environment for the FHS environment
-        profile = ''
-          export PATH="${extracted}/bin:${extracted}/usr/bin:${extracted}/usr/local/bin:$PATH"
-          export LD_LIBRARY_PATH="${extracted}/lib:${extracted}/usr/lib:${extracted}/usr/local/lib:$LD_LIBRARY_PATH"
-          ${concatStringsSep "\n" (
-            mapAttrsToList (
-              name: value:
-              if name == "PATH" then
-                "export PATH=\"${value}:\$PATH\"" # Special handling for PATH
-              else
-                "export ${name}='${value}'"
-            ) pkg.wrapper.environmentVariables
-          )}
-        '';
-
-        # Run script - determines if sandboxed or direct execution
-        runScript =
-          if pkg.sandbox.enable then
-            pkgs.writeShellScript "${name}-sandboxed" ''
-              # Bubblewrap sandbox wrapper
-              exec ${pkgs.bubblewrap}/bin/bwrap \
-                --ro-bind /nix/store /nix/store \
-                --dev /dev \
-                --proc /proc \
-                --tmpfs /tmp \
-                --tmpfs /run \
-                --bind "$HOME" "$HOME" \
-                ${blockDevices} \
-                ${allowedPathsArgs} \
-                --unshare-all \
-                --share-net \
-                --die-with-parent \
-                --setenv PATH "${extracted}/bin:${extracted}/usr/bin:/usr/bin:/bin" \
-                --setenv LD_LIBRARY_PATH "${extracted}/lib:${extracted}/usr/lib" \
-                ${extracted}/${pkg.wrapper.executable} "$@"
-            ''
-          else
-            pkgs.writeShellScript "${name}-direct" ''
-              export PATH="${extracted}/bin:${extracted}/usr/bin:${extracted}:$PATH"
-              export LD_LIBRARY_PATH="${extracted}/lib:${extracted}/usr/lib:$LD_LIBRARY_PATH"
-              ${concatStringsSep "\n" (
-                mapAttrsToList (name: value: "export ${name}='${value}'") pkg.wrapper.environmentVariables
-              )}
-              exec ${extracted}/${pkg.wrapper.executable} "$@"
-            '';
-      };
-    in
-    fhsEnv;
-
-  # Build using native Nix approach with patchelf
-  buildNative =
-    name: pkg: extracted:
-    let
-      # Patch ELF binaries for Nix store
-      patchedBinaries =
-        pkgs.runCommand "${name}-patched"
-          {
-            buildInputs = with pkgs; [
-              patchelf
-              autoPatchelfHook
-              stdenv.cc.cc.lib
-              zlib
-              file
-            ];
-          }
-          ''
-            cp -r ${extracted} $out
-            chmod -R +w $out
-
-            # Find and patch all ELF binaries (skip statically linked ones)
-            find $out -type f -executable | while read binary; do
-              if file "$binary" | grep -q ELF; then
-                # Check if statically linked
-                if ldd "$binary" 2>&1 | grep -q "statically linked"; then
-                  echo "Skipping static binary: $binary"
-                  continue
-                fi
-
-                # Only patch dynamically linked binaries
-                patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" "$binary" 2>/dev/null || true
-                patchelf --set-rpath "${
-                  lib.makeLibraryPath [
-                    pkgs.stdenv.cc.cc.lib
-                    pkgs.zlib
-                  ]
-                }" "$binary" 2>/dev/null || true
-              fi
-            done
-          '';
-
-      # Create wrapper script
-      wrapperScript =
-        if pkg.sandbox.enable then
-          pkgs.writeShellScriptBin name ''
-            exec ${pkgs.bubblewrap}/bin/bwrap \
-              --ro-bind /nix/store /nix/store \
-              --dev /dev \
-              --proc /proc \
-              --tmpfs /tmp \
-              --bind "$HOME" "$HOME" \
-              ${
-                concatStringsSep " " (map (hw: "--dev-bind-try /dev/null /dev/${hw}") pkg.sandbox.blockHardware)
-              } \
-              ${concatStringsSep " " (map (path: "--bind ${path} ${path}") pkg.sandbox.allowedPaths)} \
-              --unshare-all \
-              --share-net \
-              --die-with-parent \
-              ${patchedBinaries}/${pkg.wrapper.executable} "$@"
-          ''
-        else
-          pkgs.writeShellScriptBin name ''
-            # Set base directory for tools that need to find their files
-            export PACKAGE_BASE_DIR="${patchedBinaries}"
-            export LYNIS_HOME="${patchedBinaries}"
-
-            # Set tool-specific environment variables
-            ${concatStringsSep "\n" (
-              mapAttrsToList (
-                name: value:
-                # Special handling for PATH to allow appending to existing PATH
-                if name == "PATH" then "export PATH=\"${value}:\$PATH\"" else "export ${name}='${value}'"
-              ) pkg.wrapper.environmentVariables
-            )}
-
-            # For tools like lynis that need to find include directories
-            cd "${patchedBinaries}"
-            exec ${patchedBinaries}/${pkg.wrapper.executable} "$@"
-          '';
-    in
-    wrapperScript;
-
   # Auto-detect best build method based on binary characteristics
   autoDetectMethod =
     name: pkg: extracted:
@@ -347,9 +166,20 @@ let
 
       # Log final method selection
       _ = builtins.trace "Package ${name}: Using build method '${method}'" null;
+      
+      # Prepare arguments for shared builders
+      commonArgs = {
+        inherit name extracted;
+        sandbox = pkg.sandbox;
+        wrapper_raw = pkg.wrapper; # Now includes executable
+        meta = pkg.meta or {};
+      };
 
       # Build the package
-      package = if method == "fhs" then buildFHS name pkg extracted else buildNative name pkg extracted;
+      package = if method == "fhs" then 
+          builders.buildFHS commonArgs 
+        else 
+          builders.buildNative commonArgs;
     in
     package;
 
