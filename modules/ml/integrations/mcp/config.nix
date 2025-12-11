@@ -12,22 +12,26 @@ let
 
   # Template para gerar mcp.json personalizado por agente
   generateMcpConfig =
-    projectRoot:
-    pkgs.writeText "mcp-config.json" (
-      builtins.toJSON {
+    agentCfg:
+    pkgs.runCommand "mcp-config.json" {
+      nativeBuildInputs = [ pkgs.jq ];
+      jsonContent = builtins.toJSON {
         mcpServers = {
           securellm-bridge = {
-            command = "node";
+            command = "${pkgs.nodejs}/bin/node";
             args = [ "${cfg.mcpServerPath}/build/src/index.js" ];
             env = {
-              PROJECT_ROOT = projectRoot;
+              PROJECT_ROOT = agentCfg.projectRoot;
               KNOWLEDGE_DB_PATH = cfg.knowledgeDbPath;
               ENABLE_KNOWLEDGE = "true";
-            };
+            } // agentCfg.extraEnv;
           };
         };
-      }
-    );
+      };
+      passAsFile = [ "jsonContent" ];
+    } ''
+      jq . "$jsonContentPath" > $out
+    '';
 
 in
 {
@@ -69,6 +73,12 @@ in
               description = "System user that owns this agent";
               example = "kernelcore";
             };
+
+            extraEnv = mkOption {
+              type = types.attrsOf types.str;
+              default = { };
+              description = "Extra environment variables (e.g. API keys)";
+            };
           };
         }
       );
@@ -101,7 +111,7 @@ in
           # Create config directory (extract directory from configPath)
           "d ${dirOf agentCfg.configPath} 0750 ${agentCfg.user} ${agentCfg.user} -"
           # Install mcp.json as symlink
-          "L+ ${agentCfg.configPath} - - - - ${generateMcpConfig agentCfg.projectRoot}"
+          "L+ ${agentCfg.configPath} - - - - ${generateMcpConfig agentCfg}"
         ]
       ) cfg.agents
     ));

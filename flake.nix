@@ -105,9 +105,10 @@
 
             # Packages (declarative .deb, flatpak, etc.)
             ./modules/packages
+            #./projects
 
             # Programs
-            #./modules/programs/default.nix
+            ./modules/programs/default.nix
 
             ./modules/desktop/yazi/yazi.nix
 
@@ -120,7 +121,7 @@
             ./modules/system/services.nix
             ./modules/system/aliases.nix
             ./modules/system/ml-gpu-users.nix
-            
+
             # Modules moved to knowledge/ (archived)
             # ./modules/system/sudo-claude-code.nix
 

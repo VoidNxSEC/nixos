@@ -15,6 +15,14 @@ interface Connection {
   username: string;
   connected: boolean;
   created: Date;
+  created_at?: Date;
+  last_used?: Date;
+  error_count?: number;
+  config?: any;
+  health_status?: string;
+  bytes_sent?: number;
+  bytes_received?: number;
+  commands_executed?: number;
 }
 
 export class SSHConnectionManager {
@@ -102,6 +110,30 @@ export class SSHConnectionManager {
 
   getConnection(connectionId: string): Connection | undefined {
     return this.connections.get(connectionId);
+  }
+
+  async getOrCreateConnection(args: SSHConnectArgs): Promise<Connection> {
+    // Try to find existing connection
+    const existing = Array.from(this.connections.values()).find(
+      conn => conn.host === args.host && conn.username === args.username && conn.connected
+    );
+
+    if (existing) {
+      return existing;
+    }
+
+    // Create new connection
+    const result = await this.connect(args);
+    if (!result.success || !result.data) {
+      throw new Error(result.error || 'Failed to create connection');
+    }
+
+    const connection = this.connections.get(result.data.connection_id);
+    if (!connection) {
+      throw new Error('Connection created but not found in map');
+    }
+
+    return connection;
   }
 
   disconnect(connectionId: string): boolean {

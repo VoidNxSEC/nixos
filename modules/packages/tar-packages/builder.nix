@@ -172,7 +172,11 @@ let
         inherit name extracted;
         sandbox = pkg.sandbox;
         wrapper_raw = pkg.wrapper; # Now includes executable
-        meta = pkg.meta or {};
+        meta = if pkg.meta != {} then pkg.meta else {
+          description = "${name} package";
+          license = lib.licenses.unfree;
+          platforms = [ "x86_64-linux" ];
+        };
       };
 
       # Build the package
