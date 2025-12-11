@@ -164,6 +164,12 @@ let
                 description = "Name of the wrapper executable";
               };
 
+              executable = mkOption {
+                type = types.nullOr types.str;
+                default = null;
+                description = "Path to the executable within the extracted package (e.g. 'usr/bin/myapp')";
+              };
+
               extraArgs = mkOption {
                 type = types.listOf types.str;
                 default = [ ];

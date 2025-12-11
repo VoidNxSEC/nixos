@@ -219,6 +219,12 @@ let
           default = null;
           description = "Desktop entry configuration (null = no desktop entry)";
         };
+
+        meta = mkOption {
+          type = types.attrs;
+          default = { };
+          description = "Package metadata";
+        };
       };
     }
   );

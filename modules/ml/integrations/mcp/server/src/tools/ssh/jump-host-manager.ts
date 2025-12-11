@@ -327,9 +327,9 @@ export class JumpHostManager {
     // For now, we'll connect directly to target using the connection manager
     // In a full implementation, this would tunnel through the established jumps
     const conn = await this.connectionManager.getOrCreateConnection(target);
-    
+
     console.log(`[ConnectThrough] Final connection established to ${target.host}`);
-    return conn;
+    return conn as any;
   }
 
   /**

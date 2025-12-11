@@ -101,7 +101,13 @@ rec {
 
         relBinPath = removePrefix "/" binPath;
 
-  
+        # Fix license if it's a string or null (common source of errors)
+        finalMeta = meta // {
+          platforms = meta.platforms or [ "x86_64-linux" ];
+          license = if (meta.license or null) == "Proprietary" || (meta.license or null) == null 
+                    then lib.licenses.unfree 
+                    else meta.license;
+        };
 
         fhsEnv = pkgs.buildFHSEnv {
 
@@ -189,11 +195,7 @@ rec {
 
   
 
-          meta = meta // {
-
-            platforms = [ "x86_64-linux" ];
-
-          };
+          meta = finalMeta;
 
         };
 

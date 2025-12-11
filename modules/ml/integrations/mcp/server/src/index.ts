@@ -122,7 +122,7 @@ class SecureLLMBridgeMCPServer {
     const configMap = new Map(Object.entries(RATE_LIMIT_CONFIGS));
     this.rateLimiter = new SmartRateLimiter(configMap);
     this.guideManager = new GuideManager();
-    
+
     this.server = new Server(
       {
         name: "securellm-bridge",
@@ -159,8 +159,7 @@ class SecureLLMBridgeMCPServer {
       const rootDetection = await detectProjectRoot();
       this.projectRoot = rootDetection.projectRoot;
       console.error(
-        `[MCP] Project root detected: ${this.projectRoot} (method: ${rootDetection.method}${
-          rootDetection.flakeFound ? ", flake.nix found" : ""
+        `[MCP] Project root detected: ${this.projectRoot} (method: ${rootDetection.method}${rootDetection.flakeFound ? ", flake.nix found" : ""
         })`
       );
 
@@ -209,7 +208,7 @@ class SecureLLMBridgeMCPServer {
         this.initKnowledge();
       }
 
-      console.log("MCP Server initialization complete.");
+      console.error("MCP Server initialization complete.");
     } catch (error) {
       console.error("Failed to initialize MCP server:", error);
       throw error;
@@ -629,7 +628,7 @@ class SecureLLMBridgeMCPServer {
             }],
           };
         }
-        
+
         if (uri.startsWith('skill://')) {
           const name = uri.replace('skill://', '');
           const content = await this.guideManager.loadSkill(name);
@@ -641,7 +640,7 @@ class SecureLLMBridgeMCPServer {
             }],
           };
         }
-        
+
         if (uri.startsWith('prompt://')) {
           const name = uri.replace('prompt://', '');
           const content = await this.guideManager.loadPrompt(name);
@@ -682,7 +681,7 @@ class SecureLLMBridgeMCPServer {
 
   private async handleProviderTest(args: ProviderTestArgs) {
     const { provider, prompt, model } = args;
-    
+
     try {
       // Wrap API call with rate limiter
       const result = await this.rateLimiter.execute(provider, async () => {
@@ -738,7 +737,7 @@ class SecureLLMBridgeMCPServer {
 
     try {
       const configContent = await fs.readFile(configPath, "utf-8");
-      
+
       const issues: string[] = [];
       const warnings: string[] = [];
       const recommendations: string[] = [];
@@ -958,7 +957,7 @@ class SecureLLMBridgeMCPServer {
     const { key_type, output_path } = args;
 
     const outputDir = path.resolve(PROJECT_ROOT, output_path);
-    
+
     try {
       // Wrap crypto operations with rate limiter (expensive operations)
       const result = await this.rateLimiter.execute('crypto', async () => {
@@ -1103,7 +1102,7 @@ class SecureLLMBridgeMCPServer {
         isError: true
       };
     }
-    
+
     try {
       const session = await this.db.createSession(args as CreateSessionInput);
       return {
@@ -1127,7 +1126,7 @@ class SecureLLMBridgeMCPServer {
         isError: true
       };
     }
-    
+
     try {
       const entry = await this.db.saveKnowledge(args as SaveKnowledgeInput);
       return {
@@ -1151,7 +1150,7 @@ class SecureLLMBridgeMCPServer {
         isError: true
       };
     }
-    
+
     try {
       const results = await this.db.searchKnowledge(args as SearchKnowledgeInput);
       return {
@@ -1175,7 +1174,7 @@ class SecureLLMBridgeMCPServer {
         isError: true
       };
     }
-    
+
     try {
       const session = await this.db.getSession(args.session_id);
       if (!session) {
@@ -1184,7 +1183,7 @@ class SecureLLMBridgeMCPServer {
           isError: true
         };
       }
-      
+
       const entries = await this.db.getRecentKnowledge(args.session_id, 100);
       return {
         content: [{
@@ -1207,7 +1206,7 @@ class SecureLLMBridgeMCPServer {
         isError: true
       };
     }
-    
+
     try {
       const sessions = await this.db.listSessions(args.limit || 20, args.offset || 0);
       return {
@@ -1231,7 +1230,7 @@ class SecureLLMBridgeMCPServer {
         isError: true
       };
     }
-    
+
     try {
       const entries = await this.db.getRecentKnowledge(args.session_id, args.limit || 20);
       return {

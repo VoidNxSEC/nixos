@@ -11,7 +11,7 @@
     # Source configuration
     source = {
       path = ../storage/Antigravity.tar.gz;
-      sha256 = "4e03151a55743cf30fac595abb343c9eb5a3b6a80d2540136d75b4ead8072112";
+      sha256 = "4548789f5e30ad13ef341ef112f3a399b2d6b0e0cc95e7bf5a0625b08a5a7120";
     };
 
     # Wrapper configuration
