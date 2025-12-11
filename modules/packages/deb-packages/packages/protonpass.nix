@@ -1,5 +1,5 @@
 # Proton Pass - Secure Password Manager
-# Version: 37.9.0
+# Version: 1.33.0
 # Purpose: End-to-end encrypted password manager from Proton
 {
   protonpass = {
@@ -8,15 +8,17 @@
     # Build method - FHS for Electron apps
     method = "fhs";
 
-    # Source configuration
+    # Source configuration - using local .deb from storage
     source = {
-      path = ../storage/proton-pass-37.9.0.tar.gz;
-      sha256 = "52166a5b11c3a6636c6697e63dda4007658e0a9e93ecbe84cf3a1349ef0b64eb";
+      path = ../storage/ProtonPass.deb;
+      sha256 = "10b03e615f9a6e341685bd447067b839fd3a770e9bb1110ca04d0418d6beaca8";
     };
 
     # Wrapper configuration
     wrapper = {
       executable = "usr/bin/proton-pass";
+      name = "proton-pass";
+      extraArgs = [];
       environmentVariables = {
         "PROTON_PASS_CONFIG_DIR" = "$HOME/.config/proton-pass";
       };
@@ -28,8 +30,9 @@
       allowedPaths = [
         "$HOME/.config/proton-pass"
         "$HOME/.local/share/proton-pass"
+        "$HOME/.cache/proton-pass"
       ];
-      blockHardware = [ ];
+      blockHardware = [ ]; # Allow all hardware for proper functionality
       resourceLimits = {
         memory = "2G";
         cpu = null;
