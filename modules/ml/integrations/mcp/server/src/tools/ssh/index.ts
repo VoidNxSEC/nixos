@@ -55,7 +55,7 @@ export class SSHExecuteTool {
       let stdout = '';
       let stderr = '';
 
-      conn.client.exec(fullCommand, { timeout: timeout_seconds * 1000 }, (err: any, stream: any) => {
+      conn.client.exec(fullCommand, (err: any, stream: any) => {
         if (err) {
           resolve({
             success: false,
