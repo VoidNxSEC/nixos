@@ -9,6 +9,7 @@ with lib;
 
 let
   cfg = config.kernelcore.packages.tar;
+  zellij = import ./packages/zellij.nix { inherit pkgs; };
 
   # Package type definition
   packageType = types.submodule (
@@ -251,6 +252,10 @@ let
 
 in
 {
+  imports = [
+    ./packages/zellij.nix
+  ];
+
   # ============================================================
   # MODULE OPTIONS
   # ============================================================
