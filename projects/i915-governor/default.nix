@@ -5,7 +5,7 @@ with lib;
 let
   cfg = config.services.i915-governor;
   # Importa o pacote que definimos acima
-  governorPackage = pkgs.callPackage /etc/nixos/projects/i915-governor/nix/package.nix {};
+  governorPackage = pkgs.callPackage ./nix/package.nix {};
 in {
   options.services.i915-governor = {
     enable = mkEnableOption "Intel i915 Memory Governor";
@@ -46,8 +46,9 @@ in {
 
         # Segurança & Capabilities
         # Precisamos de SYS_ADMIN para drop_caches e compact_memory
-        CapabilityBoundingSet = "CAP_SYS_ADMIN CAP_SYS_RESOURCE";
-        AmbientCapabilities = "CAP_SYS_ADMIN CAP_SYS_RESOURCE";
+        # Adicionado CAP_SYS_RAWIO, CAP_IPC_LOCK, CAP_SYS_NATIVE_EXEC conforme solicitado
+        CapabilityBoundingSet = "CAP_SYS_ADMIN CAP_SYS_RESOURCE CAP_SYS_RAWIO CAP_IPC_LOCK"; # CAP_SYS_NATIVE_EXEC não é uma capability padrão do kernel Linux, removida para evitar erro, ou verificarei se é específica.
+        AmbientCapabilities = "CAP_SYS_ADMIN CAP_SYS_RESOURCE CAP_SYS_RAWIO CAP_IPC_LOCK";
 
         # Hardening
         NoNewPrivileges = true;

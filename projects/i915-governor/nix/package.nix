@@ -16,13 +16,20 @@ stdenv.mkDerivation {
   ];
 
   # O Zig Cache precisa ser tratado com cuidado no Nix
-  preBuild = ''
-    export ZIG_GLOBAL_CACHE_DIR=$TMPDIR/zig-cache
-    export ZIG_LOCAL_CACHE_DIR=$TMPDIR/zig-cache
-  '';
+  # preBuild removido, vars movidas para buildPhase para garantir persistência
 
   buildPhase = ''
-    zig build -Doptimize=ReleaseSafe --prefix $out
+    export HOME=$TMPDIR
+    export ZIG_GLOBAL_CACHE_DIR=$TMPDIR/zig-cache
+    export ZIG_LOCAL_CACHE_DIR=$TMPDIR/zig-cache
+    
+    mkdir -p $ZIG_GLOBAL_CACHE_DIR
+    mkdir -p $ZIG_LOCAL_CACHE_DIR
+
+    echo "DEBUG: HOME=$HOME"
+    echo "DEBUG: ZIG_GLOBAL_CACHE_DIR=$ZIG_GLOBAL_CACHE_DIR"
+    
+    zig build -Doptimize=ReleaseSafe --prefix $out --verbose
   '';
 
   meta = with lib; {

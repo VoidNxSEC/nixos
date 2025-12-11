@@ -18,6 +18,9 @@
     # Declarative .js package management
     ./js-packages
 
+    # Native derivations (nixpkgs-style)
+    ./appflowy.nix
+
     # Future: Add other package format integrations here
     # ./flatpak
     # ./appimage
