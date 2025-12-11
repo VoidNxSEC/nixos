@@ -112,10 +112,12 @@
     };
 
     # Package managers for binaries not in nixpkgs or testing upstream
-    # NOTE: deb-packages has a bug with list/null validation - investigating
     packages.deb = {
-      enable = false; # DISABLED: validation error - "expected a list but found null"
-      packages = import ../../modules/packages/deb-packages/packages/protonvpn.nix;
+      enable = true;
+      packages =
+        (import ../../modules/packages/deb-packages/packages/protonpass.nix);
+        # (import ../../modules/packages/deb-packages/packages/protonvpn.nix);
+
     };
 
     packages.tar = {
@@ -124,6 +126,8 @@
         (import ../../modules/packages/tar-packages/packages/codex.nix)
         (import ../../modules/packages/tar-packages/packages/zellij.nix)
         (import ../../modules/packages/tar-packages/packages/lynis.nix { inherit pkgs; })
+        (import ../../modules/packages/tar-packages/packages/antigravity.nix)
+        # (import ../../modules/packages/tar-packages/packages/protonpass.nix { inherit lib; }) - DISABLED: Build issues
       ];
     };
 
@@ -165,10 +169,11 @@
           gitea = true; # Offload automation to GitHub hosted runners
         };
         pre-commit = {
-          enable = false; # DISABLED: Temporarily disabled for CI debugging
+          enable = true; # ENABLED: For auto-commit hooks
           formatCode = false;
           runTests = false;
           flakeCheckOnPush = false;
+          autoCommit = true;
         };
       };
     };
@@ -361,6 +366,26 @@
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
           user = "gemini-agent";
         };
+
+        # Antigravity - User's local editor (needs access to shared knowledge)
+        # WARNING: API keys here are exposed in /nix/store
+        antigravity = {
+          enable = true;
+          projectRoot = "/home/kernelcore/dev";
+          configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
+          user = "antigravity";
+          extraEnv = {
+            "ANTHROPIC_API_KEY" = "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";
+            "OPENAI_API_KEY" = "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";
+            "DEEPSEEK_API_KEY" = "sk-f56f797eced9485e995abd6f49f291ec";
+            "GEMINI_API_KEY" = "AIzaSyCRRsHY1paG1CxVLGkpfNnLOgwmi51yQxk";
+            "OPENROUTER_API_KEY" = "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";
+            "GROQ_API_KEY" = "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";
+            "MISTRAL_API_KEY" = "QOL4rLO2YSZlvNZF8hAIinbv6S5kWz6h";
+            "NVIDIA_API_KEY" = "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";
+            "REPLICATE_API_TOKEN" = "r8_FDzv3Wfbef36oarLsagY03gvb2NiZKJ1FA0Bo";
+          };
+        };
       };
     };
 
@@ -452,18 +477,18 @@
     };
 
     llamacpp = {
-      enable = true;
-      model = "/var/lib/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
+      enable = false;
+      model = "/var/lib/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
       port = 8080;
       n_threads = 40;
-      n_gpu_layers = 27; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
+      n_gpu_layers = 20; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
       n_parallel = 1;
-      n_ctx = 2048; # Reduced from 4096 to 2048 (~400MB VRAM for KV cache)
+      n_ctx = 4096; # Increased to 4096 for better diff context
       # Total VRAM usage: ~2.9GB (allows coexistence with other GPU services)
     };
 
     ollama = {
-      enable = false;
+      enable = true;
       package = pkgs.ollama-cuda; # Use CUDA-enabled package
       host = "127.0.0.1"; # Security: Bind to localhost only
       port = 11434; # Default port - Docker ollama uses 11435
@@ -616,6 +641,9 @@
       starship
       terraform
       #ghidra
+      waybackurls
+      hakrawler
+
       awscli # AWS CLI v1 (stable) - awscli2 has hash mismatch in prompt-toolkit
 
       invidious
@@ -626,7 +654,6 @@
       kubernetes-polaris
       kubernetes-helm
       git-lfs
-      appflowy
       promptfoo
 
       libreoffice
@@ -689,6 +716,9 @@
     # SWAY - DISABLED (using Hyprland exclusively)
     # ============================================
     sway.enable = false;
+
+    # CognitiveVault - Secure Password Manager
+    cognitive-vault.enable = true;
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -741,7 +771,7 @@
 
     # Colored wrappers and debugging helpers
     (writeShellScriptBin "rebuild" ''
-      #!/usr/bin/env bash
+      #!/usr/bin/env baunsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.ggufsh
       # Colored nixos-rebuild wrapper - Compatible with bash and zsh
 
       # Colors
@@ -1141,7 +1171,7 @@
     }/acpi_override.cpio"
   ];
 
-  services.i915-governor.enable = true;
+  services.i915-governor.enable = false;
 
 
   system.stateVersion = "26.05";
