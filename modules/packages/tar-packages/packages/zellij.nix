@@ -1,8 +1,12 @@
 # Zellij Terminal Multiplexer
-# Version: 0.43.1
-# Purpose: Testing tar-packages module with Zellij
+# Version: Auto-updated via nvfetcher
+# Purpose: Production tar-package with auto-updates
+{ pkgs, ... }:
+let
+  sources = pkgs.callPackage ../../_sources/generated.nix { };
+in
 {
-  zellij = {
+  kernelcore.packages.tar.packages.zellij = {
     enable = true;
 
     # Build method - native works well for single Rust binaries
@@ -10,8 +14,9 @@
 
     # Source configuration
     source = {
-      path = ../storage/zellij-v0.43.1-x86_64-unknown-linux-musl.tar.gz;
-      sha256 = "541d98efef5558293ef85ad9acd29e4d920b6e881513b9e77255d8207020d75a";
+      path = sources.zellij.src;
+      # sha256 is handled by the source derivation
+      sha256 = ""; 
     };
 
     # Wrapper configuration
