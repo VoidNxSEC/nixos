@@ -1,7 +1,10 @@
 { ... }:
 
 {
+  imports = [
+    ./cognitive-vault.nix
+  ];
 
-  sway.xwayland.enable = true;
+  programs.sway.xwayland.enable = true;
 
 }
