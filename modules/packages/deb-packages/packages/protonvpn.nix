@@ -42,6 +42,11 @@
       logLevel = "standard";
     };
 
-    # Desktop entry - handled by .deb package itself
+    # Metadata
+    meta = {
+      description = "ProtonVPN - Secure VPN Client";
+      homepage = "https://protonvpn.com";
+      license = "Proprietary";
+    };
   };
 }
