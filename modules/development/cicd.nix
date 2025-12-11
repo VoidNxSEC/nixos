@@ -42,6 +42,11 @@ with lib;
           default = true;
           description = "Run nix flake check in the pre-push hook (disable when relying on hosted CI)";
         };
+        autoCommit = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Automatically generate commit messages and commit changes using local LLM before push";
+        };
       };
     };
   };
@@ -58,6 +63,10 @@ with lib;
         git
         git-lfs
         git-crypt
+
+        # Utilities
+        jq
+        curl
 
         # CI/CD utilities
         act # Run GitHub Actions locally
@@ -201,7 +210,27 @@ with lib;
 
             echo "Running pre-push hooks..."
 
-            # Always check git status before push
+            # Auto-commit logic
+            ${optionalString config.kernelcore.development.cicd.pre-commit.autoCommit ''
+              if [ -n "$(git status --porcelain)" ]; then
+                echo "🤖 Auto-commit enabled: Detected uncommitted changes."
+                if [ -f "/etc/nixos/scripts/auto-commit.sh" ]; then
+                  echo "🚀 Generating commit message with local LLM..."
+                  if /etc/nixos/scripts/auto-commit.sh; then
+                    echo "✅ Auto-commit successful."
+                    echo "⚠️  Please run 'git push' again to push the new commit."
+                    exit 1
+                  else
+                    echo "❌ Auto-commit failed."
+                    exit 1
+                  fi
+                else
+                  echo "⚠️  Auto-commit script not found at /etc/nixos/scripts/auto-commit.sh"
+                fi
+              fi
+            ''}
+
+            # Always check git status before push (if auto-commit didn't handle it or is disabled)
             if [ -n "$(git status --porcelain)" ]; then
               echo "ERROR: You have uncommitted changes. Commit them before pushing."
               git status --short
