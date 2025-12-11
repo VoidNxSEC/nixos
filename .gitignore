@@ -94,3 +94,5 @@ modules/packages/js-packages/storage/*/build/
 modules/packages/js-packages/storage/*/.turbo/
 modules/packages/js-packages/storage/*/coverage/
 arch/
+modules/packages/tar-packages/storage/
+projects/cognitive-vault/core/target/debug/**
