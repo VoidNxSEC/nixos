@@ -49,9 +49,10 @@ export interface SSHConnectArgs {
   host: string;
   port?: number;
   username: string;
-  auth_method: 'key' | 'password';
+  auth_method: 'key' | 'password' | 'certificate';
   key_path?: string;
   password?: string;
+  certificate_path?: string;
 }
 
 export interface SSHExecuteArgs {
