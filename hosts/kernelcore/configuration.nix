@@ -120,12 +120,19 @@
 
     };
 
-    packages.tar = {
-      enable = true;
-      packages = lib.mkMerge [
-        (import ../../modules/packages/tar-packages/packages/codex.nix)
-        (import ../../modules/packages/tar-packages/packages/zellij.nix)
-        (import ../../modules/packages/tar-packages/packages/lynis.nix { inherit pkgs; })
+          packages.tar = {
+
+          enable = true;
+
+          packages = lib.mkMerge [
+
+            (import ../../modules/packages/tar-packages/packages/codex.nix)
+
+            # Zellij is now imported via module system
+
+            (import ../../modules/packages/tar-packages/packages/lynis.nix { inherit pkgs; })
+
+    
         (import ../../modules/packages/tar-packages/packages/antigravity.nix)
         # (import ../../modules/packages/tar-packages/packages/protonpass.nix { inherit lib; }) - DISABLED: Build issues
       ];
