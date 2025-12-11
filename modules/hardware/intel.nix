@@ -164,6 +164,7 @@ in
     boot.kernelModules = [
       "kvm-intel"
       "intel_powerclamp"
+      "coretemp"
     ];
 
     # Power Management Configuration
@@ -189,7 +190,7 @@ in
         if [ -d /sys/devices/system/cpu/intel_pstate ]; then
           echo ${toString cfg.pstate.minFreqPercent} > /sys/devices/system/cpu/intel_pstate/min_perf_pct || true
           echo ${toString cfg.pstate.maxFreqPercent} > /sys/devices/system/cpu/intel_pstate/max_perf_pct || true
-          
+
           # Energy Performance Preference
           for cpu in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
             if [ -f "$cpu" ]; then
@@ -237,16 +238,31 @@ in
         RestartSec = "10s";
       };
       script = ''
+        # Garante que temos um valor inicial seguro
+        last_temp=0
+
         while true; do
-          # Check CPU temperature
-          temp=$(cat /sys/class/thermal/thermal_zone*/temp 2>/dev/null | sort -nr | head -1 || echo 0)
+          # Estratégia híbrida de leitura:
+          # 1. Procura em hwmon (driver coretemp/acpitz) -> /sys/class/hwmon/hwmon*/temp*_input
+          # 2. Procura em thermal zones (ACPI) -> /sys/class/thermal/thermal_zone*/temp
+          # 3. Ordena decrescente (-nr) e pega a maior temperatura encontrada
+
+          current_temp=$(cat /sys/class/hwmon/hwmon*/temp*_input /sys/class/thermal/thermal_zone*/temp 2>/dev/null | sort -nr | head -1)
+
+          # Se falhar em ler (null ou vazio), assume 0 para não quebrar a aritmética
+          temp=''${current_temp:-0}
           temp_c=$((temp / 1000))
 
-          # Disable turbo if too hot
+          # Debug opcional (pode remover depois):
+          # echo "Temp atual: $temp_c °C"
+
+          # Lógica de controle do Turbo
           if [ -f /sys/devices/system/cpu/intel_pstate/no_turbo ]; then
-            if [ $temp_c -gt ${toString cfg.turboBoost.maxTemp} ]; then
+            if [ "$temp_c" -gt "${toString cfg.turboBoost.maxTemp}" ]; then
+              # Se estiver muito quente, DESATIVA o turbo (escreve 1)
               echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
-            elif [ $temp_c -lt $((${toString cfg.turboBoost.maxTemp} - 10)) ]; then
+            elif [ "$temp_c" -lt $((${toString cfg.turboBoost.maxTemp} - 10)) ]; then
+              # Histerese: só reativa se esfriou bem (limite - 10°C)
               echo 0 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
             fi
           fi
@@ -255,6 +271,7 @@ in
         done
       '';
     };
+
 
     # Memory tuning
     boot.kernel.sysctl = mkIf cfg.memory.enableTuning {
