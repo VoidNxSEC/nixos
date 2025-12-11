@@ -98,3 +98,5 @@ modules/packages/tar-packages/storage/
 projects/cognitive-vault/core/target/debug/**
 modules/packages/deb-packages/storage/**
 modules/packages/tar-packages/storage/**
+modules/packages/tar-packages/storage/*.tar.gz
+modules/packages/js-packages/storage/
