@@ -1,4 +1,39 @@
 {
+    "gemini-cli": {
+        "cargoLocks": null,
+        "date": "2025-12-11",
+        "extract": null,
+        "name": "gemini-cli",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "rev": "927102ea1b9a13bdb15b30524c2db86a4dfe640e",
+            "sha256": "sha256-qXxUzlLJ/rBQMaYAz5++5VQfn0e4TZ3cNkuE4Fq+V84=",
+            "sparseCheckout": [],
+            "type": "git",
+            "url": "https://github.com/google-gemini/gemini-cli"
+        },
+        "version": "927102ea1b9a13bdb15b30524c2db86a4dfe640e"
+    },
+    "lynis": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "lynis",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": null,
+            "sha256": "sha256-KjHj4CjWufDo9QJAKtZ1KwafkIKJNRTIwCOWL1eGs7Y=",
+            "type": "url",
+            "url": "https://github.com/CISOfy/lynis/archive/3.1.6.tar.gz"
+        },
+        "version": "3.1.6"
+    },
     "zellij": {
         "cargoLocks": null,
         "date": null,
