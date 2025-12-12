@@ -9,6 +9,7 @@ with lib;
 
 let
   cfg = config.kernelcore.packages.gemini-cli;
+  sources = pkgs.callPackage ../_sources/generated.nix { };
 in
 {
   options.kernelcore.packages.gemini-cli = {
@@ -19,16 +20,13 @@ in
     environment.systemPackages = [
       (pkgs.buildNpmPackage rec {
         pname = "gemini-cli";
-        version = "0.21.0-nightly.20251211.8c83e1ea9}";
+        version = sources.gemini-cli.version;
 
-        # Use locally stored tarball for reproducible builds
-        src = pkgs.fetchurl {
-          url = "file://${./storage/gemini-cli-0.21.0-nightly.20251211.8c83e1ea9.tar.gz}";
-          sha256 = "f2e2e90635b0fd0ba1b933a27f6c23e107d33e7f48062de3e52e8060df367005";
-        };
+        src = sources.gemini-cli.src;
 
-        # Hash calculated from first build
-        npmDepsHash = "";
+        # Hash to be updated after first build attempt
+        # npmDepsHash = lib.fakeHash; # Removed, using actual hash below
+        npmDepsHash = "sha256-OCSYOxMyBkb4ygeys4GhNwVKOWRGhgmao4QBrpFpt74=";
 
         nodeLinker = "pnpm";
 
