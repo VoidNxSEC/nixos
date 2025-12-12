@@ -17,16 +17,17 @@
     maxLogSize = "1G";
   };
 
-      kernelcore = {
-      system = {
-        memory.optimizations.enable = true;
-        nix.optimizations.enable = true;
-        nix.experimental-features.enable = true;
-        # sudo-claude-code.enable = true; # REMOVED: Insecure module moved to knowledge/
-      };
+  kernelcore = {
+    system = {
+      memory.optimizations.enable = true;
+      nix.optimizations.enable = true;
+      nix.experimental-features.enable = true;
+      # sudo-claude-code.enable = true; # REMOVED: Insecure module moved to knowledge/
+    };
 
-      security = {
-        hardening.enable = true;      sandbox-fallback = false;
+    security = {
+      hardening.enable = true;
+      sandbox-fallback = false;
       audit.enable = true;
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
@@ -101,7 +102,6 @@
     # Bluetooth support
     bluetooth = {
       enable = true;
-      #powerOnBoot = true;
     };
 
     # Applications
@@ -343,7 +343,7 @@
 
         # Codex Agent - Isolated workspace with bwrap (already stable)
         codex = {
-          enable = true;
+          enable = false;
           projectRoot = "/var/lib/codex/dev";
           configPath = "/var/lib/codex/.codex/mcp.json";
           user = "codex";
@@ -351,30 +351,21 @@
 
         # Gemini Agent - Isolated workspace (needs bwrap isolation)
         gemini = {
-          enable = true;
+          enable = false;
           projectRoot = "/var/lib/gemini-agent/dev";
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
           user = "gemini-agent";
         };
 
         # Antigravity - User's local editor (needs access to shared knowledge)
-        # WARNING: API keys here are exposed in /nix/store
+        # API keys loaded from SOPS at runtime via /run/secrets/
         antigravity = {
           enable = true;
           projectRoot = "/home/kernelcore/dev";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
-          user = "antigravity";
-          extraEnv = {
-            "ANTHROPIC_API_KEY" = "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";
-            "OPENAI_API_KEY" = "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";
-            "DEEPSEEK_API_KEY" = "sk-f56f797eced9485e995abd6f49f291ec";
-            "GEMINI_API_KEY" = "AIzaSyCRRsHY1paG1CxVLGkpfNnLOgwmi51yQxk";
-            "OPENROUTER_API_KEY" = "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";
-            "GROQ_API_KEY" = "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";
-            "MISTRAL_API_KEY" = "QOL4rLO2YSZlvNZF8hAIinbv6S5kWz6h";
-            "NVIDIA_API_KEY" = "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";
-            "REPLICATE_API_TOKEN" = "r8_FDzv3Wfbef36oarLsagY03gvb2NiZKJ1FA0Bo";
-          };
+          user = "kernelcore";
+          # extraEnv removed - API keys now read from /run/secrets/ (SOPS)
+          # Use: source /etc/load-api-keys.sh to load into shell
         };
       };
     };
@@ -592,7 +583,7 @@
   modules.audio.videoProduction = {
     enable = true;
     enableNVENC = true;
-    fixHeadphoneMute = true;  # Fix para mic P2 mutando speaker
+    fixHeadphoneMute = true; # Fix para mic P2 mutando speaker
     lowLatency = true;
   };
 
@@ -702,7 +693,6 @@
   };
 
   # Guest user removed for security hardening
-
 
   users.extraGroups.docker.members = [ "kernelcore" ];
 
@@ -1176,17 +1166,16 @@
 
   services.i915-governor.enable = false;
 
-
   programs.obs-studio = {
     enable = true;
     enableVirtualCamera = true; # Cria uma webcam virtual (ótimo para Zoom/Meet)
 
     # Aqui entram os plugins que emulam as features da Nvidia Broadcast e facilitam a vida
     plugins = with pkgs.obs-studio-plugins; [
-      obs-backgroundremoval      # Remove o fundo via IA (substituto do Nvidia Broadcast)
+      obs-backgroundremoval # Remove o fundo via IA (substituto do Nvidia Broadcast)
       obs-pipewire-audio-capture # Captura áudio do sistema sem dor de cabeça
-      obs-vkcapture              # Captura de jogos/janelas Vulkan com alta performance
-      obs-vaapi                  # Aceleração de hardware genérica
+      obs-vkcapture # Captura de jogos/janelas Vulkan com alta performance
+      obs-vaapi # Aceleração de hardware genérica
     ];
   };
 
