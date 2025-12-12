@@ -6,11 +6,11 @@
 }:
 
 # ML Applications Layer
-# Standalone ML applications (SecureLLM Bridge, etc.)
+# Standalone ML applications now managed as independent flakes in projects/
+# - securellm-bridge -> projects/securellm-bridge (imported via flake input)
 
 {
   imports = [
-    ./securellm-bridge
-    # Future applications here
+    # Applications moved to projects/ folder as independent flakes
   ];
 }

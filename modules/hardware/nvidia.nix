@@ -39,8 +39,11 @@ with lib;
     hardware.nvidia = {
       modesetting.enable = true;
       powerManagement.enable = true;
-      # Fine-grained power management requires offload mode to be enabled
-      powerManagement.finegrained = config.kernelcore.nvidia.prime.offload;
+      # ⚠️ Finegrained PM DISABLED: causa race condition com NVENC quando OBS fecha
+      # GPU tenta D3 suspend antes do encoder terminar cleanup → system hang
+      # Sintomas: freeze total ao fechar OBS, só reboot recupera
+      # Ticket: https://gitlab.freedesktop.org/drm/nvidia/-/issues/
+      powerManagement.finegrained = false;
       open = false;
       nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.production;
