@@ -23,6 +23,13 @@
       nix.optimizations.enable = true;
       nix.experimental-features.enable = true;
       # sudo-claude-code.enable = true; # REMOVED: Insecure module moved to knowledge/
+
+      # Local binary cache - uses offload-server's nix-serve
+      binary-cache = {
+        enable = true;
+        local.enable = true;
+        # URL: http://192.168.15.9:5000 (default)
+      };
     };
 
     security = {
