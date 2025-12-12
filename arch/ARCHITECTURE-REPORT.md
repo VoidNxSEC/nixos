@@ -1,7 +1,7 @@
 # NixOS Architecture Analysis Report
 
 > **Professional Edition v2.0.0**
-> **Generated**: 2025-12-11 18:49:55 -02
+> **Generated**: 2025-12-12 02:31:13 -02
 > **Location**: `/etc/nixos`
 
 ---
@@ -24,12 +24,12 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Files** | 881 |
-| **Total Directories** | 350 |
+| **Total Files** | 887 |
+| **Total Directories** | 354 |
 | **Repository Size** | 2.7G |
 | **Git Branch** | `main` |
-| **Git Commit** | `28c3297` |
-| **Total Commits** | 210 |
+| **Git Commit** | `add8e39` |
+| **Total Commits** | 212 |
 | **Contributors** | 3 |
 | **Repository Age** | 0 days |
 
@@ -37,7 +37,7 @@
 
 | Metric | Value |
 |--------|-------|
-| **.nix files** | 247 (47144 lines) |
+| **.nix files** | 249 (47364 lines) |
 | **Total modules** | 171 |
 | **Module categories** | 12 |
 | **Modules size** | 1.2G |
@@ -57,7 +57,7 @@
 | Category | Modules | Lines | Description |
 |----------|---------|-------|-------------|
 | **shell** | 35 | 5243 | Shell configuration and aliases |
-| **packages** | 27 | 3034 | Custom packages and overlays |
+| **packages** | 27 | 3062 | Custom packages and overlays |
 | **ml** | 26 | 2573 | Machine learning infrastructure |
 | **security** | 17 | 2257 | Security hardening and policies |
 | **services** | 15 | 2798 | System services and daemons |
@@ -117,9 +117,9 @@
 
 | Type | Count | Lines |
 |------|-------|-------|
-| .nix | 247 | 47144 |
+| .nix | 249 | 47364 |
 | .sh | 75 | 14164 |
-| .md | 284 | 104034 |
+| .md | 286 | 104302 |
 | .yaml | 16 | - |
 
 ### Directory Sizes
@@ -141,7 +141,8 @@
 │   ├── snapshots/
 │   │   ├── snapshot-20251210-054056.txt
 │   │   ├── snapshot-20251210-054112.txt
-│   │   └── snapshot-20251210-054218.txt
+│   │   ├── snapshot-20251210-054218.txt
+│   │   └── snapshot-20251211-184953.txt
 │   ├── ARCHITECTURE-REPORT.json
 │   ├── ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.txt
@@ -195,6 +196,7 @@
 │   ├── ARCHITECTURE-TRACKING.md
 │   ├── ARCHITECTURE-TREE.md
 │   ├── ARCHITECTURE-TREE.txt
+│   ├── AUDIO_TROUBLESHOOTING.md
 │   ├── AUDITD_INVESTIGATION.md*
 │   ├── auditoria-disco-20251122-054711.txt
 │   ├── AUDITORIA-DISCO-FERRAMENTAS.md
@@ -659,11 +661,13 @@
 │   │   ├── nix.nix*
 │   │   ├── services.nix*
 │   │   └── ssh-config.nix
-│   └── virtualization/
-│       ├── default.nix
-│       ├── macos-kvm.nix
-│       ├── vmctl.nix
-│       └── vms.nix*
+│   ├── virtualization/
+│   │   ├── default.nix
+│   │   ├── macos-kvm.nix
+│   │   ├── vmctl.nix
+│   │   └── vms.nix*
+│   ├── TEMPLATE_GUIDE.md
+│   └── TEMPLATE.nix
 ├── overlays/
 │   ├── default.nix
 │   ├── hyprland.nix
@@ -688,13 +692,19 @@
 │   │   ├── default.nix
 │   │   ├── flake.lock
 │   │   └── flake.nix
-│   └── i915-governor/
-│       ├── nix/
-│       │   └── package.nix
+│   ├── i915-governor/
+│   │   ├── nix/
+│   │   │   └── package.nix
+│   │   ├── src/
+│   │   │   └── main.zig
+│   │   ├── build.zig
+│   │   └── default.nix
+│   └── spider-nix/
 │       ├── src/
-│       │   └── main.zig
-│       ├── build.zig
-│       └── default.nix
+│       │   └── spider_nix/
+│       ├── tests/
+│       ├── default.nix
+│       └── pyproject.toml
 ├── scripts/
 │   ├── nixos-shell/
 │   │   ├── scripts/
@@ -814,7 +824,7 @@
 ├── knowledge.db
 └── run-lynis-audits.sh*
 
-127 directories, 550 files
+131 directories, 556 files
 ```
 
 ---
@@ -822,7 +832,7 @@
 ## 📝 Metadata
 
 - **Report Version**: 2.0.0
-- **Generated**: 2025-12-11 18:49:55 -02
+- **Generated**: 2025-12-12 02:31:13 -02
 - **Tool**: NixOS Architecture Analysis Tool
 - **Repository**: /etc/nixos
 
