@@ -13,25 +13,28 @@ let
   # Template para gerar mcp.json personalizado por agente
   generateMcpConfig =
     agentCfg:
-    pkgs.runCommand "mcp-config.json" {
-      nativeBuildInputs = [ pkgs.jq ];
-      jsonContent = builtins.toJSON {
-        mcpServers = {
-          securellm-bridge = {
-            command = "${pkgs.nodejs}/bin/node";
-            args = [ "${cfg.mcpServerPath}/build/src/index.js" ];
-            env = {
-              PROJECT_ROOT = agentCfg.projectRoot;
-              KNOWLEDGE_DB_PATH = cfg.knowledgeDbPath;
-              ENABLE_KNOWLEDGE = "true";
-            } // agentCfg.extraEnv;
+    pkgs.runCommand "mcp-config.json"
+      {
+        nativeBuildInputs = [ pkgs.jq ];
+        jsonContent = builtins.toJSON {
+          mcpServers = {
+            securellm-bridge = {
+              command = "${pkgs.nodejs}/bin/node";
+              args = [ "${cfg.mcpServerPath}/build/src/index.js" ];
+              env = {
+                PROJECT_ROOT = agentCfg.projectRoot;
+                KNOWLEDGE_DB_PATH = cfg.knowledgeDbPath;
+                ENABLE_KNOWLEDGE = "true";
+              }
+              // agentCfg.extraEnv;
+            };
           };
         };
-      };
-      passAsFile = [ "jsonContent" ];
-    } ''
-      jq . "$jsonContentPath" > $out
-    '';
+        passAsFile = [ "jsonContent" ];
+      }
+      ''
+        jq . "$jsonContentPath" > $out
+      '';
 
 in
 {
@@ -40,7 +43,7 @@ in
 
     mcpServerPath = mkOption {
       type = types.str;
-      default = "/etc/nixos/modules/ml/integrations/mcp/server";
+      default = "/etc/nixos/projects/securellm-mcp";
       description = "Path to MCP server installation";
     };
 

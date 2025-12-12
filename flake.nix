@@ -12,6 +12,34 @@
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nix-colors.url = "github:misterio77/nix-colors";
+
+    # ═══════════════════════════════════════════════════════════════
+    # PROJECTS - Independent flakes on GitHub
+    # ═══════════════════════════════════════════════════════════════
+    securellm-mcp = {
+      url = "github:VoidNxSEC/securellm-mcp";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    securellm-bridge = {
+      url = "github:VoidNxSEC/securellm-bridge";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    cognitive-vault = {
+      url = "github:VoidNxSEC/cognitive-vault";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    vmctl = {
+      url = "github:VoidNxSEC/vmctl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    spider-nix = {
+      url = "github:VoidNxSEC/spider-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    i915-governor = {
+      url = "github:VoidNxSEC/i915-governor";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -95,7 +123,7 @@
             ./modules/services/gpu-orchestration.nix
             ./modules/services/mosh.nix # Mosh server for mobile shell (Blink Shell iOS)
             ./modules/services/mobile-workspace.nix # Isolated workspace for mobile access
-            #./modules/services/rsync-server.nix
+            #./modules/services/rsync-server.nix # DISABLED: File doesn't exist
 
             # Desktop environments
             ./modules/desktop
@@ -127,8 +155,6 @@
 
             # Modules moved to knowledge/ (archived)
             # ./modules/system/sudo-claude-code.nix
-
-
 
             # Hardware (GPU, Trezor, WiFi)
             ./modules/hardware
