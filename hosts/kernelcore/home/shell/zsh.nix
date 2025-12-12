@@ -189,6 +189,16 @@ in
             -I node_modules|.git|target|dist|build|out|.next|.svelte-kit|.vite|.nuxt|.vercel|.turbo|.cache|.parcel-cache|.esbuild|__pycache__|*.pyc|*.map|*.tsbuildinfo|.js|*.jsx|*.ts|*.tsx|*.mjs|*.cjs|*.d.ts|*.tsbuildinfo|.tauri/tmp|temp|.DS_Store|*.log|coverage|storybook-static \
             --prune";
 
+        # MCP Server
+        mcp-server-start = "node /etc/nixos/modules/ml/integrations/mcp/server/build/src/index.js --log-level=INFO";
+
+        # Smart Commits
+        git-commit-smart = "git add -A && git commit -m \"feat: $(date +%Y-%m-%d) - $(git status --porcelain | grep -c ^M) changes\"";
+        git-commit-ai = "/etc/nixos/scripts/auto-commit.sh";
+
+        # Cognitive Vault
+        cvault = "cd ~/.cognitive-vault";
+
         # Waybar
         wayreload = "killall waybar && waybar &";
         wayedit = "$EDITOR ~/.config/waybar/config";
