@@ -2,19 +2,19 @@ name: NixOS Build & Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       deploy:
-        description: 'Deploy to system after build'
+        description: "Deploy to system after build"
         required: false
         default: false
         type: boolean
 
 env:
-  CACHIX_CACHE_NAME: kernelcore
+  CACHIX_CACHE_NAME: marcosfpina
 
 jobs:
   # SOPS: Decrypt secrets first
@@ -51,7 +51,7 @@ jobs:
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
           authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
-          pushFilter: '(-source$|-env$)'
+          pushFilter: "(-source$|-env$)"
 
       - name: Check flake syntax
         run: nix flake check --show-trace
@@ -92,7 +92,7 @@ jobs:
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
           authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
-          pushFilter: '(-source$|-env$)'
+          pushFilter: "(-source$|-env$)"
 
       - name: Build ${{ matrix.target }}
         id: build
