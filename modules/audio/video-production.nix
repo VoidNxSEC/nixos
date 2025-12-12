@@ -36,8 +36,8 @@ in
       # OBS Studio (principal) - configurado via programs.obs-studio
       
       # Editores de Vídeo
-      kdenlive           # Editor profissional
-      shotcut            # Editor leve e rápido
+      kdePackages.kdenlive  # Editor profissional
+      shotcut               # Editor leve e rápido
       
       # Gravação de tela
       wf-recorder        # Wayland screen recorder
