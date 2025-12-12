@@ -102,15 +102,16 @@ SECRETS_FOUND=false
 
 for file in $STAGED_FILES; do
     if [ -f "$file" ]; then
-        # Skip binary and encrypted files
-        if file "$file" | grep -q "text"; then
-            # Check for common secret patterns (but not in documented examples)
-            if grep -Eq "(password\s*=\s*['\"][^'\"]+['\"]|api[_-]?key\s*=\s*['\"][^'\"]+['\"]|secret\s*=\s*['\"][^'\"]+['\"])" "$file" 2>/dev/null; then
-                # Exclude false positives (option definitions, examples)
-                if ! grep -q "mkOption\|description\|#.*example" "$file" 2>/dev/null; then
-                    echo -e "  ${RED}⚠️  Potential secret in: $file${NC}"
-                    SECRETS_FOUND=true
-                fi
+        # Skip binary and encrypted files based on extension
+        case "$file" in
+            *.png|*.jpg|*.gif|*.ico|*.pdf|*.bin|*.so|*.a|*.o|*.age|*.gpg) continue ;;
+        esac
+        # Check for common secret patterns (but not in documented examples)
+        if grep -Eq "(password\s*=\s*['\"][^'\"]+['\"]|api[_-]?key\s*=\s*['\"][^'\"]+['\"]|secret\s*=\s*['\"][^'\"]+['\"])" "$file" 2>/dev/null; then
+            # Exclude false positives (option definitions, examples)
+            if ! grep -q "mkOption\|description\|#.*example" "$file" 2>/dev/null; then
+                echo -e "  ${RED}⚠️  Potential secret in: $file${NC}"
+                SECRETS_FOUND=true
             fi
         fi
     fi
