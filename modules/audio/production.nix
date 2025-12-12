@@ -16,7 +16,7 @@ in
 
     jackAudio = mkOption {
       type = types.bool;
-      default = true;
+      default = false;
       description = "Habilitar JACK Audio Connection Kit";
     };
 
@@ -62,17 +62,17 @@ in
         # Ferramentas de sistema
         alsa-utils
         pavucontrol
-        pulseaudio
+        # pulseaudio # REMOVIDO: Conflito com pipewire-pulse
 
         # Python para scripts
         python3
         python3Packages.mutagen
         python3Packages.pydub
       ]
-      ++ optionals cfg.jackAudio [
-        jack2
-        qjackctl
-      ]
+      #++ optionals cfg.jackAudio [
+      #jack2
+      #qjackctl
+      #]
       ++ optionals cfg.plugins [
         lsp-plugins
         calf
@@ -88,6 +88,22 @@ in
       ++ optionals cfg.downloaders [
         yt-dlp
         ffmpeg-full
+
+      (writeScriptBin "youtube-to-flac" ''
+        exec /etc/audio-helpers/youtube-to-flac.sh "$@"
+      '')
+      (writeScriptBin "batch-convert" ''
+        exec /etc/audio-helpers/batch-convert.sh "$@"
+      '')
+      (writeScriptBin "audio-metadata" ''
+        exec /etc/audio-helpers/audio-metadata.sh "$@"
+      '')
+      (writeScriptBin "normalize-audio" ''
+        exec /etc/audio-helpers/normalize-audio.sh "$@"
+      '')
+      (writeScriptBin "split-audio" ''
+        exec /etc/audio-helpers/split-audio.sh "$@"
+      '')
       ];
 
     # Aliases e helpers para shell
@@ -542,24 +558,7 @@ in
       };
     };
 
-    # Adicionar scripts ao PATH via wrapper
-    environment.systemPackages = with pkgs; [
-      (writeScriptBin "youtube-to-flac" ''
-        exec /etc/audio-helpers/youtube-to-flac.sh "$@"
-      '')
-      (writeScriptBin "batch-convert" ''
-        exec /etc/audio-helpers/batch-convert.sh "$@"
-      '')
-      (writeScriptBin "audio-metadata" ''
-        exec /etc/audio-helpers/audio-metadata.sh "$@"
-      '')
-      (writeScriptBin "normalize-audio" ''
-        exec /etc/audio-helpers/normalize-audio.sh "$@"
-      '')
-      (writeScriptBin "split-audio" ''
-        exec /etc/audio-helpers/split-audio.sh "$@"
-      '')
-    ];
+
 
     # Configurar JACK se habilitado
     services.jack = mkIf cfg.jackAudio {
@@ -569,24 +568,25 @@ in
     };
 
     # Configurar PulseAudio/PipeWire para baixa latência
-    services.pipewire = mkIf config.services.pipewire.enable {
-      extraConfig.pipewire = {
-        "10-audio-production" = {
-          "context.properties" = {
-            "default.clock.rate" = 48000;
-            "default.clock.allowed-rates" = [
-              44100
-              48000
-              88200
-              96000
-            ];
-            "default.clock.quantum" = 128;
-            "default.clock.min-quantum" = 128;
-            "default.clock.max-quantum" = 2048;
-          };
-        };
-      };
-    };
+    # COMENTADO: Causando instabilidade no áudio (dispositivos somem)
+    # services.pipewire = mkIf config.services.pipewire.enable {
+    #   extraConfig.pipewire = {
+    #     "10-audio-production" = {
+    #       "context.properties" = {
+    #         "default.clock.rate" = 48000;
+    #         "default.clock.allowed-rates" = [
+    #           44100
+    #           48000
+    #           88200
+    #           96000
+    #         ];
+    #         "default.clock.quantum" = 128;
+    #         "default.clock.min-quantum" = 128;
+    #         "default.clock.max-quantum" = 2048;
+    #       };
+    #     };
+    #   };
+    # };
 
     # Limites de sistema para áudio em tempo real
     security.pam.loginLimits = [

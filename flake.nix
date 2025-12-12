@@ -103,6 +103,9 @@
             # Applications (browsers and editors)
             ./modules/applications
 
+            # Audio
+            #./modules/audio/production.nix
+
             # Packages (declarative .deb, flatpak, etc.)
             ./modules/packages
             #./projects
