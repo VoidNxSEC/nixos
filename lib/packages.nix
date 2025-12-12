@@ -1,17 +1,24 @@
 # lib/packages.nix - Exported packages for the flake
 # VM, ISO builds and Docker images
-{ pkgs, self }:
+{
+  pkgs,
+  self,
+  inputs ? { },
+}:
 
 let
   mkLd = pkgs.lib.makeLibraryPath;
+  system = pkgs.stdenv.hostPlatform.system;
 in
 {
   # VM and ISO builds
   vm-image = self.nixosConfigurations.kernelcore.config.system.build.vm;
   iso = self.nixosConfigurations.kernelcore-iso.config.system.build.isoImage;
 
-  # NOTE: securellm-mcp moved to external flake input
-  # Import via flake inputs when ready
+  # SecureLLM MCP - from external flake input
+  securellm-mcp =
+    inputs.securellm-mcp.packages.${system}.default
+      or inputs.securellm-mcp.packages.${system}.securellm-mcp or null;
 
   # Docker images - exposed as individual packages
   image-app = pkgs.dockerTools.buildImage {
