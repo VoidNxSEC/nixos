@@ -25,6 +25,9 @@
       # Colorful output
       color.ui = true;
 
+      # Hooks configuration
+      core.hooksPath = ".githooks";
+
       alias = {
         st = "status";
         co = "checkout";
@@ -39,5 +42,7 @@
         undo = "reset --soft HEAD^";
       };
     };
+
+    lfs.enable = true;
   };
 }

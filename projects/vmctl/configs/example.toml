@@ -1,0 +1,57 @@
+# vmctl Configuration Example
+# Location: ~/.config/vmctl/config.toml or /etc/vmctl/config.toml
+
+# ═══════════════════════════════════════════════════════════════
+# VM Definitions
+# ═══════════════════════════════════════════════════════════════
+
+[vm.wazuh]
+enabled = true
+image = "/var/lib/vm-images/wazuh-4.14.0.qcow2"
+memory = "4G"
+cpus = 2
+network = "user"           # or "bridge:br0"
+display = "gtk"            # gtk, sdl, spice, none
+spice = false
+
+# Optional: Fixed MAC address for consistent DHCP
+# mac_address = "52:54:00:12:34:56"
+
+# Additional disks
+[[vm.wazuh.disks]]
+path = "/srv/vms/wazuh-data.qcow2"
+size = "50G"
+format = "qcow2"
+
+# Shared directories (virtiofs)
+[[vm.wazuh.shares]]
+host_path = "/srv/vms/shared"
+guest_tag = "hostshare"
+driver = "virtiofs"
+readonly = false
+
+
+[vm.ubuntu]
+enabled = true
+image = "/var/lib/vm-images/ubuntu-22.04.qcow2"
+memory = "8G"
+cpus = 4
+network = "bridge:br0"
+display = "gtk"
+
+# Extra QEMU arguments
+extra_args = [
+  "-usb",
+  "-device", "usb-tablet"
+]
+
+
+[vm.windows]
+enabled = false
+image = "/var/lib/vm-images/windows11.qcow2"
+memory = "16G"
+cpus = 8
+network = "user"
+display = "spice"
+spice = true
+mac_address = "52:54:00:aa:bb:cc"
