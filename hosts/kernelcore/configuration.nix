@@ -114,28 +114,10 @@
     # Package managers for binaries not in nixpkgs or testing upstream
     packages.deb = {
       enable = true;
-      packages =
-        (import ../../modules/packages/deb-packages/packages/protonpass.nix);
-        # (import ../../modules/packages/deb-packages/packages/protonvpn.nix);
-
     };
 
-          packages.tar = {
-
-          enable = true;
-
-          packages = lib.mkMerge [
-
-            (import ../../modules/packages/tar-packages/packages/codex.nix)
-
-            # Zellij is now imported via module system
-
-            (import ../../modules/packages/tar-packages/packages/lynis.nix { inherit pkgs; })
-
-    
-        (import ../../modules/packages/tar-packages/packages/antigravity.nix)
-        # (import ../../modules/packages/tar-packages/packages/protonpass.nix { inherit lib; }) - DISABLED: Build issues
-      ];
+    packages.tar = {
+      enable = true;
     };
 
     packages.js = {
@@ -605,6 +587,13 @@
 
   services.tailscale.enable = true;
 
+  #modules.audio.production = {
+  #enable = true;
+  #jackAudio = true;
+  #plugins = true;
+  #synthesizers = true;
+  #};
+
   services.xserver.screenSection = ''
     Option "metamodes" "nvidia-auto-select +0+0 (ForceFullCompositionPipeLIne=On)"
   '';
@@ -650,6 +639,11 @@
       #ghidra
       waybackurls
       hakrawler
+
+      obs-studio
+      pavucontrol
+      ffmpeg-full
+      mpv
 
       awscli # AWS CLI v1 (stable) - awscli2 has hash mismatch in prompt-toolkit
 
@@ -1180,6 +1174,19 @@
 
   services.i915-governor.enable = false;
 
+
+  programs.obs-studio = {
+    enable = true;
+    enableVirtualCamera = true; # Cria uma webcam virtual (ótimo para Zoom/Meet)
+
+    # Aqui entram os plugins que emulam as features da Nvidia Broadcast e facilitam a vida
+    plugins = with pkgs.obs-studio-plugins; [
+      obs-backgroundremoval      # Remove o fundo via IA (substituto do Nvidia Broadcast)
+      obs-pipewire-audio-capture # Captura áudio do sistema sem dor de cabeça
+      obs-vkcapture              # Captura de jogos/janelas Vulkan com alta performance
+      obs-vaapi                  # Aceleração de hardware genérica
+    ];
+  };
 
   system.stateVersion = "26.05";
 }
