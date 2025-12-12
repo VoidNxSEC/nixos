@@ -342,7 +342,7 @@
       agents = {
         # Roo/Claude Code - USER workspace (HOME-based ~/dev/)
         roo = {
-          enable = true;
+          enable = false;
           projectRoot = "/home/kernelcore/dev";
           configPath = "/home/kernelcore/.roo/mcp.json";
           user = "kernelcore";
@@ -367,7 +367,7 @@
         # Antigravity - User's local editor (needs access to shared knowledge)
         # API keys loaded from SOPS at runtime via /run/secrets/
         antigravity = {
-          enable = true;
+          enable = false;
           projectRoot = "/home/kernelcore/dev";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
