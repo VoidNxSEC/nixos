@@ -1,12 +1,13 @@
 # Lynis - Security Auditing Tool
-# Version: 3.1.6
+# Version: Auto-updated via nvfetcher
 # Purpose: Custom management outside nixpkgs for more control
 { pkgs, ... }:
 let
   inherit (pkgs) lib;
+  sources = pkgs.callPackage ../../_sources/generated.nix { };
 in
 {
-  lynis = {
+  kernelcore.packages.tar.packages.lynis = {
     enable = true;
 
     # Build method - native works for shell scripts
@@ -14,9 +15,8 @@ in
 
     # Source configuration
     source = {
-      # Download from: https://github.com/CISOfy/lynis/releases
-      path = ../storage/lynis-3.1.6.tar.gz;
-      sha256 = "0513f62ba5ab615c4333827b804237d58cf7bd623d09e1b4918d3fc85f08fc70";
+      path = sources.lynis.src;
+      sha256 = ""; # Managed by sources.lynis.src
     };
 
     # Wrapper configuration

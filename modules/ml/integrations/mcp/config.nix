@@ -109,7 +109,7 @@ in
           # Create workspace directory
           "d ${agentCfg.projectRoot} 0750 ${agentCfg.user} ${agentCfg.user} -"
           # Create config directory (extract directory from configPath)
-          "d ${dirOf agentCfg.configPath} 0750 ${agentCfg.user} ${agentCfg.user} -"
+          "d ${(dirOf agentCfg.configPath)} 0750 ${agentCfg.user} ${agentCfg.user} -"
           # Install mcp.json as symlink
           "L+ ${agentCfg.configPath} - - - - ${generateMcpConfig agentCfg}"
         ]
