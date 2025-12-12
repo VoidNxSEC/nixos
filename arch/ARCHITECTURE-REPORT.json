@@ -1,34 +1,34 @@
 {
   "metadata": {
     "version": "2.0.0",
-    "generated": "2025-12-11T20:49:55Z",
+    "generated": "2025-12-12T04:31:13Z",
     "location": "/etc/nixos",
     "hostname": "nx"
   },
   "git": {
     "branch": "main",
-    "commit": "28c3297",
-    "commit_long": "28c32975cc9ff3ad5b3e1c581f0f36102c2a9e9e",
-    "commit_date": "2025-12-11 18:36:02",
-    "total_commits": 210,
+    "commit": "add8e39",
+    "commit_long": "add8e39b6eb78ef46920d4623a4a4036c90b7bfd",
+    "commit_date": "2025-12-12 01:15:09",
+    "total_commits": 212,
     "contributors": 3,
     "last_tag": "ml-restructure-complete",
     "repo_age_days": 0
   },
   "statistics": {
     "files": {
-      "total": 881,
-      "nix": 247,
+      "total": 887,
+      "nix": 249,
       "sh": 75,
-      "md": 284,
+      "md": 286,
       "yaml": 16
     },
     "lines": {
-      "nix": 47144,
+      "nix": 47364,
       "sh": 14164,
-      "md": 104034
+      "md": 104302
     },
-    "directories": 350,
+    "directories": 354,
     "sizes": {
       "modules": "1.2G",
       "docs": "2.0M",
@@ -82,7 +82,7 @@
       },
       "packages": {
         "count": 27,
-        "lines": 3034
+        "lines": 3062
       },
       "services": {
         "count": 15,
