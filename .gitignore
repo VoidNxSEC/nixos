@@ -93,10 +93,7 @@ modules/packages/js-packages/storage/*/dist/
 modules/packages/js-packages/storage/*/build/
 modules/packages/js-packages/storage/*/.turbo/
 modules/packages/js-packages/storage/*/coverage/
-arch/
 modules/packages/tar-packages/storage/
 projects/cognitive-vault/core/target/debug/**
-modules/packages/deb-packages/storage/**
-modules/packages/tar-packages/storage/**
-modules/packages/tar-packages/storage/*.tar.gz
 modules/packages/js-packages/storage/
+modules/packages/deb-packages/storage
