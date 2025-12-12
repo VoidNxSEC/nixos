@@ -3,15 +3,15 @@
 {
   gemini-cli = {
     pname = "gemini-cli";
-    version = "927102ea1b9a13bdb15b30524c2db86a4dfe640e";
+    version = "54de67536da3af801bba8ab4657769d54dd30c2a";
     src = fetchgit {
       url = "https://github.com/google-gemini/gemini-cli";
-      rev = "927102ea1b9a13bdb15b30524c2db86a4dfe640e";
+      rev = "54de67536da3af801bba8ab4657769d54dd30c2a";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-qXxUzlLJ/rBQMaYAz5++5VQfn0e4TZ3cNkuE4Fq+V84=";
+      sha256 = "sha256-53IAAiJSEK/GkUbmB1kIGiaU5bZTojG5sUBdGoEUUAc=";
     };
     date = "2025-12-11";
   };

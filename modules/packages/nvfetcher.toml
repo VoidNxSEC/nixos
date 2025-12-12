@@ -5,7 +5,7 @@ fetch.url = "https://github.com/zellij-org/zellij/releases/download/$ver/zellij-
 [gemini-cli]
 src.git = "https://github.com/google-gemini/gemini-cli"
 fetch.git = "https://github.com/google-gemini/gemini-cli"
-git.rev = "v0.21.0-nightly.20251211.8c83e1ea9"
+git.rev = "v0.21.0-nightly.20251212.54de67536"
 
 [lynis]
 src.github = "CISOfy/lynis"

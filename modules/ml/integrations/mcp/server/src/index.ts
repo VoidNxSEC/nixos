@@ -55,6 +55,10 @@ import {
   handleDiscourseSearch,
   handleStackOverflowSearch,
 } from "./tools/web-search.js";
+import {
+  researchAgentTool,
+  handleResearchAgent,
+} from "./tools/research-agent.js";
 
 const execAsync = promisify(exec);
 
@@ -477,6 +481,8 @@ class SecureLLMBridgeMCPServer {
         ...laptopDefenseTools,
         // Add Web Search tools
         ...webSearchTools,
+        // Add Research Agent tool
+        researchAgentTool,
       ],
     }));
 
@@ -565,6 +571,10 @@ class SecureLLMBridgeMCPServer {
             return await this.handleDiscourseSearch(args);
           case "stackoverflow_search":
             return await this.handleStackOverflowSearch(args);
+
+          // Research Agent handler
+          case "research_agent":
+            return await handleResearchAgent(args as any);
 
           default:
             throw new McpError(
