@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "generated": "2025-12-11T20:49:55Z",
+    "location": "/etc/nixos",
+    "hostname": "nx"
+  },
+  "git": {
+    "branch": "main",
+    "commit": "28c3297",
+    "commit_long": "28c32975cc9ff3ad5b3e1c581f0f36102c2a9e9e",
+    "commit_date": "2025-12-11 18:36:02",
+    "total_commits": 210,
+    "contributors": 3,
+    "last_tag": "ml-restructure-complete",
+    "repo_age_days": 0
+  },
+  "statistics": {
+    "files": {
+      "total": 881,
+      "nix": 247,
+      "sh": 75,
+      "md": 284,
+      "yaml": 16
+    },
+    "lines": {
+      "nix": 47144,
+      "sh": 14164,
+      "md": 104034
+    },
+    "directories": 350,
+    "sizes": {
+      "modules": "1.2G",
+      "docs": "2.0M",
+      "scripts": "796.0K",
+      "total": "2.7G"
+    }
+  },
+  "modules": {
+    "total": 171,
+    "categories": 12,
+    "by_category": {
+      "shell": {
+        "count": 35,
+        "lines": 5243
+      },
+      "virtualization": {
+        "count": 4,
+        "lines": 1971
+      },
+      "applications": {
+        "count": 8,
+        "lines": 1854
+      },
+      "system": {
+        "count": 8,
+        "lines": 1108
+      },
+      "hardware": {
+        "count": 12,
+        "lines": 2785
+      },
+      "network": {
+        "count": 11,
+        "lines": 2811
+      },
+      "development": {
+        "count": 4,
+        "lines": 963
+      },
+      "ml": {
+        "count": 26,
+        "lines": 2573
+      },
+      "containers": {
+        "count": 4,
+        "lines": 361
+      },
+      "security": {
+        "count": 17,
+        "lines": 2257
+      },
+      "packages": {
+        "count": 27,
+        "lines": 3034
+      },
+      "services": {
+        "count": 15,
+        "lines": 2798
+      }
+    },
+    "orphaned": 112
+  },
+  "health": {
+    "overall": 65,
+    "documentation": 51,
+    "security": 100
+  },
+  "security": {
+    "modules": 17,
+    "sops_secrets": 11,
+    "has_hardening": true
+  }
+}
