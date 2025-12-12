@@ -113,7 +113,7 @@
 
             # Services
             ./modules/services/offload-server.nix
-            ./modules/services/laptop-offload-client.nix # DISABLED: Causes remote build failures when desktop offline
+            ./modules/services/laptop-offload-client.nix
             ./modules/services/default.nix
             ./modules/services/scripts.nix # Shell aliases for ML containers (pytorch, tgi, etc)
             ./modules/services/users/default.nix
