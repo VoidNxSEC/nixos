@@ -43,7 +43,7 @@ in
 
     mcpServerPath = mkOption {
       type = types.str;
-      default = "/etc/nixos/projects/securellm-mcp";
+      default = ""; # Set via flake input when available
       description = "Path to MCP server installation";
     };
 
