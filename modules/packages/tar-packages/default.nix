@@ -254,6 +254,7 @@ in
 {
   imports = [
     ./packages/zellij.nix
+    ./packages/lynis.nix
   ];
 
   # ============================================================
