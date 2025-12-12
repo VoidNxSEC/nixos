@@ -67,6 +67,12 @@ with lib;
           # Enable aggressive substitution to avoid local builds
           substitute = true;
           builders-use-substitutes = true;
+
+          # Allow local git+file URIs for development (avoids restricted mode errors)
+          extra-allowed-uris = [
+            "git+file:///home/kernelcore/dev/projects"
+            "path:/home/kernelcore/dev/projects"
+          ];
         }
       ];
 

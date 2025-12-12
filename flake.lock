@@ -435,17 +435,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1765536704,
-        "narHash": "sha256-XeCsIWMGYmoSt/ve1T/pOXNEVyDyOhpQokOMhjLoxrQ=",
-        "owner": "VoidNxSEC",
-        "repo": "securellm-mcp",
-        "rev": "a1383039fa911248a53221e47225a58edc78557f",
-        "type": "github"
+        "lastModified": 1765557802,
+        "narHash": "sha256-Bmq8oGp301WJTYtKAaAhvhyMVNODyjDnzS6Yqe5TMSk=",
+        "ref": "refs/heads/main",
+        "rev": "b9974eb9edb14f8341454a1d6c0217badf5fc88b",
+        "revCount": 5,
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/securellm-mcp"
       },
       "original": {
-        "owner": "VoidNxSEC",
-        "repo": "securellm-mcp",
-        "type": "github"
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/securellm-mcp"
       }
     },
     "sops-nix": {
