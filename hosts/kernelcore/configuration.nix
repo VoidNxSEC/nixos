@@ -588,12 +588,13 @@
 
   services.tailscale.enable = true;
 
-  #modules.audio.production = {
-  #enable = true;
-  #jackAudio = true;
-  #plugins = true;
-  #synthesizers = true;
-  #};
+  # Video Production with OBS, NVIDIA, and mic jack fix
+  modules.audio.videoProduction = {
+    enable = true;
+    enableNVENC = true;
+    fixHeadphoneMute = true;  # Fix para mic P2 mutando speaker
+    lowLatency = true;
+  };
 
   services.xserver.screenSection = ''
     Option "metamodes" "nvidia-auto-select +0+0 (ForceFullCompositionPipeLIne=On)"
@@ -1189,7 +1190,18 @@
     ];
   };
 
-  services.blueman.enable = true;
+  programs.vmctl = {
+    enable = true;
+    vms = {
+      wazuh = {
+        image = "/var/lib/vm-images/wazuh.qcow2";
+        memory = "4G";
+        cpus = 2;
+      };
+    };
+  };
+
+  # services.blueman.enable = true;
 
   system.stateVersion = "26.05";
 }
