@@ -17,7 +17,7 @@
     # PROJECTS - Independent flakes on GitHub
     # ═══════════════════════════════════════════════════════════════
     securellm-mcp = {
-      url = "github:VoidNxSEC/securellm-mcp";
+      url = "git+file:///home/kernelcore/dev/projects/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-bridge = {
@@ -136,7 +136,6 @@
 
             # Packages (declarative .deb, flatpak, etc.)
             ./modules/packages
-            ./projects
 
             # Programs
             ./modules/programs/default.nix
@@ -152,6 +151,7 @@
             ./modules/system/services.nix
             ./modules/system/aliases.nix
             ./modules/system/ml-gpu-users.nix
+            ./modules/system/binary-cache.nix
 
             # Modules moved to knowledge/ (archived)
             # ./modules/system/sudo-claude-code.nix
