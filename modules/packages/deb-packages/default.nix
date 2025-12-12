@@ -221,6 +221,10 @@ let
 
 in
 {
+  imports = [
+    ./packages/protonpass.nix
+  ];
+
   options.kernelcore.packages.deb = {
     enable = mkEnableOption "Declarative .deb package management";
 
