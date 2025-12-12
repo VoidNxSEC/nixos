@@ -2,9 +2,9 @@
 ║                    NIXOS ARCHITECTURE TREE                                ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
-Generated: 2025-12-11 18:49:55 -02
+Generated: 2025-12-12 02:31:13 -02
 Location:  /etc/nixos
-Branch:    main (28c3297)
+Branch:    main (add8e39)
 
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -13,7 +13,8 @@ Branch:    main (28c3297)
 │   ├── snapshots/
 │   │   ├── snapshot-20251210-054056.txt
 │   │   ├── snapshot-20251210-054112.txt
-│   │   └── snapshot-20251210-054218.txt
+│   │   ├── snapshot-20251210-054218.txt
+│   │   └── snapshot-20251211-184953.txt
 │   ├── ARCHITECTURE-REPORT.json
 │   ├── ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.txt
@@ -67,6 +68,7 @@ Branch:    main (28c3297)
 │   ├── ARCHITECTURE-TRACKING.md
 │   ├── ARCHITECTURE-TREE.md
 │   ├── ARCHITECTURE-TREE.txt
+│   ├── AUDIO_TROUBLESHOOTING.md
 │   ├── AUDITD_INVESTIGATION.md*
 │   ├── auditoria-disco-20251122-054711.txt
 │   ├── AUDITORIA-DISCO-FERRAMENTAS.md
@@ -531,11 +533,13 @@ Branch:    main (28c3297)
 │   │   ├── nix.nix*
 │   │   ├── services.nix*
 │   │   └── ssh-config.nix
-│   └── virtualization/
-│       ├── default.nix
-│       ├── macos-kvm.nix
-│       ├── vmctl.nix
-│       └── vms.nix*
+│   ├── virtualization/
+│   │   ├── default.nix
+│   │   ├── macos-kvm.nix
+│   │   ├── vmctl.nix
+│   │   └── vms.nix*
+│   ├── TEMPLATE_GUIDE.md
+│   └── TEMPLATE.nix
 ├── overlays/
 │   ├── default.nix
 │   ├── hyprland.nix
@@ -560,13 +564,19 @@ Branch:    main (28c3297)
 │   │   ├── default.nix
 │   │   ├── flake.lock
 │   │   └── flake.nix
-│   └── i915-governor/
-│       ├── nix/
-│       │   └── package.nix
+│   ├── i915-governor/
+│   │   ├── nix/
+│   │   │   └── package.nix
+│   │   ├── src/
+│   │   │   └── main.zig
+│   │   ├── build.zig
+│   │   └── default.nix
+│   └── spider-nix/
 │       ├── src/
-│       │   └── main.zig
-│       ├── build.zig
-│       └── default.nix
+│       │   └── spider_nix/
+│       ├── tests/
+│       ├── default.nix
+│       └── pyproject.toml
 ├── scripts/
 │   ├── nixos-shell/
 │   │   ├── scripts/
@@ -686,6 +696,6 @@ Branch:    main (28c3297)
 ├── knowledge.db
 └── run-lynis-audits.sh*
 
-127 directories, 550 files
+131 directories, 556 files
 
 ═══════════════════════════════════════════════════════════════════════════

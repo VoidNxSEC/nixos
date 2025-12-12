@@ -100,7 +100,8 @@
 
     # Bluetooth support
     bluetooth = {
-      enable = false;
+      enable = true;
+      #powerOnBoot = true;
     };
 
     # Applications
@@ -1187,6 +1188,8 @@
       obs-vaapi                  # Aceleração de hardware genérica
     ];
   };
+
+  services.blueman.enable = true;
 
   system.stateVersion = "26.05";
 }
