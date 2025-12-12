@@ -51,6 +51,9 @@ class BrowserSessionManager {
       
       if (user_agent) {
         await page.setUserAgent(user_agent);
+      } else {
+        // Default to a common browser User-Agent to avoid basic bot detection
+        await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
       }
 
       if (cookies && cookies.length > 0) {
