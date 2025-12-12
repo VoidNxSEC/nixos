@@ -1,3 +1,12 @@
 [zellij]
 src.github = "zellij-org/zellij"
 fetch.url = "https://github.com/zellij-org/zellij/releases/download/$ver/zellij-x86_64-unknown-linux-musl.tar.gz"
+
+[gemini-cli]
+src.git = "https://github.com/google-gemini/gemini-cli"
+fetch.git = "https://github.com/google-gemini/gemini-cli"
+git.rev = "v0.21.0-nightly.20251211.8c83e1ea9"
+
+[lynis]
+src.github = "CISOfy/lynis"
+fetch.url = "https://github.com/CISOfy/lynis/archive/$ver.tar.gz"
