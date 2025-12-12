@@ -11,13 +11,13 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "rev": "927102ea1b9a13bdb15b30524c2db86a4dfe640e",
-            "sha256": "sha256-qXxUzlLJ/rBQMaYAz5++5VQfn0e4TZ3cNkuE4Fq+V84=",
+            "rev": "54de67536da3af801bba8ab4657769d54dd30c2a",
+            "sha256": "sha256-53IAAiJSEK/GkUbmB1kIGiaU5bZTojG5sUBdGoEUUAc=",
             "sparseCheckout": [],
             "type": "git",
             "url": "https://github.com/google-gemini/gemini-cli"
         },
-        "version": "927102ea1b9a13bdb15b30524c2db86a4dfe640e"
+        "version": "54de67536da3af801bba8ab4657769d54dd30c2a"
     },
     "lynis": {
         "cargoLocks": null,
