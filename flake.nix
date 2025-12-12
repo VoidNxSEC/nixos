@@ -104,11 +104,11 @@
             ./modules/applications
 
             # Audio
-            #./modules/audio/production.nix
+            ./modules/audio/video-production.nix
 
             # Packages (declarative .deb, flatpak, etc.)
             ./modules/packages
-            #./projects
+            ./projects
 
             # Programs
             ./modules/programs/default.nix
