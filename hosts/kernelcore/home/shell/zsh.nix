@@ -196,9 +196,6 @@ in
         git-commit-smart = "git add -A && git commit -m \"feat: $(date +%Y-%m-%d) - $(git status --porcelain | grep -c ^M) changes\"";
         git-commit-ai = "/etc/nixos/scripts/auto-commit.sh";
 
-        # Cognitive Vault
-        cvault = "cd ~/.cognitive-vault";
-
         # Waybar
         wayreload = "killall waybar && waybar &";
         wayedit = "$EDITOR ~/.config/waybar/config";
