@@ -72,7 +72,7 @@
       devShells.${system} = shells;
 
       # imagens Docker e utilidades de build (definido abaixo em lib/packages.nix)
-      packages.${system} = import ./lib/packages.nix { inherit pkgs self; };
+      packages.${system} = import ./lib/packages.nix { inherit pkgs self inputs; };
 
       # nix run .#securellm-mcp
       apps.${system} = {
