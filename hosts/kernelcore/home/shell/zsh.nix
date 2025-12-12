@@ -190,7 +190,7 @@ in
             --prune";
 
         # MCP Server
-        mcp-server-start = "node /etc/nixos/modules/ml/integrations/mcp/server/build/src/index.js --log-level=INFO";
+        mcp-server-start = "node /etc/nixos/projects/securellm-mcp/build/src/index.js --log-level=INFO";
 
         # Smart Commits
         git-commit-smart = "git add -A && git commit -m \"feat: $(date +%Y-%m-%d) - $(git status --porcelain | grep -c ^M) changes\"";
