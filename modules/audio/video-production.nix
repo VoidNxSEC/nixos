@@ -218,9 +218,9 @@ in
       "audio-mixer" = "helvum &";
       "audio-effects" = "easyeffects &";
       
-      # NVIDIA monitoring
-      "gpu-watch" = "watch -n 1 nvidia-smi";
-      "nvtop" = "nvtop";
+      # NVIDIA monitoring (using mkDefault to avoid conflicts)
+      "gpu-watch" = mkDefault "watch -n 1 nvidia-smi";
+      "nvtop" = mkDefault "nvtop";
       
       # Encoding
       "to-h264-nvenc" = "ffmpeg -hwaccel cuda -i";
