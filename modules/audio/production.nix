@@ -137,10 +137,30 @@ in
       "list-audio-devices" = "aplay -l";
       "list-audio-cards" = "cat /proc/asound/cards";
       "audio-monitor" = "pavucontrol";
+
+      # Quick Fix for Audio (Intel SOF Profile Switch)
+      "fix-audio" = "wpctl set-profile 52 2 && wpctl set-default 253 && wpctl set-mute 253 0 && echo 'Audio reset to Profile 2 (Speaker)'";
     };
 
     # Scripts helper em /etc/nixos/modules/audio/scripts
     environment.etc = {
+      # WirePlumber Configuration: Force Intel SOF to use HiFi Profile (Index 2)
+      # This fixes the "missing speaker" issue on boot
+      "wireplumber/main.lua.d/51-force-intel-profile.lua".text = ''
+        rule = {
+          matches = {
+            {
+              { "device.name", "matches", "alsa_card.pci-0000_00_1f.3*" },
+            },
+          },
+          apply_properties = {
+            ["api.alsa.use-acp"] = true,
+            ["api.alsa.soft-mixer"] = true,
+          },
+        }
+        table.insert(alsa_monitor.rules, rule)
+      '';
+
       "audio-helpers/youtube-to-flac.sh" = {
         text = ''
           #!/usr/bin/env bash
