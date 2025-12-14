@@ -110,8 +110,8 @@ in
     # HTTP/3 QUIC Support
     enableHTTP3 = mkOption {
       type = types.bool;
-      default = true;
-      description = "Enable HTTP/3 with QUIC for low latency";
+      default = false; # Disabled by default to avoid package compatibility issues
+      description = "Enable HTTP/3 with QUIC for low latency (requires nginxQuic package)";
     };
 
     # Connection pooling
@@ -183,11 +183,8 @@ in
 
       # Global settings
       appendHttpConfig = ''
-        # Connection pooling
-        ${optionalString cfg.enableConnectionPooling ''
-          upstream_keepalive_timeout 60s;
-          upstream_keepalive_requests 100;
-        ''}
+        # Connection pooling (Keepalive must be configured in upstream blocks, not global http)
+        # Placeholder for future upstream block implementation
 
         # Rate limiting zones
         ${concatStringsSep "\n" (
