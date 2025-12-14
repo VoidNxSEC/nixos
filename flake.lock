@@ -182,6 +182,24 @@
         "type": "github"
       }
     },
+    "flake-utils_8": {
+      "inputs": {
+        "systems": "systems_8"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -366,6 +384,7 @@
         "securellm-mcp": "securellm-mcp",
         "sops-nix": "sops-nix",
         "spider-nix": "spider-nix",
+        "swissknife": "swissknife",
         "vmctl": "vmctl"
       }
     },
@@ -487,6 +506,24 @@
         "type": "github"
       }
     },
+    "swissknife": {
+      "inputs": {
+        "flake-utils": "flake-utils_7",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1765721367,
+        "narHash": "sha256-Eecw2zt+hh4iTxQnbJcY0/GsI+3vxuAMNHB2Fy5STWA=",
+        "path": "/home/kernelcore/dev/projects/swissknife",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/kernelcore/dev/projects/swissknife",
+        "type": "path"
+      }
+    },
     "systems": {
       "locked": {
         "lastModified": 1681028828,
@@ -592,9 +629,24 @@
         "type": "github"
       }
     },
+    "systems_8": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
     "vmctl": {
       "inputs": {
-        "flake-utils": "flake-utils_7",
+        "flake-utils": "flake-utils_8",
         "nixpkgs": [
           "nixpkgs"
         ]
