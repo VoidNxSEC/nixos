@@ -179,7 +179,7 @@ in
       recommendedTlsSettings = true;
 
       # HTTP/3 support
-      package = mkIf cfg.enableHTTP3 pkgs.nginxQuic;
+      #package = mkIf cfg.enableHTTP3 pkgs.nginxQuic;
 
       # Global settings
       appendHttpConfig = ''
