@@ -85,7 +85,7 @@ in
     performance = {
       threads = mkOption {
         type = types.int;
-        default = 2; # Increased from 1 to improve parallelism and reduce I/O blocking
+        default = 4; # Increased to 4 to distribute CPU load better
         description = "Number of detection threads";
       };
 
@@ -155,7 +155,7 @@ in
         # Detection engine settings
         detect-engine = [
           {
-            profile = "high";
+            profile = "medium"; # Reduced from "high" to lower CPU usage
             sgh-mpm-context = "auto";
             inspection-recursion-limit = 3000;
           }
