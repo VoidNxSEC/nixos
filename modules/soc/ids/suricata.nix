@@ -67,13 +67,13 @@ in
     performance = {
       threads = mkOption {
         type = types.int;
-        default = 2;
+        default = 1;
         description = "Number of detection threads";
       };
 
       memcap = mkOption {
         type = types.str;
-        default = "512mb";
+        default = "256mb";
         description = "Memory cap for flow tracking";
       };
 
