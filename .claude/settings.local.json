@@ -36,7 +36,10 @@
       "Bash(sudo systemctl disable:*)",
       "Bash(sudo systemctl stop:*)",
       "Bash(sudo systemctl mask:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(readlink:*)",
+      "Bash(top:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

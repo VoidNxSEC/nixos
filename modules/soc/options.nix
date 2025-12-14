@@ -20,7 +20,7 @@ in
         "standard"
         "enterprise"
       ];
-      default = "standard";
+      default = "minimal";
       description = ''
         SOC deployment profile:
         - minimal: Log aggregation + basic alerting (low resources)
