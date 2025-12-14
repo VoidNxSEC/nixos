@@ -44,6 +44,14 @@
       url = "git+file:///home/kernelcore/dev/projects/swissknife";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # ═══════════════════════════════════════════════════════════════
+    # PHANTOM - AI Document Intelligence Toolkit
+    # ═══════════════════════════════════════════════════════════════
+    phantom = {
+      url = "git+file:///home/kernelcore/dev/Projects/phantom";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -68,6 +76,7 @@
             securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
             securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
             swissknife-tools = inputs.swissknife.packages.${system};
+            phantom = inputs.phantom.packages.${system}.default;
           })
         ];
       };
@@ -125,6 +134,7 @@
                   securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
                   securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
                   swissknife-tools = inputs.swissknife.packages.${system};
+                  phantom = inputs.phantom.packages.${system}.default;
                 })
               ];
               nixpkgs.config.allowUnfree = true;
@@ -150,13 +160,13 @@
             #./modules/services/rsync-server.nix # DISABLED: File doesn't exist
 
             # Enable SecureLLM MCP Server Daemon (runs on boot)
-            #{
-            #services.securellm-mcp = {
-            #enable = true;
-            #daemon.enable = true;
-            #daemon.logLevel = "INFO";
-            #};
-            #}
+            {
+              services.securellm-mcp = {
+                enable = true;
+                daemon.enable = true;
+                daemon.logLevel = "INFO";
+              };
+            }
 
             # Desktop environments
             ./modules/desktop
