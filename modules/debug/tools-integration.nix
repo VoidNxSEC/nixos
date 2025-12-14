@@ -35,9 +35,9 @@
 
     # Handy aliases
     environment.shellAliases = {
-      # Quick access
+      # Quick access (using different names to avoid conflicts with rebuild-advanced.nix)
       doctor = "sudo swiss-doctor";
-      rebuild = "sudo swiss-rebuild";
+      swiss = "sudo swiss-rebuild"; # Renamed from 'rebuild' to avoid conflict
 
       # Monitor aliases
       monitor = "swiss-monitor";
