@@ -266,7 +266,24 @@
 
             # Security modules LAST (highest priority to override other configs)
             ./modules/security
-            ./dev/default.nix
+            #./dev/default.nix
+
+            # SOC - Security Operations Center (NSA-level infrastructure)
+            ./modules/soc
+            {
+              kernelcore.soc = {
+                enable = true;
+                profile = "standard"; # minimal | standard | enterprise
+                retention.days = 30;
+
+                # Alert configuration (customize as needed)
+                alerting = {
+                  enable = true;
+                  minSeverity = "medium";
+                };
+              };
+            }
+
             ./sec/hardening.nix # Final override
           ];
         };
