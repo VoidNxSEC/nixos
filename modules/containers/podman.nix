@@ -58,7 +58,7 @@ with lib;
     ];
 
     # Enable cgroups v2 (recommended for Podman)
-    systemd.enableUnifiedCgroupHierarchy = mkDefault true;
+    #systemd.enableUnifiedCgroupHierarchy = mkDefault true;
 
     # Configure storage
     virtualisation.containers.storage.settings = {
