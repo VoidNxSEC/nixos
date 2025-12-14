@@ -140,7 +140,17 @@
             ./modules/services/gpu-orchestration.nix
             ./modules/services/mosh.nix # Mosh server for mobile shell (Blink Shell iOS)
             ./modules/services/mobile-workspace.nix # Isolated workspace for mobile access
+            ./modules/services/mcp-server.nix # SecureLLM MCP Server
             #./modules/services/rsync-server.nix # DISABLED: File doesn't exist
+
+            # Enable SecureLLM MCP Server Daemon (runs on boot)
+            {
+              services.securellm-mcp = {
+                enable = true;
+                daemon.enable = true;
+                daemon.logLevel = "INFO";
+              };
+            }
 
             # Desktop environments
             ./modules/desktop
