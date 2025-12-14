@@ -99,6 +99,25 @@
         autoConnect = false;
         overrideDNS = false; # IMPORTANTE: deixar systemd-resolved gerenciar DNS
       };
+
+      # Reverse proxy for Tailscale services (NGINX)
+      # Enable when you want to expose services like Ollama via subdomain
+      proxy.nginx-tailscale = {
+        enable = false; # Set to true to enable NGINX reverse proxy
+        tailnetDomain = "tail-scale.ts.net";
+        # services.ollama = { enable = true; subdomain = "ollama"; upstreamPort = 11434; };
+      };
+
+      # nftables-based firewall zones
+      # CAUTION: This replaces iptables firewall entirely
+      security.firewall-zones = {
+        enable = false; # Review nftables rules before enabling
+      };
+    };
+
+    # SSH client configuration - declarative multi-identity management
+    ssh = {
+      enable = true;
     };
 
     nvidia = {
