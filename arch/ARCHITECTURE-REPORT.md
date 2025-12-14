@@ -1,7 +1,7 @@
 # NixOS Architecture Analysis Report
 
 > **Professional Edition v2.0.0**
-> **Generated**: 2025-12-12 02:31:13 -02
+> **Generated**: 2025-12-14 16:02:34 -02
 > **Location**: `/etc/nixos`
 
 ---
@@ -24,12 +24,12 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Files** | 887 |
-| **Total Directories** | 354 |
-| **Repository Size** | 2.7G |
+| **Total Files** | 861 |
+| **Total Directories** | 262 |
+| **Repository Size** | 2.2G |
 | **Git Branch** | `main` |
-| **Git Commit** | `add8e39` |
-| **Total Commits** | 212 |
+| **Git Commit** | `7779e09b` |
+| **Total Commits** | 247 |
 | **Contributors** | 3 |
 | **Repository Age** | 0 days |
 
@@ -37,18 +37,18 @@
 
 | Metric | Value |
 |--------|-------|
-| **.nix files** | 249 (47364 lines) |
-| **Total modules** | 171 |
+| **.nix files** | 274 (51141 lines) |
+| **Total modules** | 173 |
 | **Module categories** | 12 |
-| **Modules size** | 1.2G |
+| **Modules size** | 1.1G |
 
 ### Health Metrics
 
 | Metric | Score | Status |
 |--------|-------|--------|
-| **Overall Health** | 65/100 | ⚠️ Needs Work |
+| **Overall Health** | 64/100 | ⚠️ Needs Work |
 | **Security** | 100/100 | ✅ Strong |
-| **Documentation** | 51/100 | ⚠️ Needs Work |
+| **Documentation** | 49/100 | ⚠️ Needs Work |
 
 ---
 
@@ -57,16 +57,16 @@
 | Category | Modules | Lines | Description |
 |----------|---------|-------|-------------|
 | **shell** | 35 | 5243 | Shell configuration and aliases |
-| **packages** | 27 | 3062 | Custom packages and overlays |
-| **ml** | 26 | 2573 | Machine learning infrastructure |
-| **security** | 17 | 2257 | Security hardening and policies |
-| **services** | 15 | 2798 | System services and daemons |
-| **hardware** | 12 | 2785 | Hardware configurations (GPU, CPU, peripherals) |
-| **network** | 11 | 2811 | Network configuration and services |
-| **system** | 8 | 1108 | Core system configuration |
-| **applications** | 8 | 1854 | User applications and tools |
+| **packages** | 29 | 2620 | Custom packages and overlays |
+| **ml** | 22 | 1953 | Machine learning infrastructure |
+| **security** | 17 | 2249 | Security hardening and policies |
+| **services** | 16 | 3021 | System services and daemons |
+| **network** | 12 | 2816 | Network configuration and services |
+| **hardware** | 12 | 2712 | Hardware configurations (GPU, CPU, peripherals) |
+| **system** | 9 | 1130 | Core system configuration |
+| **applications** | 8 | 1778 | User applications and tools |
+| **development** | 5 | 973 | Development environments and tools |
 | **virtualization** | 4 | 1971 | VMs, QEMU, libvirt |
-| **development** | 4 | 963 | Development environments and tools |
 | **containers** | 4 | 361 | Docker, Podman, NixOS containers |
 
 ---
@@ -87,11 +87,11 @@
 
 ## 📊 Health Score
 
-### Overall: 65/100
+### Overall: 64/100
 
 | Component | Score |
 |-----------|-------|
-| Documentation | 51/100 |
+| Documentation | 49/100 |
 | Security | 100/100 |
 | Structure | 100/100 |
 
@@ -103,7 +103,7 @@
 
 ### 📚 Documentation
 
-- **Current**: 51%
+- **Current**: 49%
 - **Target**: 80%+
 - **Action**: Add `description` fields to module options
 - **Benefit**: Better maintainability and onboarding
@@ -117,19 +117,19 @@
 
 | Type | Count | Lines |
 |------|-------|-------|
-| .nix | 249 | 47364 |
-| .sh | 75 | 14164 |
-| .md | 286 | 104302 |
-| .yaml | 16 | - |
+| .nix | 274 | 51141 |
+| .sh | 94 | 15925 |
+| .md | 258 | 98515 |
+| .yaml | 14 | - |
 
 ### Directory Sizes
 
 | Directory | Size |
 |-----------|------|
-| modules/ | 1.2G |
+| modules/ | 1.1G |
 | docs/ | 2.0M |
-| scripts/ | 796.0K |
-| **Total** | **2.7G** |
+| scripts/ | 1.3M |
+| **Total** | **2.2G** |
 
 ---
 
@@ -142,16 +142,14 @@
 │   │   ├── snapshot-20251210-054056.txt
 │   │   ├── snapshot-20251210-054112.txt
 │   │   ├── snapshot-20251210-054218.txt
-│   │   └── snapshot-20251211-184953.txt
+│   │   ├── snapshot-20251211-184953.txt
+│   │   └── snapshot-20251212-023111.txt
 │   ├── ARCHITECTURE-REPORT.json
 │   ├── ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.txt
 │   ├── ARCHITECTURE-TREE.md
 │   ├── ARCHITECTURE-TREE.txt
 │   └── README.md
-├── dev/
-│   ├── flakes/
-│   └── default.nix
 ├── docs/
 │   ├── applications/
 │   │   └── ZELLIJ-GUIDE.md
@@ -190,6 +188,7 @@
 │   ├── 2025-11-26-claude-preciso-acessar-o-server-desktop-o-guiux.txt
 │   ├── AGENT-EMPOWERMENT-TOOLKIT.md
 │   ├── AGENT-TOOLKIT-QUICKSTART.md
+│   ├── alacritty-regex-error-report.md
 │   ├── ALTERNATIVA-REINSTALACAO-LIMPA.md
 │   ├── ANALISE-SSH-CONFIG-PROBLEMAS.md
 │   ├── ARCHITECTURE-BLUEPRINT.md
@@ -262,6 +261,8 @@
 │   ├── ML-MODULES-RESTRUCTURE-PLAN.md
 │   ├── ml-offload-phase2-design.md
 │   ├── ml-offload-testing-plan.md
+│   ├── mobile-workspace-setup-complete.md
+│   ├── mosh-connection-test.md
 │   ├── neovim-integration-analysis.md
 │   ├── NEXT-SESSION-PROMPT.md
 │   ├── NIX-EMERGENCY-PROCEDURES.md
@@ -288,6 +289,7 @@
 │   ├── SESSION-1-SUMMARY.md
 │   ├── SIEM-INTEGRATION.md
 │   ├── SOPS-TROUBLESHOOTING.md*
+│   ├── ssh-mosh-setup-complete.md
 │   ├── STACK-SERVER-CLIENT-COMPLETE-GUIDE.md
 │   ├── SUMMARY.md*
 │   ├── SYSTEMD_CENTRALIZATION_INDEX.md*
@@ -345,6 +347,7 @@
 │   │   │   │   ├── README.md
 │   │   │   │   └── zsh.nix
 │   │   │   ├── alacritty.nix
+│   │   │   ├── brave.nix
 │   │   │   ├── flameshot.nix
 │   │   │   ├── git.nix
 │   │   │   ├── home.nix*
@@ -358,8 +361,6 @@
 │   │   └── hardware-configuration.nix*
 │   └── workstation/
 │       └── configuration.nix
-├── knowledge/
-│   └── sudo-claude-code.nix.backup
 ├── lib/
 │   ├── packages.nix*
 │   ├── shell.nix*
@@ -371,12 +372,15 @@
 │   │   ├── default.nix
 │   │   ├── firefox-privacy.nix*
 │   │   ├── nemo-full.nix
+│   │   ├── nixos.code-workspace
 │   │   ├── vscode-secure.nix*
 │   │   ├── vscodium-secure.nix*
 │   │   └── zellij.nix
 │   ├── audio/
+│   │   ├── default.nix
 │   │   ├── production.nix
-│   │   └── README.md
+│   │   ├── README.md
+│   │   └── video-production.nix
 │   ├── containers/
 │   │   ├── default.nix
 │   │   ├── docker.nix*
@@ -384,7 +388,9 @@
 │   │   └── podman.nix
 │   ├── debug/
 │   │   ├── debug-init.nix*
-│   │   └── test-init.nix*
+│   │   ├── default.nix
+│   │   ├── test-init.nix*
+│   │   └── tools-integration.nix
 │   ├── desktop/
 │   │   ├── yazi/
 │   │   │   └── yazi.nix
@@ -394,6 +400,7 @@
 │   ├── development/
 │   │   ├── cicd.nix*
 │   │   ├── claude-profiles.nix
+│   │   ├── default.nix
 │   │   ├── environments.nix*
 │   │   └── jupyter.nix*
 │   ├── hardware/
@@ -413,25 +420,6 @@
 │   │   └── wifi-optimization.nix
 │   ├── ml/
 │   │   ├── applications/
-│   │   │   ├── securellm-bridge/
-│   │   │   │   ├── cli/
-│   │   │   │   ├── config/
-│   │   │   │   ├── crates/
-│   │   │   │   ├── docker/
-│   │   │   │   ├── docs/
-│   │   │   │   ├── examples/
-│   │   │   │   ├── mnt/
-│   │   │   │   ├── nix/
-│   │   │   │   ├── src/
-│   │   │   │   ├── Cargo.lock
-│   │   │   │   ├── Cargo.toml
-│   │   │   │   ├── CLAUDE.md
-│   │   │   │   ├── default.nix
-│   │   │   │   ├── flake.nix
-│   │   │   │   ├── LICENSE-APACHE
-│   │   │   │   ├── LICENSE-MIT
-│   │   │   │   ├── Makefile
-│   │   │   │   └── README.md
 │   │   │   ├── default.nix
 │   │   │   └── README.md
 │   │   ├── infrastructure/
@@ -445,7 +433,6 @@
 │   │   │   └── storage.nix*
 │   │   ├── integrations/
 │   │   │   ├── mcp/
-│   │   │   │   ├── server/
 │   │   │   │   ├── config.nix
 │   │   │   │   └── default.nix
 │   │   │   ├── neovim/
@@ -488,6 +475,7 @@
 │   │   ├── monitoring/
 │   │   │   └── tailscale-monitor.nix
 │   │   ├── proxy/
+│   │   │   ├── default.nix
 │   │   │   ├── nginx-tailscale.nix
 │   │   │   └── tailscale-services.nix
 │   │   ├── security/
@@ -529,7 +517,9 @@
 │   │   │   └── js-packages.nix
 │   │   ├── lib/
 │   │   │   ├── builders.nix
-│   │   │   └── sandbox.nix
+│   │   │   ├── fetchers.nix
+│   │   │   ├── sandbox.nix
+│   │   │   └── types.nix
 │   │   ├── _sources/
 │   │   │   ├── generated.json
 │   │   │   └── generated.nix
@@ -555,10 +545,12 @@
 │   │   └── SETUP.md
 │   ├── programs/
 │   │   ├── cognitive-vault.nix
-│   │   └── default.nix
+│   │   ├── default.nix
+│   │   └── vmctl.nix
 │   ├── secrets/
 │   │   ├── api-keys.nix
 │   │   ├── aws-bedrock.nix
+│   │   ├── default.nix
 │   │   ├── sops-config.nix*
 │   │   └── tailscale.nix
 │   ├── security/
@@ -587,6 +579,7 @@
 │   │   │   ├── default.nix*
 │   │   │   ├── gemini-agent.nix
 │   │   │   └── gitlab-runner.nix
+│   │   ├── config-auditor.nix
 │   │   ├── default.nix*
 │   │   ├── gpu-orchestration.nix
 │   │   ├── laptop-builder-client.nix
@@ -650,17 +643,49 @@
 │   │   ├── gpu-flags.nix*
 │   │   ├── INTEGRATION.md*
 │   │   └── training-logger.nix
+│   ├── soc/
+│   │   ├── alerting/
+│   │   │   └── alerting.nix
+│   │   ├── dashboards/
+│   │   │   └── grafana.nix
+│   │   ├── edr/
+│   │   │   ├── edr.nix
+│   │   │   └── fim.nix
+│   │   ├── ids/
+│   │   │   ├── suricata.nix
+│   │   │   └── threat-intel.nix
+│   │   ├── network/
+│   │   │   ├── dns-monitor.nix
+│   │   │   └── netflow.nix
+│   │   ├── siem/
+│   │   │   ├── log-aggregator.nix
+│   │   │   ├── opensearch.nix
+│   │   │   └── wazuh.nix
+│   │   ├── default.nix
+│   │   ├── options.nix
+│   │   └── tools.nix
 │   ├── system/
 │   │   ├── bash/
 │   │   │   └── void.sh
 │   │   ├── aliases.nix*
 │   │   ├── binary-cache.nix
+│   │   ├── default.nix
 │   │   ├── emergency-monitor.nix
 │   │   ├── memory.nix*
 │   │   ├── ml-gpu-users.nix
 │   │   ├── nix.nix*
 │   │   ├── services.nix*
 │   │   └── ssh-config.nix
+│   ├── tools/
+│   │   ├── default.nix
+│   │   ├── dev.nix
+│   │   ├── diagnostics.nix
+│   │   ├── intel.nix
+│   │   ├── llm.nix
+│   │   ├── mcp.nix
+│   │   ├── nix-utils.nix
+│   │   ├── secops.nix
+│   │   └── secrets.nix
 │   ├── virtualization/
 │   │   ├── default.nix
 │   │   ├── macos-kvm.nix
@@ -673,38 +698,9 @@
 │   ├── hyprland.nix
 │   ├── python-packages.nix
 │   └── README.md
-├── projects/
-│   ├── cognitive-vault/
-│   │   ├── cli/
-│   │   │   ├── cmd/
-│   │   │   ├── internal/
-│   │   │   │   └── crypto/
-│   │   │   ├── default.nix
-│   │   │   ├── go.mod
-│   │   │   └── go.sum
-│   │   ├── core/
-│   │   │   ├── include/
-│   │   │   │   └── vault_core.h
-│   │   │   ├── src/
-│   │   │   ├── Cargo.lock
-│   │   │   ├── Cargo.toml
-│   │   │   └── default.nix
-│   │   ├── default.nix
-│   │   ├── flake.lock
-│   │   └── flake.nix
-│   ├── i915-governor/
-│   │   ├── nix/
-│   │   │   └── package.nix
-│   │   ├── src/
-│   │   │   └── main.zig
-│   │   ├── build.zig
-│   │   └── default.nix
-│   └── spider-nix/
-│       ├── src/
-│       │   └── spider_nix/
-│       ├── tests/
-│       ├── default.nix
-│       └── pyproject.toml
+├── reports/
+│   ├── audit_report_20251214_simple.md
+│   └── config_summary.md
 ├── scripts/
 │   ├── nixos-shell/
 │   │   ├── scripts/
@@ -717,10 +713,12 @@
 │   ├── add-to-sops.sh*
 │   ├── alacritty-enhancements-summary.md
 │   ├── alias-inspector.sh*
+│   ├── audit-config-simple.sh*
 │   ├── auditoria-disco.sh*
 │   ├── auto-commit.sh*
 │   ├── backup-rapido.sh*
 │   ├── clean-sudo.nix
+│   ├── create.sh*
 │   ├── deb-add*
 │   ├── desktop-cfg2.nix
 │   ├── desktop-cfg.nix
@@ -737,10 +735,18 @@
 │   ├── fix-sudo3.nix
 │   ├── fix-sudo.nix
 │   ├── generate-architecture-tree.sh*
+│   ├── generate-docs.sh*
 │   ├── generate-mcp-config.sh*
 │   ├── generate-tree-diagram.sh*
+│   ├── intel-dev.sh*
+│   ├── intel-health.sh*
+│   ├── intel-nix.sh*
+│   ├── intel-scan.sh*
+│   ├── intel-score.sh*
+│   ├── intel.sh*
 │   ├── interage-llm.sh*
 │   ├── investigate-infra.sh*
+│   ├── jsonl2pretty.sh*
 │   ├── kill-children.sh*
 │   ├── limpa-processos.sh*
 │   ├── limpeza-agressiva.sh*
@@ -748,18 +754,25 @@
 │   ├── load-aws-bedrock.sh*
 │   ├── mcp-health-check.sh*
 │   ├── mcp-helper.sh*
+│   ├── migrate-projects.sh
 │   ├── migrate-sec-to-sops.sh*
 │   ├── monitora-logs-seguranca.sh*
 │   ├── monitora-processos-detalhado.sh*
 │   ├── monitora-rede.sh*
 │   ├── monitor-nix-store.sh*
+│   ├── monitor-rebuild-attach.sh
+│   ├── monitor-rebuild-complete.sh*
 │   ├── monitor-rebuild.sh*
 │   ├── MONITOR-REBUILD-USAGE.md
 │   ├── nix-emergency.sh*
 │   ├── nix-hard-reset.sh*
 │   ├── nixos-perfect-install.sh
+│   ├── pipeline-check.sh*
 │   ├── post-rebuild-validate.sh*
+│   ├── pre-commit.sh*
 │   ├── pre_processa_dados_llm.sh*
+│   ├── push-all-projects.sh*
+│   ├── scan.sh*
 │   ├── SecOps (copy)
 │   ├── setup-claude-secrets.sh*
 │   ├── setup-desktop-offload.sh*
@@ -768,6 +781,7 @@
 │   ├── setup-packages*
 │   ├── simple-update.sh*
 │   ├── sops-editor.sh*
+│   ├── ssh-diagnostics.sh*
 │   ├── sync-from-desktop.sh*
 │   ├── sync-github-secrets.sh*
 │   ├── sync-to-desktop.sh*
@@ -783,6 +797,7 @@
 │   ├── update-packages.sh*
 │   ├── update-rust-package.sh
 │   ├── update-secrets.sh*
+│   ├── vram_examples.sh*
 │   ├── vscode-remote-test-summary.md
 │   ├── vscode-ssh-diagnostic.sh*
 │   ├── vscodium-wrapper.sh*
@@ -818,13 +833,15 @@
 │   ├── README.md
 │   └── tailscale-integration-test.nix
 ├── CLAUDE.md
-├── example.yaml
+├── find_patterns.sh*
 ├── flake.lock*
-├── flake.nix*
+├── flake.nix
 ├── knowledge.db
-└── run-lynis-audits.sh*
+├── README.md
+├── run-lynis-audits.sh*
+└── shell.nix
 
-131 directories, 556 files
+110 directories, 594 files
 ```
 
 ---
@@ -832,7 +849,7 @@
 ## 📝 Metadata
 
 - **Report Version**: 2.0.0
-- **Generated**: 2025-12-12 02:31:13 -02
+- **Generated**: 2025-12-14 16:02:34 -02
 - **Tool**: NixOS Architecture Analysis Tool
 - **Repository**: /etc/nixos
 
