@@ -87,7 +87,7 @@ with lib;
       wantedBy = [ "timers.target" ];
       timerConfig = {
         OnCalendar = "weekly";
-        RandomizedDelaySec = "2h";
+        #RandomizedDelaySec = "2h";
         Persistent = true;
       };
     };
