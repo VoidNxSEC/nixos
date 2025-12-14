@@ -55,7 +55,8 @@ let
             reason = "Default fallback";
           };
 
-      _ = builtins.trace "Package ${name}: method='${decision.method}' (${decision.reason})" null;
+      # Debug trace disabled in production - uncomment for debugging:
+      # _ = builtins.trace "Package ${name}: method='${decision.method}' (${decision.reason})" null;
     in
     decision.method;
 
@@ -65,7 +66,8 @@ let
       tarFile = fetchers.fetchSource name pkg.source "tar.gz";
       extracted = fetchers.extractTarball name tarFile;
       method = if pkg.method == "auto" then autoDetectMethod name pkg extracted else pkg.method;
-      _ = builtins.trace "Package ${name}: Using '${method}'" null;
+      # Debug trace disabled in production - uncomment for debugging:
+      # _ = builtins.trace "Package ${name}: Using '${method}'" null;
 
       commonArgs = {
         inherit name extracted;

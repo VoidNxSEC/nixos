@@ -106,7 +106,9 @@
 
     grafana = {
       enable = true;
-      adminPassword = "changeme"; # Use agenix in production
+      # WARNING: Override this with SOPS secret in production!
+      # Use: grafana.adminPassword = lib.mkForce config.sops.secrets.grafana-password.path;
+      adminPassword = lib.mkDefault null; # Set via SOPS in production
     };
 
     exporters = {
