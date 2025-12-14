@@ -193,6 +193,7 @@
             ./modules/system/nix.nix
             ./modules/system/services.nix
             ./modules/system/aliases.nix
+            ./modules/system/io-scheduler.nix # TICKET #IO-992: Optimized IO & ZRAM
             ./modules/system/ml-gpu-users.nix
             ./modules/system/binary-cache.nix
             ./modules/system/ssh-config.nix # SSH client configuration
@@ -294,6 +295,9 @@
                 enable = true;
                 profile = "standard"; # minimal | standard | enterprise
                 retention.days = 30;
+
+                # Explicitly disable Suricata for now
+                ids.suricata.enable = false;
 
                 # Alert configuration (customize as needed)
                 alerting = {
