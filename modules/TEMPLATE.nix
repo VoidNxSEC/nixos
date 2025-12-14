@@ -6,7 +6,12 @@
 # Dependencies: [List key dependencies if any]
 # ============================================================
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
