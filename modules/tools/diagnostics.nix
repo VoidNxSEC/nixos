@@ -51,16 +51,16 @@ let
         exec "${pkgs.writeScriptBin "log-viewer" (builtins.readFile ../../scripts/nix-tools/log-viewer.sh)}/bin/log-viewer" "$@"
         ;;
       ps)
-        exec "${pkgs.writeScriptBin "ps-advanced" (builtins.readFile ./scripts/surgical/ps-advanced.sh)}/bin/ps-advanced" "$@" # Placeholder for advanced ps
+        exec "${pkgs.writeScriptBin "ps-advanced" (builtins.readFile ../../scripts/surgical/ps-advanced.sh)}/bin/ps-advanced" "$@"
         ;;
       io)
-        exec "${pkgs.writeScriptBin "io-surgeon" (builtins.readFile ./scripts/surgical/io-surgeon.sh)}/bin/io-surgeon" "$@"
+        exec "${pkgs.writeScriptBin "io-surgeon" (builtins.readFile ../../scripts/surgical/io-surgeon.sh)}/bin/io-surgeon" "$@"
         ;;
       net)
-        exec "${pkgs.writeScriptBin "net-conflict" (builtins.readFile ./scripts/surgical/net-conflict.sh)}/bin/net-conflict" "$@"
+        exec "${pkgs.writeScriptBin "net-conflict" (builtins.readFile ../../scripts/surgical/net-conflict.sh)}/bin/net-conflict" "$@"
         ;;
       psi)
-        exec "${pkgs.writeScriptBin "psi-sentinel" (builtins.readFile ./scripts/surgical/psi-sentinel.sh)}/bin/psi-sentinel" "$@"
+        exec "${pkgs.writeScriptBin "psi-sentinel" (builtins.readFile ../../scripts/surgical/psi-sentinel.sh)}/bin/psi-sentinel" "$@"
         ;;
       *)
         echo "Unknown diag command: $COMMAND"
