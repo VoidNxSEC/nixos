@@ -414,11 +414,10 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
+        "dirtyRev": "943baaae841e8d1c17b0597fe20753b57117f5a6-dirty",
+        "dirtyShortRev": "943baaa-dirty",
         "lastModified": 1765579220,
-        "narHash": "sha256-2tZOHjISWWwILM+g19IbSrAmPemJfGm9yB6djTHcdv8=",
-        "ref": "refs/heads/main",
-        "rev": "943baaae841e8d1c17b0597fe20753b57117f5a6",
-        "revCount": 5,
+        "narHash": "sha256-eIHkCYqSFgNYmJAzmYkgUfFqjaaDcxBRrjm2YiznhSs=",
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/securellm-bridge"
       },
