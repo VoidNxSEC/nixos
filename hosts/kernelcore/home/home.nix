@@ -18,6 +18,7 @@
     ./tmux.nix # Tmux configuration
     ./flameshot.nix # Screenshot tool (legacy - swappy preferred)
     ./glassmorphism # Glassmorphism design system (replaces theme.nix)
+    ./brave.nix # Brave browser configuration
   ];
 
   # ============================================================
@@ -164,7 +165,6 @@
       # ─────────────────────────────────────────────────────
       # Browser Fleet
       # ─────────────────────────────────────────────────────
-      brave
       vivaldi
       chromium
 

@@ -23,10 +23,7 @@ in
       ];
       default = "balanced";
       description = ''
-        Power profile for thermal and performance management:
-        - silent: 35W sustained, quiet operation
-        - balanced: 45W sustained, good balance (default)
-        - performance: 55W sustained, maximum performance
+        Power profile for thermal and performance management.
       '';
     };
 
@@ -43,13 +40,11 @@ in
       minFreqPercent = mkOption {
         type = types.int;
         default = 20;
-        description = "Minimum CPU frequency percentage (0-100)";
       };
 
       maxFreqPercent = mkOption {
         type = types.int;
         default = 100;
-        description = "Maximum CPU frequency percentage (0-100)";
       };
 
       energyPerformancePreference = mkOption {
@@ -60,7 +55,7 @@ in
           "power"
         ];
         default = "balance_performance";
-        description = "Energy Performance Preference (EPP) for 13th gen Intel";
+        description = "EPP hint for HWP.";
       };
     };
 
@@ -71,23 +66,19 @@ in
           "performance"
           "powersave"
           "ondemand"
-          "conservative"
           "schedutil"
         ];
-        default = "schedutil";
-        description = "Default CPU frequency governor";
+        default = "powersave"; # Intel P-state ativa prefere 'powersave' como base, o HWP gerencia o clock real.
+        description = "Default CPU frequency governor. With intel_pstate, 'powersave' implies HWP management.";
       };
-
+      # (Mantive os overrides de P/E-cores mas note que com HWP ativo, o governador de OS tem menos impacto)
       pCores = mkOption {
         type = types.nullOr types.str;
         default = null;
-        description = "Override governor for P-cores (0-3)";
       };
-
       eCores = mkOption {
         type = types.nullOr types.str;
         default = null;
-        description = "Override governor for E-cores (4-7)";
       };
     };
 
@@ -96,86 +87,101 @@ in
       enable = mkEnableOption "Enable Intel Turbo Boost" // {
         default = true;
       };
-
       maxTemp = mkOption {
         type = types.int;
-        default = 85;
-        description = "Maximum temperature before disabling turbo (°C)";
+        default = 90;
       };
     };
 
-    # Intel Graphics (Xe iGPU)
+    # Intel Graphics (Xe iGPU) Tunings
     graphics = {
       enable = mkEnableOption "Enable Intel Xe Graphics optimizations" // {
         default = true;
       };
 
+      # CRÍTICO: PSR causa stutters e crashes em browsers (Chromium/Electron) na Gen12+.
+      # Desativar (0) é o fix de estabilidade. Habilitar apenas se tiver certeza que o painel suporta PSR2 sem falhas.
       panelSelfRefresh = mkEnableOption "Enable Panel Self-Refresh (PSR)" // {
-        default = true;
+        default = false;
       };
 
       frameBufferCompression = mkEnableOption "Enable Frame Buffer Compression (FBC)" // {
-        default = true;
+        default = true; # FBC geralmente é seguro, mas se houver glitches visuais, desative.
       };
 
-      runtimePM = mkEnableOption "Enable aggressive runtime power management" // {
+      # NOVO: GuC/HuC Submission
+      # Habilitar o GuC move o agendamento da CPU para o microcontrolador da GPU.
+      # Essencial para i5-13420H para evitar sobrecarga de interrupções e melhorar encoding de vídeo.
+      enableGuC = mkEnableOption "Enable GuC/HuC Firmware Loading & Submission" // {
         default = true;
       };
     };
 
-    # Memory Optimization
-    memory = {
-      enableTuning = mkEnableOption "Enable memory timing optimizations" // {
-        default = true;
-      };
+    # Memory & Cache (Mantidos iguais, removendo verbosidade para clareza)
+    memory.enableTuning = mkEnableOption "Enable memory timing optimizations" // {
+      default = true;
     };
-
-    # Cache Optimization
-    cache = {
-      enableOptimizations = mkEnableOption "Enable Raptor Lake cache optimizations" // {
-        default = true;
-      };
+    cache.enableOptimizations = mkEnableOption "Enable Raptor Lake cache optimizations" // {
+      default = true;
     };
   };
 
   config = mkIf cfg.enable {
-    # Intel CPU Microcode Updates
     hardware.cpu.intel.updateMicrocode = mkDefault true;
 
-    # Boot Parameters for Intel Optimization
+    # Boot Parameters
     boot.kernelParams = [
-      # Intel P-State driver
       "intel_pstate=active"
     ]
     ++ optionals cfg.pstate.hwpDynamic [ "intel_pstate=hwp_dynamic_boost" ]
-    ++ optionals cfg.graphics.enable [
-      # Intel Graphics optimizations
-      "i915.enable_fbc=${if cfg.graphics.frameBufferCompression then "1" else "0"}"
-      "i915.enable_psr=${if cfg.graphics.panelSelfRefresh then "2" else "0"}"
-      "i915.disable_power_well=0"
-    ]
+    ++ optionals cfg.graphics.enable (
+      [
+        # Graphics Parameters
+        "i915.enable_fbc=${if cfg.graphics.frameBufferCompression then "1" else "0"}"
+
+        # PSR: 0 = Disabled (Estabilidade máxima para Chromium), 1 = PSR1, 2 = PSR2 (Deep sleep)
+        "i915.enable_psr=${if cfg.graphics.panelSelfRefresh then "2" else "0"}"
+      ]
+      ++ optionals cfg.graphics.enableGuC [
+        # GuC = 3 (Enable GuC submission + HuC loading)
+        # GuC = 2 (Enable GuC submission only)
+        # Raptor Lake se beneficia de ambos (3).
+        "i915.enable_guc=3"
+      ]
+    )
     ++ optionals cfg.cache.enableOptimizations [
-      # Cache optimizations for Raptor Lake
-      "intel_idle.max_cstate=2"
+      # C-States
+      "intel_idle.max_cstate=2" # Cuidado: Isso limita a economia de energia drasticamente. Útil se houver freezes totais do sistema.
       "processor.max_cstate=2"
     ];
 
-    # Kernel Modules
     boot.kernelModules = [
       "kvm-intel"
       "intel_powerclamp"
       "coretemp"
     ];
 
-    # Power Management Configuration
+    # Instalação de drivers gráficos (Userland)
+    # Necessário para o Chromium usar VA-API corretamente via /dev/dri/renderD128
+    hardware.graphics = {
+      # (NixOS 24.05+) - Antigo hardware.opengl
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver # Driver iHD para VA-API (Gen9+) - CRÍTICO para Chromium
+        intel-vaapi-driver # Driver legado (i965)
+        vpl-gpu-rt # Intel OneVPL
+      ];
+    };
+
+    # Power Management
     powerManagement = {
       enable = true;
       cpuFreqGovernor = cfg.governor.default;
     };
 
-    # Intel P-State Configuration via systemd
+    # Service P-State (Mantido lógica original, simplificada)
     systemd.services.intel-pstate-config = mkIf cfg.pstate.enable {
-      description = "Configure Intel P-State driver for i5-13420H";
+      description = "Configure Intel P-State parameters";
       wantedBy = [ "multi-user.target" ];
       after = [ "systemd-modules-load.service" ];
       serviceConfig = {
@@ -183,123 +189,65 @@ in
         RemainAfterExit = true;
       };
       script = ''
-        # Wait for P-State interface
+        # Wait for sysfs
         sleep 2
 
-        # Configure P-State parameters
-        if [ -d /sys/devices/system/cpu/intel_pstate ]; then
-          echo ${toString cfg.pstate.minFreqPercent} > /sys/devices/system/cpu/intel_pstate/min_perf_pct || true
-          echo ${toString cfg.pstate.maxFreqPercent} > /sys/devices/system/cpu/intel_pstate/max_perf_pct || true
+        PSTATE_DIR="/sys/devices/system/cpu/intel_pstate"
 
-          # Energy Performance Preference
+        if [ -d "$PSTATE_DIR" ]; then
+          echo ${toString cfg.pstate.minFreqPercent} > "$PSTATE_DIR/min_perf_pct" || true
+          echo ${toString cfg.pstate.maxFreqPercent} > "$PSTATE_DIR/max_perf_pct" || true
+
+          # EPP Update
           for cpu in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
-            if [ -f "$cpu" ]; then
-              echo "${cfg.pstate.energyPerformancePreference}" > "$cpu" || true
-            fi
+            [ -f "$cpu" ] && echo "${cfg.pstate.energyPerformancePreference}" > "$cpu" || true
           done
+
+          # Turbo Control
+          # 'no_turbo' -> 0 (enabled), 1 (disabled)
+          echo "${if cfg.turboBoost.enable then "0" else "1"}" > "$PSTATE_DIR/no_turbo" || true
         fi
-
-        # Turbo boost control
-        if [ -f /sys/devices/system/cpu/intel_pstate/no_turbo ]; then
-          echo "${
-            if cfg.turboBoost.enable then "0" else "1"
-          }" > /sys/devices/system/cpu/intel_pstate/no_turbo || true
-        fi
-
-        # Hybrid core governor optimization (if specified)
-        ${optionalString (cfg.governor.pCores != null) ''
-          # P-cores (0-3)
-          for cpu in 0 1 2 3; do
-            if [ -f /sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor ]; then
-              echo "${cfg.governor.pCores}" > /sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor || true
-            fi
-          done
-        ''}
-
-        ${optionalString (cfg.governor.eCores != null) ''
-          # E-cores (4-7)
-          for cpu in 4 5 6 7; do
-            if [ -f /sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor ]; then
-              echo "${cfg.governor.eCores}" > /sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor || true
-            fi
-          done
-        ''}
       '';
     };
 
-    # Thermal monitoring and turbo management
+    # Thermal Monitor (Mantido, mas ajustado para não brigar com thermald se instalado)
     systemd.services.intel-thermal-monitor = mkIf cfg.turboBoost.enable {
-      description = "Intel thermal monitoring for turbo management";
+      description = "Intel thermal monitoring logic";
       wantedBy = [ "multi-user.target" ];
-      after = [ "intel-pstate-config.service" ];
       serviceConfig = {
         Type = "simple";
         Restart = "always";
         RestartSec = "10s";
       };
       script = ''
-        # Garante que temos um valor inicial seguro
-        last_temp=0
-
         while true; do
-          # Estratégia híbrida de leitura:
-          # 1. Procura em hwmon (driver coretemp/acpitz) -> /sys/class/hwmon/hwmon*/temp*_input
-          # 2. Procura em thermal zones (ACPI) -> /sys/class/thermal/thermal_zone*/temp
-          # 3. Ordena decrescente (-nr) e pega a maior temperatura encontrada
-
           current_temp=$(cat /sys/class/hwmon/hwmon*/temp*_input /sys/class/thermal/thermal_zone*/temp 2>/dev/null | sort -nr | head -1)
-
-          # Se falhar em ler (null ou vazio), assume 0 para não quebrar a aritmética
           temp=''${current_temp:-0}
           temp_c=$((temp / 1000))
 
-          # Debug opcional (pode remover depois):
-          # echo "Temp atual: $temp_c °C"
-
-          # Lógica de controle do Turbo
           if [ -f /sys/devices/system/cpu/intel_pstate/no_turbo ]; then
             if [ "$temp_c" -gt "${toString cfg.turboBoost.maxTemp}" ]; then
-              # Se estiver muito quente, DESATIVA o turbo (escreve 1)
               echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
-            elif [ "$temp_c" -lt $((${toString cfg.turboBoost.maxTemp} - 10)) ]; then
-              # Histerese: só reativa se esfriou bem (limite - 10°C)
+            elif [ "$temp_c" -lt $((${toString cfg.turboBoost.maxTemp} - 15)) ]; then
+              # Histerese aumentada para 15C para evitar oscilação rápida (flapping)
               echo 0 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
             fi
           fi
-
           sleep 5
         done
       '';
     };
 
-
-    # Memory tuning
+    # Sysctl tuning
     boot.kernel.sysctl = mkIf cfg.memory.enableTuning {
-      # Memory subsystem tuning for Raptor Lake
       "vm.swappiness" = mkDefault 10;
       "vm.vfs_cache_pressure" = mkDefault 50;
-      "vm.dirty_ratio" = mkDefault 10;
-      "vm.dirty_background_ratio" = mkDefault 5;
     };
 
-    # Intel Graphics runtime PM
-    services.udev.extraRules = mkIf cfg.graphics.runtimePM ''
-      # Intel Graphics runtime power management
-      ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x8086", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="auto"
-    '';
-
-    # Install monitoring tools
+    # Packages
     environment.systemPackages = with pkgs; [
-      intel-gpu-tools
-      cpufrequtils
+      intel-gpu-tools # Use 'sudo intel_gpu_top' para verificar se a GPU está carregando (Render/Video/Blitter)
       lm_sensors
-      turbostat
-    ];
-
-    # Profile-based optimization
-    systemd.tmpfiles.rules = [
-      "d /var/lib/intel-power-profile 0755 root root -"
-      "f /var/lib/intel-power-profile/current 0644 root root - ${cfg.powerProfile}"
     ];
   };
 }

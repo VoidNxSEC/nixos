@@ -16,7 +16,8 @@ NC='\033[0m' # No Color
 
 # Paths
 PROJECT_ROOT="/etc/nixos"
-MCP_SERVER_PATH="${PROJECT_ROOT}/modules/ml/unified-llm/mcp-server/build/src/index.js"
+# New path: securellm-mcp binary is installed system-wide via Nix
+MCP_SERVER_PATH="$(command -v securellm-mcp 2>/dev/null || echo '/run/current-system/sw/bin/securellm-mcp')"
 KNOWLEDGE_DB_PATH="/var/lib/mcp-knowledge/knowledge.db"
 
 # Client config paths
@@ -70,10 +71,8 @@ generate_base_config() {
 {
   "mcpServers": {
     "securellm-bridge": {
-      "command": "node",
-      "args": [
-        "$MCP_SERVER_PATH"
-      ],
+      "command": "$MCP_SERVER_PATH",
+      "args": [],
       "env": {
         "PROJECT_ROOT": "$PROJECT_ROOT",
         "KNOWLEDGE_DB_PATH": "$KNOWLEDGE_DB_PATH",
@@ -231,7 +230,7 @@ ${BLUE}Next Steps:${NC}
    ${BLUE}source /etc/load-api-keys.sh${NC}
 
 4. ${YELLOW}Test MCP connection${NC}:
-   ${BLUE}echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node $MCP_SERVER_PATH${NC}
+   ${BLUE}echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | securellm-mcp${NC}
 
 ${GREEN}Configuration Files:${NC}
 EOF

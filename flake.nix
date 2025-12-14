@@ -21,7 +21,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-bridge = {
-      url = "github:VoidNxSEC/securellm-bridge";
+      url = "git+file:///home/kernelcore/dev/projects/securellm-bridge";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cognitive-vault = {
@@ -59,7 +59,12 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = overlays;
+        overlays = overlays ++ [
+          (final: prev: {
+            securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
+            securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
+          })
+        ];
       };
 
       # coleção de shells (definido abaixo em lib/shells.nix)
@@ -80,6 +85,10 @@
           type = "app";
           program = "${self.packages.${system}.securellm-mcp}/bin/securellm-mcp";
         };
+        securellm-bridge = {
+          type = "app";
+          program = "${self.packages.${system}.securellm-bridge}/bin/securellm-bridge";
+        };
       };
 
       # checks que o CI pode rodar (fmt, flake check, builds importantes)
@@ -92,6 +101,8 @@
         vm = self.packages.${system}.vm-image;
         docker-app = self.packages.${system}.image-app;
         mcp-server = self.packages.${system}.securellm-mcp;
+        llm-bridge = self.packages.${system}.securellm-bridge;
+
       };
 
       nixosConfigurations = {
@@ -104,7 +115,12 @@
           modules = [
             # Apply overlays to NixOS configuration
             {
-              nixpkgs.overlays = overlays;
+              nixpkgs.overlays = overlays ++ [
+                (final: prev: {
+                  securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
+                  securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
+                })
+              ];
               nixpkgs.config.allowUnfree = true;
             }
 
@@ -114,6 +130,7 @@
             # Services
             ./modules/services/offload-server.nix
             ./modules/services/laptop-offload-client.nix
+            ./modules/services/config-auditor.nix
             ./modules/services/default.nix
             ./modules/services/scripts.nix # Shell aliases for ML containers (pytorch, tgi, etc)
             ./modules/services/users/default.nix
