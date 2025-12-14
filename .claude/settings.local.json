@@ -15,7 +15,15 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(gh secret:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(test:*)",
+      "Bash(cat:*)",
+      "Bash(nix flake lock:*)",
+      "Bash(lsof:*)",
+      "Bash(fuser:*)",
+      "Bash(journalctl:*)"
     ],
     "deny": [],
     "ask": []
