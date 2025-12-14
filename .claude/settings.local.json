@@ -23,7 +23,9 @@
       "Bash(nix flake lock:*)",
       "Bash(lsof:*)",
       "Bash(fuser:*)",
-      "Bash(journalctl:*)"
+      "Bash(journalctl:*)",
+      "Bash(bash /etc/nixos/scripts/limpa-processos.sh:*)",
+      "Bash(pkill:*)"
     ],
     "deny": [],
     "ask": []
