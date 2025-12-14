@@ -1,3 +1,21 @@
+# Suricata IDS/IPS Configuration
+# Optimized for minimal I/O throttling and high performance
+#
+# Key optimizations (2025-12-14):
+# - Increased detection threads from 1 to 2 for better parallelism
+# - Increased memcap from 256mb to 512mb to reduce memory pressure
+# - Removed netflow logging (was 54% of events, major I/O offender)
+# - Removed flow logging (was 31.7% of events, redundant)
+# - Reduced TLS/HTTP extended logging to lower I/O
+# - Increased stats interval from 60s to 300s (5min)
+# - Added AF_PACKET ring/block buffers to reduce kernel drops
+# - Enabled modbus protocol to fix signature parsing errors
+# - Added log rotation to prevent unbounded log growth
+#
+# Expected I/O improvement: ~60% reduction in write operations
+# Expected packet drops: 1540 → <100 drops
+# Expected PSI: 2.74% → <0.5% I/O stall time
+
 {
   config,
   lib,
@@ -67,13 +85,13 @@ in
     performance = {
       threads = mkOption {
         type = types.int;
-        default = 1;
+        default = 2; # Increased from 1 to improve parallelism and reduce I/O blocking
         description = "Number of detection threads";
       };
 
       memcap = mkOption {
         type = types.str;
-        default = "256mb";
+        default = "512mb"; # Increased from 256mb to reduce memory pressure events
         description = "Memory cap for flow tracking";
       };
 
@@ -81,6 +99,12 @@ in
         type = types.bool;
         default = true;
         description = "Use AF_PACKET for high performance capture";
+      };
+
+      afPacketBufferSize = mkOption {
+        type = types.str;
+        default = "32mb"; # Added to reduce kernel packet drops
+        description = "AF_PACKET buffer size";
       };
     };
 
@@ -123,6 +147,8 @@ in
             defrag = true;
             use-mmap = true;
             tpacket-v3 = true;
+            ring-size = 32768; # Added to reduce kernel packet drops
+            block-size = 32768; # Buffer size for better performance
           }) suricataCfg.interfaces
         );
 
@@ -146,6 +172,7 @@ in
         # Threading
         threading = {
           detect-thread-ratio = 1.0;
+          set-cpu-affinity = false; # Allow kernel to schedule threads optimally
         };
 
         # Outputs
@@ -159,34 +186,30 @@ in
               pcap-file = false;
               community-id = true;
               types = [
-                { alert = { }; }
+                { alert = { }; } # Critical: keep alerts
                 {
                   anomaly = {
-                    enabled = true;
+                    enabled = true; # Critical: keep anomaly detection
                   };
                 }
                 {
                   http = {
-                    extended = true;
+                    extended = false; # Reduced from true to lower I/O (was generating verbose logs)
                   };
                 }
-                { dns = { }; }
+                { dns = { }; } # Keep DNS for security monitoring
                 {
                   tls = {
-                    extended = true;
+                    extended = false; # Reduced from true to lower I/O (12.5% of events)
                   };
                 }
-                {
-                  files = {
-                    force-magic = true;
-                  };
-                }
-                { smtp = { }; }
-                { flow = { }; }
-                { netflow = { }; }
+                # REMOVED: files.force-magic (unnecessary for basic IDS)
+                # REMOVED: smtp (low value, adds I/O)
+                # REMOVED: flow (31.7% of events - redundant with alerts)
+                # REMOVED: netflow (54.1% of events - MAJOR I/O offender!)
                 {
                   stats = {
-                    interval = 60;
+                    interval = 300; # Increased from 60s to 5min to reduce I/O pressure
                   };
                 }
               ];
@@ -218,7 +241,7 @@ in
               enabled = true;
               filename = "stats.log";
               append = true;
-              interval = 60;
+              interval = 300; # Increased from 60s to 5min to reduce I/O pressure
             };
           }
         ];
@@ -260,6 +283,11 @@ in
             };
             ssh = {
               enabled = "yes";
+            };
+            # Enable modbus to fix signature parsing errors
+            modbus = {
+              enabled = "yes";
+              detection-enabled = "yes";
             };
           };
         };
@@ -341,7 +369,27 @@ in
     ];
 
     # Make preStart run as root before dropping to suricata user
-    systemd.services.suricata.serviceConfig.PermissionsStartOnly = true;
+    systemd.services.suricata.serviceConfig = {
+      PermissionsStartOnly = true;
+      # Add systemd service hardening and log management
+      LogsDirectory = "suricata";
+      LogsDirectoryMode = "0750";
+    };
+
+    # Configure log rotation to prevent I/O throttling from large log files
+    services.logrotate.settings.suricata = {
+      files = "/var/log/suricata/*.log /var/log/suricata/*.json";
+      frequency = "daily";
+      rotate = 7; # Keep 7 days of logs
+      compress = true;
+      delaycompress = true;
+      missingok = true;
+      notifempty = true;
+      create = "0640 suricata suricata";
+      postrotate = ''
+        systemctl reload suricata.service > /dev/null 2>&1 || true
+      '';
+    };
 
     # CLI aliases
     environment.shellAliases = {
