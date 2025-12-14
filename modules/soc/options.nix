@@ -163,5 +163,9 @@ in
       threatIntel.enable = mkDefault (cfg.profile == "enterprise");
       alerting.enable = mkDefault true;
     };
+
+    # Enable Podman for OCI containers (required by SOC modules)
+    kernelcore.containers.podman.enable = true;
+    virtualisation.oci-containers.backend = "podman";
   };
 }

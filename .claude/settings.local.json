@@ -25,7 +25,18 @@
       "Bash(fuser:*)",
       "Bash(journalctl:*)",
       "Bash(bash /etc/nixos/scripts/limpa-processos.sh:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(systemctl status:*)",
+      "Bash(systemctl list-units:*)",
+      "Bash(systemctl reset-failed:*)",
+      "Bash(pstree:*)",
+      "Bash(ps:*)",
+      "Bash(systemctl stop:*)",
+      "Bash(systemctl list-jobs:*)",
+      "Bash(sudo systemctl disable:*)",
+      "Bash(sudo systemctl stop:*)",
+      "Bash(sudo systemctl mask:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []
