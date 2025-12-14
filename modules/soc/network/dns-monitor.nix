@@ -42,8 +42,11 @@ in
   config = mkIf (cfg.enable && cfg.network.dnsMonitor.enable) {
     # DNS query logging via dnsmasq or systemd-resolved
     services.dnsmasq = mkIf cfg.network.dnsMonitor.logQueries {
-      enable = true;
+      enable = false; # Temporarily disabled to fix port conflict
       settings = {
+        port = 5353; # Avoid conflict with systemd-resolved
+        listen-address = "127.0.0.1";
+        bind-interfaces = true;
         log-queries = true;
         log-facility = "/var/log/soc/dns-queries.log";
         cache-size = 10000;
