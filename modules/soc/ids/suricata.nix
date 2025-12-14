@@ -32,7 +32,7 @@ in
     # Network interfaces
     interfaces = mkOption {
       type = types.listOf types.str;
-      default = [ "any" ];
+      default = [ "wlp62s0" ]; # Use actual interface - 'any' doesn't work with af-packet
       description = "Network interfaces to monitor";
     };
 
@@ -293,31 +293,43 @@ in
     };
 
     systemd.services.suricata.preStart = lib.mkAfter ''
+      # Create directories manually (PermissionsStartOnly ensures this runs as root)
       mkdir -p /var/lib/suricata/rules
-      touch /var/lib/suricata/rules/classification.config
-      touch /var/lib/suricata/rules/reference.config
+      mkdir -p /var/log/suricata
 
+      # Ensure suricata user owns everything
+      chown -R suricata:suricata /var/lib/suricata /var/log/suricata
+      chmod 755 /var/lib/suricata
+      chmod 755 /var/lib/suricata/rules
+      chmod 755 /var/log/suricata
+
+      # Create config files with correct ownership atomically
+      install -D -m 640 -o suricata -g suricata /dev/null /var/lib/suricata/rules/classification.config 2>/dev/null || true
+      install -D -m 640 -o suricata -g suricata /dev/null /var/lib/suricata/rules/reference.config 2>/dev/null || true
+
+      # Ensure suricata.rules exists
       if [ ! -s /var/lib/suricata/rules/suricata.rules ]; then
-         ${pkgs.suricata}/bin/suricata-update --no-reload || true
+         # Create empty rules file if suricata-update fails
+         install -D -m 640 -o suricata -g suricata /dev/null /var/lib/suricata/rules/suricata.rules 2>/dev/null || true
       fi
 
-      # Fix permissions for suricata user
-      chown -R suricata:suricata /var/lib/suricata
-      chmod -R 750 /var/lib/suricata
+      # Final permission fix
+      chown -R suricata:suricata /var/lib/suricata 2>/dev/null || true
+      chmod -R 750 /var/lib/suricata 2>/dev/null || true
+      chmod 640 /var/lib/suricata/rules/*.config 2>/dev/null || true
     '';
 
     # Note: NixOS provides suricata-update service built-in
     # To update rules manually: sudo suricata-update && sudo systemctl reload suricata
 
-    # Fix for suricata-update namespace
+    # Fix for suricata-update - add pyyaml dependency
     systemd.services.suricata-update = {
+      path = [ pkgs.python313Packages.pyyaml ];
+      environment = {
+        PYTHONPATH = "${pkgs.python313Packages.pyyaml}/lib/python3.13/site-packages";
+      };
       serviceConfig = {
-        StateDirectory = "suricata";
-        StateDirectoryMode = "0750";
-        BindPaths = [ "/var/lib/suricata" ];
-        User = lib.mkForce "root"; # suricata-update needs to write rules usually
-        Group = "suricata";
-        PermissionsStartOnly = true;
+        User = lib.mkForce "root"; # suricata-update needs to write rules
       };
     };
 
@@ -327,6 +339,9 @@ in
       "d /var/lib/suricata/rules 0750 suricata suricata -"
       "d /var/log/suricata 0750 suricata suricata -"
     ];
+
+    # Make preStart run as root before dropping to suricata user
+    systemd.services.suricata.serviceConfig.PermissionsStartOnly = true;
 
     # CLI aliases
     environment.shellAliases = {
