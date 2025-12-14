@@ -554,11 +554,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1765752987,
-        "narHash": "sha256-BBwWpoUn+k6AiKtrIkT91QaWKz81M1W6xfvv7pNPah0=",
+        "lastModified": 1765753505,
+        "narHash": "sha256-yo8NkjB2IrJLrD6l3W4tIUsKESXSNPFG2pPyqLpgfys=",
         "ref": "refs/heads/main",
-        "rev": "8b12bb6905c014971d41c765ba4a4eed74a0f40e",
-        "revCount": 4,
+        "rev": "f9da7dbba6eb5bd2e0fd41818e02d86e6094f5b1",
+        "revCount": 6,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/swissknife"
       },
