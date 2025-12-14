@@ -57,42 +57,42 @@ in
         # Encrypt with: sops -e secrets-template.yaml > secrets/encrypted.yaml
         # Decrypt with: sops -d secrets/encrypted.yaml
 
-        # API Keys
+        # API Keys (replace with your encrypted values)
         api_keys:
-          github_token: "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-          nordvpn_token: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-          anthropic_api_key: "sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-          openai_api_key: "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-          huggingface_token: "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          github_token: "<YOUR_GITHUB_TOKEN>"
+          nordvpn_token: "<YOUR_NORDVPN_TOKEN>"
+          anthropic_api_key: "<YOUR_ANTHROPIC_API_KEY>"
+          openai_api_key: "<YOUR_OPENAI_API_KEY>"
+          huggingface_token: "<YOUR_HUGGINGFACE_TOKEN>"
 
         # VPN Credentials
         vpn:
           nordvpn:
-            username: "user@example.com"
-            password: "securepassword"
+            username: "<YOUR_VPN_USERNAME>"
+            password: "<YOUR_VPN_PASSWORD>"
 
         # Database Credentials
         database:
           postgresql:
-            password: "pgpassword"
+            password: "<YOUR_POSTGRES_PASSWORD>"
           mongodb:
-            password: "mongopassword"
+            password: "<YOUR_MONGO_PASSWORD>"
 
         # SSH Keys (base64 encoded)
         ssh:
-          private_key: "LS0tLS1CRUd...=="
-          public_key: "ssh-ed25519 AAAA...=="
+          private_key: "<YOUR_PRIVATE_KEY_BASE64>"
+          public_key: "<YOUR_PUBLIC_KEY>"
 
         # Docker Registry
         docker:
           registry:
-            username: "dockeruser"
-            password: "dockerpass"
+            username: "<YOUR_DOCKER_USERNAME>"
+            password: "<YOUR_DOCKER_PASSWORD>"
 
         # Environment Variables
         env:
-          ANTHROPIC_API_KEY: "sk-ant-xxxxxxxxxxxxx"
-          DATABASE_URL: "postgresql://user:pass@localhost/db"
+          ANTHROPIC_API_KEY: "<YOUR_ANTHROPIC_API_KEY>"
+          DATABASE_URL: "<YOUR_DATABASE_URL>"
       '';
     };
 
