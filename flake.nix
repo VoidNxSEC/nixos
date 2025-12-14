@@ -40,6 +40,10 @@
       url = "github:VoidNxSEC/i915-governor";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    swissknife = {
+      url = "path:/home/kernelcore/dev/projects/swissknife";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -63,6 +67,7 @@
           (final: prev: {
             securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
             securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
+            swissknife-tools = inputs.swissknife.packages.${system};
           })
         ];
       };
@@ -247,8 +252,11 @@
             }
 
             # Debug (optional - comment out if not needed)
-            # ./modules/debug/debug-init.nix
-            # ./modules/debug/test-init.nix
+            # Debug
+            ./modules/debug/default.nix
+            {
+              kernelcore.swissknife.enable = true;
+            }
 
             home-manager.nixosModules.home-manager
             {
