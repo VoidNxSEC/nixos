@@ -74,11 +74,12 @@ with lib;
     # ============================================================
 
     programs.ssh = {
-      # Enable SSH client
-      startAgent = true;
+      # Enable SSH client - only start agent if GnuPG agent is not handling SSH
+      # This prevents conflict with programs.gnupg.agent.enableSSHSupport
+      startAgent = mkDefault (!(config.programs.gnupg.agent.enableSSHSupport or false));
 
       # SSH agent configuration
-      agentTimeout = "1h"; # Keys expire after 1 hour
+      agentTimeout = mkDefault "1h"; # Keys expire after 1 hour
 
       # Extra configuration (applies to all hosts)
       extraConfig = ''
