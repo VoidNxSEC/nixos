@@ -40,8 +40,9 @@ in
 
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.softflowd}/bin/softflowd -i ${head cfg.network.netflow.interfaces} -n 127.0.0.1:9995 -v 9 -t maxlife=300";
+        ExecStart = "${pkgs.softflowd}/bin/softflowd -i ${head cfg.network.netflow.interfaces} -n 127.0.0.1:9997 -v 9 -t maxlife=600";
         Restart = "always";
+        RestartSec = "10s";
       };
     };
 
@@ -53,8 +54,10 @@ in
 
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.nfdump}/bin/nfcapd -w -D -p 9995 -l /var/lib/soc/netflow -P /run/nfcapd.pid";
+        ExecStart = "${pkgs.nfdump}/bin/nfcapd -p 9997 -l /var/lib/soc/netflow -P /run/nfcapd.pid -t 60";
         Restart = "always";
+        RestartSec = "5s";
+        User = "root";
       };
     };
 
@@ -85,7 +88,7 @@ in
     environment.systemPackages = [ pkgs.nfdump ];
 
     environment.shellAliases = {
-      nf-top = "nfdump -R /var/lib/soc/netflow -s srcip/bytes -n 10";
+      nf-top = "nfdump -R /var/lib/soc/netflow -s srcip/bytes -n 50";
       nf-flows = "nfdump -R /var/lib/soc/netflow -c 50";
     };
   };
