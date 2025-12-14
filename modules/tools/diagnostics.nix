@@ -34,6 +34,7 @@ let
       echo "  io          IO and ZRAM diagnostics"
       echo "  net         Network conflict detection"
       echo "  psi         System pressure sentinel"
+      echo "  modules     Module catalog - show all modules and their state (active/disabled/orphan)"
       echo ""
       echo "For specific help: diag <command> --help"
     }
@@ -61,6 +62,9 @@ let
         ;;
       psi)
         exec "${pkgs.writeScriptBin "psi-sentinel" (builtins.readFile ../../scripts/surgical/psi-sentinel.sh)}/bin/psi-sentinel" "$@"
+        ;;
+      modules)
+        exec "${pkgs.writeScriptBin "module-catalog" (builtins.readFile ../../scripts/surgical/module-catalog.sh)}/bin/module-catalog" "$@"
         ;;
       *)
         echo "Unknown diag command: $COMMAND"
