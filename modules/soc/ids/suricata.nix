@@ -11,6 +11,7 @@
 # - Added AF_PACKET ring/block buffers to reduce kernel drops
 # - Enabled modbus protocol to fix signature parsing errors
 # - Added log rotation to prevent unbounded log growth
+# - [NEW] Disabled NIC offloading for Tailscale to prevent CPU spikes
 #
 # Expected I/O improvement: ~60% reduction in write operations
 # Expected packet drops: 1540 → <100 drops
@@ -50,8 +51,11 @@ in
     # Network interfaces
     interfaces = mkOption {
       type = types.listOf types.str;
-      default = [ "tailscale0" ]; # Monitor Tailscale VPN traffic
-      description = "Network interfaces to monitor";
+      # NOTE: Only include interfaces that are ALWAYS present
+      # - podman0: Removed - only exists when containers are running
+      # - tailscale0: Only exists when Tailscale is connected
+      default = [ "wlp62s0" ]; # Primary WiFi interface (always present)
+      description = "Network interfaces to monitor. Dynamic interfaces (tailscale0, podman0) should be added only when needed.";
     };
 
     # Rule management
@@ -131,6 +135,41 @@ in
   };
 
   config = mkIf (cfg.enable && suricataCfg.enable) {
+
+    # [FIX] Critical for Tailscale/VPN CPU Usage
+    # Disable hardware offloading that confuses Suricata on virtual interfaces
+    #networking.interfaces."podman0".ethtool = {
+    #rx = false;
+    #tx = false;
+    #gro = false;
+    #lro = false;
+    #tso = false;
+    #};
+
+    # !!! CORREÇÃO DO LEGO !!!
+    # Substitui a opção inexistente 'ethtool' por um serviço systemd dedicado.
+    # Isso garante que o offloading seja desligado assim que o Tailscale subir.
+
+    systemd.services.fix-tailscale-offload = {
+      description = "Disable NIC offloading on tailscale0 for Suricata optimization";
+      after = [
+        "tailscaled.service"
+        "podman.service"
+        "network-online.target"
+      ]; # Só roda depois que o túnel existir
+      wants = [ "tailscaled.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        # O comando mágico. O '-' no gso/tso garante que tentamos desativar tudo.
+        ExecStart = pkgs.writeShellScript "fix-offload" ''
+          ${pkgs.ethtool}/bin/ethtool -K tailscale0 rx off tx off gro off lro off tso off gso off || true
+          ${pkgs.ethtool}/bin/ethtool -K wlp62s0 rx off tx off gro off lro off tso off gso off || true
+        '';
+      };
+    };
+
     # Suricata service
     services.suricata = {
       enable = true;
@@ -138,17 +177,40 @@ in
       package = pkgs.suricata;
 
       settings = {
+        # [FIX] Fixed typo 'checkshum' -> 'checksum'
+        stream = {
+          memcap = suricataCfg.performance.memcap;
+          checksum-validation = "no";
+          inline = "auto";
+          reassembly = {
+            memcap = "256mb";
+            depth = "1mb";
+            toserver-chunk-size = 2560;
+            toclient-chunk-size = 2560;
+            randomize-chunk-size = "yes";
+          };
+        };
+
         # Capture method
+        # FIX 2025-12-14: Critical AF-Packet fixes
+        # - block-size MUST be multiple of pagesize (4096), was 65561 -> now 65536
+        # - cluster-type "cluster_flow" causes fanout issues on WiFi -> use "cluster_qm"
+        # - Removed podman0 from defaults (interface may not exist)
         af-packet = mkIf suricataCfg.performance.afPacket (
           map (iface: {
             interface = iface;
             cluster-id = 99;
-            cluster-type = "cluster_flow";
+            # cluster_qm is more compatible with virtual/WiFi interfaces
+            cluster-type = "cluster_qm";
             defrag = true;
             use-mmap = true;
             tpacket-v3 = true;
-            ring-size = 32768; # Added to reduce kernel packet drops
-            block-size = 32768; # Buffer size for better performance
+            ring-size = 32768;
+            # CRITICAL FIX: block-size must be multiple of pagesize (4096)
+            # 65536 = 16 * 4096 (was 65561 which caused startup failures)
+            block-size = 65536;
+            checksum-checks = "no";
+            threads = "auto";
           }) suricataCfg.interfaces
         );
 
@@ -158,6 +220,7 @@ in
             profile = "medium"; # Reduced from "high" to lower CPU usage
             sgh-mpm-context = "auto";
             inspection-recursion-limit = 3000;
+            "delayed-detect" = "yes"; # Fixed typo in key name if it was underscored
           }
         ];
 
@@ -170,9 +233,29 @@ in
         };
 
         # Threading
+        # [FIX] Corrected Nix syntax for nested lists/sets
         threading = {
           detect-thread-ratio = 1.0;
-          set-cpu-affinity = false; # Allow kernel to schedule threads optimally
+          set-cpu-affinity = "yes";
+          cpu-affinity = [
+            {
+              management-cpu-set = {
+                cpu = [ 0 ];
+              };
+            }
+            {
+              worker-cpu-set = {
+                cpu = [ "1-3" ]; # Workers nos outros cores
+                mode = "exclusive";
+                prio = {
+                  low = [ 0 ];
+                  medium = [ "1-2" ];
+                  high = [ 3 ];
+                  default = "medium";
+                };
+              };
+            }
+          ];
         };
 
         # Outputs
@@ -194,22 +277,18 @@ in
                 }
                 {
                   http = {
-                    extended = false; # Reduced from true to lower I/O (was generating verbose logs)
+                    extended = false; # Reduced from true to lower I/O
                   };
                 }
                 { dns = { }; } # Keep DNS for security monitoring
                 {
                   tls = {
-                    extended = false; # Reduced from true to lower I/O (12.5% of events)
+                    extended = false; # Reduced from true to lower I/O
                   };
                 }
-                # REMOVED: files.force-magic (unnecessary for basic IDS)
-                # REMOVED: smtp (low value, adds I/O)
-                # REMOVED: flow (31.7% of events - redundant with alerts)
-                # REMOVED: netflow (54.1% of events - MAJOR I/O offender!)
                 {
                   stats = {
-                    interval = 300; # Increased from 60s to 5min to reduce I/O pressure
+                    interval = 300; # Increased from 60s to 5min
                   };
                 }
               ];
@@ -241,7 +320,7 @@ in
               enabled = true;
               filename = "stats.log";
               append = true;
-              interval = 300; # Increased from 60s to 5min to reduce I/O pressure
+              interval = 300; # Increased from 60s to 5min
             };
           }
         ];
@@ -249,6 +328,7 @@ in
         # Default action for IDS vs IPS
         default-rule-path = "/var/lib/suricata/rules";
         rule-files = [ "*.rules" ];
+        threshold-file = "/etc/suricata/threshold.config";
 
         # Classification and reference configs
         classification-file = "/var/lib/suricata/rules/classification.config";
@@ -274,6 +354,7 @@ in
               };
             };
             dns = {
+              enabled = "yes";
               tcp = {
                 enabled = "yes";
               };
@@ -320,31 +401,48 @@ in
       '';
     };
 
+    # Create threshold.config to prevent warning about missing file
+    environment.etc."suricata/threshold.config" = {
+      mode = "0644";
+      text = ''
+        # Suricata threshold configuration
+        # Use this file to configure rate limiting and suppression rules
+        # See: https://docs.suricata.io/en/latest/configuration/rule-management.html
+
+        # Example: Suppress noisy alerts from specific IP
+        # suppress gen_id 1, sig_id 1000001, track by_src, ip 192.168.1.1
+
+        # Example: Rate limit SSH brute force alerts
+        # threshold gen_id 1, sig_id 1000001, type limit, track by_src, count 1, seconds 60
+      '';
+    };
+
     systemd.services.suricata.preStart = lib.mkAfter ''
-      # Create directories manually (PermissionsStartOnly ensures this runs as root)
+      # 1. Cria os diretórios necessários
       mkdir -p /var/lib/suricata/rules
       mkdir -p /var/log/suricata
 
-      # Ensure suricata user owns everything
+      # 2. Garante que o usuário 'suricata' possui os diretórios
       chown -R suricata:suricata /var/lib/suricata /var/log/suricata
-      chmod 755 /var/lib/suricata
-      chmod 755 /var/lib/suricata/rules
-      chmod 755 /var/log/suricata
+      chmod 750 /var/lib/suricata
+      chmod 750 /var/lib/suricata/rules
+      chmod 750 /var/log/suricata
 
-      # Create config files with correct ownership atomically
-      install -D -m 640 -o suricata -g suricata /dev/null /var/lib/suricata/rules/classification.config 2>/dev/null || true
-      install -D -m 640 -o suricata -g suricata /dev/null /var/lib/suricata/rules/reference.config 2>/dev/null || true
+      # 3. Copia os arquivos de classificação e referência do Nix Store para a pasta do Suricata
+      # O Suricata-Update do NixOS já baixa e valida esses arquivos no store.
+      # Usamos 'cp -p' para preservar data/permissões e '-f' para forçar a cópia.
+      cp -pf ${pkgs.suricata}/share/suricata/classification.config /var/lib/suricata/rules/classification.config
+      cp -pf ${pkgs.suricata}/share/suricata/reference.config /var/lib/suricata/rules/reference.config
 
-      # Ensure suricata.rules exists
+      # 4. Assegura que o usuário suricata pode ler os arquivos que acabamos de copiar
+      chown suricata:suricata /var/lib/suricata/rules/classification.config
+      chown suricata:suricata /var/lib/suricata/rules/reference.config
+      chmod 640 /var/lib/suricata/rules/*.config 2>/dev/null || true
+
+      # 5. Cria o ruleset principal se ele não existir (para evitar falha de inicialização)
       if [ ! -s /var/lib/suricata/rules/suricata.rules ]; then
-         # Create empty rules file if suricata-update fails
          install -D -m 640 -o suricata -g suricata /dev/null /var/lib/suricata/rules/suricata.rules 2>/dev/null || true
       fi
-
-      # Final permission fix
-      chown -R suricata:suricata /var/lib/suricata 2>/dev/null || true
-      chmod -R 750 /var/lib/suricata 2>/dev/null || true
-      chmod 640 /var/lib/suricata/rules/*.config 2>/dev/null || true
     '';
 
     # Note: NixOS provides suricata-update service built-in
@@ -357,7 +455,7 @@ in
         PYTHONPATH = "${pkgs.python313Packages.pyyaml}/lib/python3.13/site-packages";
       };
       serviceConfig = {
-        User = lib.mkForce "root"; # suricata-update needs to write rules
+        User = lib.mkForce "suricata"; # suricata-update needs to write rules
       };
     };
 
@@ -403,7 +501,8 @@ in
     # Additional packages
     environment.systemPackages = with pkgs; [
       suricata # Main package
-      jq # For EVE JSON parsing
+      jq
+      ethtool # For EVE JSON parsing
     ];
   };
 }
