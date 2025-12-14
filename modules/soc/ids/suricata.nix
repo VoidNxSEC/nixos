@@ -110,6 +110,8 @@ in
     # Suricata service
     services.suricata = {
       enable = true;
+      # Ensure config files exist
+      package = pkgs.suricata;
 
       settings = {
         # Capture method
@@ -290,8 +292,34 @@ in
       '';
     };
 
+    systemd.services.suricata.preStart = lib.mkAfter ''
+      mkdir -p /var/lib/suricata/rules
+      touch /var/lib/suricata/rules/classification.config
+      touch /var/lib/suricata/rules/reference.config
+
+      if [ ! -s /var/lib/suricata/rules/suricata.rules ]; then
+         ${pkgs.suricata}/bin/suricata-update --no-reload || true
+      fi
+
+      # Fix permissions for suricata user
+      chown -R suricata:suricata /var/lib/suricata
+      chmod -R 750 /var/lib/suricata
+    '';
+
     # Note: NixOS provides suricata-update service built-in
     # To update rules manually: sudo suricata-update && sudo systemctl reload suricata
+
+    # Fix for suricata-update namespace
+    systemd.services.suricata-update = {
+      serviceConfig = {
+        StateDirectory = "suricata";
+        StateDirectoryMode = "0750";
+        BindPaths = [ "/var/lib/suricata" ];
+        User = lib.mkForce "root"; # suricata-update needs to write rules usually
+        Group = "suricata";
+        PermissionsStartOnly = true;
+      };
+    };
 
     # Create directories
     systemd.tmpfiles.rules = [
