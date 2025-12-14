@@ -19,8 +19,9 @@ let
         jsonContent = builtins.toJSON {
           mcpServers = {
             securellm-bridge = {
-              command = "${pkgs.nodejs}/bin/node";
-              args = [ "${cfg.mcpServerPath}/build/src/index.js" ];
+              # Use the securellm-mcp binary directly (installed via Nix)
+              command = "${cfg.mcpPackage}/bin/securellm-mcp";
+              args = [ ];
               env = {
                 PROJECT_ROOT = agentCfg.projectRoot;
                 KNOWLEDGE_DB_PATH = cfg.knowledgeDbPath;
@@ -41,10 +42,10 @@ in
   options.kernelcore.ml.mcp = {
     enable = mkEnableOption "MCP (Model Context Protocol) configuration";
 
-    mcpServerPath = mkOption {
-      type = types.str;
-      default = ""; # Set via flake input when available
-      description = "Path to MCP server installation";
+    mcpPackage = mkOption {
+      type = types.package;
+      default = pkgs.securellm-mcp or (throw "securellm-mcp package not found in pkgs");
+      description = "The securellm-mcp package to use";
     };
 
     knowledgeDbPath = mkOption {
