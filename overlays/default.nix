@@ -10,4 +10,6 @@
   # Add more overlays here as needed:
   # (import ./custom-packages.nix)
   # (import ./version-overrides.nix)
+
+  # Note: swissknife-tools comes from inputs.swissknife flake (see flake.nix)
 ]
