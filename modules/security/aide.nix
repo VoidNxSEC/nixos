@@ -21,41 +21,33 @@ with lib;
       configFile = mkOption {
         type = types.lines;
         default = ''
-          # AIDE configuration for NixOS
+          # AIDE 0.19+ configuration for NixOS
 
-          # Database locations
-          database_in=/var/lib/aide/aide.db
-          database_out=/var/lib/aide/aide.db.new
-          database_new=/var/lib/aide/aide.db.new
+          # Database locations (file: prefix required)
+          database_in=file:/var/lib/aide/aide.db
+          database_out=file:/var/lib/aide/aide.db.new
+          database_new=file:/var/lib/aide/aide.db.new
 
-          # Report settings
-          report_url=/var/log/aide/aide.log
+          # Report settings (file: prefix required)
+          report_url=file:/var/log/aide/aide.log
           report_url=stdout
 
-          # Verbose level (0-255)
-          verbose=5
+          # Log level (AIDE 0.17+): error, warning, notice, info, debug, trace
+          log_level=warning
 
           # Rule definitions
-          # p: permissions
-          # i: inode
-          # n: number of links
-          # u: user
-          # g: group
-          # s: size
-          # b: block count
-          # m: mtime
-          # a: atime
-          # c: ctime
+          # p: permissions, i: inode, n: number of links
+          # u: user, g: group, s: size
+          # m: mtime, a: atime, c: ctime
           # S: check for growing size
-          # md5: md5 checksum
           # sha256: sha256 checksum
 
-          # Custom rules
-          FIPSR = p+i+n+u+g+s+m+c+md5+sha256
-          NORMAL = p+i+n+u+g+s+m+c+md5+sha256
+          # Custom rules (sha256 only - more secure than md5)
+          FIPSR = p+i+n+u+g+s+m+c+sha256
+          NORMAL = p+i+n+u+g+s+m+c+sha256
           DIR = p+i+n+u+g
           PERMS = p+i+u+g
-          LOG = >
+          LOG = p+u+g+n+S
 
           # Critical system directories
           /boot FIPSR
@@ -72,7 +64,7 @@ with lib;
           /nix/var/nix/profiles/system NORMAL
           /etc NORMAL
 
-          # Configuration files
+          # Configuration files (excluded - dynamic)
           !/etc/mtab
           !/etc/resolv.conf
           !/etc/hosts
@@ -82,7 +74,7 @@ with lib;
           /etc/ssh/sshd_config FIPSR
           /root/.ssh FIPSR
 
-          # User directories (selective monitoring)
+          # User directories (excluded)
           !/home
 
           # Temporary and variable data (excluded)
@@ -94,7 +86,7 @@ with lib;
           !/var/run
           !/run
 
-          # Process and system information
+          # Process and system information (excluded)
           !/proc
           !/sys
           !/dev
