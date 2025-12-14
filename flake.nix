@@ -293,11 +293,11 @@
             {
               kernelcore.soc = {
                 enable = true;
-                profile = "standard"; # minimal | standard | enterprise
+                profile = "minimal"; # minimal | standard | enterprise
                 retention.days = 30;
 
                 # Explicitly disable Suricata for now
-                ids.suricata.enable = false;
+                ids.suricata.enable = true;
 
                 # Alert configuration (customize as needed)
                 alerting = {

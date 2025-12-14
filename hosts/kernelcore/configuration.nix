@@ -123,7 +123,7 @@
     # Security Operations Center (SOC) - IDS/IPS, SIEM, monitoring
     soc = {
       enable = true;
-      profile = "standard"; # minimal | standard | enterprise
+      profile = "minimal"; # minimal | standard | enterprise
     };
 
     nvidia = {
@@ -211,7 +211,7 @@
     };
 
     virtualization = {
-      enable = true;
+      enable = false;
       virt-manager = true;
       libvirtdGroup = [ "kernelcore" ];
       virtiofs.enable = true;
@@ -223,7 +223,7 @@
       # Commands: mvm, mfetch, mssh, msnap, mbench
       # See: ~/Downloads/standalone-mac/MASTERPLAN.md
       macos-kvm = {
-        enable = true;
+        enable = false;
         autoDetectResources = true; # Uses 50% of host CPU/RAM
         maxCores = 8;
         maxMemoryGB = 32;
@@ -243,7 +243,7 @@
 
       vms = {
         wazuh = {
-          enable = true;
+          enable = false;
           # Resolve under sourceImageDir unless absolute
           sourceImage = "wazuh.qcow2";
           # Final image location (symlink created if missing)
@@ -266,7 +266,7 @@
         };
 
         nx = {
-          enable = true;
+          enable = false;
           sourceImage = "voidnx.qcow2"; # Will auto-discover in /var/lib/libvirt/images
           memoryMiB = 4096;
           vcpus = 2;
@@ -290,7 +290,7 @@
     services.github-runner = {
       # Self-hosted GitHub Actions runner
       # Requires secrets/github.yaml to be configured with registration token
-      enable = false;
+      enable = true;
       useSops = true; # SOPS for secure token management
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos"; # Repository URL
@@ -750,7 +750,10 @@
 
   # Guest user removed for security hardening
 
-  users.extraGroups.docker.members = [ "kernelcore" ];
+  users.extraGroups.docker.members = [
+    "kernelcore"
+    "nvidia"
+  ];
 
   programs = {
     firefox.enable = true;
