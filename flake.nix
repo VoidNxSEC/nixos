@@ -41,7 +41,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     swissknife = {
-      url = "path:/home/kernelcore/dev/projects/swissknife";
+      url = "git+file:///home/kernelcore/dev/projects/swissknife";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -124,6 +124,7 @@
                 (final: prev: {
                   securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
                   securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
+                  swissknife-tools = inputs.swissknife.packages.${system};
                 })
               ];
               nixpkgs.config.allowUnfree = true;
