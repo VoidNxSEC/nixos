@@ -16,7 +16,8 @@ let
         map (
           e:
           let
-            update = if e ? updateUrl then e.updateUrl else "https://clients2.google.com/service/update2/crx";
+            update =
+              if e.updateUrl != null then e.updateUrl else "https://clients2.google.com/service/update2/crx";
           in
           if e ? id then [ "${e.id};${update}" ] else [ ]
         ) cfg.extensions.force
@@ -27,63 +28,75 @@ let
       extAllowlist = cfg.extensions.allowlist;
 
       # High-level organizational rules mapped to Chromium policies
-      rulePolicies = {
-        HomepageLocation = mkIf (cfg.rules.homepage != null) cfg.rules.homepage;
-        HomepageIsNewTabPage = mkIf (cfg.rules.homepageIsNewTabPage != null) cfg.rules.homepageIsNewTabPage;
-        RestoreOnStartup = mkIf (cfg.rules.restoreOnStartup != null) cfg.rules.restoreOnStartup; # 1 = HOMEPAGE, 4 = URLS
-        RestoreOnStartupURLs = mkIf (cfg.rules.startupUrls != [ ]) cfg.rules.startupUrls;
+      rulePolicies = lib.filterAttrs (n: v: v != null) {
+        HomepageLocation = if (cfg.rules.homepage != null) then cfg.rules.homepage else null;
+        HomepageIsNewTabPage =
+          if (cfg.rules.homepageIsNewTabPage != null) then cfg.rules.homepageIsNewTabPage else null;
+        RestoreOnStartup =
+          if (cfg.rules.restoreOnStartup != null) then cfg.rules.restoreOnStartup else null; # 1 = HOMEPAGE, 4 = URLS
+        RestoreOnStartupURLs = if (cfg.rules.startupUrls != [ ]) then cfg.rules.startupUrls else null;
 
-        DefaultSearchProviderEnabled = mkIf (cfg.rules.defaultSearch != null) true;
-        DefaultSearchProviderName = mkIf (cfg.rules.defaultSearch != null) cfg.rules.defaultSearch.name;
-        DefaultSearchProviderSearchURL = mkIf (
-          cfg.rules.defaultSearch != null
-        ) cfg.rules.defaultSearch.searchUrl;
-        DefaultSearchProviderSuggestURL = mkIf (
-          cfg.rules.defaultSearch != null && cfg.rules.defaultSearch ? suggestUrl
-        ) cfg.rules.defaultSearch.suggestUrl;
-        DefaultSearchProviderIconURL = mkIf (
-          cfg.rules.defaultSearch != null && cfg.rules.defaultSearch ? iconUrl
-        ) cfg.rules.defaultSearch.iconUrl;
+        DefaultSearchProviderEnabled = if (cfg.rules.defaultSearch != null) then true else null;
+        DefaultSearchProviderName =
+          if (cfg.rules.defaultSearch != null) then cfg.rules.defaultSearch.name else null;
+        DefaultSearchProviderSearchURL =
+          if (cfg.rules.defaultSearch != null) then cfg.rules.defaultSearch.searchUrl else null;
+        DefaultSearchProviderSuggestURL =
+          if (cfg.rules.defaultSearch != null && cfg.rules.defaultSearch.suggestUrl != null) then
+            cfg.rules.defaultSearch.suggestUrl
+          else
+            null;
+        DefaultSearchProviderIconURL =
+          if (cfg.rules.defaultSearch != null && cfg.rules.defaultSearch.iconUrl != null) then
+            cfg.rules.defaultSearch.iconUrl
+          else
+            null;
 
         # Privacy & safety
-        SafeBrowsingProtectionLevel = mkIf (cfg.rules.safeBrowsing != null) cfg.rules.safeBrowsing; # 0=off,1=standard,2=enhanced
-        PasswordManagerEnabled = mkIf (
-          cfg.rules.passwordManagerEnabled != null
-        ) cfg.rules.passwordManagerEnabled;
-        IncognitoModeAvailability = mkIf (
-          cfg.rules.incognitoModeAvailability != null
-        ) cfg.rules.incognitoModeAvailability; # 0=enabled,1=disabled,2=forced
-        BrowserSignin = mkIf (cfg.rules.browserSignin != null) cfg.rules.browserSignin; # 0=disabled,1=enabled,2=forced
-        SyncDisabled = mkIf (cfg.rules.syncDisabled != null) cfg.rules.syncDisabled;
-        UrlBlocklist = mkIf (cfg.rules.urlBlocklist != [ ]) cfg.rules.urlBlocklist;
-        UrlAllowlist = mkIf (cfg.rules.urlAllowlist != [ ]) cfg.rules.urlAllowlist;
-        PopupsAllowedForUrls = mkIf (cfg.rules.popupsAllowedForUrls != [ ]) cfg.rules.popupsAllowedForUrls;
-        AutoSelectCertificateForUrls = mkIf (
-          cfg.rules.autoSelectCertForUrls != [ ]
-        ) cfg.rules.autoSelectCertForUrls;
+        SafeBrowsingProtectionLevel =
+          if (cfg.rules.safeBrowsing != null) then cfg.rules.safeBrowsing else null; # 0=off,1=standard,2=enhanced
+        PasswordManagerEnabled =
+          if (cfg.rules.passwordManagerEnabled != null) then cfg.rules.passwordManagerEnabled else null;
+        IncognitoModeAvailability =
+          if (cfg.rules.incognitoModeAvailability != null) then
+            cfg.rules.incognitoModeAvailability
+          else
+            null; # 0=enabled,1=disabled,2=forced
+        BrowserSignin = if (cfg.rules.browserSignin != null) then cfg.rules.browserSignin else null; # 0=disabled,1=enabled,2=forced
+        SyncDisabled = if (cfg.rules.syncDisabled != null) then cfg.rules.syncDisabled else null;
+        UrlBlocklist = if (cfg.rules.urlBlocklist != [ ]) then cfg.rules.urlBlocklist else null;
+        UrlAllowlist = if (cfg.rules.urlAllowlist != [ ]) then cfg.rules.urlAllowlist else null;
+        PopupsAllowedForUrls =
+          if (cfg.rules.popupsAllowedForUrls != [ ]) then cfg.rules.popupsAllowedForUrls else null;
+        AutoSelectCertificateForUrls =
+          if (cfg.rules.autoSelectCertForUrls != [ ]) then cfg.rules.autoSelectCertForUrls else null;
 
         # Downloads
-        DownloadDirectory = mkIf (cfg.rules.downloadDirectory != null) cfg.rules.downloadDirectory;
-        PromptForDownload = mkIf (cfg.rules.promptForDownload != null) cfg.rules.promptForDownload;
+        DownloadDirectory =
+          if (cfg.rules.downloadDirectory != null) then cfg.rules.downloadDirectory else null;
+        PromptForDownload =
+          if (cfg.rules.promptForDownload != null) then cfg.rules.promptForDownload else null;
 
         # Extensions
-        ExtensionInstallForcelist = mkIf (extForceList != [ ]) extForceList;
-        ExtensionInstallBlocklist = mkIf (extBlocklist != [ ]) extBlocklist;
-        ExtensionInstallAllowlist = mkIf (extAllowlist != [ ]) extAllowlist;
+        ExtensionInstallForcelist = if (extForceList != [ ]) then extForceList else null;
+        ExtensionInstallBlocklist = if (extBlocklist != [ ]) then extBlocklist else null;
+        ExtensionInstallAllowlist = if (extAllowlist != [ ]) then extAllowlist else null;
 
         # UI/UX
-        ShowHomeButton = mkIf (cfg.rules.showHomeButton != null) cfg.rules.showHomeButton;
-        DefaultBrowserSettingEnabled = mkIf (
-          cfg.rules.defaultBrowserSettingEnabled != null
-        ) cfg.rules.defaultBrowserSettingEnabled;
+        ShowHomeButton = if (cfg.rules.showHomeButton != null) then cfg.rules.showHomeButton else null;
+        DefaultBrowserSettingEnabled =
+          if (cfg.rules.defaultBrowserSettingEnabled != null) then
+            cfg.rules.defaultBrowserSettingEnabled
+          else
+            null;
 
         # Certificates / proxies / networking (optional simple hooks)
-        ProxyMode = mkIf (cfg.rules.proxyMode != null) cfg.rules.proxyMode; # "direct"|"auto_detect"|"pac_script"|"fixed_servers"|"system"
-        ProxyServer = mkIf (cfg.rules.proxyServer != null) cfg.rules.proxyServer;
-        ProxyPacUrl = mkIf (cfg.rules.proxyPacUrl != null) cfg.rules.proxyPacUrl;
+        ProxyMode = if (cfg.rules.proxyMode != null) then cfg.rules.proxyMode else null; # "direct"|"auto_detect"|"pac_script"|"fixed_servers"|"system"
+        ProxyServer = if (cfg.rules.proxyServer != null) then cfg.rules.proxyServer else null;
+        ProxyPacUrl = if (cfg.rules.proxyPacUrl != null) then cfg.rules.proxyPacUrl else null;
 
         # Printing
-        PrintingEnabled = mkIf (cfg.rules.printingEnabled != null) cfg.rules.printingEnabled;
+        PrintingEnabled = if (cfg.rules.printingEnabled != null) then cfg.rules.printingEnabled else null;
       };
     in
     lib.recursiveUpdate rulePolicies cfg.policies;

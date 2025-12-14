@@ -22,7 +22,7 @@ in
     wrapper = {
       executable = "usr/bin/proton-pass";
       name = "proton-pass";
-      extraArgs = [];
+      extraArgs = [ ];
       environmentVariables = {
         "PROTON_PASS_CONFIG_DIR" = "$HOME/.config/proton-pass";
       };

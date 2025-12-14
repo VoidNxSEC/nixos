@@ -16,7 +16,7 @@ in
 
     gpuMemoryLimit = mkOption {
       type = types.str;
-      default = "2G";
+      default = "4G";
       description = "GPU memory limit for Brave (e.g., '2G', '1024M')";
     };
 
