@@ -89,21 +89,21 @@ in
         yt-dlp
         ffmpeg-full
 
-      (writeScriptBin "youtube-to-flac" ''
-        exec /etc/audio-helpers/youtube-to-flac.sh "$@"
-      '')
-      (writeScriptBin "batch-convert" ''
-        exec /etc/audio-helpers/batch-convert.sh "$@"
-      '')
-      (writeScriptBin "audio-metadata" ''
-        exec /etc/audio-helpers/audio-metadata.sh "$@"
-      '')
-      (writeScriptBin "normalize-audio" ''
-        exec /etc/audio-helpers/normalize-audio.sh "$@"
-      '')
-      (writeScriptBin "split-audio" ''
-        exec /etc/audio-helpers/split-audio.sh "$@"
-      '')
+        (writeScriptBin "youtube-to-flac" ''
+          exec /etc/audio-helpers/youtube-to-flac.sh "$@"
+        '')
+        (writeScriptBin "batch-convert" ''
+          exec /etc/audio-helpers/batch-convert.sh "$@"
+        '')
+        (writeScriptBin "audio-metadata" ''
+          exec /etc/audio-helpers/audio-metadata.sh "$@"
+        '')
+        (writeScriptBin "normalize-audio" ''
+          exec /etc/audio-helpers/normalize-audio.sh "$@"
+        '')
+        (writeScriptBin "split-audio" ''
+          exec /etc/audio-helpers/split-audio.sh "$@"
+        '')
       ];
 
     # Aliases e helpers para shell
@@ -139,7 +139,8 @@ in
       "audio-monitor" = "pavucontrol";
 
       # Quick Fix for Audio (Intel SOF Profile Switch)
-      "fix-audio" = "wpctl set-profile 52 2 && wpctl set-default 253 && wpctl set-mute 253 0 && echo 'Audio reset to Profile 2 (Speaker)'";
+      "fix-audio" =
+        "wpctl set-profile 52 2 && wpctl set-default 253 && wpctl set-mute 253 0 && echo 'Audio reset to Profile 2 (Speaker)'";
     };
 
     # Scripts helper em /etc/nixos/modules/audio/scripts
@@ -577,8 +578,6 @@ in
         mode = "0644";
       };
     };
-
-
 
     # Configurar JACK se habilitado
     services.jack = mkIf cfg.jackAudio {
