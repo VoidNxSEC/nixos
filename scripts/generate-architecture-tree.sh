@@ -27,7 +27,7 @@ set -euo pipefail
 # ═══════════════════════════════════════════════════════════════════════════
 
 readonly SCRIPT_VERSION="2.0.0"
-readonly REPO_ROOT="${REPO_ROOT:-/etc/nixos}"
+readonly REPO_ROOT="${REPO_ROOT:-/home/kernelcore/dev/Projects/phantom}"
 readonly OUTPUT_DIR="${REPO_ROOT}/arch"
 readonly SNAPSHOT_DIR="${OUTPUT_DIR}/snapshots"
 readonly TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
