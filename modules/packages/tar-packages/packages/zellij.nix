@@ -16,7 +16,7 @@ in
     source = {
       path = sources.zellij.src;
       # sha256 is handled by the source derivation
-      sha256 = ""; 
+      sha256 = "";
     };
 
     # Wrapper configuration
