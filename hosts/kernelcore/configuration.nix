@@ -284,7 +284,7 @@
     services.github-runner = {
       # Self-hosted GitHub Actions runner
       # Requires secrets/github.yaml to be configured with registration token
-      enable = true; # ❌ DISABLED - CI/CD disabled as requested
+      enable = false;
       useSops = true; # SOPS for secure token management
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos"; # Repository URL

@@ -200,6 +200,24 @@
         "type": "github"
       }
     },
+    "flake-utils_9": {
+      "inputs": {
+        "systems": "systems_9"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -370,6 +388,27 @@
         "type": "github"
       }
     },
+    "phantom": {
+      "inputs": {
+        "flake-utils": "flake-utils_4",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1765738308,
+        "narHash": "sha256-hPnw30nSGwvJdA9wCG51ZXBpQmzqCrhZG7lVuQZ+pLE=",
+        "ref": "refs/heads/main",
+        "rev": "3562fc2f1c6bb28e1db3f8de99040247f402a372",
+        "revCount": 12,
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/Projects/phantom"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/Projects/phantom"
+      }
+    },
     "root": {
       "inputs": {
         "cognitive-vault": "cognitive-vault",
@@ -380,6 +419,7 @@
         "nix-colors": "nix-colors",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
+        "phantom": "phantom",
         "securellm-bridge": "securellm-bridge",
         "securellm-mcp": "securellm-mcp",
         "sops-nix": "sops-nix",
@@ -426,7 +466,7 @@
     },
     "securellm-bridge": {
       "inputs": {
-        "flake-utils": "flake-utils_4",
+        "flake-utils": "flake-utils_5",
         "nixpkgs": [
           "nixpkgs"
         ],
@@ -448,7 +488,7 @@
     },
     "securellm-mcp": {
       "inputs": {
-        "flake-utils": "flake-utils_5",
+        "flake-utils": "flake-utils_6",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -487,7 +527,7 @@
     },
     "spider-nix": {
       "inputs": {
-        "flake-utils": "flake-utils_6",
+        "flake-utils": "flake-utils_7",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -508,7 +548,7 @@
     },
     "swissknife": {
       "inputs": {
-        "flake-utils": "flake-utils_7",
+        "flake-utils": "flake-utils_8",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -647,9 +687,24 @@
         "type": "github"
       }
     },
+    "systems_9": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
     "vmctl": {
       "inputs": {
-        "flake-utils": "flake-utils_8",
+        "flake-utils": "flake-utils_9",
         "nixpkgs": [
           "nixpkgs"
         ]
