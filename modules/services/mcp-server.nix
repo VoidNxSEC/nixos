@@ -33,6 +33,27 @@ in
   options.services.securellm-mcp = {
     enable = mkEnableOption "SecureLLM Bridge MCP Server";
 
+    daemon = {
+      enable = mkEnableOption "Run MCP server as a systemd user service on boot";
+
+      logLevel = mkOption {
+        type = types.enum [
+          "DEBUG"
+          "INFO"
+          "WARN"
+          "ERROR"
+        ];
+        default = "INFO";
+        description = "Log level for the MCP server daemon";
+      };
+
+      restartOnFailure = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Automatically restart the daemon on failure";
+      };
+    };
+
     user = mkOption {
       type = types.str;
       default = "kernelcore";
@@ -230,11 +251,64 @@ in
       mcp = "mcp-server";
       mcp-status = "mcp-server status";
       mcp-test = "mcp-server test";
+      mcp-logs = "journalctl --user -u securellm-mcp -f";
     };
 
     # Shell initialization message
     environment.interactiveShellInit = ''
       # MCP Server available: run 'mcp-server' for help
+    '';
+
+    # ═══════════════════════════════════════════════════════════════════
+    # Systemd User Service for MCP Server Daemon
+    # ═══════════════════════════════════════════════════════════════════
+    systemd.user.services.securellm-mcp = mkIf cfg.daemon.enable {
+      description = "SecureLLM MCP Server - Model Context Protocol Bridge";
+
+      # Start after user session is ready
+      wantedBy = [ "default.target" ];
+      after = [ "network.target" ];
+
+      # Environment variables
+      environment = {
+        KNOWLEDGE_DB_PATH = "${cfg.dataDir}/knowledge.db";
+        ENABLE_KNOWLEDGE = "true";
+        LOG_LEVEL = cfg.daemon.logLevel;
+        NODE_ENV = "production";
+        # Ensure proper locale for UTF-8 output
+        LANG = "en_US.UTF-8";
+        LC_ALL = "en_US.UTF-8";
+      };
+
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${cfg.package}/bin/securellm-mcp";
+
+        # Restart configuration
+        Restart = if cfg.daemon.restartOnFailure then "on-failure" else "no";
+        RestartSec = "5s";
+        RestartPreventExitStatus = "0";
+
+        # Security hardening
+        NoNewPrivileges = true;
+        PrivateTmp = true;
+
+        # Resource limits
+        MemoryMax = "512M";
+        CPUQuota = "50%";
+
+        # Logging
+        StandardOutput = "journal";
+        StandardError = "journal";
+        SyslogIdentifier = "securellm-mcp";
+      };
+    };
+
+    # Ensure lingering is enabled for user services to start at boot
+    # This creates the /var/lib/systemd/linger/<user> file
+    system.activationScripts.enableUserLinger = mkIf cfg.daemon.enable ''
+      echo "Enabling lingering for ${cfg.user} to allow MCP service at boot..."
+      ${pkgs.systemd}/bin/loginctl enable-linger ${cfg.user} || true
     '';
   };
 }
