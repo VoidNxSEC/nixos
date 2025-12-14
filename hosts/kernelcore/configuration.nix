@@ -39,7 +39,7 @@
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
       # File integrity monitoring - detects unauthorized file modifications
-      aide.enable = false;
+      aide.enable = true;
 
       # Antivirus scanning for malware detection
       # DISABLED: ClamAV consumes 2.7GB RAM + 1.2GB swap (causes system slowdown)
@@ -682,6 +682,7 @@
       #ghidra
       waybackurls
       hakrawler
+      python313Packages.pyyaml
 
       # obs-studio moved to modules/audio/video-production.nix
       # pavucontrol and ffmpeg-full also included in that module
