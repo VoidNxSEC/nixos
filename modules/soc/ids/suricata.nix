@@ -50,7 +50,7 @@ in
     # Network interfaces
     interfaces = mkOption {
       type = types.listOf types.str;
-      default = [ "wlp62s0" ]; # Use actual interface - 'any' doesn't work with af-packet
+      default = [ "tailscale0" ]; # Monitor Tailscale VPN traffic
       description = "Network interfaces to monitor";
     };
 
