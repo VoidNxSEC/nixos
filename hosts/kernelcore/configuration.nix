@@ -120,6 +120,12 @@
       enable = true;
     };
 
+    # Security Operations Center (SOC) - IDS/IPS, SIEM, monitoring
+    soc = {
+      enable = true;
+      profile = "standard"; # minimal | standard | enterprise
+    };
+
     nvidia = {
       enable = true;
       cudaSupport = true;
