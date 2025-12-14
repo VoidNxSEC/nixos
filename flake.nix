@@ -199,6 +199,22 @@
             # Virtualization (VMs, vmctl)
             ./modules/virtualization
 
+            # Tools Suite (unified CLI)
+            ./modules/tools
+            {
+              kernelcore.tools = {
+                enable = true;
+                intel.enable = true;
+                secops.enable = true;
+                nix-utils.enable = true;
+                dev.enable = true;
+                secrets.enable = true;
+                diagnostics.enable = true;
+                llm.enable = true;
+                mcp.enable = true;
+              };
+            }
+
             ./modules/secrets/sops-config.nix
 
             # Network
