@@ -71,13 +71,13 @@
     # Check if /tmp is full
     TMPFULL=$(df /tmp | awk 'NR==2 {print $5}' | sed 's/%//')
     if [ "$TMPFULL" -gt 90 ]; then
-      echo "⚠️  /tmp is ${TMPFULL}% full"
+      echo "⚠️  /tmp is ''${TMPFULL}% full"
     fi
 
     # Check if /boot is full
     BOOTFULL=$(df /boot | awk 'NR==2 {print $5}' | sed 's/%//')
     if [ "$BOOTFULL" -gt 80 ]; then
-      echo "⚠️  /boot is ${BOOTFULL}% full"
+      echo "⚠️  /boot is ''${BOOTFULL}% full"
     fi
 
     echo -e "\n✅ System analysis complete"
