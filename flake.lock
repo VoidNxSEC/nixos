@@ -414,17 +414,17 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1765536716,
-        "narHash": "sha256-zdo+zxI0dst0oQmhBW6827mf77trHZS3QXPeK4TL7UU=",
-        "owner": "VoidNxSEC",
-        "repo": "securellm-bridge",
-        "rev": "c680cc120d5ca631f11e359e221e86e9cfd00eb4",
-        "type": "github"
+        "lastModified": 1765579220,
+        "narHash": "sha256-2tZOHjISWWwILM+g19IbSrAmPemJfGm9yB6djTHcdv8=",
+        "ref": "refs/heads/main",
+        "rev": "943baaae841e8d1c17b0597fe20753b57117f5a6",
+        "revCount": 5,
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/securellm-bridge"
       },
       "original": {
-        "owner": "VoidNxSEC",
-        "repo": "securellm-bridge",
-        "type": "github"
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/securellm-bridge"
       }
     },
     "securellm-mcp": {
