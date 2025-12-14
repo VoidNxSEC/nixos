@@ -179,6 +179,7 @@
             ./modules/system/aliases.nix
             ./modules/system/ml-gpu-users.nix
             ./modules/system/binary-cache.nix
+            ./modules/system/ssh-config.nix # SSH client configuration
 
             # Modules moved to knowledge/ (archived)
             # ./modules/system/sudo-claude-code.nix
@@ -209,6 +210,8 @@
             ./modules/network/vpn/tailscale.nix
             ./modules/network/vpn/tailscale-laptop.nix
             ./modules/network/vpn/tailscale-desktop.nix
+            ./modules/network/proxy/nginx-tailscale.nix # NGINX reverse proxy for Tailscale
+            ./modules/network/security/firewall-zones.nix # nftables firewall zones
 
             # Shell (includes professional alias structure)
             ./modules/shell/default.nix
@@ -219,6 +222,7 @@
             ./modules/secrets/sops-config.nix
             ./modules/secrets/api-keys.nix
             ./modules/secrets/aws-bedrock.nix
+            ./modules/secrets/tailscale.nix # Tailscale secrets management
 
             sops-nix.nixosModules.sops
             {
