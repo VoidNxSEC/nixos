@@ -30,7 +30,9 @@ rec {
     blockList:
     concatStringsSep " " (
       flatten (
-        map (hwType: map (dev: "--dev-bind-try /dev/null ${dev}") (hardwareDevices.${hwType} or [])) blockList
+        map (
+          hwType: map (dev: "--dev-bind-try /dev/null ${dev}") (hardwareDevices.${hwType} or [ ])
+        ) blockList
       )
     );
 
@@ -98,31 +100,33 @@ rec {
   };
 
   # Generate full bwrap arguments from a configuration
-  mkSandboxArgs = { 
-    pkgs, 
-    enable ? false, 
-    blockHardware ? [], 
-    allowedPaths ? [],
-    extraArgs ? ""
-  }:
-  if !enable then ""
-  else 
-    let
-      blockArgs = mkHardwareBlockArgs blockHardware;
-      allowArgs = mkPathAllowArgs allowedPaths;
-    in
-    ''
-      exec ${pkgs.bubblewrap}/bin/bwrap \
-        --ro-bind /nix /nix \
-        --tmpfs /tmp \
-        --tmpfs /run \
-        --proc /proc \
-        --dev /dev \
-        ${blockArgs} \
-        ${allowArgs} \
-        --unshare-all \
-        --share-net \
-        --die-with-parent \
-        ${extraArgs}
-    '';
+  mkSandboxArgs =
+    {
+      pkgs,
+      enable ? false,
+      blockHardware ? [ ],
+      allowedPaths ? [ ],
+      extraArgs ? "",
+    }:
+    if !enable then
+      ""
+    else
+      let
+        blockArgs = mkHardwareBlockArgs blockHardware;
+        allowArgs = mkPathAllowArgs allowedPaths;
+      in
+      ''
+        exec ${pkgs.bubblewrap}/bin/bwrap \
+          --ro-bind /nix /nix \
+          --tmpfs /tmp \
+          --tmpfs /run \
+          --proc /proc \
+          --dev /dev \
+          ${blockArgs} \
+          ${allowArgs} \
+          --unshare-all \
+          --share-net \
+          --die-with-parent \
+          ${extraArgs}
+      '';
 }
