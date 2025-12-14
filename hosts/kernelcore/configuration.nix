@@ -358,7 +358,7 @@
 
         # Gemini Agent - Isolated workspace (needs bwrap isolation)
         gemini = {
-          enable = false;
+          enable = true;
           projectRoot = "/var/lib/gemini-agent/dev";
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
           user = "gemini-agent";
@@ -367,8 +367,8 @@
         # Antigravity - User's local editor (needs access to shared knowledge)
         # API keys loaded from SOPS at runtime via /run/secrets/
         antigravity = {
-          enable = false;
-          projectRoot = "/home/kernelcore/dev";
+          enable = true;
+          projectRoot = "/etc/nixos";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
           # extraEnv removed - API keys now read from /run/secrets/ (SOPS)
@@ -380,6 +380,9 @@
     # Centralized ML/GPU user and group management
     system.ml-gpu-users.enable = true;
   };
+
+  # Enable the configuration auditor tool
+  services.config-auditor.enable = true;
 
   #services.llama-swap = {
   #enable = true;
@@ -539,6 +542,22 @@
 
     libinput.enable = true;
     printing.enable = true;
+
+    chromiumOrg = {
+      enable = true;
+      extraArgs = [
+        "--force-dark-mode"
+        "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,ParallelDownloading"
+        "--ignore-gpu-blocklist"
+        "--enable-gpu-rasterization"
+        "--enable-zero-copy"
+        "--ozone-platform-hint=auto" # Wayland nativo para o Hyprland
+        "--disable-reading-from-canvas"
+        "--no-first-run"
+        "--disable-sync"
+      ];
+    };
+
   };
 
   # Copy SSL certificates to Gitea directory
@@ -556,6 +575,10 @@
     builtins.elem (lib.getName pkg) [
       "terraform"
     ];
+
+  kernelcore.hardware.intel = {
+    enable = true;
+  };
 
   # Yazi configuration moved to home-manager: hosts/kernelcore/home/yazi.nix
 
@@ -636,13 +659,13 @@
       tmux
       starship
       terraform
+      nushell
       #ghidra
       waybackurls
       hakrawler
 
-      obs-studio
-      pavucontrol
-      ffmpeg-full
+      # obs-studio moved to modules/audio/video-production.nix
+      # pavucontrol and ffmpeg-full also included in that module
       mpv
 
       awscli # AWS CLI v1 (stable) - awscli2 has hash mismatch in prompt-toolkit
@@ -1147,7 +1170,19 @@
     ];
   };
 
+  programs.brave-secure = {
+    enable = true;
+  };
+
+  programs.firefox-privacy = {
+    enable = true;
+  };
+
   programs.git.lfs = {
+    enable = true;
+  };
+
+  programs.nemo = {
     enable = true;
   };
 
@@ -1173,21 +1208,11 @@
 
   services.i915-governor.enable = false;
 
-  programs.obs-studio = {
-    enable = true;
-    enableVirtualCamera = true; # Cria uma webcam virtual (ótimo para Zoom/Meet)
-
-    # Aqui entram os plugins que emulam as features da Nvidia Broadcast e facilitam a vida
-    plugins = with pkgs.obs-studio-plugins; [
-      obs-backgroundremoval # Remove o fundo via IA (substituto do Nvidia Broadcast)
-      obs-pipewire-audio-capture # Captura áudio do sistema sem dor de cabeça
-      obs-vkcapture # Captura de jogos/janelas Vulkan com alta performance
-      obs-vaapi # Aceleração de hardware genérica
-    ];
-  };
+  # OBS Studio configuration moved to modules/audio/video-production.nix
+  # Enable with: modules.audio.videoProduction.enable = true;
 
   programs.vmctl = {
-    enable = true;
+    enable = false;
     vms = {
       wazuh = {
         image = "/var/lib/vm-images/wazuh.qcow2";

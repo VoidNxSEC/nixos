@@ -100,6 +100,34 @@ in
           echo "[obs-nvenc] OBS exited with code $OBS_EXIT"
           exit $OBS_EXIT
         '')
+
+        # OBS NVENC test - valida disponibilidade dos encoders
+        (writeShellScriptBin "obs-test-nvenc" ''
+          echo "╔═══════════════════════════════════════════════════════════╗"
+          echo "║         OBS NVENC Availability Test                   ║"
+          echo "╚═══════════════════════════════════════════════════════════╝"
+          echo ""
+
+          echo "[1] Testing NVIDIA GPU..."
+          nvidia-smi --query-gpu=name,driver_version --format=csv,noheader
+          echo ""
+
+          echo "[2] Available NVENC encoders in ffmpeg:"
+          ffmpeg -hide_banner -encoders 2>/dev/null | grep nvenc
+          echo ""
+
+          echo "[3] NVIDIA Encoder Libraries:"
+          find /run/opengl-driver -name "*nvidia-encode*" -o -name "*nvenc*" 2>/dev/null
+          echo ""
+
+          echo "[4] VAAPI drivers (fallback):"
+          vainfo 2>/dev/null || echo "VAAPI not available (expected on NVIDIA-only)"
+          echo ""
+
+          echo "╔═══════════════════════════════════════════════════════════╗"
+          echo "║ Use 'obs-nvenc' to launch OBS with NVENC support     ║"
+          echo "╚═══════════════════════════════════════════════════════════╝"
+        '')
       ]
       # NVENC/CUDA tools
       ++ optionals cfg.enableNVENC [
@@ -114,23 +142,54 @@ in
       enable = true;
       enableVirtualCamera = true;
 
+      # CRITICAL: Override package with CUDA support for NVENC
+      package = pkgs.obs-studio.override { cudaSupport = true; };
+
       plugins = with pkgs.obs-studio-plugins; [
-        # IA e remoção de fundo
+        # ═══════════════════════════════════════════════════════
+        # IA E REMOÇÃO DE FUNDO
+        # ═══════════════════════════════════════════════════════
         obs-backgroundremoval # Remove fundo via IA (substituto Nvidia Broadcast)
 
-        # Captura de áudio
-        obs-pipewire-audio-capture # Captura áudio do sistema
+        # ═══════════════════════════════════════════════════════
+        # CAPTURA DE ÁUDIO
+        # ═══════════════════════════════════════════════════════
+        obs-pipewire-audio-capture # Captura áudio do sistema via PipeWire
 
-        # Captura de vídeo/jogos
+        # ═══════════════════════════════════════════════════════
+        # CAPTURA DE VÍDEO/JOGOS
+        # ═══════════════════════════════════════════════════════
         obs-vkcapture # Captura Vulkan/OpenGL com alta performance
-        obs-vaapi # Aceleração de hardware VA-API
-
-        # Streaming
-        obs-websocket # Controle remoto/automação
-
-        # Efeitos visuais
-        obs-move-transition # Transições suaves
+        obs-vaapi # Aceleração de hardware VA-API (fallback quando NVENC não disponível)
         wlrobs # Captura nativa Wayland/wlroots
+
+        # ═══════════════════════════════════════════════════════
+        # STREAMING E MULTI-PLATAFORMA
+        # ═══════════════════════════════════════════════════════
+        obs-websocket # Controle remoto/automação via WebSocket
+        obs-multi-rtmp # Stream simultâneo múltiplas plataformas (Twitch+YouTube+etc)
+
+        # ═══════════════════════════════════════════════════════
+        # TRANSIÇÕES E EFEITOS VISUAIS
+        # ═══════════════════════════════════════════════════════
+        obs-move-transition # Transições suaves entre cenas
+        # obs-3d-effect - REMOVED: crashes on GL/Vulkan switching
+        # obs-composite-blur - REMOVED: crashes with hardware accel preview
+        obs-freeze-filter # Congela frame (útil para highlights)
+        obs-gradient-source # Gradientes para backgrounds
+        obs-retro-effects # Filtros retro (VHS, CRT, etc)
+
+        # ═══════════════════════════════════════════════════════
+        # FERRAMENTAS AVANÇADAS
+        # ═══════════════════════════════════════════════════════
+        advanced-scene-switcher # Troca automática de cenas (baseado em janelas/eventos)
+        obs-command-source # Executa comandos/scripts
+        obs-replay-source # Instant replay (captura retroativa)
+
+        # ═══════════════════════════════════════════════════════
+        # INTEGRAÇÕES
+        # ═══════════════════════════════════════════════════════
+        obs-gstreamer # Integração GStreamer (codecs adicionais)
       ];
     };
 
@@ -236,10 +295,20 @@ in
               96000
             ];
 
-            # Quantum baixo para baixa latência (256 samples = ~5.3ms @ 48kHz)
-            "default.clock.quantum" = 256;
-            "default.clock.min-quantum" = 128;
+            # ULTRA LOW LATENCY: 128 samples = ~2.7ms @ 48kHz (optimized for streaming)
+            "default.clock.quantum" = 128;
+            "default.clock.min-quantum" = 64;
             "default.clock.max-quantum" = 1024;
+
+            # Performance optimizations
+            "link.max-buffers" = 16; # Reduce buffer latency
+            "log.level" = 0; # Disable verbose logging for performance
+          };
+
+          # Stream properties for minimal latency
+          "stream.properties" = {
+            "node.latency" = "128/48000"; # ~2.7ms latency
+            "resample.quality" = 4; # Balance between quality and CPU usage
           };
         };
       };
@@ -285,6 +354,13 @@ in
 
       # OBS optimizations
       OBS_USE_EGL = "1";
+
+      # Preview crash prevention (hybrid GPU fixes)
+      # Using mkDefault to avoid conflicts with system defaults
+      QT_XCB_GL_INTEGRATION = mkDefault "xcb_egl"; # Force consistent GL backend
+      __GL_GSYNC_ALLOWED = mkDefault "0"; # Disable G-Sync (can cause preview hang)
+      __GL_VRR_ALLOWED = mkDefault "0"; # Disable VRR (Variable Refresh Rate)
+
       # LIBVA_DRIVER_NAME removed - causes VAAPI detection issues on hybrid GPUs
       # Use obs-nvenc wrapper instead for NVIDIA encoding
     };
