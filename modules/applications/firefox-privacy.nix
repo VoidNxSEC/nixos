@@ -16,7 +16,7 @@ in
 
     enableGoogleAuthenticator = mkOption {
       type = types.bool;
-      default = true;
+      default = false; # DISABLED by default - was causing sudo lockout!
       description = "Integração PAM com Google Authenticator para autenticação local reforçada.";
     };
 
