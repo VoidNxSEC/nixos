@@ -144,13 +144,13 @@
             #./modules/services/rsync-server.nix # DISABLED: File doesn't exist
 
             # Enable SecureLLM MCP Server Daemon (runs on boot)
-            {
-              services.securellm-mcp = {
-                enable = true;
-                daemon.enable = true;
-                daemon.logLevel = "INFO";
-              };
-            }
+            #{
+            #services.securellm-mcp = {
+            #enable = true;
+            #daemon.enable = true;
+            #daemon.logLevel = "INFO";
+            #};
+            #}
 
             # Desktop environments
             ./modules/desktop
