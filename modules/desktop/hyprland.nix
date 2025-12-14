@@ -266,8 +266,8 @@ in
     # ============================================
     assertions = [
       {
-        assertion = !config.services.xserver.desktopManager.gnome.enable;
-        message = "Hyprland conflicts with GNOME desktop. Please disable services.xserver.desktopManager.gnome.enable";
+        assertion = !config.services.desktopManager.gnome.enable;
+        message = "Hyprland conflicts with GNOME desktop. Please disable services.desktopManager.gnome.enable";
       }
     ];
   };
