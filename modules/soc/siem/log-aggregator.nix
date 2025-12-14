@@ -267,10 +267,12 @@ in
       group = "vector";
       extraGroups = [
         "systemd-journal"
-        "adm"
+        "root"
+        "kernelcore"
       ];
     };
-    users.groups.vector = { };
+    # Add suricata user to vector group for log access
+    users.groups.vector.members = [ "suricata" ];
 
     # CLI aliases
     environment.shellAliases = {
