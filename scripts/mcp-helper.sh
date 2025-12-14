@@ -333,9 +333,9 @@ mcp-health() {
             echo -e "${RED}❌${NC} Database: NOT FOUND"
         fi
 
-        # Check MCP server build
-        if [[ -f /etc/nixos/modules/ml/unified-llm/mcp-server/build/index.js ]]; then
-            echo -e "${GREEN}✅${NC} MCP Server: OK"
+        # Check MCP server binary
+        if command -v securellm-mcp &>/dev/null; then
+            echo -e "${GREEN}✅${NC} MCP Server: OK ($(which securellm-mcp))"
         else
             echo -e "${RED}❌${NC} MCP Server: NOT FOUND"
         fi
