@@ -29,7 +29,7 @@ in
     # Resource configuration
     heapSize = mkOption {
       type = types.str;
-      default = "2g";
+      default = "512m";
       description = "JVM heap size for OpenSearch";
     };
 
@@ -114,7 +114,7 @@ in
       extraOptions = [
         "--ulimit=memlock=-1:-1"
         "--ulimit=nofile=65536:65536"
-        "--memory=4g"
+        "--memory=1g"
       ];
     };
 

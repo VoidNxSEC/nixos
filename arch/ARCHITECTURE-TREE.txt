@@ -2,9 +2,9 @@
 ║                    NIXOS ARCHITECTURE TREE                                ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
-Generated: 2025-12-12 02:31:13 -02
+Generated: 2025-12-14 16:02:34 -02
 Location:  /etc/nixos
-Branch:    main (add8e39)
+Branch:    main (7779e09b)
 
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -14,16 +14,14 @@ Branch:    main (add8e39)
 │   │   ├── snapshot-20251210-054056.txt
 │   │   ├── snapshot-20251210-054112.txt
 │   │   ├── snapshot-20251210-054218.txt
-│   │   └── snapshot-20251211-184953.txt
+│   │   ├── snapshot-20251211-184953.txt
+│   │   └── snapshot-20251212-023111.txt
 │   ├── ARCHITECTURE-REPORT.json
 │   ├── ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.txt
 │   ├── ARCHITECTURE-TREE.md
 │   ├── ARCHITECTURE-TREE.txt
 │   └── README.md
-├── dev/
-│   ├── flakes/
-│   └── default.nix
 ├── docs/
 │   ├── applications/
 │   │   └── ZELLIJ-GUIDE.md
@@ -62,6 +60,7 @@ Branch:    main (add8e39)
 │   ├── 2025-11-26-claude-preciso-acessar-o-server-desktop-o-guiux.txt
 │   ├── AGENT-EMPOWERMENT-TOOLKIT.md
 │   ├── AGENT-TOOLKIT-QUICKSTART.md
+│   ├── alacritty-regex-error-report.md
 │   ├── ALTERNATIVA-REINSTALACAO-LIMPA.md
 │   ├── ANALISE-SSH-CONFIG-PROBLEMAS.md
 │   ├── ARCHITECTURE-BLUEPRINT.md
@@ -134,6 +133,8 @@ Branch:    main (add8e39)
 │   ├── ML-MODULES-RESTRUCTURE-PLAN.md
 │   ├── ml-offload-phase2-design.md
 │   ├── ml-offload-testing-plan.md
+│   ├── mobile-workspace-setup-complete.md
+│   ├── mosh-connection-test.md
 │   ├── neovim-integration-analysis.md
 │   ├── NEXT-SESSION-PROMPT.md
 │   ├── NIX-EMERGENCY-PROCEDURES.md
@@ -160,6 +161,7 @@ Branch:    main (add8e39)
 │   ├── SESSION-1-SUMMARY.md
 │   ├── SIEM-INTEGRATION.md
 │   ├── SOPS-TROUBLESHOOTING.md*
+│   ├── ssh-mosh-setup-complete.md
 │   ├── STACK-SERVER-CLIENT-COMPLETE-GUIDE.md
 │   ├── SUMMARY.md*
 │   ├── SYSTEMD_CENTRALIZATION_INDEX.md*
@@ -217,6 +219,7 @@ Branch:    main (add8e39)
 │   │   │   │   ├── README.md
 │   │   │   │   └── zsh.nix
 │   │   │   ├── alacritty.nix
+│   │   │   ├── brave.nix
 │   │   │   ├── flameshot.nix
 │   │   │   ├── git.nix
 │   │   │   ├── home.nix*
@@ -230,8 +233,6 @@ Branch:    main (add8e39)
 │   │   └── hardware-configuration.nix*
 │   └── workstation/
 │       └── configuration.nix
-├── knowledge/
-│   └── sudo-claude-code.nix.backup
 ├── lib/
 │   ├── packages.nix*
 │   ├── shell.nix*
@@ -243,12 +244,15 @@ Branch:    main (add8e39)
 │   │   ├── default.nix
 │   │   ├── firefox-privacy.nix*
 │   │   ├── nemo-full.nix
+│   │   ├── nixos.code-workspace
 │   │   ├── vscode-secure.nix*
 │   │   ├── vscodium-secure.nix*
 │   │   └── zellij.nix
 │   ├── audio/
+│   │   ├── default.nix
 │   │   ├── production.nix
-│   │   └── README.md
+│   │   ├── README.md
+│   │   └── video-production.nix
 │   ├── containers/
 │   │   ├── default.nix
 │   │   ├── docker.nix*
@@ -256,7 +260,9 @@ Branch:    main (add8e39)
 │   │   └── podman.nix
 │   ├── debug/
 │   │   ├── debug-init.nix*
-│   │   └── test-init.nix*
+│   │   ├── default.nix
+│   │   ├── test-init.nix*
+│   │   └── tools-integration.nix
 │   ├── desktop/
 │   │   ├── yazi/
 │   │   │   └── yazi.nix
@@ -266,6 +272,7 @@ Branch:    main (add8e39)
 │   ├── development/
 │   │   ├── cicd.nix*
 │   │   ├── claude-profiles.nix
+│   │   ├── default.nix
 │   │   ├── environments.nix*
 │   │   └── jupyter.nix*
 │   ├── hardware/
@@ -285,25 +292,6 @@ Branch:    main (add8e39)
 │   │   └── wifi-optimization.nix
 │   ├── ml/
 │   │   ├── applications/
-│   │   │   ├── securellm-bridge/
-│   │   │   │   ├── cli/
-│   │   │   │   ├── config/
-│   │   │   │   ├── crates/
-│   │   │   │   ├── docker/
-│   │   │   │   ├── docs/
-│   │   │   │   ├── examples/
-│   │   │   │   ├── mnt/
-│   │   │   │   ├── nix/
-│   │   │   │   ├── src/
-│   │   │   │   ├── Cargo.lock
-│   │   │   │   ├── Cargo.toml
-│   │   │   │   ├── CLAUDE.md
-│   │   │   │   ├── default.nix
-│   │   │   │   ├── flake.nix
-│   │   │   │   ├── LICENSE-APACHE
-│   │   │   │   ├── LICENSE-MIT
-│   │   │   │   ├── Makefile
-│   │   │   │   └── README.md
 │   │   │   ├── default.nix
 │   │   │   └── README.md
 │   │   ├── infrastructure/
@@ -317,7 +305,6 @@ Branch:    main (add8e39)
 │   │   │   └── storage.nix*
 │   │   ├── integrations/
 │   │   │   ├── mcp/
-│   │   │   │   ├── server/
 │   │   │   │   ├── config.nix
 │   │   │   │   └── default.nix
 │   │   │   ├── neovim/
@@ -360,6 +347,7 @@ Branch:    main (add8e39)
 │   │   ├── monitoring/
 │   │   │   └── tailscale-monitor.nix
 │   │   ├── proxy/
+│   │   │   ├── default.nix
 │   │   │   ├── nginx-tailscale.nix
 │   │   │   └── tailscale-services.nix
 │   │   ├── security/
@@ -401,7 +389,9 @@ Branch:    main (add8e39)
 │   │   │   └── js-packages.nix
 │   │   ├── lib/
 │   │   │   ├── builders.nix
-│   │   │   └── sandbox.nix
+│   │   │   ├── fetchers.nix
+│   │   │   ├── sandbox.nix
+│   │   │   └── types.nix
 │   │   ├── _sources/
 │   │   │   ├── generated.json
 │   │   │   └── generated.nix
@@ -427,10 +417,12 @@ Branch:    main (add8e39)
 │   │   └── SETUP.md
 │   ├── programs/
 │   │   ├── cognitive-vault.nix
-│   │   └── default.nix
+│   │   ├── default.nix
+│   │   └── vmctl.nix
 │   ├── secrets/
 │   │   ├── api-keys.nix
 │   │   ├── aws-bedrock.nix
+│   │   ├── default.nix
 │   │   ├── sops-config.nix*
 │   │   └── tailscale.nix
 │   ├── security/
@@ -459,6 +451,7 @@ Branch:    main (add8e39)
 │   │   │   ├── default.nix*
 │   │   │   ├── gemini-agent.nix
 │   │   │   └── gitlab-runner.nix
+│   │   ├── config-auditor.nix
 │   │   ├── default.nix*
 │   │   ├── gpu-orchestration.nix
 │   │   ├── laptop-builder-client.nix
@@ -522,17 +515,49 @@ Branch:    main (add8e39)
 │   │   ├── gpu-flags.nix*
 │   │   ├── INTEGRATION.md*
 │   │   └── training-logger.nix
+│   ├── soc/
+│   │   ├── alerting/
+│   │   │   └── alerting.nix
+│   │   ├── dashboards/
+│   │   │   └── grafana.nix
+│   │   ├── edr/
+│   │   │   ├── edr.nix
+│   │   │   └── fim.nix
+│   │   ├── ids/
+│   │   │   ├── suricata.nix
+│   │   │   └── threat-intel.nix
+│   │   ├── network/
+│   │   │   ├── dns-monitor.nix
+│   │   │   └── netflow.nix
+│   │   ├── siem/
+│   │   │   ├── log-aggregator.nix
+│   │   │   ├── opensearch.nix
+│   │   │   └── wazuh.nix
+│   │   ├── default.nix
+│   │   ├── options.nix
+│   │   └── tools.nix
 │   ├── system/
 │   │   ├── bash/
 │   │   │   └── void.sh
 │   │   ├── aliases.nix*
 │   │   ├── binary-cache.nix
+│   │   ├── default.nix
 │   │   ├── emergency-monitor.nix
 │   │   ├── memory.nix*
 │   │   ├── ml-gpu-users.nix
 │   │   ├── nix.nix*
 │   │   ├── services.nix*
 │   │   └── ssh-config.nix
+│   ├── tools/
+│   │   ├── default.nix
+│   │   ├── dev.nix
+│   │   ├── diagnostics.nix
+│   │   ├── intel.nix
+│   │   ├── llm.nix
+│   │   ├── mcp.nix
+│   │   ├── nix-utils.nix
+│   │   ├── secops.nix
+│   │   └── secrets.nix
 │   ├── virtualization/
 │   │   ├── default.nix
 │   │   ├── macos-kvm.nix
@@ -545,38 +570,9 @@ Branch:    main (add8e39)
 │   ├── hyprland.nix
 │   ├── python-packages.nix
 │   └── README.md
-├── projects/
-│   ├── cognitive-vault/
-│   │   ├── cli/
-│   │   │   ├── cmd/
-│   │   │   ├── internal/
-│   │   │   │   └── crypto/
-│   │   │   ├── default.nix
-│   │   │   ├── go.mod
-│   │   │   └── go.sum
-│   │   ├── core/
-│   │   │   ├── include/
-│   │   │   │   └── vault_core.h
-│   │   │   ├── src/
-│   │   │   ├── Cargo.lock
-│   │   │   ├── Cargo.toml
-│   │   │   └── default.nix
-│   │   ├── default.nix
-│   │   ├── flake.lock
-│   │   └── flake.nix
-│   ├── i915-governor/
-│   │   ├── nix/
-│   │   │   └── package.nix
-│   │   ├── src/
-│   │   │   └── main.zig
-│   │   ├── build.zig
-│   │   └── default.nix
-│   └── spider-nix/
-│       ├── src/
-│       │   └── spider_nix/
-│       ├── tests/
-│       ├── default.nix
-│       └── pyproject.toml
+├── reports/
+│   ├── audit_report_20251214_simple.md
+│   └── config_summary.md
 ├── scripts/
 │   ├── nixos-shell/
 │   │   ├── scripts/
@@ -589,10 +585,12 @@ Branch:    main (add8e39)
 │   ├── add-to-sops.sh*
 │   ├── alacritty-enhancements-summary.md
 │   ├── alias-inspector.sh*
+│   ├── audit-config-simple.sh*
 │   ├── auditoria-disco.sh*
 │   ├── auto-commit.sh*
 │   ├── backup-rapido.sh*
 │   ├── clean-sudo.nix
+│   ├── create.sh*
 │   ├── deb-add*
 │   ├── desktop-cfg2.nix
 │   ├── desktop-cfg.nix
@@ -609,10 +607,18 @@ Branch:    main (add8e39)
 │   ├── fix-sudo3.nix
 │   ├── fix-sudo.nix
 │   ├── generate-architecture-tree.sh*
+│   ├── generate-docs.sh*
 │   ├── generate-mcp-config.sh*
 │   ├── generate-tree-diagram.sh*
+│   ├── intel-dev.sh*
+│   ├── intel-health.sh*
+│   ├── intel-nix.sh*
+│   ├── intel-scan.sh*
+│   ├── intel-score.sh*
+│   ├── intel.sh*
 │   ├── interage-llm.sh*
 │   ├── investigate-infra.sh*
+│   ├── jsonl2pretty.sh*
 │   ├── kill-children.sh*
 │   ├── limpa-processos.sh*
 │   ├── limpeza-agressiva.sh*
@@ -620,18 +626,25 @@ Branch:    main (add8e39)
 │   ├── load-aws-bedrock.sh*
 │   ├── mcp-health-check.sh*
 │   ├── mcp-helper.sh*
+│   ├── migrate-projects.sh
 │   ├── migrate-sec-to-sops.sh*
 │   ├── monitora-logs-seguranca.sh*
 │   ├── monitora-processos-detalhado.sh*
 │   ├── monitora-rede.sh*
 │   ├── monitor-nix-store.sh*
+│   ├── monitor-rebuild-attach.sh
+│   ├── monitor-rebuild-complete.sh*
 │   ├── monitor-rebuild.sh*
 │   ├── MONITOR-REBUILD-USAGE.md
 │   ├── nix-emergency.sh*
 │   ├── nix-hard-reset.sh*
 │   ├── nixos-perfect-install.sh
+│   ├── pipeline-check.sh*
 │   ├── post-rebuild-validate.sh*
+│   ├── pre-commit.sh*
 │   ├── pre_processa_dados_llm.sh*
+│   ├── push-all-projects.sh*
+│   ├── scan.sh*
 │   ├── SecOps (copy)
 │   ├── setup-claude-secrets.sh*
 │   ├── setup-desktop-offload.sh*
@@ -640,6 +653,7 @@ Branch:    main (add8e39)
 │   ├── setup-packages*
 │   ├── simple-update.sh*
 │   ├── sops-editor.sh*
+│   ├── ssh-diagnostics.sh*
 │   ├── sync-from-desktop.sh*
 │   ├── sync-github-secrets.sh*
 │   ├── sync-to-desktop.sh*
@@ -655,6 +669,7 @@ Branch:    main (add8e39)
 │   ├── update-packages.sh*
 │   ├── update-rust-package.sh
 │   ├── update-secrets.sh*
+│   ├── vram_examples.sh*
 │   ├── vscode-remote-test-summary.md
 │   ├── vscode-ssh-diagnostic.sh*
 │   ├── vscodium-wrapper.sh*
@@ -690,12 +705,14 @@ Branch:    main (add8e39)
 │   ├── README.md
 │   └── tailscale-integration-test.nix
 ├── CLAUDE.md
-├── example.yaml
+├── find_patterns.sh*
 ├── flake.lock*
-├── flake.nix*
+├── flake.nix
 ├── knowledge.db
-└── run-lynis-audits.sh*
+├── README.md
+├── run-lynis-audits.sh*
+└── shell.nix
 
-131 directories, 556 files
+110 directories, 594 files
 
 ═══════════════════════════════════════════════════════════════════════════
