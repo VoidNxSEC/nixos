@@ -38,16 +38,17 @@ with lib;
           # ULTRA-OPTIMIZED: Prevent CPU/RAM throttling and OOM
           # Reduced from max-jobs=4 cores=3 to prevent memory exhaustion
           # Using mkForce to override hardening.nix settings
-          max-jobs = mkForce 2; # Only 2 parallel builds to prevent RAM overload
-          cores = mkForce 2; # 2 cores per job (total 4 cores active)
+          max-jobs = mkForce 4; # Only 2 parallel builds to prevent RAM overload
+          cores = mkForce 4; # 2 cores per job (total 4 cores active)
           # Total concurrent threads: 2 jobs × 2 cores = 4 threads (was 12)
 
           # Kill builds that take too long (prevents zombie builds)
-          timeout = mkDefault 3600; # 1 hour timeout for stuck builds
+          timeout = mkDefault 900; # 15 min timeout for stuck builds
 
           trusted-users = [
             "root"
             "@wheel"
+            "kernelcore"
           ];
 
           # Aggressive cleanup to save disk space
@@ -71,7 +72,7 @@ with lib;
           # Allow local git+file URIs for development (avoids restricted mode errors)
           extra-allowed-uris = [
             "git+file:///home/kernelcore/dev/projects"
-            "path:/home/kernelcore/dev/projects"
+            "path:///home/kernelcore/dev/projects"
           ];
         }
       ];
