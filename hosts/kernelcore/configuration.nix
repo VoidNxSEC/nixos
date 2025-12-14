@@ -211,7 +211,7 @@
     };
 
     virtualization = {
-      enable = false;
+      enable = true;
       virt-manager = true;
       libvirtdGroup = [ "kernelcore" ];
       virtiofs.enable = true;
