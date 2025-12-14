@@ -44,7 +44,7 @@
       # Antivirus scanning for malware detection
       # DISABLED: ClamAV consumes 2.7GB RAM + 1.2GB swap (causes system slowdown)
       # See REFATORACAO-ARQUITETURA-2025.md for optimized configuration
-      clamav.enable = false;
+      clamav.enable = true;
 
       # Enhanced SSH security hardening
       ssh.enable = true;
@@ -103,7 +103,7 @@
       # Reverse proxy for Tailscale services (NGINX)
       # Enable when you want to expose services like Ollama via subdomain
       proxy.nginx-tailscale = {
-        enable = false; # Set to true to enable NGINX reverse proxy
+        enable = true; # Set to true to enable NGINX reverse proxy
         tailnetDomain = "tail-scale.ts.net";
         # services.ollama = { enable = true; subdomain = "ollama"; upstreamPort = 11434; };
       };
@@ -197,7 +197,7 @@
     containers = {
       docker.enable = true;
       podman = {
-        enable = false; # Set to true to use Podman instead of/alongside Docker
+        enable = true; # Set to true to use Podman instead of/alongside Docker
         dockerCompat = false; # Enable Docker CLI compatibility (creates docker -> podman alias)
         enableNvidia = true; # NVIDIA GPU support for containers
       };
@@ -369,10 +369,10 @@
 
         # Codex Agent - Isolated workspace with bwrap (already stable)
         codex = {
-          enable = false;
+          enable = true;
           projectRoot = "/var/lib/codex/dev";
           configPath = "/var/lib/codex/.codex/mcp.json";
-          user = "codex";
+          user = "kernelcore";
         };
 
         # Gemini Agent - Isolated workspace (needs bwrap isolation)
@@ -380,7 +380,7 @@
           enable = true;
           projectRoot = "/var/lib/gemini-agent/dev";
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
-          user = "gemini-agent";
+          user = "kernelcore";
         };
 
         # Antigravity - User's local editor (needs access to shared knowledge)
