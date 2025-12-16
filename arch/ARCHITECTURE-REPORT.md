@@ -1,7 +1,7 @@
 # NixOS Architecture Analysis Report
 
-> **Professional Edition v2.0.0**
-> **Generated**: 2025-12-14 16:02:34 -02
+> **Professional Edition v3.0.0**
+> **Generated**: 2025-12-16 01:14:53 -02
 > **Location**: `/etc/nixos`
 
 ---
@@ -24,12 +24,12 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Files** | 861 |
-| **Total Directories** | 262 |
-| **Repository Size** | 2.2G |
+| **Total Files** | 885 |
+| **Total Directories** | 274 |
+| **Repository Size** | 2.4G |
 | **Git Branch** | `main` |
-| **Git Commit** | `7779e09b` |
-| **Total Commits** | 247 |
+| **Git Commit** | `73ef6bf7` |
+| **Total Commits** | 262 |
 | **Contributors** | 3 |
 | **Repository Age** | 0 days |
 
@@ -37,18 +37,18 @@
 
 | Metric | Value |
 |--------|-------|
-| **.nix files** | 274 (51141 lines) |
-| **Total modules** | 173 |
+| **.nix files** | 284 (52076 lines) |
+| **Total modules** | 181 |
 | **Module categories** | 12 |
-| **Modules size** | 1.1G |
+| **Modules size** | 1.2G |
 
 ### Health Metrics
 
 | Metric | Score | Status |
 |--------|-------|--------|
-| **Overall Health** | 64/100 | ⚠️ Needs Work |
+| **Overall Health** | 65/100 | ⚠️ Needs Work |
 | **Security** | 100/100 | ✅ Strong |
-| **Documentation** | 49/100 | ⚠️ Needs Work |
+| **Documentation** | 51/100 | ⚠️ Needs Work |
 
 ---
 
@@ -56,14 +56,14 @@
 
 | Category | Modules | Lines | Description |
 |----------|---------|-------|-------------|
+| **packages** | 36 | 3151 | Custom packages and overlays |
 | **shell** | 35 | 5243 | Shell configuration and aliases |
-| **packages** | 29 | 2620 | Custom packages and overlays |
 | **ml** | 22 | 1953 | Machine learning infrastructure |
 | **security** | 17 | 2249 | Security hardening and policies |
-| **services** | 16 | 3021 | System services and daemons |
+| **services** | 16 | 3028 | System services and daemons |
 | **network** | 12 | 2816 | Network configuration and services |
 | **hardware** | 12 | 2712 | Hardware configurations (GPU, CPU, peripherals) |
-| **system** | 9 | 1130 | Core system configuration |
+| **system** | 10 | 1196 | Core system configuration |
 | **applications** | 8 | 1778 | User applications and tools |
 | **development** | 5 | 973 | Development environments and tools |
 | **virtualization** | 4 | 1971 | VMs, QEMU, libvirt |
@@ -87,11 +87,11 @@
 
 ## 📊 Health Score
 
-### Overall: 64/100
+### Overall: 65/100
 
 | Component | Score |
 |-----------|-------|
-| Documentation | 49/100 |
+| Documentation | 51/100 |
 | Security | 100/100 |
 | Structure | 100/100 |
 
@@ -103,7 +103,7 @@
 
 ### 📚 Documentation
 
-- **Current**: 49%
+- **Current**: 51%
 - **Target**: 80%+
 - **Action**: Add `description` fields to module options
 - **Benefit**: Better maintainability and onboarding
@@ -117,19 +117,19 @@
 
 | Type | Count | Lines |
 |------|-------|-------|
-| .nix | 274 | 51141 |
-| .sh | 94 | 15925 |
-| .md | 258 | 98515 |
+| .nix | 284 | 52076 |
+| .sh | 100 | 16595 |
+| .md | 258 | 98274 |
 | .yaml | 14 | - |
 
 ### Directory Sizes
 
 | Directory | Size |
 |-----------|------|
-| modules/ | 1.1G |
+| modules/ | 1.2G |
 | docs/ | 2.0M |
-| scripts/ | 1.3M |
-| **Total** | **2.2G** |
+| scripts/ | 1.5M |
+| **Total** | **2.4G** |
 
 ---
 
@@ -143,7 +143,12 @@
 │   │   ├── snapshot-20251210-054112.txt
 │   │   ├── snapshot-20251210-054218.txt
 │   │   ├── snapshot-20251211-184953.txt
-│   │   └── snapshot-20251212-023111.txt
+│   │   ├── snapshot-20251212-023111.txt
+│   │   ├── snapshot-20251214-160231.txt
+│   │   ├── snapshot-20251216-011142.txt
+│   │   ├── snapshot-20251216-011215.txt
+│   │   ├── snapshot-20251216-011243.txt
+│   │   └── snapshot-20251216-011332.txt
 │   ├── ARCHITECTURE-REPORT.json
 │   ├── ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.txt
@@ -488,54 +493,52 @@
 │   │   ├── bridge.nix
 │   │   └── dns-resolver.nix*
 │   ├── packages/
-│   │   ├── deb-packages/
-│   │   │   ├── packages/
-│   │   │   │   ├── all.nix
-│   │   │   │   ├── cursor.nix
-│   │   │   │   ├── example.nix
-│   │   │   │   ├── protonpass.nix
-│   │   │   │   ├── protonvpn.nix
-│   │   │   │   └── README.md
-│   │   │   ├── storage/
-│   │   │   │   ├── cursor_2.0.34_amd64.deb
-│   │   │   │   ├── ProtonPass.deb
+│   │   ├── _archive/
+│   │   │   ├── deb-packages/
+│   │   │   │   ├── packages/
+│   │   │   │   ├── storage/
+│   │   │   │   ├── audit.nix
+│   │   │   │   ├── builder.nix
+│   │   │   │   ├── default.nix
 │   │   │   │   ├── README.md
-│   │   │   │   └── warp-terminal_0.2025.11.19.08.12.stable.03_amd64.deb
-│   │   │   ├── audit.nix
-│   │   │   ├── builder.nix
+│   │   │   │   └── sandbox.nix
+│   │   │   ├── js-packages/
+│   │   │   │   ├── storage/
+│   │   │   │   ├── builder.nix
+│   │   │   │   ├── build-gemini.nix
+│   │   │   │   ├── default.nix
+│   │   │   │   ├── gemini-cli.nix
+│   │   │   │   └── js-packages.nix
+│   │   │   ├── lib/
+│   │   │   │   ├── builders.nix
+│   │   │   │   ├── fetchers.nix
+│   │   │   │   ├── sandbox.nix
+│   │   │   │   └── types.nix
+│   │   │   └── tar-packages/
+│   │   │       ├── packages/
+│   │   │       ├── storage/
+│   │   │       ├── builder.nix
+│   │   │       ├── default.nix
+│   │   │       └── README.md
+│   │   ├── gemini-cli/
+│   │   │   └── default.nix
+│   │   ├── lynis/
+│   │   │   └── default.nix
+│   │   ├── protonpass/
 │   │   │   ├── default.nix
-│   │   │   ├── README.md
-│   │   │   └── sandbox.nix
-│   │   ├── js-packages/
-│   │   │   ├── storage/
-│   │   │   │   ├── gemini-cli-0.19.0-nightly.20251124.e177314a4/
-│   │   │   │   └── README.md
-│   │   │   ├── builder.nix
-│   │   │   ├── build-gemini.nix
-│   │   │   ├── default.nix
-│   │   │   ├── gemini-cli.nix
-│   │   │   └── js-packages.nix
-│   │   ├── lib/
-│   │   │   ├── builders.nix
-│   │   │   ├── fetchers.nix
-│   │   │   ├── sandbox.nix
-│   │   │   └── types.nix
+│   │   │   └── ProtonPass.deb
 │   │   ├── _sources/
 │   │   │   ├── generated.json
 │   │   │   └── generated.nix
-│   │   ├── tar-packages/
-│   │   │   ├── packages/
-│   │   │   │   ├── antigravity.nix
-│   │   │   │   ├── appflowy.nix
-│   │   │   │   ├── codex.nix
-│   │   │   │   ├── lynis.nix
-│   │   │   │   ├── protonpass.nix
-│   │   │   │   └── zellij.nix
-│   │   │   ├── storage/
-│   │   │   │   └── codex-x86_64-unknown-linux-musl*
-│   │   │   ├── builder.nix
-│   │   │   ├── default.nix
-│   │   │   └── README.md
+│   │   ├── _templates/
+│   │   │   ├── deb-package/
+│   │   │   │   └── default.nix
+│   │   │   ├── npm-package/
+│   │   │   │   └── default.nix
+│   │   │   └── tar-package/
+│   │   │       └── default.nix
+│   │   ├── zellij/
+│   │   │   └── default.nix
 │   │   ├── appflowy.nix
 │   │   ├── default.nix
 │   │   ├── DOCUMENTATION.md
@@ -546,6 +549,7 @@
 │   ├── programs/
 │   │   ├── cognitive-vault.nix
 │   │   ├── default.nix
+│   │   ├── phantom.nix
 │   │   └── vmctl.nix
 │   ├── secrets/
 │   │   ├── api-keys.nix
@@ -664,6 +668,9 @@
 │   │   ├── default.nix
 │   │   ├── options.nix
 │   │   └── tools.nix
+│   ├── _sources/
+│   │   ├── generated.json
+│   │   └── generated.nix
 │   ├── system/
 │   │   ├── bash/
 │   │   │   └── void.sh
@@ -671,6 +678,7 @@
 │   │   ├── binary-cache.nix
 │   │   ├── default.nix
 │   │   ├── emergency-monitor.nix
+│   │   ├── io-scheduler.nix
 │   │   ├── memory.nix*
 │   │   ├── ml-gpu-users.nix
 │   │   ├── nix.nix*
@@ -707,8 +715,16 @@
 │   │   └── README.md
 │   ├── nixos-ssh/
 │   │   └── README.md
+│   ├── nix-tools/
+│   │   └── log-viewer.sh*
 │   ├── SecOps/
 │   │   └── bedrock-investigation-brief.md
+│   ├── surgical/
+│   │   ├── io-surgeon.sh*
+│   │   ├── module-catalog.sh*
+│   │   ├── net-conflict.sh*
+│   │   ├── ps-advanced.sh*
+│   │   └── psi-sentinel.sh*
 │   ├── add-secret.sh*
 │   ├── add-to-sops.sh*
 │   ├── alacritty-enhancements-summary.md
@@ -839,17 +855,18 @@
 ├── knowledge.db
 ├── README.md
 ├── run-lynis-audits.sh*
-└── shell.nix
+├── shell.nix
+└── test_file.txt
 
-110 directories, 594 files
+121 directories, 600 files
 ```
 
 ---
 
 ## 📝 Metadata
 
-- **Report Version**: 2.0.0
-- **Generated**: 2025-12-14 16:02:34 -02
+- **Report Version**: 3.0.0
+- **Generated**: 2025-12-16 01:14:53 -02
 - **Tool**: NixOS Architecture Analysis Tool
 - **Repository**: /etc/nixos
 
