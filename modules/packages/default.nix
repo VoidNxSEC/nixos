@@ -19,7 +19,6 @@
     ./zellij
     ./gemini-cli
     ./lynis
-    ./protonpass
 
     # Legacy support - will be migrated
     # TODO: Migrate remaining packages from old structure
