@@ -1,43 +1,43 @@
 {
   "metadata": {
-    "version": "2.0.0",
-    "generated": "2025-12-14T18:02:34Z",
+    "version": "3.0.0",
+    "generated": "2025-12-16T03:14:53Z",
     "location": "/etc/nixos",
     "hostname": "nx"
   },
   "git": {
     "branch": "main",
-    "commit": "7779e09b",
-    "commit_long": "7779e09bf7bf45544531d450eca6b71ca62d2e07",
-    "commit_date": "2025-12-14 13:34:05",
-    "total_commits": 247,
+    "commit": "73ef6bf7",
+    "commit_long": "73ef6bf76c8ef8090b4924dc0ec0a3a02f418af3",
+    "commit_date": "2025-12-16 01:03:54",
+    "total_commits": 262,
     "contributors": 3,
     "last_tag": "ml-restructure-complete",
     "repo_age_days": 0
   },
   "statistics": {
     "files": {
-      "total": 861,
-      "nix": 274,
-      "sh": 94,
+      "total": 885,
+      "nix": 284,
+      "sh": 100,
       "md": 258,
       "yaml": 14
     },
     "lines": {
-      "nix": 51141,
-      "sh": 15925,
-      "md": 98515
+      "nix": 52076,
+      "sh": 16595,
+      "md": 98274
     },
-    "directories": 262,
+    "directories": 274,
     "sizes": {
-      "modules": "1.1G",
+      "modules": "1.2G",
       "docs": "2.0M",
-      "scripts": "1.3M",
-      "total": "2.2G"
+      "scripts": "1.5M",
+      "total": "2.4G"
     }
   },
   "modules": {
-    "total": 173,
+    "total": 181,
     "categories": 12,
     "by_category": {
       "shell": {
@@ -53,8 +53,8 @@
         "lines": 1778
       },
       "system": {
-        "count": 9,
-        "lines": 1130
+        "count": 10,
+        "lines": 1196
       },
       "hardware": {
         "count": 12,
@@ -81,19 +81,19 @@
         "lines": 2249
       },
       "packages": {
-        "count": 29,
-        "lines": 2620
+        "count": 36,
+        "lines": 3151
       },
       "services": {
         "count": 16,
-        "lines": 3021
+        "lines": 3028
       }
     },
-    "orphaned": 131
+    "orphaned": 133
   },
   "health": {
-    "overall": 64,
-    "documentation": 49,
+    "overall": 65,
+    "documentation": 51,
     "security": 100
   },
   "security": {
