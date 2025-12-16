@@ -67,7 +67,6 @@ with lib;
       libsecret
 
       # AI/ML tools (if needed for security analysis)
-      ollama
       llama-cpp
       python313Packages.llama-stack-client
 

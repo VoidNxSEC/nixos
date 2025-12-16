@@ -2,9 +2,9 @@
 ║                    NIXOS ARCHITECTURE TREE                                ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
-Generated: 2025-12-16 01:14:53 -02
+Generated: 2025-12-16 08:31:20 -02
 Location:  /etc/nixos
-Branch:    main (73ef6bf7)
+Branch:    main (58218681)
 
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -20,13 +20,42 @@ Branch:    main (73ef6bf7)
 │   │   ├── snapshot-20251216-011142.txt
 │   │   ├── snapshot-20251216-011215.txt
 │   │   ├── snapshot-20251216-011243.txt
-│   │   └── snapshot-20251216-011332.txt
+│   │   ├── snapshot-20251216-011332.txt
+│   │   └── snapshot-20251216-011451.txt
+│   ├── AI-ARCHITECTURE-REPORT.json
+│   ├── AI-ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.json
 │   ├── ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.txt
 │   ├── ARCHITECTURE-TREE.md
 │   ├── ARCHITECTURE-TREE.txt
+│   ├── dependency-graph.mmd
 │   └── README.md
+├── backups/
+│   ├── ollama_cleanup_20251216_080650/
+│   │   └── configuration.nix*
+│   └── ollama_cleanup_20251216_080716/
+│       ├── agent-hub.nix
+│       ├── ai-compose-stack.sh*
+│       ├── ai-ml-stack.sh*
+│       ├── aliases.sh
+│       ├── configurations-template.nix*
+│       ├── database.nix
+│       ├── default.nix
+│       ├── firewall-zones.nix
+│       ├── gpu-management.sh
+│       ├── gpu-orchestration.nix
+│       ├── home.nix*
+│       ├── litellm_runtime_manager.sh*
+│       ├── ml-gpu-users.nix
+│       ├── multimodal.sh*
+│       ├── nginx-tailscale.nix
+│       ├── nixos-aliases.nix
+│       ├── nx.sh*
+│       ├── packages.nix*
+│       ├── phantom.nix
+│       ├── storage.nix*
+│       └── tailscale-services.nix
 ├── docs/
 │   ├── applications/
 │   │   └── ZELLIJ-GUIDE.md
@@ -191,17 +220,17 @@ Branch:    main (73ef6bf7)
 │   │   │   └── dsdt.dsl
 │   │   ├── home/
 │   │   │   ├── aliases/
-│   │   │   │   ├── ai-compose-stack.sh*
-│   │   │   │   ├── ai-ml-stack.sh*
+│   │   │   │   ├── ai-compose-stack.sh
+│   │   │   │   ├── ai-ml-stack.sh
 │   │   │   │   ├── aliases.sh
 │   │   │   │   ├── gcloud.sh*
 │   │   │   │   ├── gpu-docker-core.sh*
 │   │   │   │   ├── gpu-management.sh
 │   │   │   │   ├── gpu.sh*
-│   │   │   │   ├── litellm_runtime_manager.sh*
-│   │   │   │   ├── multimodal.sh*
+│   │   │   │   ├── litellm_runtime_manager.sh
+│   │   │   │   ├── multimodal.sh
 │   │   │   │   ├── nixos-aliases.nix
-│   │   │   │   └── nx.sh*
+│   │   │   │   └── nx.sh
 │   │   │   ├── glassmorphism/
 │   │   │   │   ├── agent-hub.nix
 │   │   │   │   ├── colors.nix
@@ -227,13 +256,14 @@ Branch:    main (73ef6bf7)
 │   │   │   ├── brave.nix
 │   │   │   ├── flameshot.nix
 │   │   │   ├── git.nix
-│   │   │   ├── home.nix*
+│   │   │   ├── home.nix
 │   │   │   ├── hyprland.nix
 │   │   │   ├── theme.nix
 │   │   │   ├── tmux.nix
 │   │   │   └── yazi.nix
-│   │   ├── configuration.nix*
-│   │   ├── configurations-template.nix*
+│   │   ├── configuration.nix
+│   │   ├── configuration.nix.bak*
+│   │   ├── configurations-template.nix
 │   │   ├── default.nix*
 │   │   └── hardware-configuration.nix*
 │   └── workstation/
@@ -296,9 +326,6 @@ Branch:    main (73ef6bf7)
 │   │   ├── trezor.nix*
 │   │   └── wifi-optimization.nix
 │   ├── ml/
-│   │   ├── applications/
-│   │   │   ├── default.nix
-│   │   │   └── README.md
 │   │   ├── infrastructure/
 │   │   │   ├── hardware/
 │   │   │   │   └── default.nix
@@ -307,7 +334,7 @@ Branch:    main (73ef6bf7)
 │   │   │   │   └── monitoring.nix
 │   │   │   ├── default.nix
 │   │   │   ├── README.md
-│   │   │   └── storage.nix*
+│   │   │   └── storage.nix
 │   │   ├── integrations/
 │   │   │   ├── mcp/
 │   │   │   │   ├── config.nix
@@ -321,10 +348,10 @@ Branch:    main (73ef6bf7)
 │   │   │   ├── api/
 │   │   │   │   ├── src/
 │   │   │   │   ├── Cargo.lock
-│   │   │   │   ├── Cargo.toml
-│   │   │   │   └── dev-ui.html
+│   │   │   │   └── Cargo.toml
 │   │   │   ├── backends/
-│   │   │   │   └── default.nix
+│   │   │   │   ├── default.nix
+│   │   │   │   └── vllm-driver.nix
 │   │   │   ├── registry/
 │   │   │   │   ├── database.nix
 │   │   │   │   └── default.nix
@@ -333,13 +360,10 @@ Branch:    main (73ef6bf7)
 │   │   │   ├── manager.nix
 │   │   │   └── README.md
 │   │   ├── services/
-│   │   │   ├── ollama/
-│   │   │   │   ├── default.nix
-│   │   │   │   └── gpu-manager.nix*
 │   │   │   ├── default.nix
-│   │   │   ├── llama-cpp.nix*
-│   │   │   ├── llama-cpp-swap.nix
-│   │   │   └── README.md
+│   │   │   ├── llama-cpp-turbo.nix
+│   │   │   ├── README.md
+│   │   │   └── vllm.nix
 │   │   ├── default.nix
 │   │   └── README.md
 │   ├── network/
@@ -363,6 +387,7 @@ Branch:    main (73ef6bf7)
 │   │   │   ├── tailscale-laptop.nix
 │   │   │   └── tailscale.nix
 │   │   ├── bridge.nix
+│   │   ├── default.nix
 │   │   └── dns-resolver.nix*
 │   ├── packages/
 │   │   ├── _archive/
@@ -444,7 +469,7 @@ Branch:    main (73ef6bf7)
 │   │   ├── keyring.nix
 │   │   ├── network.nix*
 │   │   ├── nix-daemon.nix*
-│   │   ├── packages.nix*
+│   │   ├── packages.nix
 │   │   ├── pam.nix*
 │   │   └── ssh.nix*
 │   ├── services/
@@ -468,8 +493,7 @@ Branch:    main (73ef6bf7)
 │   ├── shell/
 │   │   ├── aliases/
 │   │   │   ├── ai/
-│   │   │   │   ├── default.nix
-│   │   │   │   └── ollama.nix
+│   │   │   │   └── default.nix
 │   │   │   ├── amazon/
 │   │   │   │   ├── aws.nix
 │   │   │   │   └── default.nix
@@ -557,6 +581,9 @@ Branch:    main (73ef6bf7)
 │   │   ├── services.nix*
 │   │   └── ssh-config.nix
 │   ├── tools/
+│   │   ├── arch-analyzer/
+│   │   │   ├── python/
+│   │   │   └── default.nix
 │   │   ├── default.nix
 │   │   ├── dev.nix
 │   │   ├── diagnostics.nix
@@ -571,6 +598,7 @@ Branch:    main (73ef6bf7)
 │   │   ├── macos-kvm.nix
 │   │   ├── vmctl.nix
 │   │   └── vms.nix*
+│   ├── default.nix
 │   ├── TEMPLATE_GUIDE.md
 │   └── TEMPLATE.nix
 ├── overlays/
@@ -578,6 +606,7 @@ Branch:    main (73ef6bf7)
 │   ├── hyprland.nix
 │   ├── python-packages.nix
 │   └── README.md
+├── projects/
 ├── reports/
 │   ├── audit_report_20251214_simple.md
 │   └── config_summary.md
@@ -660,6 +689,7 @@ Branch:    main (73ef6bf7)
 │   ├── pre-commit.sh*
 │   ├── pre_processa_dados_llm.sh*
 │   ├── push-all-projects.sh*
+│   ├── remove_ollama_lines.sh*
 │   ├── scan.sh*
 │   ├── SecOps (copy)
 │   ├── setup-claude-secrets.sh*
@@ -730,6 +760,6 @@ Branch:    main (73ef6bf7)
 ├── shell.nix
 └── test_file.txt
 
-121 directories, 600 files
+125 directories, 626 files
 
 ═══════════════════════════════════════════════════════════════════════════
