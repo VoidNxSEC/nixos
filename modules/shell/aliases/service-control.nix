@@ -105,47 +105,66 @@ with lib;
       '')
 
       # ============================================================
-      # LLAMA.CPP CONTROL
+      # LLAMA.CPP TURBO CONTROL
       # ============================================================
       (pkgs.writeShellScriptBin "llama-start" ''
         #!/usr/bin/env bash
-        echo "▶️  STARTING LLAMA.CPP..."
-        sudo systemctl start llamacpp.service
-        sleep 1
-        sudo systemctl status llamacpp.service --no-pager | head -15
+        echo "▶️  STARTING LLAMA.CPP TURBO..."
+        sudo systemctl start llamacpp-turbo.service
+        sleep 2
+        sudo systemctl status llamacpp-turbo.service --no-pager | head -15
         nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv,noheader 2>/dev/null || true
       '')
 
       (pkgs.writeShellScriptBin "llama-stop" ''
         #!/usr/bin/env bash
-        echo "⏸️  STOPPING LLAMA.CPP..."
-        sudo systemctl stop llamacpp.service
-        echo "✅ Llama.cpp stopped"
+        echo "⏸️  STOPPING LLAMA.CPP TURBO..."
+        sudo systemctl stop llamacpp-turbo.service
+        echo "✅ LLama.cpp Turbo stopped"
         free -h
         nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv,noheader 2>/dev/null || true
       '')
 
       (pkgs.writeShellScriptBin "llama-restart" ''
         #!/usr/bin/env bash
-        echo "🔄 RESTARTING LLAMA.CPP..."
-        sudo systemctl restart llamacpp.service
-        sleep 1
-        sudo systemctl status llamacpp.service --no-pager | head -15
+        echo "🔄 RESTARTING LLAMA.CPP TURBO..."
+        sudo systemctl restart llamacpp-turbo.service
+        sleep 2
+        sudo systemctl status llamacpp-turbo.service --no-pager | head -15
       '')
 
       (pkgs.writeShellScriptBin "llama-kill" ''
         #!/usr/bin/env bash
-        echo "🔪 KILLING LLAMA.CPP (FORCE)..."
-        sudo systemctl stop llamacpp.service
+        echo "🔪 KILLING LLAMA.CPP TURBO (FORCE)..."
+        sudo systemctl stop llamacpp-turbo.service
         pkill -9 llama 2>/dev/null || true
         pkill -9 llama-server 2>/dev/null || true
-        echo "✅ Llama.cpp killed"
+        echo "✅ LLama.cpp Turbo killed"
         free -h
       '')
 
       (pkgs.writeShellScriptBin "llama-status" ''
         #!/usr/bin/env bash
-        sudo systemctl status llamacpp.service --no-pager
+        sudo systemctl status llamacpp-turbo.service --no-pager
+        echo ""
+        echo "=== Health Check ==="
+        curl -s http://localhost:8080/health 2>/dev/null | jq . || echo "Server not responding"
+      '')
+
+      (pkgs.writeShellScriptBin "llama-bench" ''
+        #!/usr/bin/env bash
+        echo "🔥 LLAMA.CPP TURBO BENCHMARK"
+        echo ""
+        echo "=== Health ==="
+        curl -s http://localhost:8080/health | jq .
+        echo ""
+        echo "=== Model Info ==="
+        curl -s http://localhost:8080/props | jq '{model, n_ctx, n_gpu_layers, n_threads}'
+        echo ""
+        echo "=== Quick Generation Test ==="
+        time curl -s -X POST http://localhost:8080/v1/chat/completions \
+          -H "Content-Type: application/json" \
+          -d '{"model":"default","messages":[{"role":"user","content":"Hello"}],"max_tokens":10}' | jq '.choices[0].message.content'
       '')
 
       # ============================================================
@@ -270,8 +289,8 @@ with lib;
         sudo systemctl stop ollama.service 2>/dev/null || true
         pkill -9 ollama 2>/dev/null || true
         echo ""
-        echo "Stopping Llama.cpp..."
-        sudo systemctl stop llamacpp.service 2>/dev/null || true
+        echo "Stopping LLama.cpp Turbo..."
+        sudo systemctl stop llamacpp-turbo.service 2>/dev/null || true
         pkill -9 llama 2>/dev/null || true
         pkill -9 llama-server 2>/dev/null || true
         echo ""
@@ -289,8 +308,8 @@ with lib;
         #!/usr/bin/env bash
         echo "🚀 STARTING GPU SERVICES..."
         echo ""
-        echo "Starting Llama.cpp..."
-        sudo systemctl start llamacpp.service
+        echo "Starting LLama.cpp Turbo..."
+        sudo systemctl start llamacpp-turbo.service
         sleep 2
         echo ""
         echo "Starting ML Offload..."
@@ -309,7 +328,7 @@ with lib;
         echo ""
         echo "=== GPU SERVICES ==="
         echo "Ollama: $(systemctl is-active ollama.service)"
-        echo "Llama.cpp: $(systemctl is-active llamacpp.service)"
+        echo "LLama.cpp Turbo: $(systemctl is-active llamacpp-turbo.service)"
         echo "ML Offload API: $(systemctl is-active ml-offload-api.service)"
         echo "VRAM Monitor: $(systemctl is-active ml-vram-monitor.service)"
       '')
@@ -363,7 +382,7 @@ with lib;
         #!/usr/bin/env bash
         watch -n 1 'nvidia-smi && echo "" && echo "=== GPU Services ===" && \
         echo "Ollama: $(systemctl is-active ollama.service)" && \
-        echo "Llama.cpp: $(systemctl is-active llamacpp.service)" && \
+        echo "LLama.cpp Turbo: $(systemctl is-active llamacpp-turbo.service)" && \
         echo "ML Offload: $(systemctl is-active ml-offload-api.service)"'
       '')
 
@@ -379,7 +398,7 @@ with lib;
         echo ""
         echo "📦 Nix Daemon: $(systemctl is-active nix-daemon.service)"
         echo "🦙 Ollama: $(systemctl is-active ollama.service)"
-        echo "🦙 Llama.cpp: $(systemctl is-active llamacpp.service)"
+        echo "🦙 LLama.cpp Turbo: $(systemctl is-active llamacpp-turbo.service)"
         echo "🤖 ML Offload API: $(systemctl is-active ml-offload-api.service)"
         echo "📊 VRAM Monitor: $(systemctl is-active ml-vram-monitor.service)"
         echo "🐳 Docker: $(systemctl is-active docker.service)"
@@ -408,7 +427,7 @@ with lib;
           echo "🔪 KILLING EVERYTHING..."
 
           # GPU services
-          sudo systemctl stop ollama.service llamacpp.service ml-offload-api.service ml-vram-monitor.service 2>/dev/null || true
+          sudo systemctl stop ollama.service llamacpp-turbo.service ml-offload-api.service ml-vram-monitor.service 2>/dev/null || true
           pkill -9 ollama llama llama-server 2>/dev/null || true
 
           # Heavy RAM services
@@ -454,12 +473,13 @@ with lib;
           ollama-kill   - Force kill Ollama
           ollama-status - Check Ollama status
 
-        🦙 LLAMA.CPP CONTROL
-          llama-start   - Start llama.cpp service
-          llama-stop    - Stop llama.cpp service
-          llama-restart - Restart llama.cpp
-          llama-kill    - Force kill llama.cpp
-          llama-status  - Check llama.cpp status
+        🦙 LLAMA.CPP TURBO CONTROL
+          llama-start   - Start llama.cpp turbo service
+          llama-stop    - Stop llama.cpp turbo service
+          llama-restart - Restart llama.cpp turbo
+          llama-kill    - Force kill llama.cpp turbo
+          llama-status  - Check llama.cpp turbo status + health
+          llama-bench   - Run quick benchmark
 
         🤖 ML OFFLOAD CONTROL
           ml-offload-start   - Start ML Offload API + VRAM Monitor
