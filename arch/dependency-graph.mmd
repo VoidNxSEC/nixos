@@ -1,0 +1,199 @@
+graph TD
+    subgraph TEMPLATE.nix
+        TEMPLATE[TEMPLATE]
+    end
+    subgraph _sources
+        generated[generated]
+    end
+    subgraph applications
+        brave-secure[brave-secure]
+        chromium[chromium]
+        default[default]
+        firefox-privacy[firefox-privacy]
+        nemo-full[nemo-full]
+        vscode-secure[vscode-secure]
+        vscodium-secure[vscodium-secure]
+        zellij[zellij]
+    end
+    subgraph audio
+        default[default]
+        production[production]
+        video-production[video-production]
+    end
+    subgraph containers
+        default[default]
+        docker[docker]
+        nixos-containers[nixos-containers]
+        podman[podman]
+    end
+    subgraph debug
+        debug-init[debug-init]
+        default[default]
+        test-init[test-init]
+        tools-integration[tools-integration]
+    end
+    subgraph desktop
+        default[default]
+        hyprland[hyprland]
+        i3-lightweight[i3-lightweight]
+        yazi[yazi]
+    end
+    subgraph development
+        cicd[cicd]
+        claude-profiles[claude-profiles]
+        default[default]
+        environments[environments]
+        jupyter[jupyter]
+    end
+    subgraph hardware
+        bluetooth[bluetooth]
+        default[default]
+        default[default]
+        flake[flake]
+        intel[intel]
+        lenovo-throttled[lenovo-throttled]
+        mcp-integration[mcp-integration]
+        nvidia[nvidia]
+        rebuild-hooks[rebuild-hooks]
+        thermal-profiles[thermal-profiles]
+    end
+    subgraph ml
+        config[config]
+        database[database]
+        default[default]
+        default[default]
+        default[default]
+        default[default]
+        default[default]
+        default[default]
+        default[default]
+        default[default]
+    end
+    subgraph network
+        bridge[bridge]
+        default[default]
+        default[default]
+        dns-resolver[dns-resolver]
+        firewall-zones[firewall-zones]
+        nginx-tailscale[nginx-tailscale]
+        nordvpn[nordvpn]
+        tailscale[tailscale]
+        tailscale-desktop[tailscale-desktop]
+        tailscale-laptop[tailscale-laptop]
+    end
+    subgraph packages
+        all[all]
+        antigravity[antigravity]
+        appflowy[appflowy]
+        appflowy[appflowy]
+        audit[audit]
+        build-gemini[build-gemini]
+        builder[builder]
+        builder[builder]
+        builder[builder]
+        builders[builders]
+    end
+    subgraph programs
+        cognitive-vault[cognitive-vault]
+        default[default]
+        phantom[phantom]
+        vmctl[vmctl]
+    end
+    subgraph secrets
+        api-keys[api-keys]
+        aws-bedrock[aws-bedrock]
+        default[default]
+        sops-config[sops-config]
+        tailscale[tailscale]
+    end
+    subgraph security
+        aide[aide]
+        audit[audit]
+        auto-upgrade[auto-upgrade]
+        boot[boot]
+        clamav[clamav]
+        compiler-hardening[compiler-hardening]
+        default[default]
+        dev-directory-hardening[dev-directory-hardening]
+        hardening[hardening]
+        hardening-template[hardening-template]:::high
+    end
+    subgraph services
+        actions[actions]
+        claude-code[claude-code]
+        codex-agent[codex-agent]
+        config-auditor[config-auditor]
+        default[default]
+        default[default]
+        gemini-agent[gemini-agent]
+        gitlab-runner[gitlab-runner]
+        gpu-orchestration[gpu-orchestration]
+        laptop-builder-client[laptop-builder-client]
+    end
+    subgraph shell
+        analytics[analytics]
+        aws[aws]
+        build[build]
+        compose[compose]
+        default[default]
+        default[default]
+        default[default]
+        default[default]
+        default[default]
+        default[default]
+    end
+    subgraph soc
+        alerting[alerting]
+        default[default]
+        dns-monitor[dns-monitor]
+        edr[edr]
+        fim[fim]
+        grafana[grafana]
+        log-aggregator[log-aggregator]
+        netflow[netflow]
+        opensearch[opensearch]
+        options[options]
+    end
+    subgraph system
+        aliases[aliases]
+        binary-cache[binary-cache]
+        default[default]
+        emergency-monitor[emergency-monitor]
+        io-scheduler[io-scheduler]
+        memory[memory]:::high
+        ml-gpu-users[ml-gpu-users]
+        nix[nix]
+        services[services]
+        ssh-config[ssh-config]
+    end
+    subgraph tools
+        default[default]
+        dev[dev]
+        diagnostics[diagnostics]
+        intel[intel]
+        llm[llm]
+        mcp[mcp]
+        nix-utils[nix-utils]
+        secops[secops]
+        secrets[secrets]
+    end
+    subgraph virtualization
+        default[default]
+        macos-kvm[macos-kvm]
+        vmctl[vmctl]
+        vms[vms]
+    end
+    actions --> config
+    build --> config
+    builder --> builders
+    builder --> fetchers
+    builders --> sandbox
+    chromium --> config
+    gitlab-runner --> config
+    js-packages --> types
+    js-packages --> builder
+    run --> config
+    wazuh --> config
+
+    classDef critical fill:#ff6b6b,stroke:#c92a2a
+    classDef high fill:#ffd43b,stroke:#f59f00
