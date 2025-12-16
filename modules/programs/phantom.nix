@@ -108,11 +108,9 @@ in
         description = "LlamaCPP server URL";
       };
 
-      ollama.url = lib.mkOption {
-        type = lib.types.str;
-        default = "http://localhost:11434";
-        description = "Ollama server URL";
-      };
+      #  type = lib.types.str;
+      #  default = "http://localhost:11434";
+      #};
     };
 
     vectorDb.path = lib.mkOption {
@@ -140,7 +138,6 @@ in
     # Environment variables
     environment.sessionVariables = {
       LLAMACPP_URL = cfg.providers.llamacpp.url;
-      OLLAMA_URL = cfg.providers.ollama.url;
       PHANTOM_VECTOR_PATH = cfg.vectorDb.path;
     };
 
