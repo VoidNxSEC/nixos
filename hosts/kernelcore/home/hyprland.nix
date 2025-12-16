@@ -239,45 +239,79 @@
       # ============================================
       # WINDOW RULES - Glassmorphism styling
       # ============================================
+      # Opacity Hierarchy (least to most opaque):
+      # - Terminals: 0.90-0.92 (most transparent)
+      # - File Managers: 0.92
+      # - Editors/Communication: 0.95
+      # - Browsers: 0.98 (least transparent for readability)
+      # ============================================
       windowrulev2 = [
-        # Terminal transparency - Kitty (primary)
+        # ==========================================
+        # CATEGORY: Development Tools
+        # ==========================================
+        # Terminals - High transparency for background visibility
         "opacity 0.92 0.88, class:^(kitty)$"
         "animation slide, class:^(kitty)$"
-
-        # Terminal transparency - Alacritty (fallback)
         "opacity 0.90 0.85, class:^(Alacritty)$"
+        "opacity 0.90 0.85, class:^(foot)$"
 
-        # Code editors - slightly less transparent
+        # Code Editors - Slightly less transparent than terminals
         "opacity 0.95 0.90, class:^(code-oss)$"
         "opacity 0.95 0.90, class:^(Code)$"
         "opacity 0.95 0.90, class:^(VSCodium)$"
         "opacity 0.95 0.90, class:^(codium)$"
+        "opacity 0.95 0.90, class:^(neovide)$"
 
-        # Browsers - near opaque for readability
+        # ==========================================
+        # CATEGORY: Web Browsers
+        # ==========================================
+        # Near opaque for readability (text-heavy content)
         "opacity 0.98 0.95, class:^(firefox)$"
+        "opacity 0.98 0.95, class:^(Firefox)$"
         "opacity 0.98 0.95, class:^(brave-browser)$"
         "opacity 0.98 0.95, class:^(chromium)$"
+        "opacity 0.98 0.95, class:^(Google-chrome)$"
 
-        # File managers - float
+        # ==========================================
+        # CATEGORY: File Managers
+        # ==========================================
         "float, class:^(nemo)$"
         "size 1200 700, class:^(nemo)$"
         "center, class:^(nemo)$"
         "opacity 0.92 0.88, class:^(nemo)$"
 
-        # System utilities - float
+        "float, class:^(thunar)$"
+        "size 1200 700, class:^(thunar)$"
+        "center, class:^(thunar)$"
+        "opacity 0.92 0.88, class:^(thunar)$"
+
+        # ==========================================
+        # CATEGORY: System Utilities
+        # ==========================================
+        # Audio Control
         "float, class:^(pavucontrol)$"
         "size 800 500, class:^(pavucontrol)$"
         "center, class:^(pavucontrol)$"
 
+        # Network Manager
         "float, class:^(nm-connection-editor)$"
         "size 600 400, class:^(nm-connection-editor)$"
         "center, class:^(nm-connection-editor)$"
 
+        # Bluetooth Manager
         "float, class:^(blueman-manager)$"
         "size 600 400, class:^(blueman-manager)$"
         "center, class:^(blueman-manager)$"
 
-        # Image viewers - float and larger
+        # System Monitor
+        "float, class:^(gnome-system-monitor)$"
+        "size 1000 700, class:^(gnome-system-monitor)$"
+        "center, class:^(gnome-system-monitor)$"
+
+        # ==========================================
+        # CATEGORY: Media Applications
+        # ==========================================
+        # Image Viewers
         "float, class:^(imv)$"
         "size 1400 900, class:^(imv)$"
         "center, class:^(imv)$"
@@ -286,40 +320,102 @@
         "size 1400 900, class:^(feh)$"
         "center, class:^(feh)$"
 
-        # Media players
+        # Video Players
         "float, class:^(mpv)$"
         "size 1280 720, class:^(mpv)$"
         "center, class:^(mpv)$"
 
-        # Dialogs
-        "float, title:^(Open File)$"
-        "float, title:^(Save File)$"
-        "float, title:^(Choose Files)$"
-        "float, title:^(Confirm)$"
-
-        # Swappy screenshot editor
-        "float, class:^(swappy)$"
-        "size 1000 700, class:^(swappy)$"
-        "center, class:^(swappy)$"
-        "opacity 0.95 0.90, class:^(swappy)$"
-
-        # Picture-in-picture
+        # Picture-in-Picture (stay on top, bottom-right corner)
         "float, title:^(Picture-in-Picture)$"
         "pin, title:^(Picture-in-Picture)$"
         "size 400 225, title:^(Picture-in-Picture)$"
         "move 100%-420 100%-245, title:^(Picture-in-Picture)$"
 
-        # KeepassXC
+        # ==========================================
+        # CATEGORY: Productivity
+        # ==========================================
+        # Password Manager
         "float, class:^(org.keepassxc.KeePassXC)$"
         "size 1000 700, class:^(org.keepassxc.KeePassXC)$"
         "center, class:^(org.keepassxc.KeePassXC)$"
 
-        # Discord/communication
-        "opacity 0.95 0.92, class:^(discord)$"
-
-        # Obsidian
+        # Note-taking
         "opacity 0.95 0.92, class:^(obsidian)$"
+        "opacity 0.95 0.92, class:^(logseq)$"
+
+        # PDF Viewers
+        "opacity 0.98 0.95, class:^(org.pwmt.zathura)$"
+        "opacity 0.98 0.95, class:^(evince)$"
+
+        # ==========================================
+        # CATEGORY: Communication
+        # ==========================================
+        "opacity 0.95 0.92, class:^(discord)$"
+        "opacity 0.95 0.92, class:^(slack)$"
+        "opacity 0.95 0.92, class:^(teams)$"
+
+        # ==========================================
+        # CATEGORY: Screenshot & Graphics Tools
+        # ==========================================
+        "float, class:^(swappy)$"
+        "size 1000 700, class:^(swappy)$"
+        "center, class:^(swappy)$"
+        "opacity 0.95 0.90, class:^(swappy)$"
+
+        # ==========================================
+        # CATEGORY: Dialogs & Popups
+        # ==========================================
+        "float, title:^(Open File)$"
+        "float, title:^(Save File)$"
+        "float, title:^(Save As)$"
+        "float, title:^(Choose Files)$"
+        "float, title:^(Confirm)$"
+        "float, title:^(File Operation Progress)$"
       ];
+
+      # ============================================
+      # WORKSPACE ASSIGNMENTS
+      # ============================================
+      # Workspace Purpose Guide:
+      # 1 = Primary Development (Terminals, Code Editors)
+      # 2 = Secondary Development (Documentation, Testing)
+      # 3 = Web Browsing (Firefox, Brave, Chromium)
+      # 4 = Communication (Discord, Slack, Email)
+      # 5 = Media/Entertainment (MPV, Spotify, YouTube)
+      # 6 = System Monitoring (btop, system tools)
+      # 7 = Research/Notes (Obsidian, PDF viewers)
+      # 8 = Graphics/Design (GIMP, Inkscape, Image viewers)
+      # 9 = Virtual Machines (VMs, Containers)
+      # 10 = Miscellaneous (Temporary workspace)
+      # ============================================
+      # Note: Workspace assignments are optional - windows can be moved manually.
+      # Uncomment the rules below to enable automatic workspace assignments.
+      # ============================================
+      # workspace = [
+      #   # Development Tools → Workspace 1
+      #   "1, class:^(kitty)$"
+      #   "1, class:^(Alacritty)$"
+      #   "1, class:^(VSCodium)$"
+      #   "1, class:^(code-oss)$"
+      #
+      #   # Browsers → Workspace 3
+      #   "3, class:^(firefox)$"
+      #   "3, class:^(brave-browser)$"
+      #   "3, class:^(chromium)$"
+      #
+      #   # Communication → Workspace 4
+      #   "4, class:^(discord)$"
+      #   "4, class:^(slack)$"
+      #   "4, class:^(teams)$"
+      #
+      #   # Media → Workspace 5
+      #   "5, class:^(mpv)$"
+      #   "5, class:^(spotify)$"
+      #
+      #   # Research/Notes → Workspace 7
+      #   "7, class:^(obsidian)$"
+      #   "7, class:^(org.pwmt.zathura)$"
+      # ];
 
       # ============================================
       # MISC SETTINGS - 144Hz optimizations
@@ -376,6 +472,10 @@
 
       # ============================================
       # KEYBINDINGS
+      # ============================================
+      # Comprehensive keybinding reference:
+      # See: /home/user/nixos/docs/HYPRLAND-KEYBINDINGS.md
+      # Quick reference: Super = main modifier
       # ============================================
       "$mainMod" = "SUPER";
 
