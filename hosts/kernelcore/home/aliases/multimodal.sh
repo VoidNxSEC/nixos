@@ -23,25 +23,16 @@ alias ai-status='docker-compose -f ~/Base/docker-compose-multimodal.yml ps'
 alias ai-logs='docker-compose -f ~/Base/docker-compose-multimodal.yml logs -f'
 
 # ============================================================
-# 💬 OLLAMA (LLM Local)
 # ============================================================
 
-# Puxa modelo do Ollama
-alias ollama-pull='docker exec ollama-gpu ollama pull'
 
 # Lista modelos instalados
-alias ollama-list='docker exec ollama-gpu ollama list'
 
 # Chat interativo com modelo
-alias ollama-chat='docker exec -it ollama-gpu ollama run'
 
 # Remove modelo
-alias ollama-rm='docker exec ollama-gpu ollama rm'
 
 # Puxa modelos populares
-alias ollama-setup='docker exec ollama-gpu ollama pull llama3.2 && \
-                     docker exec ollama-gpu ollama pull mistral && \
-                     docker exec ollama-gpu ollama pull codellama'
 
 # ============================================================
 # 🎨 STABLE DIFFUSION
@@ -101,8 +92,6 @@ tts-speak() {
 # 🧪 API TESTING
 # ============================================================
 
-# Testa Ollama API
-test-ollama() {
     curl http://localhost:11434/api/generate -d '{
       "model": "qwen3:8b",
       "prompt": "Why is the sky blue?",
@@ -156,25 +145,16 @@ alias ai-status='docker-compose -f ~/Base/docker-compose-multimodal.yml ps'
 alias ai-logs='docker-compose -f ~/Base/docker-compose-multimodal.yml logs -f'
 
 # ============================================================
-# 💬 OLLAMA (LLM Local)
 # ============================================================
 
-# Puxa modelo do Ollama
-alias ollama-pull='docker exec ollama-gpu ollama pull'
 
 # Lista modelos instalados
-alias ollama-list='docker exec ollama-gpu ollama list'
 
 # Chat interativo com modelo
-alias ollama-chat='docker exec -it ollama-gpu ollama run'
 
 # Remove modelo
-alias ollama-rm='docker exec ollama-gpu ollama rm'
 
 # Puxa modelos populares
-alias ollama-setup='docker exec ollama-gpu ollama pull llama3.2 && \
-                     docker exec ollama-gpu ollama pull mistral && \
-                     docker exec ollama-gpu ollama pull codellama'
 
 # ============================================================
 # 🎨 STABLE DIFFUSION
@@ -234,14 +214,12 @@ tts-speak() {
 # 🧪 API TESTING
 # ============================================================
 
-# Testa Ollama API
-test-ollama() {
-    curl http://localhost:11434/api/generate -d '{
-      "model": "llama3.2",
-      "prompt": "Why is the sky blue?",
-      "stream": false
-    }'
-}
+#    curl http://localhost:11434/api/generate -d '{
+#      "model": "llama3.2",
+#      "prompt": "Why is the sky blue?",
+#      "stream": false
+#    }'
+#}
 
 # Testa Stable Diffusion API
 test-sd() {
@@ -283,10 +261,6 @@ ai-cleanup() {
 ai-download-models() {
     echo "📥 Downloading popular models..."
 
-    # Ollama models
-    docker exec ollama-gpu ollama pull llama3.2
-    docker exec ollama-gpu ollama pull mistral
-    docker exec ollama-gpu ollama pull llava
 
     echo "✓ Models downloaded!"
 }
@@ -296,8 +270,6 @@ ai-backup() {
     local backup_dir="$HOME/ai-backup-$(date +%Y%m%d)"
     mkdir -p "$backup_dir"
 
-    docker-compose -f ~/Base/docker-compose-multimodal.yml exec -T ollama-gpu \
-        tar czf - /root/.ollama > "$backup_dir/ollama.tar.gz"
 
     echo "Backup saved to: $backup_dir"
 }
@@ -332,11 +304,11 @@ workflow-audio-to-summary() {
     echo "Transcription: $text"
 
     echo "2. Generating summary..."
-    curl http://localhost:11434/api/generate -d "{
-      \"model\": \"llama3.2\",
-      \"prompt\": \"Summarize this in one sentence: $text\",
-      \"stream\": false
-    }" | jq -r '.response'
+    #curl http://localhost:11434/api/generate -d "{
+    #  \"model\": \"llama3.2\",
+    #  \"prompt\": \"Summarize this in one sentence: $text\",
+    #  \"stream\": false
+    #}" | jq -r '.response'
 }
 
 # ============================================================
@@ -353,11 +325,6 @@ ai-help() {
     echo "  ai-status          - Show service status"
     echo "  ai-logs            - Follow logs"
     echo ""
-    echo "Ollama (LLM):"
-    echo "  ollama-pull <model>    - Download model"
-    echo "  ollama-list            - List installed models"
-    echo "  ollama-chat <model>    - Interactive chat"
-    echo "  ollama-setup           - Download popular models"
     echo ""
     echo "Stable Diffusion:"
     echo "  sd-open            - Open WebUI in browser"
@@ -389,7 +356,6 @@ ai-help() {
 export -f whisper-transcribe
 export -f whisper-translate
 export -f tts-speak
-export -f test-ollama
 export -f test-sd
 export -f ai-cleanup
 export -f ai-download-models
