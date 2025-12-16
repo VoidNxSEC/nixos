@@ -27,7 +27,7 @@ set -euo pipefail
 # ═══════════════════════════════════════════════════════════════════════════
 
 readonly SCRIPT_VERSION="3.0.0"
-readonly REPO_ROOT="${REPO_ROOT:-/home/kernelcore/dev/Projects/phantom}"
+readonly REPO_ROOT="${REPO_ROOT:-/etc/nixos}"
 readonly OUTPUT_DIR="${REPO_ROOT}/arch"
 readonly SNAPSHOT_DIR="${OUTPUT_DIR}/snapshots"
 readonly TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
@@ -201,7 +201,7 @@ get_git_info() {
     repo_age_days)
       local first_commit=$(git log --reverse --format=%ct --max-count=1 2>/dev/null)
       if [ -n "$first_commit" ]; then
-        echo $(( ($(date +%s) - first_commit) / 86400 ))
+        echo $((($(date +%s) - first_commit) / 86400))
       else
         echo "0"
       fi
@@ -225,7 +225,7 @@ build_find_excludes() {
 count_files_by_type() {
   local extension=$1
   local excludes
-  read -ra excludes <<< "$(build_find_excludes)"
+  read -ra excludes <<<"$(build_find_excludes)"
 
   find "$REPO_ROOT" -type f -name "*.${extension}" \
     "${excludes[@]}" 2>/dev/null | wc -l
@@ -234,10 +234,10 @@ count_files_by_type() {
 count_lines_in_files() {
   local extension=$1
   local excludes
-  read -ra excludes <<< "$(build_find_excludes)"
+  read -ra excludes <<<"$(build_find_excludes)"
 
   find "$REPO_ROOT" -type f -name "*.${extension}" \
-    "${excludes[@]}" -exec wc -l {} + 2>/dev/null | \
+    "${excludes[@]}" -exec wc -l {} + 2>/dev/null |
     tail -1 | awk '{print $1}'
 }
 
@@ -413,7 +413,7 @@ calculate_health_score() {
   [ $orphaned_penalty -gt 20 ] && orphaned_penalty=20
 
   # Overall health score (weighted average)
-  local health_score=$(( (doc_score * 30 + security_score * 40 + structure_score * 30) / 100 - orphaned_penalty ))
+  local health_score=$(((doc_score * 30 + security_score * 40 + structure_score * 30) / 100 - orphaned_penalty))
 
   declare -g ANALYSIS_HEALTH_SCORE=$health_score
 
@@ -436,7 +436,7 @@ gather_statistics() {
   section "${EMOJI_CHART} Gathering statistics..."
 
   local excludes
-  read -ra excludes <<< "$(build_find_excludes)"
+  read -ra excludes <<<"$(build_find_excludes)"
 
   # File counts
   declare -g STAT_TOTAL_FILES=$(find "$REPO_ROOT" -type f "${excludes[@]}" 2>/dev/null | wc -l)
@@ -518,8 +518,8 @@ generate_ascii_bar() {
   [ $filled -gt $width ] && filled=$width
 
   local bar=""
-  for ((i=0; i<filled; i++)); do bar+="█"; done
-  for ((i=filled; i<width; i++)); do bar+="░"; done
+  for ((i = 0; i < filled; i++)); do bar+="█"; done
+  for ((i = filled; i < width; i++)); do bar+="░"; done
 
   echo "$bar"
 }
@@ -1100,7 +1100,7 @@ main() {
     generate_tree
     echo ""
     echo "═══════════════════════════════════════════════════════════════════════════"
-  } > "$OUTPUT_TREE"
+  } >"$OUTPUT_TREE"
   success "Tree diagram: $OUTPUT_TREE"
 
   # Generate text report
@@ -1113,17 +1113,17 @@ main() {
     generate_health_score_txt
     generate_recommendations_txt
     generate_report_footer_txt
-  } > "$OUTPUT_REPORT_TXT"
+  } >"$OUTPUT_REPORT_TXT"
   success "Text report: $OUTPUT_REPORT_TXT"
 
   # Generate markdown report
   log "Generating markdown report..."
-  generate_report_md > "$OUTPUT_REPORT_MD"
+  generate_report_md >"$OUTPUT_REPORT_MD"
   success "Markdown report: $OUTPUT_REPORT_MD"
 
   # Generate JSON report
   log "Generating JSON report..."
-  generate_report_json > "$OUTPUT_REPORT_JSON"
+  generate_report_json >"$OUTPUT_REPORT_JSON"
   success "JSON report: $OUTPUT_REPORT_JSON"
 
   # Create snapshot
@@ -1148,11 +1148,11 @@ main() {
       if [ -f "$SCRIPT_DIR/arch-analyzer.py" ]; then
         env LLM_PARALLEL="$LLM_PARALLEL" LLM_TIMEOUT="$LLM_TIMEOUT" \
           python3 "$SCRIPT_DIR/arch-analyzer.py" \
-            --repo "$REPO_ROOT" \
-            --output "$OUTPUT_DIR" \
-            --model "$LLM_MODEL" \
-            --parallel "$LLM_PARALLEL" && \
-          success "AI analysis complete" || \
+          --repo "$REPO_ROOT" \
+          --output "$OUTPUT_DIR" \
+          --model "$LLM_MODEL" \
+          --parallel "$LLM_PARALLEL" &&
+          success "AI analysis complete" ||
           warning "AI analysis encountered issues (non-fatal)"
       else
         warning "arch-analyzer.py not found in $SCRIPT_DIR"
