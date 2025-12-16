@@ -23,8 +23,6 @@ alias ai-up='docker-compose -f $AI_COMPOSE_FILE up -d'
 
 # Start seletivo (só o que você quer)
 ai-up-minimal() {
-    echo "🚀 Starting minimal stack (Ollama + Whisper)..."
-    docker-compose -f "$AI_COMPOSE_FILE" up -d ollama whisper-api
 }
 
 ai-up-full() {
@@ -35,8 +33,6 @@ ai-up-full() {
 }
 
 ai-up-llm() {
-    echo "🚀 Starting LLM stack (Ollama + vLLM)..."
-    docker-compose -f "$AI_COMPOSE_FILE" up -d ollama vllm
 }
 
 ai-up-vision() {
@@ -71,7 +67,6 @@ alias ai-restart='docker-compose -f $AI_COMPOSE_FILE restart'
 ai-restart-service() {
     if [ -z "$1" ]; then
         echo "Usage: ai-restart-service <service_name>"
-        echo "Available: ollama, comfyui, vllm, whisper-api, jupyter, redis, nginx"
         return 1
     fi
     docker-compose -f "$AI_COMPOSE_FILE" restart "$1"
@@ -101,8 +96,6 @@ ai-health() {
     echo "🏥 Health Check - Multimodal AI Stack"
     echo "======================================"
     
-    # Ollama
-    echo -n "Ollama (11434): "
     curl -s http://localhost:11434/api/tags > /dev/null && echo "✓ OK" || echo "✗ DOWN"
     
     # ComfyUI
@@ -136,23 +129,14 @@ ai-dashboard() {
 alias ai-gpu-compose='watch -n 1 "nvidia-smi && echo && docker-compose -f $AI_COMPOSE_FILE ps"'
 
 # ============================================================
-# 💬 OLLAMA (Compose Integration)
 # ============================================================
 
-alias ollama-compose-pull='docker-compose -f $AI_COMPOSE_FILE exec ollama ollama pull'
 
-alias ollama-compose-list='docker-compose -f $AI_COMPOSE_FILE exec ollama ollama list'
 
-alias ollama-compose-chat='docker-compose -f $AI_COMPOSE_FILE exec ollama ollama run'
 
-ollama-compose-setup() {
-    echo "📥 Downloading popular models via compose..."
-    docker-compose -f "$AI_COMPOSE_FILE" exec ollama ollama pull llama3.2
-    docker-compose -f "$AI_COMPOSE_FILE" exec ollama ollama pull mistral
-    docker-compose -f "$AI_COMPOSE_FILE" exec ollama ollama pull codellama
-    docker-compose -f "$AI_COMPOSE_FILE" exec ollama ollama pull llava
-    echo "✓ Models ready!"
-}
+#    echo "📥 Downloading popular models via compose..."
+#    echo "✓ Models ready!"
+#}
 
 # ============================================================
 # 🎨 COMFYUI (Compose Integration)
@@ -195,14 +179,12 @@ ai-test-pipeline() {
     echo "🧪 Testing full AI pipeline..."
     echo ""
     
-    # 1. Test Ollama
-    echo "1️⃣ Testing Ollama LLM..."
-    curl -s http://localhost:11434/api/generate -d '{
-      "model": "llama3.2",
-      "prompt": "Say hello in one word",
-      "stream": false
-    }' | jq -r '.response'
-    echo ""
+    #curl -s http://localhost:11434/api/generate -d '{
+    #  "model": "llama3.2",
+    #  "prompt": "Say hello in one word",
+    #  "stream": false
+    #}' | jq -r '.response'
+    #echo ""
     
     # 2. Test vLLM
     echo "2️⃣ Testing vLLM..."
@@ -235,8 +217,7 @@ workflow-compose-full() {
     echo "(Manual: Open http://localhost:8188 and generate)"
     
     # 2. Analyze with vision model
-    echo "👁️ Step 2: Would analyze with LLaVA..."
-    docker-compose -f "$AI_COMPOSE_FILE" exec ollama ollama run llava "Describe: $prompt"
+    #echo "👁️ Step 2: Would analyze with LLaVA..."
 }
 
 # ============================================================
@@ -254,7 +235,6 @@ ai-update() {
 ai-disk() {
     echo "💾 Docker Disk Usage - AI Stack"
     echo "================================"
-    docker-compose -f "$AI_COMPOSE_FILE" exec ollama du -sh /root/.ollama 2>/dev/null | head -1
     echo ""
     docker system df -v | grep -A 10 "VOLUME NAME"
 }
@@ -266,11 +246,8 @@ ai-backup() {
     
     echo "💾 Backing up AI volumes to: $backup_dir"
     
-    # Backup Ollama models
     docker run --rm \
-        -v $(docker volume inspect --format '{{ .Mountpoint }}' $(docker-compose -f "$AI_COMPOSE_FILE" config | grep ollama-data | head -1 | awk '{print $1}')):/data \
         -v "$backup_dir":/backup \
-        alpine tar czf /backup/ollama-models.tar.gz -C /data .
     
     echo "✓ Backup complete: $backup_dir"
 }
@@ -284,7 +261,6 @@ ai-compose-help() {
     echo ""
     echo "Lifecycle:"
     echo "  ai-up              - Start all services"
-    echo "  ai-up-minimal      - Start only Ollama + Whisper"
     echo "  ai-up-full         - Start all + show status"
     echo "  ai-up-llm          - Start LLM services only"
     echo "  ai-up-vision       - Start ComfyUI only"
@@ -302,11 +278,6 @@ ai-compose-help() {
     echo "  ai-dashboard       - Open web dashboard"
     echo "  ai-gpu-compose     - GPU + container monitoring"
     echo ""
-    echo "Ollama (Compose):"
-    echo "  ollama-compose-pull <model>  - Download model"
-    echo "  ollama-compose-list          - List models"
-    echo "  ollama-compose-chat <model>  - Interactive chat"
-    echo "  ollama-compose-setup         - Download popular models"
     echo ""
     echo "ComfyUI (Compose):"
     echo "  comfy-compose-open           - Open in browser"
@@ -327,7 +298,6 @@ ai-compose-help() {
     echo ""
     echo "🎯 Quick Start:"
     echo "  1. ai-up-full          # Start everything"
-    echo "  2. ollama-compose-setup # Download models"
     echo "  3. ai-health           # Verify all working"
     echo "  4. ai-dashboard        # Open UI"
 }
@@ -346,7 +316,6 @@ export -f ai-restart-service
 export -f ai-logs-service
 export -f ai-health
 export -f ai-dashboard
-export -f ollama-compose-setup
 export -f comfy-download-models
 export -f whisper-compose-transcribe
 export -f ai-test-pipeline

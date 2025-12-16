@@ -8,9 +8,7 @@
 # Model Registry System
 #
 # Maintains a SQLite database of all available ML models with metadata:
-# - Model name, path, format (GGUF, SafeTensors, Ollama)
 # - Size (GB), estimated VRAM usage (GB)
-# - Compatible backends (llamacpp, ollama, vllm, tgi)
 # - Last used timestamp, usage count, priority
 #
 # Features:
@@ -84,7 +82,6 @@ in
       type = types.listOf types.path;
       default = [
         "${offloadCfg.modelsPath}/llamacpp/models"
-        "${offloadCfg.modelsPath}/ollama/models"
         "${offloadCfg.modelsPath}/huggingface"
         "${offloadCfg.modelsPath}/gguf"
         "${offloadCfg.modelsPath}/custom"

@@ -132,7 +132,9 @@
             colors = inputs.nix-colors;
           };
           modules = [
-            # Apply overlays to NixOS configuration
+            # ═══════════════════════════════════════════════════════════
+            # NIXPKGS CONFIGURATION
+            # ═══════════════════════════════════════════════════════════
             {
               nixpkgs.overlays = overlays ++ [
                 (final: prev: {
@@ -146,85 +148,29 @@
               nixpkgs.config.allowUnfree = true;
             }
 
+            # ═══════════════════════════════════════════════════════════
+            # HOST-SPECIFIC CONFIGURATION
+            # ═══════════════════════════════════════════════════════════
             ./hosts/kernelcore/hardware-configuration.nix
             ./hosts/kernelcore/configuration.nix
 
-            # Services
-            ./modules/services/offload-server.nix
-            ./modules/services/laptop-offload-client.nix
-            ./modules/services/config-auditor.nix
-            ./modules/services/default.nix
-            ./modules/services/scripts.nix # Shell aliases for ML containers (pytorch, tgi, etc)
-            ./modules/services/users/default.nix
-            ./modules/services/users/claude-code.nix
-            ./modules/services/users/actions.nix
-            ./modules/services/users/gitlab-runner.nix
-            ./modules/services/gpu-orchestration.nix
-            ./modules/services/mosh.nix # Mosh server for mobile shell (Blink Shell iOS)
-            ./modules/services/mobile-workspace.nix # Isolated workspace for mobile access
-            ./modules/services/mcp-server.nix # SecureLLM MCP Server
-            #./modules/services/rsync-server.nix # DISABLED: File doesn't exist
+            # ═══════════════════════════════════════════════════════════
+            # ALL SYSTEM MODULES (auto-imported via modules/default.nix)
+            # ═══════════════════════════════════════════════════════════
+            ./modules
 
-            # Enable SecureLLM MCP Server Daemon (runs on boot)
+            # ═══════════════════════════════════════════════════════════
+            # FEATURE FLAGS & CONFIGURATION
+            # ═══════════════════════════════════════════════════════════
             {
+              # SecureLLM MCP Server
               services.securellm-mcp = {
                 enable = true;
                 daemon.enable = true;
                 daemon.logLevel = "INFO";
               };
-            }
 
-            # Desktop environments
-            ./modules/desktop
-
-            # Applications (browsers and editors)
-            ./modules/applications
-
-            # Audio
-            ./modules/audio/video-production.nix
-
-            # Packages (declarative .deb, flatpak, etc.)
-            ./modules/packages
-
-            # Programs
-            ./modules/programs/default.nix
-
-            ./modules/desktop/yazi/yazi.nix
-
-            # ML - Machine Learning Infrastructure (modular, see modules/ml/README.md)
-            ./modules/ml
-
-            # System
-            ./modules/system/memory.nix
-            ./modules/system/nix.nix
-            ./modules/system/services.nix
-            ./modules/system/aliases.nix
-            ./modules/system/io-scheduler.nix # TICKET #IO-992: Optimized IO & ZRAM
-            ./modules/system/ml-gpu-users.nix
-            ./modules/system/binary-cache.nix
-            ./modules/system/ssh-config.nix # SSH client configuration
-
-            # Modules moved to knowledge/ (archived)
-            # ./modules/system/sudo-claude-code.nix
-
-            # Hardware (GPU, Trezor, WiFi)
-            ./modules/hardware
-
-            # Development
-            ./modules/development/environments.nix
-            ./modules/development/claude-profiles.nix # TEMP DISABLED for troubleshooting
-            ./modules/development/jupyter.nix
-            ./modules/development/cicd.nix
-
-            # Containers (Docker, Podman, NixOS containers)
-            ./modules/containers
-
-            # Virtualization (VMs, vmctl)
-            ./modules/virtualization
-
-            # Tools Suite (unified CLI)
-            ./modules/tools
-            {
+              # Tools Suite
               kernelcore.tools = {
                 enable = true;
                 intel.enable = true;
@@ -237,46 +183,22 @@
                 mcp.enable = true;
                 arch-analyzer.enable = true;
               };
-            }
 
-            ./modules/secrets/sops-config.nix
-
-            # Network
-            ./modules/network/dns-resolver.nix
-            ./modules/network/dns/default.nix
-            ./modules/network/bridge.nix
-            ./modules/network/vpn/nordvpn.nix
-            ./modules/network/monitoring/tailscale-monitor.nix
-            ./modules/network/vpn/tailscale.nix
-            ./modules/network/vpn/tailscale-laptop.nix
-            ./modules/network/vpn/tailscale-desktop.nix
-            ./modules/network/proxy/nginx-tailscale.nix # NGINX reverse proxy for Tailscale
-            ./modules/network/security/firewall-zones.nix # nftables firewall zones
-
-            # Shell (includes professional alias structure)
-            ./modules/shell/default.nix
-            ./modules/shell/gpu-flags.nix
-            ./modules/shell/aliases
-
-            # Secrets
-            ./modules/secrets/sops-config.nix
-            ./modules/secrets/api-keys.nix
-            ./modules/secrets/aws-bedrock.nix
-            ./modules/secrets/tailscale.nix # Tailscale secrets management
-
-            sops-nix.nixosModules.sops
-            {
-              # SOPS-nix configuration to use SSH host key
-              sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-            }
-
-            # Debug (optional - comment out if not needed)
-            # Debug
-            ./modules/debug/default.nix
-            {
+              # Swissknife Debug Tools
               kernelcore.swissknife.enable = true;
             }
 
+            # ═══════════════════════════════════════════════════════════
+            # SOPS-NIX SECRETS MANAGEMENT
+            # ═══════════════════════════════════════════════════════════
+            sops-nix.nixosModules.sops
+            {
+              sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+            }
+
+            # ═══════════════════════════════════════════════════════════
+            # HOME-MANAGER
+            # ═══════════════════════════════════════════════════════════
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
@@ -286,19 +208,14 @@
                 nix-colors = inputs.nix-colors;
               };
               home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix;
-              # Use custom backup command with timestamp to avoid conflicts
               home-manager.backupFileExtension = null;
               home-manager.backupCommand = "${pkgs.coreutils}/bin/cp -a $1 $1.backup-$(date +%Y%m%d-%H%M%S)";
             }
 
-            # Security modules LAST (highest priority to override other configs)
-            ./modules/security
-            #./dev/default.nix
-
-            # SOC - Security Operations Center (NSA-level infrastructure)
-            ./modules/soc
-
-            ./sec/hardening.nix # Final override
+            # ═══════════════════════════════════════════════════════════
+            # SECURITY FINAL OVERRIDE (highest priority)
+            # ═══════════════════════════════════════════════════════════
+            ./sec/hardening.nix
           ];
         };
 
