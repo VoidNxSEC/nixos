@@ -21,7 +21,6 @@ with lib;
         default = "docker";
         description = ''
           Default GPU allocation mode:
-          - local: Systemd services (llamacpp, ollama) get GPU
           - docker: Docker containers get GPU
           - auto: Automatically manage based on usage
         '';
@@ -43,7 +42,6 @@ with lib;
       description = "GPU Local Mode - Systemd services active";
       wants = [
         "llamacpp.service"
-        "ollama.service"
       ];
       conflicts = [ "gpu-docker-mode.target" ];
     };
@@ -53,7 +51,6 @@ with lib;
       conflicts = [
         "gpu-local-mode.target"
         "llamacpp.service"
-        "ollama.service"
       ];
     };
 
@@ -62,7 +59,7 @@ with lib;
     # ═══════════════════════════════════════════════════════════
 
     # Modify llamacpp to support GPU modes
-    systemd.services.llamacpp = mkIf config.services.llamacpp.enable {
+    systemd.services.llama-cpp = mkIf config.services.llama-cpp.enable {
       conflicts = [ "gpu-docker-mode.target" ];
       partOf = [ "gpu-local-mode.target" ];
 
@@ -73,17 +70,15 @@ with lib;
       };
     };
 
-    # Modify ollama to support GPU modes
-    systemd.services.ollama = mkIf config.services.ollama.enable {
-      conflicts = [ "gpu-docker-mode.target" ];
-      partOf = [ "gpu-local-mode.target" ];
+    #conflicts = [ "gpu-docker-mode.target" ];
+    #partOf = [ "gpu-local-mode.target" ];
 
-      serviceConfig = {
-        # Graceful shutdown to release GPU
-        TimeoutStopSec = "30s";
-        KillMode = "mixed";
-      };
-    };
+    #serviceConfig = {
+    # Graceful shutdown to release GPU
+    #TimeoutStopSec = "30s";
+    #KillMode = "mixed";
+    #};
+    #};
 
     # ═══════════════════════════════════════════════════════════
     # Helper Scripts for GPU Mode Switching
@@ -108,7 +103,7 @@ with lib;
         # Start GPU local mode
         echo "▶️  Starting systemd GPU services..."
         sudo ${pkgs.systemd}/bin/systemctl start gpu-local-mode.target
-        sudo ${pkgs.systemd}/bin/systemctl start llamacpp.service ollama.service
+        sudo ${pkgs.systemd}/bin/systemctl start llamacpp.service
 
         sleep 3
 
@@ -117,11 +112,11 @@ with lib;
         echo ""
         echo "Services:"
         sudo ${pkgs.systemd}/bin/systemctl status llamacpp.service --no-pager -l | head -3
-        sudo ${pkgs.systemd}/bin/systemctl status ollama.service --no-pager -l | head -3
+
         echo ""
         echo "Access:"
         echo "  - LlamaCPP: http://127.0.0.1:8080"
-        echo "  - Ollama: http://127.0.0.1:11434"
+
       '')
 
       # Switch to docker mode
@@ -134,7 +129,7 @@ with lib;
 
         # Stop systemd GPU services
         echo "⏹️  Stopping systemd GPU services..."
-        sudo ${pkgs.systemd}/bin/systemctl stop llamacpp.service ollama.service 2>/dev/null || true
+        sudo ${pkgs.systemd}/bin/systemctl stop llamacpp.service 2>/dev/null || true
         sudo ${pkgs.systemd}/bin/systemctl stop gpu-local-mode.target 2>/dev/null || true
 
         # Wait for GPU to be released
@@ -151,14 +146,14 @@ with lib;
         echo "✅ GPU Docker Mode Active"
         echo ""
         echo "Containers:"
-        ${pkgs.docker}/bin/docker ps --format "table {{.Names}}\t{{.Status}}" | grep -E "gpu-api|jupyter|koboldcpp|comfyui|ollama"
+        ${pkgs.docker}/bin/docker ps --format "table {{.Names}}\t{{.Status}}" | grep -E "gpu-api|jupyter|koboldcpp|comfyui"
         echo ""
         echo "Access:"
         echo "  - GPU API: http://localhost:8000"
         echo "  - Jupyter: http://localhost:8888"
         echo "  - KoboldCPP: http://localhost:5001"
         echo "  - ComfyUI: http://localhost:8188"
-        echo "  - Ollama: http://localhost:11435"
+
       '')
 
       # Show GPU status
@@ -184,7 +179,6 @@ with lib;
           echo ""
           echo "  Running services:"
           sudo ${pkgs.systemd}/bin/systemctl is-active llamacpp.service &>/dev/null && echo "    - llamacpp ✓"
-          sudo ${pkgs.systemd}/bin/systemctl is-active ollama.service &>/dev/null && echo "    - ollama ✓"
         elif ${pkgs.docker}/bin/docker ps | grep -qE "gpu-api|jupyter-gpu|koboldcpp"; then
           echo "  🐳 GPU Docker Mode (containers)"
           echo ""
@@ -242,7 +236,7 @@ with lib;
 
       script = ''
         # Default to docker mode (containers get GPU priority)
-        ${pkgs.systemd}/bin/systemctl stop llamacpp.service ollama.service || true
+        ${pkgs.systemd}/bin/systemctl stop llamacpp.service || true
 
         echo "GPU Orchestration: Defaulting to Docker mode (containers get GPU)"
         echo "Use 'gpu-mode-local' to switch to systemd services mode"
