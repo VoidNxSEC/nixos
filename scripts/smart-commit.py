@@ -7,9 +7,9 @@ import sys
 import os
 import re
 
-# Configuration
-API_URL = "http://127.0.0.1:11434/v1/chat/completions"
-MODEL_NAME = "qwen2.5-coder:7b-instruct"
+# Configuration - llama.cpp TURBO
+API_URL = os.environ.get("LLAMACPP_URL", "http://127.0.0.1:8080") + "/v1/chat/completions"
+MODEL_NAME = "default"
 MAX_DIFF_SIZE = 12000  # Characters
 
 def run_command(command):
@@ -74,7 +74,7 @@ def generate_commit_message(diff, issue_id=None):
             return result['choices'][0]['message']['content']
     except urllib.error.URLError as e:
         print(f"Error connecting to LLM API at {API_URL}: {e}")
-        print("Ensure your local LLM server (Ollama/LM Studio) is running.")
+        print("Ensure llama.cpp TURBO is running (llama-start).")
         sys.exit(1)
 
 def verify_pipeline():
