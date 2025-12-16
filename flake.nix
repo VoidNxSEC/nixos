@@ -56,6 +56,20 @@
       url = "git+file:///home/kernelcore/dev/projects/phantom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # ═══════════════════════════════════════════════════════════════
+    # SECURITY & SIEM TOOLS
+    # ═══════════════════════════════════════════════════════════════
+    owasaka = {
+      url = "git+file:///home/kernelcore/dev/projects/O.W.A.S.A.K.A.";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows
+    # Commented for now, can be enabled when needed for Apple Silicon development
+    # mlx-mcp = {
+    #   url = "git+file:///home/kernelcore/dev/projects/mlx-mcp";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   outputs =
