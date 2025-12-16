@@ -1,0 +1,108 @@
+{
+    "meta": {
+        "benchmarkId": "Anduril_NixOS_STIG",
+        "version": "1",
+        "releaseDate": "2024-10-25",
+        "title": "Anduril NixOS Security Technical Implementation Guide",
+        "source": "https://www.stigviewer.com/stigs/anduril_nixos",
+        "totalRules": 20
+    },
+    "rules": [
+        {
+            "id": "V-268078",
+            "ruleVersion": "ANIX-00-000010",
+            "severity": "medium",
+            "title": "NixOS must enable the built-in firewall",
+            "category": "network",
+            "checkType": "nix-grep",
+            "checkPattern": "networking.firewall.enable\\s*=\\s*true",
+            "checkCommand": "grep -r 'firewall.enable' /etc/nixos/*.nix /etc/nixos/**/*.nix 2>/dev/null | grep -v '#'",
+            "nixFix": "networking.firewall.enable = true;",
+            "cci": "CCI-002322"
+        },
+        {
+            "id": "V-268080",
+            "ruleVersion": "ANIX-00-000030",
+            "severity": "medium",
+            "title": "NixOS must enable the audit daemon",
+            "category": "audit",
+            "checkType": "nix-grep",
+            "checkPattern": "security\\.auditd?\\.enable\\s*=\\s*true",
+            "checkCommand": "grep -r 'audit.*enable' /etc/nixos/*.nix /etc/nixos/**/*.nix 2>/dev/null | grep -v '#'",
+            "nixFix": "security.auditd.enable = true;",
+            "cci": "CCI-000018"
+        },
+        {
+            "id": "V-268130",
+            "ruleVersion": "ANIX-00-000800",
+            "severity": "high",
+            "title": "System must disable SSH password authentication",
+            "category": "ssh",
+            "checkType": "nix-grep",
+            "checkPattern": "PasswordAuthentication.*no|false",
+            "checkCommand": "grep -r 'PasswordAuthentication' /etc/nixos/*.nix /etc/nixos/**/*.nix 2>/dev/null | grep -v '#'",
+            "nixFix": "services.openssh.settings.PasswordAuthentication = false;",
+            "cci": "CCI-000187"
+        },
+        {
+            "id": "V-268131",
+            "ruleVersion": "ANIX-00-000810",
+            "severity": "high",
+            "title": "Disable root SSH login",
+            "category": "ssh",
+            "checkType": "nix-grep",
+            "checkPattern": "PermitRootLogin.*no",
+            "checkCommand": "grep -r 'PermitRootLogin' /etc/nixos/*.nix /etc/nixos/**/*.nix 2>/dev/null | grep -v '#'",
+            "nixFix": "services.openssh.settings.PermitRootLogin = \"no\";",
+            "cci": "CCI-000366"
+        },
+        {
+            "id": "V-268154",
+            "ruleVersion": "ANIX-00-001500",
+            "severity": "medium",
+            "title": "Kernel address randomization must be enabled",
+            "category": "kernel",
+            "checkType": "sysctl",
+            "checkCommand": "sysctl kernel.randomize_va_space 2>/dev/null",
+            "checkPattern": "= 2$",
+            "nixFix": "boot.kernel.sysctl.\"kernel.randomize_va_space\" = 2;",
+            "cci": "CCI-000366"
+        },
+        {
+            "id": "V-268157",
+            "ruleVersion": "ANIX-00-001530",
+            "severity": "medium",
+            "title": "Kernel pointer restriction must be set to 2",
+            "category": "kernel",
+            "checkType": "sysctl",
+            "checkCommand": "sysctl kernel.kptr_restrict 2>/dev/null",
+            "checkPattern": "= 2$",
+            "nixFix": "boot.kernel.sysctl.\"kernel.kptr_restrict\" = 2;",
+            "cci": "CCI-000366"
+        },
+        {
+            "id": "V-268159",
+            "ruleVersion": "ANIX-00-001550",
+            "severity": "medium",
+            "title": "Ptrace scope must be restricted",
+            "category": "kernel",
+            "checkType": "sysctl",
+            "checkCommand": "sysctl kernel.yama.ptrace_scope 2>/dev/null",
+            "checkPattern": "= [123]$",
+            "nixFix": "boot.kernel.sysctl.\"kernel.yama.ptrace_scope\" = 2;",
+            "cci": "CCI-000366"
+        },
+        {
+            "id": "V-268168",
+            "ruleVersion": "ANIX-00-001710",
+            "severity": "medium",
+            "title": "IP forwarding must be disabled",
+            "category": "network",
+            "checkType": "sysctl",
+            "checkCommand": "sysctl net.ipv4.ip_forward 2>/dev/null",
+            "checkPattern": "= 0$",
+            "nixFix": "boot.kernel.sysctl.\"net.ipv4.ip_forward\" = 0;",
+            "cci": "CCI-000366"
+        }
+    ]
+}
