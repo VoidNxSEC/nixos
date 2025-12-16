@@ -488,29 +488,62 @@
       enableNFS = true; # Pode habilitar se quiser compartilhar /nix/store via NFS
     };
 
-    llamacpp = {
-      enable = false;
+    # ============================================
+    # LLAMA.CPP TURBO - High-Performance Inference
+    # ============================================
+    # Replaces Ollama with superior performance:
+    # - CUDA Graphs (~1.2x speedup)
+    # - Flash Attention (lower VRAM, faster long context)
+    # - Speculative Decoding (1.5-3x speedup)
+    # - Continuous Batching (concurrent requests)
+    llamacpp-turbo = {
+      enable = true;
       model = "/var/lib/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
+      host = "127.0.0.1";
       port = 8080;
-      n_threads = 40;
-      n_gpu_layers = 20; # Reduced from 32 to 24 (~2.5GB VRAM instead of ~5GB)
-      n_parallel = 1;
-      n_ctx = 4096; # Increased to 4096 for better diff context
-      # Total VRAM usage: ~2.9GB (allows coexistence with other GPU services)
+
+      # Threading (use physical cores)
+      n_threads = 12;
+      n_threads_batch = 12;
+
+      # GPU configuration (~4GB VRAM for 8B Q4)
+      n_gpu_layers = 30;
+      mainGpu = 0;
+
+      # Context & batching
+      n_parallel = 4; # 4 concurrent requests
+      n_ctx = 8192; # 8K context window
+      n_batch = 2048;
+      n_ubatch = 512;
+
+      # Performance optimizations
+      cudaGraphs = true; # CUDA Graphs enabled
+      flashAttention = true; # Flash Attention enabled
+      mmap = true; # Memory-mapped I/O
+      mlock = true; # Lock in RAM
+      continuousBatching = true;
+
+      # Speculative Decoding (optional - enable when you have a draft model)
+      speculativeDecoding = {
+        enable = false; # Enable when you download a draft model
+        # draftModel = "/var/lib/ml-models/llama-cpp/Qwen2.5-0.5B-Instruct-Q4_K_M.gguf";
+        # draftMax = 16;
+        # draftMin = 1;
+      };
+
+      # API settings
+      metricsEndpoint = true; # Prometheus metrics at /metrics
     };
 
+    # Legacy llamacpp (disabled - replaced by turbo)
+    llamacpp.enable = false;
+
+    # Ollama (disabled - replaced by llama-cpp-turbo)
     ollama = {
-      enable = true;
-      package = pkgs.ollama-cuda; # Use CUDA-enabled package
-      host = "127.0.0.1"; # Security: Bind to localhost only
-      port = 11434; # Default port - Docker ollama uses 11435
-      # GPU memory management: unload models after 5 minutes of inactivity
-      environmentVariables = {
-        OLLAMA_KEEP_ALIVE = "5m"; # Unload models after 5min idle to free VRAM
-      };
-      # NOTE: Systemd ollama service uses port 11434
-      # Docker ollama in ~/Dev/Docker.Base/sql/docker-compose.yml uses host port 11435
-      # To run ollama manually: OLLAMA_HOST=127.0.0.1:11435 ollama serve
+      enable = false;
+      # To re-enable: set enable = true;
+      # package = pkgs.ollama-cuda;
+      # port = 11434;
     };
 
     gitea = {
