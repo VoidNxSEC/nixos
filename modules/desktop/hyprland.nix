@@ -160,8 +160,7 @@ in
       gtk3
       gtk4
 
-      # Cursor themes
-      catppuccin-cursors.macchiatoBlue
+      # Cursor theme (bibata-cursors installed via home-manager)
     ];
 
     # ============================================
@@ -214,9 +213,8 @@ in
         # Mozilla
         MOZ_ENABLE_WAYLAND = "1";
 
-        # Cursor
+        # Cursor (theme set at home-manager level)
         XCURSOR_SIZE = "24";
-        XCURSOR_THEME = "catppuccin-macchiato-blue-cursors";
       }
 
       # NVIDIA-specific environment variables (conditional)
