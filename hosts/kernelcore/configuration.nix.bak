@@ -485,7 +485,7 @@
     # - Speculative Decoding (1.5-3x speedup)
     # - Continuous Batching (concurrent requests)
     llamacpp-turbo = {
-      enable = false;
+      enable = true;
       model = "/var/lib/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
       host = "127.0.0.1";
       port = 8080;
@@ -496,11 +496,11 @@
 
       # GPU configuration (~4GB VRAM for 8B Q4)
       n_gpu_layers = 30;
-      mainGpu = 0;
+      mainGpu = 1;
 
       # Context & batching
       n_parallel = 4; # 4 concurrent requests
-      n_ctx = 8192; # 8K context window
+      n_ctx = 4096; # 8K context window
       n_batch = 2048;
       n_ubatch = 512;
 

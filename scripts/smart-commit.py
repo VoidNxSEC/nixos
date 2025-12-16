@@ -43,7 +43,7 @@ def generate_commit_message(diff, issue_id=None):
     Your task is to generate a semantic git commit message based on the provided diff. 
     
     Rules:
-    1. Format: <type>(<scope>): <subject>
+    1. Format: <type>(<scope>): <subject> for the 'subject' field in the JSON output.
     2. Body: clearly explain WHY the changes were made, not just WHAT.
     3. Footer: specific issue references or breaking changes.
     4. Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert.
