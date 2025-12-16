@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1765864837,
-        "narHash": "sha256-cNcvMPq2Dqdpckdr13e8bejrjJq3SRZ3MlFPlNKEooE=",
+        "lastModified": 1765876757,
+        "narHash": "sha256-p25bBqn2C7zzlD3nT9IVFWVSWVQIqpWYP4MjM5IRGAY=",
         "ref": "refs/heads/main",
-        "rev": "3947738ba7415d85e981755d794acc9e80f8cfc9",
-        "revCount": 2,
+        "rev": "fee26e929ecc8b9f208ac20e646104f91b8c1744",
+        "revCount": 3,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/arch-analyzer"
       },
@@ -594,11 +594,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1765873524,
-        "narHash": "sha256-U1GMZrmsiFj+4VfaXfEwVrU/t9+BLB4t74tZEoN/pzM=",
+        "lastModified": 1765876772,
+        "narHash": "sha256-vAnEQTNaVOlA/34wqiqwewQ/juyLXJfWrMOymo4Gpdc=",
         "ref": "refs/heads/main",
-        "rev": "37376252f160a499c5b254c9de73977d04903440",
-        "revCount": 10,
+        "rev": "5f0e0baeb08c09e20f900d62dc06022503dc25de",
+        "revCount": 11,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/swissknife"
       },
