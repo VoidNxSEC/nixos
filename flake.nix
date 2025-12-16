@@ -25,19 +25,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cognitive-vault = {
-      url = "github:VoidNxSEC/cognitive-vault";
+      url = "git+file:///home/kernelcore/dev/projects/cognitive-vault";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vmctl = {
-      url = "github:VoidNxSEC/vmctl";
+      url = "git+file:///home/kernelcore/dev/projects/vmctl";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     spider-nix = {
-      url = "github:VoidNxSEC/spider-nix";
+      url = "git+file:///home/kernelcore/dev/projects/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
-      url = "github:VoidNxSEC/i915-governor";
+      url = "git+file:///home/kernelcore/dev/projects/i915-governor";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     swissknife = {
@@ -45,7 +45,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     arch-analyzer = {
-      url = "git+file:///home/kernelcore/dev/Projects/arch-analyzer";
+      url = "git+file:///home/kernelcore/dev/projects/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -53,7 +53,7 @@
     # PHANTOM - AI Document Intelligence Toolkit
     # ═══════════════════════════════════════════════════════════════
     phantom = {
-      url = "git+file:///home/kernelcore/dev/Projects/phantom";
+      url = "git+file:///home/kernelcore/dev/projects/phantom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
