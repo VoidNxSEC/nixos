@@ -16,30 +16,8 @@
 }:
 
 let
-  # Glassmorphism color palette for Zellij
-  colors = {
-    # Base surfaces
-    bg0 = "#0a0a0f";
-    bg1 = "#12121a";
-    bg2 = "#1a1a24";
-    bg3 = "#22222e";
-
-    # Foreground
-    fg0 = "#ffffff";
-    fg1 = "#e4e4e7";
-    fg2 = "#a1a1aa";
-    fg3 = "#71717a";
-
-    # Accents
-    cyan = "#00d4ff";
-    magenta = "#ff00aa";
-    violet = "#7c3aed";
-    blue = "#3b82f6";
-    green = "#22c55e";
-    yellow = "#eab308";
-    orange = "#f97316";
-    red = "#ef4444";
-  };
+  # Reference glassmorphism design tokens (single source of truth)
+  colors = config.glassmorphism.colors;
 in
 {
   programs.zellij = {
@@ -370,21 +348,21 @@ in
       themes = {
         glassmorphism = {
           # UI frame colors (dark glassmorphism base)
-          fg = colors.fg1;
-          bg = colors.bg0; # Use darkest background instead of transparent
+          fg = colors.base.fg1;
+          bg = colors.base.bg0; # Use darkest background instead of transparent
 
           # Base colors
-          black = colors.bg3;
-          white = colors.fg0;
+          black = colors.base.bg3;
+          white = colors.base.fg0;
 
           # Accent colors matching glassmorphism palette
-          red = colors.magenta; # Using magenta for red
-          green = colors.green;
-          yellow = colors.yellow;
-          blue = colors.blue;
-          magenta = colors.violet; # Using violet for magenta
-          cyan = colors.cyan; # Primary accent
-          orange = colors.orange;
+          red = colors.accent.magenta; # Using magenta for red
+          green = colors.accent.green;
+          yellow = colors.accent.yellow;
+          blue = colors.accent.blue;
+          magenta = colors.accent.violet; # Using violet for magenta
+          cyan = colors.accent.cyan; # Primary accent
+          orange = colors.accent.orange;
         };
       };
 
