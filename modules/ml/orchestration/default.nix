@@ -56,7 +56,7 @@
 
     # Add Python environment to system packages
     environment.systemPackages = with pkgs; [
-      (python311.withPackages (
+      (python313.withPackages (
         ps: with ps; [
           fastapi
           uvicorn

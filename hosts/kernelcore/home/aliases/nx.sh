@@ -24,7 +24,6 @@ alias nx-docker='sudo nvim /etc/nixos/modules/containers/docker.nix'
 alias chat='python koboldcpp.py L3-8B-Stheno-v3.2-Q4_K_S.gguf --sdmodel Anything-V3.0-pruned-fp16.safetensors 8080 --host localhost --gpulayers 40  --usecuda all --usecublas all --usehipblas'
 
 
-alias ollama-run='ollama run '
 # ============================================================
 # 🔧 NIXOS SYSTEM MANAGEMENT
 # ============================================================
