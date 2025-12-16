@@ -1,8 +1,3 @@
-# Google Gemini CLI
-#
-# Self-contained package - no external dependencies
-# Using official nightly release tarball
-#
 {
   config,
   lib,
@@ -24,46 +19,61 @@ let
 
     npmDepsHash = "sha256-EQRAeVC9xJRoztl89g0QINMd10I4zSITISQpdkSMEuY=";
 
-    # Native dependencies for keytar
+    # Dependências de compilação (necessárias apenas para construir o pacote)
     nativeBuildInputs = with pkgs; [
       pkg-config
       python3
       git
+      makeBinaryWrapper
     ];
-    buildInputs = with pkgs; [ libsecret ];
+
+    # Dependências de biblioteca (libsecret para keytar)
+    buildInputs = with pkgs; [
+      libsecret
+    ];
 
     npmFlags = [ "--legacy-peer-deps" ];
-    dontNpmInstall = true; # Skip default install, use custom
+    dontNpmInstall = true;
 
     installPhase = ''
       runHook preInstall
 
       mkdir -p $out/lib/gemini-cli $out/bin
 
-      # Copy monorepo workspace packages (needed for symlinks to work)
+      # Copia os pacotes do monorepo
       cp -r packages $out/lib/gemini-cli/
 
-      # Copy node_modules
+      # Copia node_modules dereferenciando links simbólicos
       cp -rL node_modules $out/lib/gemini-cli/ || cp -r node_modules $out/lib/gemini-cli/
 
-      # Create executable wrapper
-      cat > $out/bin/gemini << EOF
-      #!${pkgs.bash}/bin/bash
-      exec ${pkgs.nodejs}/bin/node $out/lib/gemini-cli/packages/cli/dist/index.js "\$@"
-      EOF
-      chmod +x $out/bin/gemini
+      # CRIAR WRAPPER ROBUSTO
+      # Aqui está a correção dos erros de grep/git:
+      # 1. Definimos o script JS alvo.
+      # 2. Injetamos o LD_LIBRARY_PATH para o libsecret funcionar.
+      # 3. Injetamos o PATH com git, grep, coreutils e xdg-open (para abrir o navegador).
+
+      makeWrapper ${pkgs.nodejs}/bin/node $out/bin/gemini \
+        --add-flags "$out/lib/gemini-cli/packages/cli/dist/index.js" \
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ pkgs.libsecret ]} \
+        --prefix PATH : ${
+          lib.makeBinPath [
+            pkgs.git # Para comandos git internos
+            pkgs.gnugrep # Para o erro de grep que você viu
+            pkgs.coreutils # Comandos básicos (ls, cat, etc)
+            pkgs.xdg-utils # Para 'gemini login' conseguir abrir o navegador
+          ]
+        }
 
       runHook postInstall
     '';
 
-    # Skip broken symlink check - monorepo has internal workspace links
     dontCheckNoBrokenSymlinks = true;
 
     meta = {
       description = "CLI tool for Google's Gemini Generative AI API";
       homepage = "https://github.com/google-gemini/gemini-cli";
       license = lib.licenses.asl20;
-      platforms = lib.platforms.all;
+      platforms = lib.platforms.linux;
     };
   };
 
