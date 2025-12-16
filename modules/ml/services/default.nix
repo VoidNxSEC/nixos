@@ -6,15 +6,11 @@
 }:
 
 # ML Services Layer
-# Systemd services for ML inference (llama.cpp, Ollama, etc.)
+# Inference services: llama.cpp (CUDA), vLLM
 
 {
   imports = [
-    ./llama-cpp.nix
     ./llama-cpp-turbo.nix
-    #./llama-cpp-swap.nix
-    ./ollama
-
-    # ./vllm.nix  # TODO: Future
+    ./vllm.nix
   ];
 }

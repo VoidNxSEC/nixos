@@ -57,7 +57,6 @@ in
   jupyter-logs-ai = "${orch} logs multimodal jupyter -f";
   nginx-logs-gpu = "${orch} logs gpu nginx -f";
   nginx-logs-ai = "${orch} logs multimodal nginx -f";
-  ollama-logs = "${orch} logs multimodal ollama -f";
   vllm-logs = "${orch} logs multimodal vllm -f";
   whisper-logs = "${orch} logs multimodal whisper-api -f";
 
@@ -68,9 +67,7 @@ in
   db-restart = "${orch} restart gpu db";
 
   # ==========================================================================
-  # OLLAMA
   # ==========================================================================
-  ollama-list = "docker exec ollama-gpu ollama list 2>/dev/null || echo 'Ollama não está rodando'";
 
   # ==========================================================================
   # DOCKER UTILITIES

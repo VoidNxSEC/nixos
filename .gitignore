@@ -1,6 +1,14 @@
+# Generic ignore patterns
+logs/
+temp/
+build/
+cache/
+node_modules/
+
 # Nix build results
 result
 result-*
+
 
 # Nix REPL history
 .nix-repl-history
@@ -69,7 +77,14 @@ modules/ml/**/node_modules/
 modules/ml/**/*.db
 modules/ml/**/*.db-shm
 modules/ml/**/*.db-wal
+modules/ml/**/*.db-journal
 modules/ml/**/build/
+modules/ml/**/.cache/
+
+# General Build Artifacts (all modules)
+**/.cache/
+**/target/debug/
+**/target/release/
 
 # OAuth tokens (plaintext - never commit) - Updated paths
 modules/ml/integrations/mcp/server/secrets/oauth/*.token.json

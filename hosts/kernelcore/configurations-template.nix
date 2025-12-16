@@ -98,11 +98,10 @@
         n_gpu_layers = 35;
       };
 
-      ollama = {
-        enable = true;
-        acceleration = "cuda";
-        gpu-manager.enable = true; # Auto-offload on idle
-      };
+      #  enable = true;
+      #  acceleration = "cuda";
+      #  gpu-manager.enable = true; # Auto-offload on idle
+      #};
     };
 
     # ───────────────────────────────────────────────────────────────────────
@@ -117,8 +116,6 @@
       # ML Services
       ml = {
         llama.enable = true;
-        ollama.enable = true;
-        ollama-gpu-manager.enable = true;
       };
 
       # Container Services
