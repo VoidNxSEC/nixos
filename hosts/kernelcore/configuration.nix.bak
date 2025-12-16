@@ -98,9 +98,11 @@
       };
 
       # Reverse proxy for Tailscale services (NGINX)
+      # Enable when you want to expose services like Ollama via subdomain
       proxy.nginx-tailscale = {
         enable = true; # Set to true to enable NGINX reverse proxy
         tailnetDomain = "tail-scale.ts.net";
+        # services.ollama = { enable = true; subdomain = "ollama"; upstreamPort = 11434; };
       };
 
       # nftables-based firewall zones
@@ -419,6 +421,7 @@
 
   services = {
 
+
     # ============================================
     # XSERVER - Minimal for NVIDIA drivers only
     # ============================================
@@ -432,6 +435,7 @@
       # Disable default X11 session managers
       displayManager.lightdm.enable = false;
     };
+
 
     displayManager = {
       gdm = {
@@ -475,6 +479,7 @@
     # ============================================
     # LLAMA.CPP TURBO - High-Performance Inference
     # ============================================
+    # Replaces Ollama with superior performance:
     # - CUDA Graphs (~1.2x speedup)
     # - Flash Attention (lower VRAM, faster long context)
     # - Speculative Decoding (1.5-3x speedup)
@@ -521,8 +526,11 @@
     # Legacy llamacpp (disabled - replaced by turbo)
     #llamacpp.enable = false;
 
+    # Ollama (disabled - replaced by llama-cpp-turbo)
+    #ollama = {
     #enable = false;
     # To re-enable: set enable = true;
+    # package = pkgs.ollama-cuda;
     # port = 11434;
     #};
 
@@ -784,6 +792,7 @@
     docker-buildx
     docker
     gnumake
+    #ollama
     libfido2
     python313Packages.pyudev
     libudev0-shim

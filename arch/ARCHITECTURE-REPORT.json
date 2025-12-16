@@ -1,34 +1,34 @@
 {
   "metadata": {
     "version": "3.0.0",
-    "generated": "2025-12-16T03:14:53Z",
+    "generated": "2025-12-16T10:31:20Z",
     "location": "/etc/nixos",
     "hostname": "nx"
   },
   "git": {
     "branch": "main",
-    "commit": "73ef6bf7",
-    "commit_long": "73ef6bf76c8ef8090b4924dc0ec0a3a02f418af3",
-    "commit_date": "2025-12-16 01:03:54",
-    "total_commits": 262,
+    "commit": "58218681",
+    "commit_long": "58218681ed5bc34cb8fa2a67575c109f3892602c",
+    "commit_date": "2025-12-16 07:24:06",
+    "total_commits": 269,
     "contributors": 3,
     "last_tag": "ml-restructure-complete",
     "repo_age_days": 0
   },
   "statistics": {
     "files": {
-      "total": 885,
-      "nix": 284,
-      "sh": 100,
+      "total": 910,
+      "nix": 299,
+      "sh": 108,
       "md": 258,
       "yaml": 14
     },
     "lines": {
-      "nix": 52076,
-      "sh": 16595,
-      "md": 98274
+      "nix": 56704,
+      "sh": 19030,
+      "md": 98355
     },
-    "directories": 274,
+    "directories": 277,
     "sizes": {
       "modules": "1.2G",
       "docs": "2.0M",
@@ -37,12 +37,12 @@
     }
   },
   "modules": {
-    "total": 181,
+    "total": 179,
     "categories": 12,
     "by_category": {
       "shell": {
-        "count": 35,
-        "lines": 5243
+        "count": 34,
+        "lines": 5222
       },
       "virtualization": {
         "count": 4,
@@ -54,23 +54,23 @@
       },
       "system": {
         "count": 10,
-        "lines": 1196
+        "lines": 1193
       },
       "hardware": {
         "count": 12,
         "lines": 2712
       },
       "network": {
-        "count": 12,
-        "lines": 2816
+        "count": 13,
+        "lines": 2842
       },
       "development": {
         "count": 5,
         "lines": 973
       },
       "ml": {
-        "count": 22,
-        "lines": 1953
+        "count": 20,
+        "lines": 2362
       },
       "containers": {
         "count": 4,
@@ -78,7 +78,7 @@
       },
       "security": {
         "count": 17,
-        "lines": 2249
+        "lines": 2317
       },
       "packages": {
         "count": 36,
@@ -86,10 +86,10 @@
       },
       "services": {
         "count": 16,
-        "lines": 3028
+        "lines": 3046
       }
     },
-    "orphaned": 133
+    "orphaned": 171
   },
   "health": {
     "overall": 65,

@@ -41,13 +41,9 @@ let
       command = "gemini-cli";
       description = "Google Gemini CLI agent";
     };
-    ollama = {
-      name = "Ollama";
-      icon = "󰊠";
-      color = "#22c55e";
-      command = "ollama run";
-      description = "Local LLM via Ollama";
-    };
+    #  icon = "󰊠";
+    #  color = "#22c55e";
+    #};
   };
 in
 {
@@ -70,7 +66,6 @@ in
           ["󰚩 Roo (Claude) - VSCode AI Assistant"]="code"
           ["󰧑 Codex - CLI Agent"]="alacritty -e codex"
           ["󰊤 Gemini - Google AI"]="alacritty -e gemini-cli"
-          ["󰊠 Ollama - Local LLM"]="alacritty -e ollama run llama3"
           ["󰋼 Quick Question"]="agent-quick-prompt"
         )
 
@@ -110,7 +105,7 @@ in
         fi
 
         # Select agent
-        AGENTS="󰚩 Claude (via API)\n󰊤 Gemini\n󰊠 Ollama (Local)"
+        AGENTS="󰚩 Claude (via API)\n󰊤 Gemini"
         AGENT=$(echo -e "$AGENTS" | wofi --dmenu --prompt="Select Agent" --width=300 --height=150 --cache-file=/dev/null)
 
         case "$AGENT" in
@@ -130,19 +125,12 @@ in
               notify-send -a "Agent Hub" "󰊤 Gemini" "gemini-cli not installed"
             fi
             ;;
-          "󰊠 Ollama (Local)")
-            # Use ollama if available
-            if command -v ollama &> /dev/null; then
-              notify-send -a "Agent Hub" "󰊠 Ollama" "Processing..."
-              RESPONSE=$(ollama run llama3 "$PROMPT" 2>/dev/null)
-              if [[ -n "$RESPONSE" ]]; then
-                echo "$RESPONSE" | wl-copy
-                notify-send -a "Agent Hub" "󰊠 Ollama Response" "$(echo "$RESPONSE" | head -c 200)...\n\nCopied to clipboard!"
-              fi
-            else
-              notify-send -a "Agent Hub" "󰊠 Ollama" "ollama not installed or not running"
-            fi
-            ;;
+          #    if [[ -n "$RESPONSE" ]]; then
+          #      echo "$RESPONSE" | wl-copy
+          #    fi
+          #  else
+          #  fi
+          #  ;;
         esac
       '';
     };
@@ -182,17 +170,11 @@ in
           echo "󰊤 Gemini CLI: ❌ Not installed"
         fi
 
-        # Check Ollama
-        if command -v ollama &> /dev/null; then
-          if curl -s localhost:11434 &> /dev/null; then
-            MODELS=$(ollama list 2>/dev/null | tail -n +2 | wc -l)
-            echo "󰊠 Ollama: ✅ Running ($MODELS models)"
-          else
-            echo "󰊠 Ollama: 󰋗 Installed but not running"
-          fi
-        else
-          echo "󰊠 Ollama: ❌ Not installed"
-        fi
+        #  if curl -s localhost:11434 &> /dev/null; then
+        #  else
+        #  fi
+        #else
+        #fi
 
         # Check LLaMA.cpp
         if systemctl is-active --quiet llamacpp.service 2>/dev/null; then
@@ -231,10 +213,9 @@ in
           TOOLTIP+="\n󰧑 Codex: Active"
         fi
 
-        if curl -s localhost:11434 &> /dev/null 2>&1; then
-          ((ACTIVE++))
-          TOOLTIP+="\n󰊠 Ollama: Running"
-        fi
+        #if curl -s localhost:11434 &> /dev/null 2>&1; then
+        #  ((ACTIVE++))
+        #fi
 
         if systemctl is-active --quiet llamacpp.service 2>/dev/null; then
           ((ACTIVE++))

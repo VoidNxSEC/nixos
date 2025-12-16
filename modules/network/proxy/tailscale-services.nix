@@ -72,16 +72,12 @@ in
 
       # Expose services
       services = {
-        # Ollama LLM
-        ollama = {
-          enable = mkDefault (config.services.ollama.enable or false);
-          subdomain = "ollama";
-          upstreamPort = 11434;
-          rateLimit = "20r/s";
-          maxBodySize = "500M"; # Large for model uploads
-          timeout = 600; # 10 minutes for long inference
-          enableWebSocket = false;
-        };
+        #  upstreamPort = 11434;
+        #  rateLimit = "20r/s";
+        #  maxBodySize = "500M"; # Large for model uploads
+        #  timeout = 600; # 10 minutes for long inference
+        #  enableWebSocket = false;
+        #};
 
         # LlamaCPP
         llamacpp = {

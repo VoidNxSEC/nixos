@@ -65,13 +65,9 @@ llm_init() {
 model_list:
   - model_name: gpt-3.5-turbo
     litellm_params:
-      model: ollama/llama3.2
-      api_base: http://ollama:11434
 
   - model_name: gpt-4
     litellm_params:
-      model: ollama/mistral
-      api_base: http://ollama:11434
 
 litellm_settings:
   drop_params: true
@@ -419,30 +415,19 @@ llm_network_inspect() {
     docker network inspect "$LITELLM_NETWORK" | jq '.[0].Containers'
 }
 
-llm_connect_ollama() {
-    log_info "Connecting to Ollama container..."
-    
-    # Verifica se Ollama existe
-    if ! docker ps --format '{{.Names}}' | grep -q ollama; then
-        log_warn "Ollama container not found. Starting..."
-        
-        docker run -d \
-            --name ollama \
-            --network "$LITELLM_NETWORK" \
-            --gpus all \
-            -v ollama-data:/root/.ollama \
-            ollama/ollama
-        
-        log_success "Ollama started"
-    fi
-    
-    # Conecta à mesma network
-    docker network connect "$LITELLM_NETWORK" ollama 2>/dev/null || log_info "Already connected"
-    
-    # Test connection
-    log_info "Testing connection..."
-    docker exec "$LITELLM_CONTAINER" curl -s http://ollama:11434/api/tags | jq -r '.models[].name' | sed 's/^/  - /'
-}
+#    
+#        
+#        docker run -d \
+#            --network "$LITELLM_NETWORK" \
+#            --gpus all \
+#        
+#    fi
+#    
+#    # Conecta à mesma network
+#    
+#    # Test connection
+#    log_info "Testing connection..."
+#}
 
 # ============================================================
 # 📚 HELP & DOCUMENTATION
@@ -487,7 +472,6 @@ llm_help() {
 
 🌐 NETWORK
   llm-network-inspect   Inspect network topology
-  llm-connect-ollama    Connect to Ollama container
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -495,7 +479,6 @@ llm_help() {
   1. llm-init              # Setup workspace
   2. llm-build             # Build custom image
   3. llm-start             # Start container
-  4. llm-connect-ollama    # Connect to Ollama
   5. llm-test-api          # Test everything
 
 🔐 SSH ACCESS:
@@ -535,7 +518,6 @@ alias llm-test-api='llm_test_api'
 alias llm-metrics='llm_metrics'
 alias llm-debug='llm_debug'
 alias llm-network-inspect='llm_network_inspect'
-alias llm-connect-ollama='llm_connect_ollama'
 alias llm-help='llm_help'
 
 # Se rodado diretamente (não source)

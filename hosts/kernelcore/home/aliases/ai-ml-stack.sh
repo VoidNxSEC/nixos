@@ -5,36 +5,19 @@
 # ============================================================
 
 # ============================================================
-# 💬 OLLAMA (LLM Local) - FUNCIONA
 # ============================================================
 
-# Ollama standalone 
-alias ollama-start='docker run -d --rm \
-  --device=nvidia.com/gpu=all \
-  --name ollama-gpu \
-  -p 11434:11434 \
-  -v ollama-data:/root/.ollama \
-  ollama/ollama:latest'
+#  --device=nvidia.com/gpu=all \
+#  -p 11434:11434 \
 
-alias ollama-stop='docker stop ollama-gpu 2>/dev/null || echo "Ollama not running"'
 
-alias ollama-pull='docker exec ollama-gpu ollama pull'
 
-alias ollama-list='docker exec ollama-gpu ollama list'
 
-alias ollama-chat='docker exec -it ollama-gpu ollama run'
 
-alias ollama-rm='docker exec ollama-gpu ollama rm'
 
-alias ollama-logs='docker logs -f ollama-gpu'
 
 # Setup modelos populares
-alias ollama-setup='echo "📥 Downloading models..." && \
-  docker exec ollama-gpu ollama pull llama3.2 && \
-  docker exec ollama-gpu ollama pull mistral && \
-  docker exec ollama-gpu ollama pull codellama && \
-  docker exec ollama-gpu ollama pull llava && \
-  echo "✓ Models ready!"'
+#  echo "✓ Models ready!"'
 
 # ============================================================
 # 🗣️ WHISPER (Speech-to-Text) - FUNCIONA
@@ -107,14 +90,11 @@ alias kobold-ai="cd ~/base/ml/chat/koboldcpp"
 # 🧪 API TESTING
 # ============================================================
 
-test-ollama() {
-    echo "🧪 Testing Ollama API..."
-    curl -s http://localhost:11434/api/generate -d '{
-      "model": "hf.co/KoboldAI/LLaMA2-13B-Erebus-v3-GGUF:Q4_K_M",
-      "prompt": "Hey there",
-      "stream": true
-    }' | jq -r '.response' || echo "❌ Ollama not responding"
-}
+#    curl -s http://localhost:11434/api/generate -d '{
+#      "model": "hf.co/KoboldAI/LLaMA2-13B-Erebus-v3-GGUF:Q4_K_M",
+#      "prompt": "Hey there",
+#      "stream": true
+#}
 
 test-whisper() {
     echo "🧪 Testing Whisper API..."
@@ -129,7 +109,6 @@ test-comfy() {
 test-all() {
     echo "🔍 Testing all services..."
     echo ""
-    test-ollama
     test-whisper
     test-comfy
 }
@@ -138,11 +117,8 @@ test-all() {
 # 📊 MONITORING
 # ============================================================
 
-alias ai-ps='docker ps --filter "name=ollama\|whisper\|comfy\|jupyter-ml" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
 
-alias ai-gpu='watch -n 1 "nvidia-smi && echo && docker ps --filter \"name=ollama\|whisper\|comfy\" --format \"table {{.Names}}\t{{.Status}}\""'
 
-alias ai-stats='docker stats $(docker ps --filter "name=ollama\|whisper\|comfy\|jupyter-ml" -q) --no-stream'
 
 # ============================================================
 # 🎯 WORKFLOWS
@@ -170,18 +146,16 @@ whisper-translate() {
     curl -s -F "audio_file=@$1" "http://localhost:9000/asr?task=translate" | jq -r '.text'
 }
 
-# Chat direto com Ollama
-ollama-ask() {
-    local model="${1:-hf.co/KoboldAI/LLaMA2-13B-Erebus-v3-GGUF:Q4_K_M}"
-    local prompt="${2:-Hey there}"
-
-    echo "💬 Asking $model: $prompt"
-    curl -s http://localhost:11434/api/generate -d "{
-      \"model\": \"$model\",
-      \"prompt\": \"$prompt\",
-      \"stream\": true
-    }" | jq -r '.response'
-}
+#    local model="${1:-hf.co/KoboldAI/LLaMA2-13B-Erebus-v3-GGUF:Q4_K_M}"
+#    local prompt="${2:-Hey there}"
+#
+#    echo "💬 Asking $model: $prompt"
+#    curl -s http://localhost:11434/api/generate -d "{
+#      \"model\": \"$model\",
+#      \"prompt\": \"$prompt\",
+#      \"stream\": true
+#    }" | jq -r '.response'
+#}
 
 # Pipeline: Audio → Transcript → LLM Summary
 audio-to-summary() {
@@ -197,11 +171,11 @@ audio-to-summary() {
     echo ""
     echo "🤖 Step 2: Generating summary..."
 
-    curl -s http://localhost:11434/api/generate -d "{
-      \"model\": \"llama3.2\",
-      \"prompt\": \"Summarize this in one sentence: $transcript\",
-      \"stream\": false
-    }" | jq -r '.response'
+    #curl -s http://localhost:11434/api/generate -d "{
+    #  \"model\": \"llama3.2\",
+    #  \"prompt\": \"Summarize this in one sentence: $transcript\",
+    #  \"stream\": false
+    #}" | jq -r '.response'
 }
 
 # ============================================================
@@ -210,21 +184,18 @@ audio-to-summary() {
 
 ai-start-all() {
     echo "🚀 Starting AI stack..."
-    ollama-start
     sleep 3
     whisper-start
     sleep 2
     comfy-start
     echo ""
     echo "✓ Stack started!"
-    echo "  - Ollama:  http://localhost:11434"
     echo "  - Whisper: http://localhost:9000"
     echo "  - ComfyUI: http://localhost:8188"
 }
 
 ai-stop-all() {
     echo "🛑 Stopping AI stack..."
-    ollama-stop
     whisper-stop
     comfy-stop
     jup-ml-stop
@@ -233,7 +204,6 @@ ai-stop-all() {
 
 ai-cleanup() {
     echo "🧹 Cleaning up AI containers..."
-    docker stop $(docker ps -q --filter "name=ollama\|whisper\|comfy\|jupyter-ml") 2>/dev/null
     docker system prune -f
     echo "✓ Cleanup complete!"
 }
@@ -245,20 +215,14 @@ ai-reset() {
     ai-start-all
 }
 
-# Backup de modelos do Ollama
-ai-backup-ollama() {
-    local backup_dir="$HOME/ai-backup-$(date +%Y%m%d-%H%M%S)"
-    mkdir -p "$backup_dir"
-
-    echo "💾 Backing up Ollama models to: $backup_dir"
-    docker run --rm \
-        -v ollama-data:/data \
-        -v "$backup_dir":/backup \
-        alpine \
-        tar czf /backup/ollama-models.tar.gz -C /data .
-
-    echo "✓ Backup saved: $backup_dir/ollama-models.tar.gz"
-}
+#    local backup_dir="$HOME/ai-backup-$(date +%Y%m%d-%H%M%S)"
+#    mkdir -p "$backup_dir"
+#
+#    docker run --rm \
+#        -v "$backup_dir":/backup \
+#        alpine \
+#
+#}
 
 # ============================================================
 # 📚 HELP
@@ -273,14 +237,6 @@ ai-help() {
     echo "  ai-reset           - Restart all services"
     echo "  ai-cleanup         - Clean up containers and images"
     echo ""
-    echo "Ollama (LLM):"
-    echo "  ollama-start       - Start Ollama container"
-    echo "  ollama-stop        - Stop Ollama"
-    echo "  ollama-pull <m>    - Download model"
-    echo "  ollama-list        - List installed models"
-    echo "  ollama-chat <m>    - Interactive chat"
-    echo "  ollama-setup       - Download popular models"
-    echo "  ollama-ask <model> <prompt> - Quick query"
     echo ""
     echo "Whisper (STT):"
     echo "  whisper-start      - Start Whisper container"
@@ -299,7 +255,6 @@ ai-help() {
     echo "  jup-open           - Open Jupyter in browser"
     echo ""
     echo "Testing:"
-    echo "  test-ollama        - Test Ollama API"
     echo "  test-whisper       - Test Whisper API"
     echo "  test-comfy         - Test ComfyUI API"
     echo "  test-all           - Test all services"
@@ -313,11 +268,9 @@ ai-help() {
     echo "  audio-to-summary <audio_file>  - Audio → Text → Summary"
     echo ""
     echo "Utilities:"
-    echo "  ai-backup-ollama   - Backup Ollama models"
     echo ""
     echo "🎯 Quick Start:"
     echo "  1. ai-start-all       # Start everything"
-    echo "  2. ollama-setup       # Download models"
     echo "  3. test-all           # Verify services"
 }
 
@@ -325,19 +278,16 @@ ai-help() {
 # EXPORT FUNCTIONS
 # ============================================================
 
-export -f test-ollama
 export -f test-whisper
 export -f test-comfy
 export -f test-all
 export -f whisper-transcribe
 export -f whisper-translate
-export -f ollama-ask
 export -f audio-to-summary
 export -f ai-start-all
 export -f ai-stop-all
 export -f ai-cleanup
 export -f ai-reset
-export -f ai-backup-ollama
 export -f ai-help
 
 #echo "✓ AI/ML Stack aliases loaded! Type 'ai-help' for commands"
