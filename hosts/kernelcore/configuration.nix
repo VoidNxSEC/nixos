@@ -6,9 +6,6 @@
 }:
 
 {
-  imports = [
-    # Yazi configuration moved to home-manager: hosts/kernelcore/home/yazi.nix
-  ];
 
   # Shell configuration - Training session logger
   shell.trainingLogger = {
@@ -122,8 +119,18 @@
 
     # Security Operations Center (SOC) - IDS/IPS, SIEM, monitoring
     soc = {
-      enable = true;
+      enable = false;
       profile = "minimal"; # minimal | standard | enterprise
+      retention.days = 30;
+
+      # Explicitly disable Suricata for now
+      ids.suricata.enable = false;
+
+      # Alert configuration
+      alerting = {
+        enable = true;
+        minSeverity = "medium";
+      };
     };
 
     nvidia = {
@@ -144,22 +151,11 @@
       maxCacheSizeMB = 5;
     };
 
-    # Package managers for binaries not in nixpkgs or testing upstream
-    packages.deb = {
-      enable = true;
-    };
-
-    packages.tar = {
-      enable = true;
-    };
-
-    packages.js = {
-      enable = true;
-    };
-
-    packages.gemini-cli = {
-      enable = true;
-    };
+    # Packages - isolated per-package architecture
+    packages.zellij.enable = true;
+    packages.lynis.enable = true;
+    packages.protonpass.enable = true;
+    packages.gemini-cli.enable = true;
 
     # services.users."codex-agent" removed for security hardening
 
