@@ -44,6 +44,10 @@
       url = "git+file:///home/kernelcore/dev/projects/swissknife";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    arch-analyzer = {
+      url = "git+file:///home/kernelcore/dev/Projects/arch-analyzer";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # ═══════════════════════════════════════════════════════════════
     # PHANTOM - AI Document Intelligence Toolkit
@@ -77,6 +81,7 @@
             securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
             swissknife-tools = inputs.swissknife.packages.${system};
             phantom = inputs.phantom.packages.${system}.default;
+            arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
           })
         ];
       };
@@ -135,6 +140,7 @@
                   securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
                   swissknife-tools = inputs.swissknife.packages.${system};
                   phantom = inputs.phantom.packages.${system}.default;
+                  arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
                 })
               ];
               nixpkgs.config.allowUnfree = true;
@@ -229,6 +235,7 @@
                 diagnostics.enable = true;
                 llm.enable = true;
                 mcp.enable = true;
+                arch-analyzer.enable = true;
               };
             }
 

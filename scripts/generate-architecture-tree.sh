@@ -26,7 +26,7 @@ set -euo pipefail
 # Configuration & Constants
 # ═══════════════════════════════════════════════════════════════════════════
 
-readonly SCRIPT_VERSION="2.0.0"
+readonly SCRIPT_VERSION="3.0.0"
 readonly REPO_ROOT="${REPO_ROOT:-/home/kernelcore/dev/Projects/phantom}"
 readonly OUTPUT_DIR="${REPO_ROOT}/arch"
 readonly SNAPSHOT_DIR="${OUTPUT_DIR}/snapshots"
@@ -44,6 +44,12 @@ readonly MAX_DEPTH="${MAX_DEPTH:-5}"
 readonly SHOW_HIDDEN="${SHOW_HIDDEN:-false}"
 readonly ENABLE_VALIDATION="${ENABLE_VALIDATION:-true}"
 readonly ENABLE_METRICS="${ENABLE_METRICS:-true}"
+
+# LLM Analysis settings (AI-powered architecture documentation)
+readonly ENABLE_LLM_ANALYSIS="${ENABLE_LLM_ANALYSIS:-true}"
+readonly LLM_MODEL="${LLM_MODEL:-qwen2.5-coder:7b-instruct}"
+readonly LLM_PARALLEL="${LLM_PARALLEL:-8}"
+readonly LLM_TIMEOUT="${LLM_TIMEOUT:-120}"
 
 # Filters - NixOS focused architecture
 readonly -a EXCLUDE_PATTERNS=(
@@ -1125,7 +1131,38 @@ main() {
   cp "$OUTPUT_REPORT_TXT" "$SNAPSHOT_FILE"
   success "Snapshot: $SNAPSHOT_FILE"
 
-  # Phase 4: Summary
+  # Phase 4: AI-Powered Analysis
+  if [ "$ENABLE_LLM_ANALYSIS" = "true" ]; then
+    section "${EMOJI_ROCKET} Phase 4: AI Architecture Analysis"
+    log "Running LLM-powered analysis with model: $LLM_MODEL"
+
+    # Check if Ollama is running
+    if ! curl -s "http://localhost:11434/api/tags" >/dev/null 2>&1; then
+      warning "Ollama not available. Skipping AI analysis."
+      warning "Start Ollama with: systemctl start ollama"
+    else
+      # Get script directory
+      SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+      # Run Python analyzer
+      if [ -f "$SCRIPT_DIR/arch-analyzer.py" ]; then
+        env LLM_PARALLEL="$LLM_PARALLEL" LLM_TIMEOUT="$LLM_TIMEOUT" \
+          python3 "$SCRIPT_DIR/arch-analyzer.py" \
+            --repo "$REPO_ROOT" \
+            --output "$OUTPUT_DIR" \
+            --model "$LLM_MODEL" \
+            --parallel "$LLM_PARALLEL" && \
+          success "AI analysis complete" || \
+          warning "AI analysis encountered issues (non-fatal)"
+      else
+        warning "arch-analyzer.py not found in $SCRIPT_DIR"
+      fi
+    fi
+  else
+    info "LLM analysis disabled (ENABLE_LLM_ANALYSIS=false)"
+  fi
+
+  # Phase 5: Final Summary
   echo ""
   section "${EMOJI_SUCCESS} Analysis Complete!"
   echo ""
@@ -1134,6 +1171,16 @@ main() {
   echo "  📝 Markdown Report:    $OUTPUT_REPORT_MD"
   echo "  📦 JSON Report:        $OUTPUT_REPORT_JSON"
   echo "  📸 Snapshot:           $SNAPSHOT_FILE"
+
+  # Show AI reports if they exist
+  if [ -f "$OUTPUT_DIR/AI-ARCHITECTURE-REPORT.md" ]; then
+    echo ""
+    echo "  🤖 AI Reports:"
+    echo "     └─ $OUTPUT_DIR/AI-ARCHITECTURE-REPORT.md"
+    echo "     └─ $OUTPUT_DIR/AI-ARCHITECTURE-REPORT.json"
+    echo "     └─ $OUTPUT_DIR/dependency-graph.mmd"
+  fi
+
   echo ""
   echo -e "  ${COLOR_BOLD}Health Score: ${ANALYSIS_HEALTH_SCORE:-0}/100${COLOR_RESET}"
   echo -e "  ${COLOR_BOLD}Security:     ${ANALYSIS_SECURITY_SCORE:-0}/100${COLOR_RESET}"
@@ -1141,6 +1188,9 @@ main() {
   echo ""
   info "View reports: cat $OUTPUT_REPORT_TXT"
   info "             less $OUTPUT_REPORT_MD"
+  if [ -f "$OUTPUT_DIR/AI-ARCHITECTURE-REPORT.md" ]; then
+    info "             less $OUTPUT_DIR/AI-ARCHITECTURE-REPORT.md"
+  fi
   echo ""
 }
 

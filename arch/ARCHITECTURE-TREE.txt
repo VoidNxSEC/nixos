@@ -2,9 +2,9 @@
 ║                    NIXOS ARCHITECTURE TREE                                ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
-Generated: 2025-12-14 16:02:34 -02
+Generated: 2025-12-16 01:14:53 -02
 Location:  /etc/nixos
-Branch:    main (7779e09b)
+Branch:    main (73ef6bf7)
 
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -15,7 +15,12 @@ Branch:    main (7779e09b)
 │   │   ├── snapshot-20251210-054112.txt
 │   │   ├── snapshot-20251210-054218.txt
 │   │   ├── snapshot-20251211-184953.txt
-│   │   └── snapshot-20251212-023111.txt
+│   │   ├── snapshot-20251212-023111.txt
+│   │   ├── snapshot-20251214-160231.txt
+│   │   ├── snapshot-20251216-011142.txt
+│   │   ├── snapshot-20251216-011215.txt
+│   │   ├── snapshot-20251216-011243.txt
+│   │   └── snapshot-20251216-011332.txt
 │   ├── ARCHITECTURE-REPORT.json
 │   ├── ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.txt
@@ -360,54 +365,52 @@ Branch:    main (7779e09b)
 │   │   ├── bridge.nix
 │   │   └── dns-resolver.nix*
 │   ├── packages/
-│   │   ├── deb-packages/
-│   │   │   ├── packages/
-│   │   │   │   ├── all.nix
-│   │   │   │   ├── cursor.nix
-│   │   │   │   ├── example.nix
-│   │   │   │   ├── protonpass.nix
-│   │   │   │   ├── protonvpn.nix
-│   │   │   │   └── README.md
-│   │   │   ├── storage/
-│   │   │   │   ├── cursor_2.0.34_amd64.deb
-│   │   │   │   ├── ProtonPass.deb
+│   │   ├── _archive/
+│   │   │   ├── deb-packages/
+│   │   │   │   ├── packages/
+│   │   │   │   ├── storage/
+│   │   │   │   ├── audit.nix
+│   │   │   │   ├── builder.nix
+│   │   │   │   ├── default.nix
 │   │   │   │   ├── README.md
-│   │   │   │   └── warp-terminal_0.2025.11.19.08.12.stable.03_amd64.deb
-│   │   │   ├── audit.nix
-│   │   │   ├── builder.nix
+│   │   │   │   └── sandbox.nix
+│   │   │   ├── js-packages/
+│   │   │   │   ├── storage/
+│   │   │   │   ├── builder.nix
+│   │   │   │   ├── build-gemini.nix
+│   │   │   │   ├── default.nix
+│   │   │   │   ├── gemini-cli.nix
+│   │   │   │   └── js-packages.nix
+│   │   │   ├── lib/
+│   │   │   │   ├── builders.nix
+│   │   │   │   ├── fetchers.nix
+│   │   │   │   ├── sandbox.nix
+│   │   │   │   └── types.nix
+│   │   │   └── tar-packages/
+│   │   │       ├── packages/
+│   │   │       ├── storage/
+│   │   │       ├── builder.nix
+│   │   │       ├── default.nix
+│   │   │       └── README.md
+│   │   ├── gemini-cli/
+│   │   │   └── default.nix
+│   │   ├── lynis/
+│   │   │   └── default.nix
+│   │   ├── protonpass/
 │   │   │   ├── default.nix
-│   │   │   ├── README.md
-│   │   │   └── sandbox.nix
-│   │   ├── js-packages/
-│   │   │   ├── storage/
-│   │   │   │   ├── gemini-cli-0.19.0-nightly.20251124.e177314a4/
-│   │   │   │   └── README.md
-│   │   │   ├── builder.nix
-│   │   │   ├── build-gemini.nix
-│   │   │   ├── default.nix
-│   │   │   ├── gemini-cli.nix
-│   │   │   └── js-packages.nix
-│   │   ├── lib/
-│   │   │   ├── builders.nix
-│   │   │   ├── fetchers.nix
-│   │   │   ├── sandbox.nix
-│   │   │   └── types.nix
+│   │   │   └── ProtonPass.deb
 │   │   ├── _sources/
 │   │   │   ├── generated.json
 │   │   │   └── generated.nix
-│   │   ├── tar-packages/
-│   │   │   ├── packages/
-│   │   │   │   ├── antigravity.nix
-│   │   │   │   ├── appflowy.nix
-│   │   │   │   ├── codex.nix
-│   │   │   │   ├── lynis.nix
-│   │   │   │   ├── protonpass.nix
-│   │   │   │   └── zellij.nix
-│   │   │   ├── storage/
-│   │   │   │   └── codex-x86_64-unknown-linux-musl*
-│   │   │   ├── builder.nix
-│   │   │   ├── default.nix
-│   │   │   └── README.md
+│   │   ├── _templates/
+│   │   │   ├── deb-package/
+│   │   │   │   └── default.nix
+│   │   │   ├── npm-package/
+│   │   │   │   └── default.nix
+│   │   │   └── tar-package/
+│   │   │       └── default.nix
+│   │   ├── zellij/
+│   │   │   └── default.nix
 │   │   ├── appflowy.nix
 │   │   ├── default.nix
 │   │   ├── DOCUMENTATION.md
@@ -418,6 +421,7 @@ Branch:    main (7779e09b)
 │   ├── programs/
 │   │   ├── cognitive-vault.nix
 │   │   ├── default.nix
+│   │   ├── phantom.nix
 │   │   └── vmctl.nix
 │   ├── secrets/
 │   │   ├── api-keys.nix
@@ -536,6 +540,9 @@ Branch:    main (7779e09b)
 │   │   ├── default.nix
 │   │   ├── options.nix
 │   │   └── tools.nix
+│   ├── _sources/
+│   │   ├── generated.json
+│   │   └── generated.nix
 │   ├── system/
 │   │   ├── bash/
 │   │   │   └── void.sh
@@ -543,6 +550,7 @@ Branch:    main (7779e09b)
 │   │   ├── binary-cache.nix
 │   │   ├── default.nix
 │   │   ├── emergency-monitor.nix
+│   │   ├── io-scheduler.nix
 │   │   ├── memory.nix*
 │   │   ├── ml-gpu-users.nix
 │   │   ├── nix.nix*
@@ -579,8 +587,16 @@ Branch:    main (7779e09b)
 │   │   └── README.md
 │   ├── nixos-ssh/
 │   │   └── README.md
+│   ├── nix-tools/
+│   │   └── log-viewer.sh*
 │   ├── SecOps/
 │   │   └── bedrock-investigation-brief.md
+│   ├── surgical/
+│   │   ├── io-surgeon.sh*
+│   │   ├── module-catalog.sh*
+│   │   ├── net-conflict.sh*
+│   │   ├── ps-advanced.sh*
+│   │   └── psi-sentinel.sh*
 │   ├── add-secret.sh*
 │   ├── add-to-sops.sh*
 │   ├── alacritty-enhancements-summary.md
@@ -711,8 +727,9 @@ Branch:    main (7779e09b)
 ├── knowledge.db
 ├── README.md
 ├── run-lynis-audits.sh*
-└── shell.nix
+├── shell.nix
+└── test_file.txt
 
-110 directories, 594 files
+121 directories, 600 files
 
 ═══════════════════════════════════════════════════════════════════════════
