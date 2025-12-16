@@ -10,7 +10,7 @@ import re
 # Configuration - llama.cpp TURBO
 API_URL = os.environ.get("LLAMACPP_URL", "http://127.0.0.1:8080") + "/v1/chat/completions"
 MODEL_NAME = "default"
-MAX_DIFF_SIZE = 12000  # Characters
+MAX_DIFF_SIZE = 4000  # Characters
 
 def run_command(command):
     try:
