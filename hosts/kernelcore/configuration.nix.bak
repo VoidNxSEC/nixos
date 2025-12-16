@@ -154,7 +154,7 @@
     # Packages - isolated per-package architecture
     packages.zellij.enable = true;
     packages.lynis.enable = true;
-    
+
     packages.gemini-cli.enable = true;
 
     # services.users."codex-agent" removed for security hardening
@@ -485,7 +485,7 @@
     # - Speculative Decoding (1.5-3x speedup)
     # - Continuous Batching (concurrent requests)
     llamacpp-turbo = {
-      enable = true;
+      enable = false;
       model = "/var/lib/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
       host = "127.0.0.1";
       port = 8080;
