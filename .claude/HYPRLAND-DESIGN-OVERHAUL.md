@@ -149,39 +149,51 @@ Create interactive UI elements for:
 
 ---
 
-### Phase 4: Hyprland Configuration Refinement (POLISH)
+### Phase 4: Hyprland Configuration Refinement (COMPLETED ✅)
 **Goal**: Optimize window management and workspace logic
 
 #### 4.1 Window Rules Optimization
-- [ ] Review all window rules for relevance
-- [ ] Group rules by application category
-- [ ] Define floating rules (dialogs, popups)
-- [ ] Workspace assignment rules (dev/browser/media)
-- [ ] Opacity/blur rules (hierarchy, focus)
-- [ ] Size/position rules (consistent placement)
+- [x] Review all window rules for relevance
+- [x] Group rules by application category (8 categories)
+- [x] Define floating rules (dialogs, popups)
+- [x] Workspace assignment rules (dev/browser/media) - documented, optional
+- [x] Opacity/blur rules (hierarchy, focus) - hierarchy documented
+- [x] Size/position rules (consistent placement)
 
 #### 4.2 Workspace Design
-- [ ] Define workspace purposes (1-10)
-- [ ] Workspace-specific layouts (master/dwindle/specific)
-- [ ] Persistent workspace assignments
-- [ ] Workspace switching animations
-- [ ] Multi-monitor workspace strategy
+- [x] Define workspace purposes (1-10)
+- [x] Workspace-specific layouts (master/dwindle/specific) - dwindle optimized
+- [x] Persistent workspace assignments - documented as optional
+- [x] Workspace switching animations - already optimized
+- [x] Multi-monitor workspace strategy - documented in keybindings
 
 #### 4.3 Keybinding Audit
-- [ ] Document all current keybindings
-- [ ] Group by category (window/workspace/system/app)
-- [ ] Identify conflicts or redundancies
-- [ ] Optimize for ergonomics (common actions = easy keys)
-- [ ] Create cheat sheet (rofi launcher?)
+- [x] Document all current keybindings - HYPRLAND-KEYBINDINGS.md created
+- [x] Group by category (window/workspace/system/app)
+- [x] Identify conflicts or redundancies - 1 minor issue documented
+- [x] Optimize for ergonomics (common actions = easy keys) - verified
+- [x] Create cheat sheet - comprehensive markdown reference
 
 #### 4.4 Performance Tuning
-- [ ] Animation performance (reduce if needed)
-- [ ] Blur optimization (selective application)
-- [ ] Border rendering (GPU usage)
-- [ ] Monitor refresh rates (per-monitor)
-- [ ] VRR/adaptive sync configuration
+- [x] Animation performance (reduce if needed) - already optimized for 144Hz
+- [x] Blur optimization (selective application) - 3 passes @ size 10
+- [x] Border rendering (GPU usage) - minimal border_size = 1
+- [x] Monitor refresh rates (per-monitor) - 144Hz configured
+- [x] VRR/adaptive sync configuration - vrr = 1, vfr = true
 
-**Deliverable**: Hyprland config that feels professional and responsive
+**Deliverable**: ✅ Hyprland config that feels professional and responsive
+
+**Files Modified**:
+- `/home/user/nixos/hosts/kernelcore/home/hyprland.nix` (+60 lines, better organization)
+- `/home/user/nixos/docs/HYPRLAND-KEYBINDINGS.md` (NEW - 726 lines)
+
+**Key Improvements**:
+- Window rules categorized by function (Development, Browsers, Media, etc.)
+- Opacity hierarchy clearly documented (0.90 → 0.98)
+- Added support for 10+ additional applications (Thunar, Neovide, Logseq, etc.)
+- Workspace purpose guide for better organization
+- Comprehensive keybinding reference with conflict analysis
+- Performance settings verified optimal for 144Hz
 
 ---
 
@@ -323,9 +335,9 @@ Create interactive UI elements for:
 
 ## Current Status
 
-**Phase**: Phase 2 - Design System Definition (COMPLETED ✅)
-**Progress**: 35%
-**Last Updated**: 2025-12-16 20:15 UTC
+**Phase**: Phase 4 - Hyprland Configuration Refinement (COMPLETED ✅)
+**Progress**: 70%
+**Last Updated**: 2025-12-16 22:30 UTC
 
 ### Completed Tasks
 - [x] **Phase 1**: Infrastructure Audit & Organization
@@ -336,9 +348,19 @@ Create interactive UI elements for:
   - Zellij CRITICAL fix (18 hardcoded → 0 tokens)
   - Helper functions: hexToRgba, withOpacity, gradient, etc.
   - Token utility library established
+- [x] **Phase 3**: Systray & Flake Integration
+  - Flake Manager widget (generation tracking, rebuild/update/rollback)
+  - System Monitor widget (CPU/RAM/Thermal)
+  - Interactive Waybar modules (+211 lines)
+- [x] **Phase 4**: Hyprland Configuration Refinement
+  - Window rules organized by category (8 categories)
+  - Comprehensive keybinding documentation (docs/HYPRLAND-KEYBINDINGS.md)
+  - Workspace purpose guide (1-10 defined)
+  - Performance settings verified (144Hz optimized)
+  - Added rules for 10+ additional applications
 
 ### In Progress
-- [ ] Phase 3: Systray & Flake Integration - Ready to begin
+- [ ] Phase 5: Visual Consistency & Polish - Ready to begin
 
 ### Known Technical Debt
 - [ ] CSS hardcoding in Waybar/Wofi/Wlogout/Mako (169+ values)
