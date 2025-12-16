@@ -40,7 +40,7 @@
         "mako"
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
         "nm-applet --indicator"
-        "swayidle -w timeout 300 'hyprlock' timeout 600 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on'"
+        # Idle management is now handled by services.hypridle (see below)
         # Wallpaper is managed by systemd user service (wallpaper.nix)
         # Run 'generate-glassmorphism-wallpaper' or 'download-glassmorphism-wallpaper' to set up
         # Clipboard manager
@@ -49,33 +49,12 @@
       ];
 
       # ============================================
-      # ENVIRONMENT VARIABLES - NVIDIA + Wayland
+      # ENVIRONMENT VARIABLES
       # ============================================
-      env = [
-        # NVIDIA Wayland support
-        "LIBVA_DRIVER_NAME,nvidia"
-        "XDG_SESSION_TYPE,wayland"
-        "GBM_BACKEND,nvidia-drm"
-        "__GLX_VENDOR_LIBRARY_NAME,nvidia"
-        "WLR_NO_HARDWARE_CURSORS,1"
-        "WLR_DRM_NO_ATOMIC,1"
-
-        # NVIDIA anti-flicker and direct scanout
-        "__GL_GSYNC_ALLOWED,1"
-        "__GL_VRR_ALLOWED,1"
-
-        # Qt/GTK Wayland
-        "NIXOS_OZONE_WL,1"
-        "QT_QPA_PLATFORM,wayland"
-        "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
-        "GDK_BACKEND,wayland,x11"
-        "SDL_VIDEODRIVER,wayland"
-        "CLUTTER_BACKEND,wayland"
-
-        # Cursor
-        "XCURSOR_SIZE,24"
-        "XCURSOR_THEME,Catppuccin-Macchiato-Blue"
-      ];
+      # NOTE: Core Wayland/NVIDIA env vars are set at system-level
+      # (modules/desktop/hyprland.nix) to avoid duplication.
+      # Only application-specific overrides should be here.
+      env = [ ];
 
       # ============================================
       # INPUT CONFIGURATION
@@ -251,10 +230,6 @@
         # Hyprlock - blur
         "blur, hyprlock"
         "ignorezero, hyprlock"
-
-        # Rofi (fallback) - blur
-        "blur, rofi"
-        "ignorezero, rofi"
 
         # GTK layer shell
         "blur, gtk-layer-shell"
@@ -556,6 +531,43 @@
       bindm = [
         "$mainMod, mouse:272, movewindow"
         "$mainMod, mouse:273, resizewindow"
+      ];
+    };
+  };
+
+  # ============================================
+  # HYPRIDLE - Idle daemon (replaces swayidle)
+  # ============================================
+  services.hypridle = {
+    enable = true;
+    settings = {
+      general = {
+        lock_cmd = "pidof hyprlock || hyprlock"; # Ensure single instance
+        before_sleep_cmd = "loginctl lock-session"; # Lock before sleep
+        after_sleep_cmd = "hyprctl dispatch dpms on"; # Turn screen on after wake
+        ignore_dbus_inhibit = false; # Respect apps preventing idle (media playback)
+      };
+
+      listener = [
+        # Screen lock after 5 minutes of inactivity
+        {
+          timeout = 300; # 5 minutes
+          on-timeout = "hyprlock"; # Lock screen
+        }
+
+        # Turn off display after 10 minutes
+        {
+          timeout = 600; # 10 minutes
+          on-timeout = "hyprctl dispatch dpms off"; # Screen off
+          on-resume = "hyprctl dispatch dpms on"; # Screen on
+        }
+
+        # Suspend system after 30 minutes (optional - disabled by default)
+        # Uncomment to enable system suspend
+        # {
+        #   timeout = 1800; # 30 minutes
+        #   on-timeout = "systemctl suspend";
+        # }
       ];
     };
   };
