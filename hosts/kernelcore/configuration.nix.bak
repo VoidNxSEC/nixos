@@ -154,7 +154,7 @@
     # Packages - isolated per-package architecture
     packages.zellij.enable = true;
     packages.lynis.enable = true;
-    packages.protonpass.enable = true;
+    
     packages.gemini-cli.enable = true;
 
     # services.users."codex-agent" removed for security hardening
