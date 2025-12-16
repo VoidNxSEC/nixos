@@ -17,9 +17,11 @@
 
 let
   # Script paths
+  flakeManager = "${config.home.homeDirectory}/.config/waybar/scripts/flake-manager.sh";
+  systemMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/system-monitor.sh";
   gpuMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/gpu-monitor.sh";
-  sshSessions = "${config.home.homeDirectory}/.config/waybar/scripts/ssh-sessions.sh";
   diskMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/disk-monitor.sh";
+  sshSessions = "${config.home.homeDirectory}/.config/waybar/scripts/ssh-sessions.sh";
 in
 {
   programs.waybar = {
@@ -47,6 +49,8 @@ in
         ];
 
         modules-right = [
+          "custom/flake"
+          "custom/system"
           "custom/gpu"
           "custom/disk"
           "custom/ssh"
@@ -54,7 +58,6 @@ in
           "bluetooth"
           "pulseaudio"
           "battery"
-          "custom/agent-hub"
           "tray"
         ];
 
@@ -147,6 +150,27 @@ in
         # ============================================
         # RIGHT MODULES
         # ============================================
+
+        # Flake Manager - NixOS system management
+        "custom/flake" = {
+          exec = flakeManager;
+          return-type = "json";
+          interval = 60;
+          format = "{}";
+          tooltip = true;
+          on-click = "alacritty -e ${flakeManager} rebuild";
+          on-click-right = "alacritty -e ${flakeManager} menu";
+        };
+
+        # System Monitor - CPU, RAM, Thermal
+        "custom/system" = {
+          exec = systemMonitor;
+          return-type = "json";
+          interval = 3;
+          format = "{}";
+          tooltip = true;
+          on-click = "alacritty -e btop";
+        };
 
         # GPU Monitor - Temp > VRAM > Util > Clock
         "custom/gpu" = {
@@ -250,14 +274,6 @@ in
           tooltip-format = "{timeTo}\n{capacity}% - {health}% health";
         };
 
-        # Agent Hub Placeholder
-        "custom/agent-hub" = {
-          format = "󰚩";
-          tooltip = true;
-          tooltip-format = "AI Agent Hub\nClick to launch agent selector";
-          on-click = "notify-send 'Agent Hub' 'Coming soon: AI agent integration'";
-        };
-
         "tray" = {
           icon-size = 18;
           spacing = 8;
@@ -317,6 +333,8 @@ in
       #workspaces,
       #window,
       #clock,
+      #custom-flake,
+      #custom-system,
       #custom-gpu,
       #custom-disk,
       #custom-ssh,
@@ -324,7 +342,6 @@ in
       #bluetooth,
       #pulseaudio,
       #battery,
-      #custom-agent-hub,
       #tray {
         background: rgba(18, 18, 26, 0.8);
         border: 1px solid rgba(255, 255, 255, 0.08);
@@ -339,6 +356,8 @@ in
       #workspaces:hover,
       #window:hover,
       #clock:hover,
+      #custom-flake:hover,
+      #custom-system:hover,
       #custom-gpu:hover,
       #custom-disk:hover,
       #custom-ssh:hover,
@@ -346,7 +365,6 @@ in
       #bluetooth:hover,
       #pulseaudio:hover,
       #battery:hover,
-      #custom-agent-hub:hover,
       #tray:hover {
         background: rgba(0, 212, 255, 0.15);
         border-color: rgba(0, 212, 255, 0.4);
@@ -611,6 +629,187 @@ in
 
   # Create scripts directory and monitoring scripts
   home.file = {
+    ".config/waybar/scripts/flake-manager.sh" = {
+      executable = true;
+      text = ''
+        #!/usr/bin/env bash
+        # ============================================
+        # NixOS Flake Manager for Waybar
+        # Provides system management via UI
+        # ============================================
+
+        set -o pipefail
+
+        FLAKE_DIR="/etc/nixos"
+        CACHE_FILE="$HOME/.cache/waybar-flake-status"
+        LOCK_FILE="/tmp/nixos-rebuild.lock"
+
+        get_flake_status() {
+          # Check if rebuild is in progress
+          if [[ -f "$LOCK_FILE" ]]; then
+            echo '{"text": "󱉕  BUILDING", "tooltip": "NixOS rebuild in progress...", "class": "building"}'
+            exit 0
+          fi
+
+          # Get current generation
+          local CURRENT_GEN
+          CURRENT_GEN=$(nixos-rebuild list-generations 2>/dev/null | grep current | awk '{print $1}' | tr -d '.')
+          if [[ -z "$CURRENT_GEN" ]]; then
+            CURRENT_GEN="?"
+          fi
+
+          # Check for updates (flake inputs)
+          local UPDATES_AVAILABLE=false
+          if [[ -f "$FLAKE_DIR/flake.lock" ]]; then
+            local LOCK_AGE
+            LOCK_AGE=$(( ($(date +%s) - $(stat -c %Y "$FLAKE_DIR/flake.lock" 2>/dev/null || echo 0)) / 86400 ))
+            if [[ "$LOCK_AGE" -gt 7 ]]; then
+              UPDATES_AVAILABLE=true
+            fi
+          fi
+
+          # Build tooltip
+          local TOOLTIP="NixOS System Manager\n━━━━━━━━━━━━━━━━━━━━━━\n"
+          TOOLTIP+="󱉕 Generation: $CURRENT_GEN\n"
+          TOOLTIP+="󰚰 Location: $FLAKE_DIR\n"
+
+          if [[ "$UPDATES_AVAILABLE" == "true" ]]; then
+            TOOLTIP+="󰚰 Updates: Available (lock $LOCK_AGE days old)\n"
+          else
+            TOOLTIP+="󰚰 Updates: Up to date\n"
+          fi
+
+          TOOLTIP+="\n󰍜 Left-click: Rebuild\n"
+          TOOLTIP+="󰍜 Right-click: Menu"
+
+          # Determine class and icon
+          local CLASS="normal"
+          local ICON="󱉕"
+          if [[ "$UPDATES_AVAILABLE" == "true" ]]; then
+            CLASS="warning"
+            ICON="󱉕"
+          fi
+
+          local TEXT="$ICON G$CURRENT_GEN"
+
+          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$TEXT" "$TOOLTIP" "$CLASS"
+        }
+
+        # Interactive menu mode
+        show_menu() {
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  NixOS Flake Manager"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "1) Rebuild (switch)"
+          echo "2) Rebuild (boot)"
+          echo "3) Update inputs"
+          echo "4) Rollback"
+          echo "5) List generations"
+          echo "6) Garbage collect"
+          echo "7) Flake check"
+          echo "0) Exit"
+          echo ""
+          read -rp "Choice: " choice
+
+          case $choice in
+            1) sudo nixos-rebuild switch --flake "$FLAKE_DIR" ;;
+            2) sudo nixos-rebuild boot --flake "$FLAKE_DIR" ;;
+            3) cd "$FLAKE_DIR" && nix flake update ;;
+            4) sudo nixos-rebuild switch --rollback ;;
+            5) nixos-rebuild list-generations | tail -20 ;;
+            6) nix-collect-garbage -d && sudo nix-collect-garbage -d ;;
+            7) cd "$FLAKE_DIR" && nix flake check ;;
+            0) exit 0 ;;
+            *) echo "Invalid choice" ;;
+          esac
+
+          read -rp "Press enter to continue..."
+        }
+
+        # Run with error trap
+        trap 'echo "{\"text\": \"󱉕 ERR\", \"tooltip\": \"Script error\", \"class\": \"warning\"}"' ERR
+
+        # Handle menu mode
+        if [[ "$1" == "menu" ]]; then
+          show_menu
+          exit 0
+        fi
+
+        get_flake_status
+      '';
+    };
+
+    ".config/waybar/scripts/system-monitor.sh" = {
+      executable = true;
+      text = ''
+        #!/usr/bin/env bash
+        # ============================================
+        # System Monitor Script for Waybar
+        # Monitors CPU, RAM, and Thermal
+        # ============================================
+
+        set -o pipefail
+
+        get_system_stats() {
+          # CPU Usage (percentage)
+          local CPU_USAGE
+          CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print int(100 - $1)}')
+          CPU_USAGE=''${CPU_USAGE:-0}
+
+          # Memory Usage
+          local MEM_INFO
+          MEM_INFO=$(free -m | awk 'NR==2')
+          read -r _ MEM_TOTAL MEM_USED _ _ _ _ <<< "$MEM_INFO"
+
+          local MEM_PERCENT=0
+          if [[ "$MEM_TOTAL" -gt 0 ]]; then
+            MEM_PERCENT=$(( (MEM_USED * 100) / MEM_TOTAL ))
+          fi
+
+          # CPU Temperature (try multiple sources)
+          local CPU_TEMP=0
+          if [[ -f /sys/class/thermal/thermal_zone0/temp ]]; then
+            CPU_TEMP=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
+            CPU_TEMP=$(( CPU_TEMP / 1000 ))
+          elif command -v sensors &> /dev/null; then
+            CPU_TEMP=$(sensors | grep -i "Package id 0:" | awk '{print $4}' | tr -d '+°C' | cut -d. -f1 2>/dev/null)
+            CPU_TEMP=''${CPU_TEMP:-0}
+          fi
+
+          # Determine class based on thresholds
+          local CLASS="normal"
+          if [[ "$CPU_USAGE" -ge 90 ]] || [[ "$MEM_PERCENT" -ge 90 ]] || [[ "$CPU_TEMP" -ge 85 ]]; then
+            CLASS="critical"
+          elif [[ "$CPU_USAGE" -ge 70 ]] || [[ "$MEM_PERCENT" -ge 75 ]] || [[ "$CPU_TEMP" -ge 75 ]]; then
+            CLASS="warning"
+          fi
+
+          # Format display
+          local TEXT="󰻠 ''${CPU_USAGE}%  ''${MEM_PERCENT}%"
+          if [[ "$CPU_TEMP" -gt 0 ]]; then
+            TEXT+="  ''${CPU_TEMP}°C"
+          fi
+
+          # Build tooltip
+          local TOOLTIP="System Resources\n━━━━━━━━━━━━━━━━━━━━━━\n"
+          TOOLTIP+="󰻠 CPU Usage: ''${CPU_USAGE}%\n"
+          TOOLTIP+="󰍛 RAM Usage: ''${MEM_USED}MiB / ''${MEM_TOTAL}MiB (''${MEM_PERCENT}%)\n"
+          if [[ "$CPU_TEMP" -gt 0 ]]; then
+            TOOLTIP+="󰔏 CPU Temp: ''${CPU_TEMP}°C"
+          else
+            TOOLTIP+="󰔏 CPU Temp: N/A"
+          fi
+
+          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$TEXT" "$TOOLTIP" "$CLASS"
+        }
+
+        # Run with error trap
+        trap 'echo "{\"text\": \"󰻠 ERR\", \"tooltip\": \"Script error\", \"class\": \"warning\"}"' ERR
+        get_system_stats
+      '';
+    };
+
     ".config/waybar/scripts/disk-monitor.sh" = {
       executable = true;
       text = ''
