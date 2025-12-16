@@ -1,7 +1,7 @@
 # NixOS Architecture Analysis Report
 
 > **Professional Edition v3.0.0**
-> **Generated**: 2025-12-16 01:14:53 -02
+> **Generated**: 2025-12-16 08:31:20 -02
 > **Location**: `/etc/nixos`
 
 ---
@@ -24,12 +24,12 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Files** | 885 |
-| **Total Directories** | 274 |
+| **Total Files** | 910 |
+| **Total Directories** | 277 |
 | **Repository Size** | 2.4G |
 | **Git Branch** | `main` |
-| **Git Commit** | `73ef6bf7` |
-| **Total Commits** | 262 |
+| **Git Commit** | `58218681` |
+| **Total Commits** | 269 |
 | **Contributors** | 3 |
 | **Repository Age** | 0 days |
 
@@ -37,8 +37,8 @@
 
 | Metric | Value |
 |--------|-------|
-| **.nix files** | 284 (52076 lines) |
-| **Total modules** | 181 |
+| **.nix files** | 299 (56704 lines) |
+| **Total modules** | 179 |
 | **Module categories** | 12 |
 | **Modules size** | 1.2G |
 
@@ -57,13 +57,13 @@
 | Category | Modules | Lines | Description |
 |----------|---------|-------|-------------|
 | **packages** | 36 | 3151 | Custom packages and overlays |
-| **shell** | 35 | 5243 | Shell configuration and aliases |
-| **ml** | 22 | 1953 | Machine learning infrastructure |
-| **security** | 17 | 2249 | Security hardening and policies |
-| **services** | 16 | 3028 | System services and daemons |
-| **network** | 12 | 2816 | Network configuration and services |
+| **shell** | 34 | 5222 | Shell configuration and aliases |
+| **ml** | 20 | 2362 | Machine learning infrastructure |
+| **security** | 17 | 2317 | Security hardening and policies |
+| **services** | 16 | 3046 | System services and daemons |
+| **network** | 13 | 2842 | Network configuration and services |
 | **hardware** | 12 | 2712 | Hardware configurations (GPU, CPU, peripherals) |
-| **system** | 10 | 1196 | Core system configuration |
+| **system** | 10 | 1193 | Core system configuration |
 | **applications** | 8 | 1778 | User applications and tools |
 | **development** | 5 | 973 | Development environments and tools |
 | **virtualization** | 4 | 1971 | VMs, QEMU, libvirt |
@@ -117,9 +117,9 @@
 
 | Type | Count | Lines |
 |------|-------|-------|
-| .nix | 284 | 52076 |
-| .sh | 100 | 16595 |
-| .md | 258 | 98274 |
+| .nix | 299 | 56704 |
+| .sh | 108 | 19030 |
+| .md | 258 | 98355 |
 | .yaml | 14 | - |
 
 ### Directory Sizes
@@ -148,13 +148,42 @@
 │   │   ├── snapshot-20251216-011142.txt
 │   │   ├── snapshot-20251216-011215.txt
 │   │   ├── snapshot-20251216-011243.txt
-│   │   └── snapshot-20251216-011332.txt
+│   │   ├── snapshot-20251216-011332.txt
+│   │   └── snapshot-20251216-011451.txt
+│   ├── AI-ARCHITECTURE-REPORT.json
+│   ├── AI-ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.json
 │   ├── ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.txt
 │   ├── ARCHITECTURE-TREE.md
 │   ├── ARCHITECTURE-TREE.txt
+│   ├── dependency-graph.mmd
 │   └── README.md
+├── backups/
+│   ├── ollama_cleanup_20251216_080650/
+│   │   └── configuration.nix*
+│   └── ollama_cleanup_20251216_080716/
+│       ├── agent-hub.nix
+│       ├── ai-compose-stack.sh*
+│       ├── ai-ml-stack.sh*
+│       ├── aliases.sh
+│       ├── configurations-template.nix*
+│       ├── database.nix
+│       ├── default.nix
+│       ├── firewall-zones.nix
+│       ├── gpu-management.sh
+│       ├── gpu-orchestration.nix
+│       ├── home.nix*
+│       ├── litellm_runtime_manager.sh*
+│       ├── ml-gpu-users.nix
+│       ├── multimodal.sh*
+│       ├── nginx-tailscale.nix
+│       ├── nixos-aliases.nix
+│       ├── nx.sh*
+│       ├── packages.nix*
+│       ├── phantom.nix
+│       ├── storage.nix*
+│       └── tailscale-services.nix
 ├── docs/
 │   ├── applications/
 │   │   └── ZELLIJ-GUIDE.md
@@ -319,17 +348,17 @@
 │   │   │   └── dsdt.dsl
 │   │   ├── home/
 │   │   │   ├── aliases/
-│   │   │   │   ├── ai-compose-stack.sh*
-│   │   │   │   ├── ai-ml-stack.sh*
+│   │   │   │   ├── ai-compose-stack.sh
+│   │   │   │   ├── ai-ml-stack.sh
 │   │   │   │   ├── aliases.sh
 │   │   │   │   ├── gcloud.sh*
 │   │   │   │   ├── gpu-docker-core.sh*
 │   │   │   │   ├── gpu-management.sh
 │   │   │   │   ├── gpu.sh*
-│   │   │   │   ├── litellm_runtime_manager.sh*
-│   │   │   │   ├── multimodal.sh*
+│   │   │   │   ├── litellm_runtime_manager.sh
+│   │   │   │   ├── multimodal.sh
 │   │   │   │   ├── nixos-aliases.nix
-│   │   │   │   └── nx.sh*
+│   │   │   │   └── nx.sh
 │   │   │   ├── glassmorphism/
 │   │   │   │   ├── agent-hub.nix
 │   │   │   │   ├── colors.nix
@@ -355,13 +384,14 @@
 │   │   │   ├── brave.nix
 │   │   │   ├── flameshot.nix
 │   │   │   ├── git.nix
-│   │   │   ├── home.nix*
+│   │   │   ├── home.nix
 │   │   │   ├── hyprland.nix
 │   │   │   ├── theme.nix
 │   │   │   ├── tmux.nix
 │   │   │   └── yazi.nix
-│   │   ├── configuration.nix*
-│   │   ├── configurations-template.nix*
+│   │   ├── configuration.nix
+│   │   ├── configuration.nix.bak*
+│   │   ├── configurations-template.nix
 │   │   ├── default.nix*
 │   │   └── hardware-configuration.nix*
 │   └── workstation/
@@ -424,9 +454,6 @@
 │   │   ├── trezor.nix*
 │   │   └── wifi-optimization.nix
 │   ├── ml/
-│   │   ├── applications/
-│   │   │   ├── default.nix
-│   │   │   └── README.md
 │   │   ├── infrastructure/
 │   │   │   ├── hardware/
 │   │   │   │   └── default.nix
@@ -435,7 +462,7 @@
 │   │   │   │   └── monitoring.nix
 │   │   │   ├── default.nix
 │   │   │   ├── README.md
-│   │   │   └── storage.nix*
+│   │   │   └── storage.nix
 │   │   ├── integrations/
 │   │   │   ├── mcp/
 │   │   │   │   ├── config.nix
@@ -449,10 +476,10 @@
 │   │   │   ├── api/
 │   │   │   │   ├── src/
 │   │   │   │   ├── Cargo.lock
-│   │   │   │   ├── Cargo.toml
-│   │   │   │   └── dev-ui.html
+│   │   │   │   └── Cargo.toml
 │   │   │   ├── backends/
-│   │   │   │   └── default.nix
+│   │   │   │   ├── default.nix
+│   │   │   │   └── vllm-driver.nix
 │   │   │   ├── registry/
 │   │   │   │   ├── database.nix
 │   │   │   │   └── default.nix
@@ -461,13 +488,10 @@
 │   │   │   ├── manager.nix
 │   │   │   └── README.md
 │   │   ├── services/
-│   │   │   ├── ollama/
-│   │   │   │   ├── default.nix
-│   │   │   │   └── gpu-manager.nix*
 │   │   │   ├── default.nix
-│   │   │   ├── llama-cpp.nix*
-│   │   │   ├── llama-cpp-swap.nix
-│   │   │   └── README.md
+│   │   │   ├── llama-cpp-turbo.nix
+│   │   │   ├── README.md
+│   │   │   └── vllm.nix
 │   │   ├── default.nix
 │   │   └── README.md
 │   ├── network/
@@ -491,6 +515,7 @@
 │   │   │   ├── tailscale-laptop.nix
 │   │   │   └── tailscale.nix
 │   │   ├── bridge.nix
+│   │   ├── default.nix
 │   │   └── dns-resolver.nix*
 │   ├── packages/
 │   │   ├── _archive/
@@ -572,7 +597,7 @@
 │   │   ├── keyring.nix
 │   │   ├── network.nix*
 │   │   ├── nix-daemon.nix*
-│   │   ├── packages.nix*
+│   │   ├── packages.nix
 │   │   ├── pam.nix*
 │   │   └── ssh.nix*
 │   ├── services/
@@ -596,8 +621,7 @@
 │   ├── shell/
 │   │   ├── aliases/
 │   │   │   ├── ai/
-│   │   │   │   ├── default.nix
-│   │   │   │   └── ollama.nix
+│   │   │   │   └── default.nix
 │   │   │   ├── amazon/
 │   │   │   │   ├── aws.nix
 │   │   │   │   └── default.nix
@@ -685,6 +709,9 @@
 │   │   ├── services.nix*
 │   │   └── ssh-config.nix
 │   ├── tools/
+│   │   ├── arch-analyzer/
+│   │   │   ├── python/
+│   │   │   └── default.nix
 │   │   ├── default.nix
 │   │   ├── dev.nix
 │   │   ├── diagnostics.nix
@@ -699,6 +726,7 @@
 │   │   ├── macos-kvm.nix
 │   │   ├── vmctl.nix
 │   │   └── vms.nix*
+│   ├── default.nix
 │   ├── TEMPLATE_GUIDE.md
 │   └── TEMPLATE.nix
 ├── overlays/
@@ -706,6 +734,7 @@
 │   ├── hyprland.nix
 │   ├── python-packages.nix
 │   └── README.md
+├── projects/
 ├── reports/
 │   ├── audit_report_20251214_simple.md
 │   └── config_summary.md
@@ -788,6 +817,7 @@
 │   ├── pre-commit.sh*
 │   ├── pre_processa_dados_llm.sh*
 │   ├── push-all-projects.sh*
+│   ├── remove_ollama_lines.sh*
 │   ├── scan.sh*
 │   ├── SecOps (copy)
 │   ├── setup-claude-secrets.sh*
@@ -858,7 +888,7 @@
 ├── shell.nix
 └── test_file.txt
 
-121 directories, 600 files
+125 directories, 626 files
 ```
 
 ---
@@ -866,7 +896,7 @@
 ## 📝 Metadata
 
 - **Report Version**: 3.0.0
-- **Generated**: 2025-12-16 01:14:53 -02
+- **Generated**: 2025-12-16 08:31:20 -02
 - **Tool**: NixOS Architecture Analysis Tool
 - **Repository**: /etc/nixos
 
