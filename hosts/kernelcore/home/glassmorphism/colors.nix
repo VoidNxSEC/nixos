@@ -231,6 +231,76 @@ let
     border = base.bg3;
   };
 
+  # ============================================
+  # HELPER FUNCTIONS - Token utilities (in let block for cross-referencing)
+  # ============================================
+
+  # Add alpha channel to hex color
+  # Usage: withAlpha "#00d4ff" "80" -> "#00d4ff80"
+  withAlpha = color: alphaHex: "${color}${alphaHex}";
+
+  # Convert RGB to rgba() CSS format
+  # Usage: rgba 0 212 255 "0.5" -> "rgba(0, 212, 255, 0.5)"
+  rgba =
+    r: g: b: a:
+    "rgba(${toString r}, ${toString g}, ${toString b}, ${a})";
+
+  # Convert hex color to rgba() with alpha
+  # Usage: hexToRgba "#00d4ff" "0.5" -> "rgba(0, 212, 255, 0.5)"
+  hexToRgba =
+    hex: alphaValue:
+    let
+      colorMap = {
+        "#0a0a0f" = "10, 10, 15"; # bg0
+        "#12121a" = "18, 18, 26"; # bg1
+        "#1a1a24" = "26, 26, 36"; # bg2
+        "#22222e" = "34, 34, 46"; # bg3
+        "#ffffff" = "255, 255, 255"; # fg0
+        "#e4e4e7" = "228, 228, 231"; # fg1
+        "#a1a1aa" = "161, 161, 170"; # fg2
+        "#71717a" = "113, 113, 122"; # fg3
+        "#00d4ff" = "0, 212, 255"; # cyan
+        "#ff00aa" = "255, 0, 170"; # magenta
+        "#7c3aed" = "124, 58, 237"; # violet
+        "#3b82f6" = "59, 130, 246"; # blue
+        "#22c55e" = "34, 197, 94"; # green
+        "#eab308" = "234, 179, 8"; # yellow
+        "#f97316" = "249, 115, 22"; # orange
+        "#ef4444" = "239, 68, 68"; # red
+      };
+      rgb = colorMap.${hex} or "0, 0, 0";
+    in
+    "rgba(${rgb}, ${alphaValue})";
+
+  # Create rgba from base color with opacity name
+  # Usage: withOpacity accent.cyan "medium" -> "rgba(0, 212, 255, 0.8)"
+  withOpacity =
+    hexColor: opacityLevel:
+    let
+      opacityValue = alpha.dec.${opacityLevel} or "1.0";
+    in
+    hexToRgba hexColor opacityValue;
+
+  # Create CSS color value with alpha
+  # Usage: cssColor accent.cyan "high" -> "rgba(0, 212, 255, 0.9)"
+  cssColor = hexColor: opacityLevel: withOpacity hexColor opacityLevel;
+
+  # Create gradient CSS
+  # Usage: gradient accent.cyan accent.violet "135deg"
+  gradient =
+    color1: color2: angle:
+    "linear-gradient(${angle}, ${color1}, ${color2})";
+
+  # Create gradient with opacity
+  # Usage: gradientWithOpacity accent.cyan accent.violet "135deg" "medium"
+  gradientWithOpacity =
+    color1: color2: angle: opacity:
+    let
+      c1 = withOpacity color1 opacity;
+      c2 = withOpacity color2 opacity;
+    in
+    "linear-gradient(${angle}, ${c1}, ${c2})";
+
 in
 {
   options.glassmorphism.colors = lib.mkOption {
@@ -255,82 +325,14 @@ in
       hyprland
       waybar
       gtk
+      withAlpha
+      rgba
+      hexToRgba
+      withOpacity
+      cssColor
+      gradient
+      gradientWithOpacity
       ;
-
-    # ============================================
-    # HELPER FUNCTIONS - Token utilities
-    # ============================================
-
-    # Add alpha channel to hex color
-    # Usage: withAlpha "#00d4ff" "80" -> "#00d4ff80"
-    withAlpha = color: alphaHex: "${color}${alphaHex}";
-
-    # Convert RGB to rgba() CSS format
-    # Usage: rgba 0 212 255 "0.5" -> "rgba(0, 212, 255, 0.5)"
-    rgba =
-      r: g: b: a:
-      "rgba(${toString r}, ${toString g}, ${toString b}, ${a})";
-
-    # Convert hex color to rgba() with alpha
-    # Usage: hexToRgba "#00d4ff" "0.5" -> "rgba(0, 212, 255, 0.5)"
-    # NOTE: For now, uses simplified mapping. For precise hex->rgb conversion,
-    # use the pre-calculated values in base/accent objects.
-    hexToRgba =
-      hex: alphaValue:
-      let
-        # Simplified: Use known color mappings for common cases
-        # Full hex->rgb conversion requires more complex Nix functions
-        # For precise values, reference base/accent colors directly
-        colorMap = {
-          "#0a0a0f" = "10, 10, 15"; # bg0
-          "#12121a" = "18, 18, 26"; # bg1
-          "#1a1a24" = "26, 26, 36"; # bg2
-          "#22222e" = "34, 34, 46"; # bg3
-          "#ffffff" = "255, 255, 255"; # fg0
-          "#e4e4e7" = "228, 228, 231"; # fg1
-          "#a1a1aa" = "161, 161, 170"; # fg2
-          "#71717a" = "113, 113, 122"; # fg3
-          "#00d4ff" = "0, 212, 255"; # cyan
-          "#ff00aa" = "255, 0, 170"; # magenta
-          "#7c3aed" = "124, 58, 237"; # violet
-          "#3b82f6" = "59, 130, 246"; # blue
-          "#22c55e" = "34, 197, 94"; # green
-          "#eab308" = "234, 179, 8"; # yellow
-          "#f97316" = "249, 115, 22"; # orange
-          "#ef4444" = "239, 68, 68"; # red
-        };
-        rgb = colorMap.${hex} or "0, 0, 0";
-      in
-      "rgba(${rgb}, ${alphaValue})";
-
-    # Create rgba from base color with opacity name
-    # Usage: withOpacity accent.cyan "medium" -> "rgba(0, 212, 255, 0.8)"
-    withOpacity =
-      hexColor: opacityLevel:
-      let
-        opacityValue = alpha.dec.${opacityLevel} or "1.0";
-      in
-      hexToRgba hexColor opacityValue;
-
-    # Create CSS color value with alpha
-    # Usage: cssColor accent.cyan "high" -> "rgba(0, 212, 255, 0.9)"
-    cssColor = hexColor: opacityLevel: withOpacity hexColor opacityLevel;
-
-    # Create gradient CSS
-    # Usage: gradient accent.cyan accent.violet "135deg"
-    gradient =
-      color1: color2: angle:
-      "linear-gradient(${angle}, ${color1}, ${color2})";
-
-    # Create gradient with opacity
-    # Usage: gradientWithOpacity accent.cyan accent.violet "135deg" "medium"
-    gradientWithOpacity =
-      color1: color2: angle: opacity:
-      let
-        c1 = withOpacity color1 opacity;
-        c2 = withOpacity color2 opacity;
-      in
-      "linear-gradient(${angle}, ${c1}, ${c2})";
 
     # Quick access shortcuts
     primary = accent.cyan;
