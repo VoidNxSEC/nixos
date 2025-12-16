@@ -8,17 +8,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1765864529,
-        "narHash": "sha256-Jm2IOPDCy6tOeaMUB/t/JO7Y4w5DI/IdFM0oZfJ0Yj8=",
+        "lastModified": 1765864837,
+        "narHash": "sha256-cNcvMPq2Dqdpckdr13e8bejrjJq3SRZ3MlFPlNKEooE=",
         "ref": "refs/heads/main",
-        "rev": "bbe7538920f50afca7435d68c3be4deddfd3207f",
-        "revCount": 1,
+        "rev": "3947738ba7415d85e981755d794acc9e80f8cfc9",
+        "revCount": 2,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/Projects/arch-analyzer"
+        "url": "file:///home/kernelcore/dev/projects/arch-analyzer"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/Projects/arch-analyzer"
+        "url": "file:///home/kernelcore/dev/projects/arch-analyzer"
       }
     },
     "base16-schemes": {
@@ -46,17 +46,17 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1765536721,
-        "narHash": "sha256-bAuyjd2hx5fC4+kZiTWmropG5oQ3pdu2PC0kYxxEBPk=",
-        "owner": "VoidNxSEC",
-        "repo": "cognitive-vault",
-        "rev": "6f37979452c84696cb0bd5f7bdfd1fea996ee754",
-        "type": "github"
+        "lastModified": 1765865370,
+        "narHash": "sha256-lOGRzoy56DX/rWaxSTZ2LbLDYCwFQ0BRsUZ+v1hgJp8=",
+        "ref": "refs/heads/main",
+        "rev": "e196c8f82afd67e4161fb92f3d1fc01b817395fb",
+        "revCount": 3,
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/cognitive-vault"
       },
       "original": {
-        "owner": "VoidNxSEC",
-        "repo": "cognitive-vault",
-        "type": "github"
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/cognitive-vault"
       }
     },
     "flake-parts": {
@@ -64,11 +64,11 @@
         "nixpkgs-lib": "nixpkgs-lib"
       },
       "locked": {
-        "lastModified": 1765495779,
-        "narHash": "sha256-MhA7wmo/7uogLxiewwRRmIax70g6q1U/YemqTGoFHlM=",
+        "lastModified": 1765835352,
+        "narHash": "sha256-XswHlK/Qtjasvhd1nOa1e8MgZ8GS//jBoTqWtrS1Giw=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "5635c32d666a59ec9a55cab87e898889869f7b71",
+        "rev": "a34fae9c08a15ad73f295041fec82323541400a9",
         "type": "github"
       },
       "original": {
@@ -264,11 +264,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1765480374,
-        "narHash": "sha256-HlbvQAqLx7WqZFFQZ8nu5UUJAVlXiV/kqKbyueA8srw=",
+        "lastModified": 1765860045,
+        "narHash": "sha256-7Lxp/PfOy4h3QIDtmWG/EgycaswqRSkDX4DGtet14NE=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "39cb677ed9e908e90478aa9fe5f3383dfc1a63f3",
+        "rev": "09de9577d47d8bffb11c449b6a3d24e32ac16c99",
         "type": "github"
       },
       "original": {
@@ -287,15 +287,15 @@
       "locked": {
         "lastModified": 1765536736,
         "narHash": "sha256-aqp+FA5PY8Qy99M9UoqbejfXXHI3VNE7Y7MVLaOZMgI=",
-        "owner": "VoidNxSEC",
-        "repo": "i915-governor",
+        "ref": "refs/heads/main",
         "rev": "80da59244ec82e680ea28053de50652bcd418401",
-        "type": "github"
+        "revCount": 1,
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/i915-governor"
       },
       "original": {
-        "owner": "VoidNxSEC",
-        "repo": "i915-governor",
-        "type": "github"
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/i915-governor"
       }
     },
     "nix-colors": {
@@ -351,11 +351,11 @@
     },
     "nixpkgs-lib": {
       "locked": {
-        "lastModified": 1761765539,
-        "narHash": "sha256-b0yj6kfvO8ApcSE+QmA6mUfu8IYG6/uU28OFn4PaC8M=",
+        "lastModified": 1765674936,
+        "narHash": "sha256-k00uTP4JNfmejrCLJOwdObYC9jHRrr/5M/a/8L2EIdo=",
         "owner": "nix-community",
         "repo": "nixpkgs.lib",
-        "rev": "719359f4562934ae99f5443f20aa06c2ffff91fc",
+        "rev": "2075416fcb47225d9b68ac469a5c4801a9c4dd85",
         "type": "github"
       },
       "original": {
@@ -381,11 +381,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1765186076,
-        "narHash": "sha256-hM20uyap1a0M9d344I692r+ik4gTMyj60cQWO+hAYP8=",
+        "lastModified": 1765779637,
+        "narHash": "sha256-KJ2wa/BLSrTqDjbfyNx70ov/HdgNBCBBSQP3BIzKnv4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "addf7cf5f383a3101ecfba091b98d0a1263dc9b8",
+        "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
         "type": "github"
       },
       "original": {
@@ -413,11 +413,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1764947035,
-        "narHash": "sha256-EYHSjVM4Ox4lvCXUMiKKs2vETUSL5mx+J2FfutM7T9w=",
+        "lastModified": 1765457389,
+        "narHash": "sha256-ddhDtNYvleZeYF7g7TRFSmuQuZh7HCgqstg5YBGwo5s=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a672be65651c80d3f592a89b3945466584a22069",
+        "rev": "f997fa0f94fb1ce55bccb97f60d41412ae8fde4c",
         "type": "github"
       },
       "original": {
@@ -435,17 +435,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1765738308,
-        "narHash": "sha256-hPnw30nSGwvJdA9wCG51ZXBpQmzqCrhZG7lVuQZ+pLE=",
+        "lastModified": 1765865692,
+        "narHash": "sha256-0G9OyFqp4BJlznCp2acNwKK8eIE5tFAY0tGu9s0/vFM=",
         "ref": "refs/heads/main",
-        "rev": "3562fc2f1c6bb28e1db3f8de99040247f402a372",
-        "revCount": 12,
+        "rev": "abab000e1895a90366dbf1949de389e9e7cfa685",
+        "revCount": 14,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/Projects/phantom"
+        "url": "file:///home/kernelcore/dev/projects/phantom"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/Projects/phantom"
+        "url": "file:///home/kernelcore/dev/projects/phantom"
       }
     },
     "root": {
@@ -473,11 +473,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1765334520,
-        "narHash": "sha256-jTof2+ir9UPmv4lWksYO6WbaXCC0nsDExrB9KZj7Dz4=",
+        "lastModified": 1765852971,
+        "narHash": "sha256-rQdOMqfQNhcfqvh1dFIVWh09mrIWwerUJqqBdhIsf8g=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "db61f666aea93b28f644861fbddd37f235cc5983",
+        "rev": "5f98ccecc9f1bc1c19c0a350a659af1a04b3b319",
         "type": "github"
       },
       "original": {
@@ -552,11 +552,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1765231718,
-        "narHash": "sha256-qdBzo6puTgG4G2RHG0PkADg22ZnQo1JmSVFRxrD4QM4=",
+        "lastModified": 1765836173,
+        "narHash": "sha256-hWRYfdH2ONI7HXbqZqW8Q1y9IRbnXWvtvt/ONZovSNY=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "7fd1416aba1865eddcdec5bb11339b7222c2363e",
+        "rev": "443a7f2e7e118c4fc63b7fae05ab3080dd0e5c63",
         "type": "github"
       },
       "original": {
@@ -575,15 +575,15 @@
       "locked": {
         "lastModified": 1765536731,
         "narHash": "sha256-jt2Cjel4kggp84UsNwwpE/X89n7qXQyrmz2/fSQx8zw=",
-        "owner": "VoidNxSEC",
-        "repo": "spider-nix",
+        "ref": "refs/heads/main",
         "rev": "8fc5df8deb877a6bb23d025925ddb868a08da40f",
-        "type": "github"
+        "revCount": 1,
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/spider-nix"
       },
       "original": {
-        "owner": "VoidNxSEC",
-        "repo": "spider-nix",
-        "type": "github"
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/spider-nix"
       }
     },
     "swissknife": {
@@ -767,15 +767,15 @@
       "locked": {
         "lastModified": 1765536726,
         "narHash": "sha256-6t+T8lb8HwEJfs3x70AXlqdAXhswqTX2LJjxToMf0t8=",
-        "owner": "VoidNxSEC",
-        "repo": "vmctl",
+        "ref": "refs/heads/main",
         "rev": "bd871ace04f4f91768833276e13a42fd86909fa5",
-        "type": "github"
+        "revCount": 1,
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/vmctl"
       },
       "original": {
-        "owner": "VoidNxSEC",
-        "repo": "vmctl",
-        "type": "github"
+        "type": "git",
+        "url": "file:///home/kernelcore/dev/projects/vmctl"
       }
     }
   },
