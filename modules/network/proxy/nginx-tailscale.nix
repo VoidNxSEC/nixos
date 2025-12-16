@@ -17,7 +17,6 @@ let
 
       subdomain = mkOption {
         type = types.str;
-        description = "Subdomain for the service (e.g., 'ollama' for ollama.hostname.ts.net)";
       };
 
       upstreamHost = mkOption {
@@ -156,9 +155,7 @@ in
       description = "Services to expose via reverse proxy";
       example = literalExpression ''
         {
-          ollama = {
             enable = true;
-            subdomain = "ollama";
             upstreamPort = 11434;
             rateLimit = "10r/s";
           };

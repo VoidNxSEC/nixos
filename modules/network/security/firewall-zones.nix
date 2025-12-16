@@ -64,7 +64,6 @@ in
           default = [
             "ssh"
             "postgresql"
-            "ollama"
             "docker"
           ];
           description = "Services allowed from internal zone";

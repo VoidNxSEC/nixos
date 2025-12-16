@@ -50,7 +50,6 @@ dlogs() {
         echo "Uso: dlogs <stack> <service>"
         echo "Exemplos:"
         echo "  dlogs gpu api"
-        echo "  dlogs multimodal ollama"
         return 1
     fi
     python3 "$DOCKER_ORCH_PATH" logs "$1" "$2" -f
@@ -93,12 +92,6 @@ alias nginx-logs-ai='dlogs multimodal nginx'
 alias db-logs='dlogs gpu db'
 alias db-restart='drestart gpu db'
 
-# Ollama
-alias ollama-logs='dlogs multimodal ollama'
-alias ollama-restart='drestart multimodal ollama'
-alias ollama-list='docker exec ollama-gpu ollama list 2>/dev/null || echo "Ollama não está rodando"'
-alias ollama-pull='docker exec ollama-gpu ollama pull'
-alias ollama-chat='docker exec -it ollama-gpu ollama run'
 
 # vLLM
 alias vllm-logs='dlogs multimodal vllm'
@@ -140,8 +133,7 @@ test-all() {
     curl -s -I http://localhost:8888 2>/dev/null | head -1 || echo "✗ Não acessível"
     echo ""
 
-    echo "4. Ollama (porta 11434):"
-    curl -s http://localhost:11434/api/tags 2>/dev/null | head -3 || echo "✗ Não acessível"
+    #curl -s http://localhost:11434/api/tags 2>/dev/null | head -3 || echo "✗ Não acessível"
 }
 
 # =============================================================================
@@ -186,13 +178,8 @@ dhelp() {
 
   api-logs        - Logs da API
   db-logs         - Logs do MariaDB
-  ollama-logs     - Logs do Ollama
   nginx-logs-gpu  - Logs nginx (gpu stack)
 
-💬 OLLAMA:
-  ollama-list     - Lista modelos instalados
-  ollama-pull     - Baixa modelo (ex: ollama-pull llama3.2)
-  ollama-chat     - Chat interativo (ex: ollama-chat llama3.2)
 
 🧪 TESTES:
   test-gpu-api    - Testa endpoints da GPU API
@@ -203,7 +190,6 @@ dhelp() {
   ai-up                    # Sobe stack AI
   dlogs gpu api            # Logs da API
   drestart multimodal nginx # Reinicia nginx
-  ollama-chat llama3.2     # Chat com modelo
 
 EOF
 }

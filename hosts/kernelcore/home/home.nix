@@ -197,7 +197,6 @@
       # ─────────────────────────────────────────────────────
       # Machine Learning
       # ─────────────────────────────────────────────────────
-      ollama-cuda
       llama-cpp
       #python313Packages.vllm
       #python313Packages.hf-xet

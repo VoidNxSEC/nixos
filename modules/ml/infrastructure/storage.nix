@@ -37,14 +37,6 @@ in
       # Recursively fix permissions for llamacpp directories
       "Z ${cfg.baseDirectory}/llamacpp 0775 llamacpp llamacpp -"
 
-      # Ollama models
-      # Note: /var/lib/ollama is managed by systemd StateDirectory
-      # We create the models directory separately and configure via OLLAMA_MODELS
-      "d ${cfg.baseDirectory}/ollama 0755 ollama ollama -"
-      "d ${cfg.baseDirectory}/ollama/models 0775 ollama ollama -"
-      # Recursively fix permissions for ollama directories
-      "Z ${cfg.baseDirectory}/ollama 0775 ollama ollama -"
-
       # Hugging Face cache
       "d ${cfg.baseDirectory}/huggingface 0755 root root -"
       "d ${cfg.baseDirectory}/huggingface/hub 0755 root root -"
@@ -73,7 +65,6 @@ in
     environment.variables = {
       ML_MODELS_BASE = cfg.baseDirectory;
       LLAMACPP_MODELS_PATH = "${cfg.baseDirectory}/llamacpp";
-      OLLAMA_MODELS_PATH = "${cfg.baseDirectory}/ollama/models";
       HF_HOME = "${cfg.baseDirectory}/huggingface";
       HF_HUB_CACHE = "${cfg.baseDirectory}/huggingface/hub";
       HF_DATASETS_CACHE = "${cfg.baseDirectory}/huggingface/datasets";
