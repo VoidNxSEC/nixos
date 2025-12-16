@@ -14,15 +14,13 @@ let
   mcpConfig = {
     mcpServers = {
       securellm-bridge = {
-        command = "nix";
-        args = [
-          "run"
-          "${config.users.users.${cfg.user}.home}/.config/nixpkgs#securellm-mcp"
-          "--"
-        ];
+        # Use direct binary path (already in system packages)
+        command = "${cfg.package}/bin/securellm-mcp";
+        args = [ ];
         env = {
           KNOWLEDGE_DB_PATH = "${cfg.dataDir}/knowledge.db";
           ENABLE_KNOWLEDGE = "true";
+          NIXOS_HOST_NAME = "kernelcore";
         };
       };
     };
@@ -278,6 +276,15 @@ in
         # Ensure proper locale for UTF-8 output
         LANG = "en_US.UTF-8";
         LC_ALL = "en_US.UTF-8";
+        # PATH needed for bash and other tools (force override default)
+        PATH = lib.mkForce (
+          lib.makeBinPath [
+            pkgs.bash
+            pkgs.coreutils
+            pkgs.nodejs
+            cfg.package
+          ]
+        );
       };
 
       serviceConfig = {
