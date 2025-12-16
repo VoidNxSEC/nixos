@@ -190,7 +190,7 @@
     applications = {
       brave-secure = {
         enable = true;
-        gpuMemoryLimit = "2G";
+        gpuMemoryLimit = "4G";
         enableHardening = true;
       };
 
@@ -202,8 +202,8 @@
       };
 
       vscode = {
-        enable = true;
-        extensions.enable = true;
+        enable = false;
+        extensions.enable = false;
       };
     };
 

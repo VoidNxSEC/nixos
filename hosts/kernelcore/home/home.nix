@@ -150,8 +150,8 @@
       imagemagick
 
       # Music
-      reaper
-      ardour
+      #reaper
+      #ardour
 
       # Secrets
       python313Packages.proton-keyring-linux
@@ -193,23 +193,22 @@
       docker-buildx
       bun
       rustup
-      wrangler
 
       # ─────────────────────────────────────────────────────
       # Machine Learning
       # ─────────────────────────────────────────────────────
       ollama-cuda
       llama-cpp
-      python313Packages.vllm
-      python313Packages.hf-xet
-      python313Packages.llama-index-embeddings-huggingface
-      python313Packages.kernels
-      python313Packages.huggingface-hub
-      python313Packages.langchain-huggingface
-      python313Packages.litellm
-      python313Packages.uv
-      python313Packages.pip
-      python313Packages.python-lsp-server
+      #python313Packages.vllm
+      #python313Packages.hf-xet
+      #python313Packages.llama-index-embeddings-huggingface
+      #python313Packages.kernels
+      #python313Packages.huggingface-hub
+      #python313Packages.langchain-huggingface
+      #python313Packages.litellm
+      # python313Packages.uv
+      #python313Packages.pip
+      #python313Packages.python-lsp-server
 
       # ─────────────────────────────────────────────────────
       # Nerd Fonts
