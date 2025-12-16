@@ -290,22 +290,6 @@
 
             # SOC - Security Operations Center (NSA-level infrastructure)
             ./modules/soc
-            {
-              kernelcore.soc = {
-                enable = true;
-                profile = "minimal"; # minimal | standard | enterprise
-                retention.days = 30;
-
-                # Explicitly disable Suricata for now
-                ids.suricata.enable = true;
-
-                # Alert configuration (customize as needed)
-                alerting = {
-                  enable = true;
-                  minSeverity = "medium";
-                };
-              };
-            }
 
             ./sec/hardening.nix # Final override
           ];
