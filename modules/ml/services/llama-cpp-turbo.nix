@@ -328,9 +328,9 @@ in
           ]
           # CUDA Graphs (no explicit flag needed in recent versions, enabled by default for bs=1)
           # Flash Attention
-          ++ lib.optionals cfg.flashAttention [ "--flash-attn" ]
+          ++ lib.optionals cfg.flashAttention [ "--flash-attn on" ]
           # Memory options
-          ++ lib.optionals cfg.mmap [ "--mmap" ]
+          ++ lib.optionals (!cfg.mmap) [ "--no-mmap" ]
           ++ lib.optionals cfg.mlock [ "--mlock" ]
           ++ lib.optionals cfg.noKvOffload [ "--no-kv-offload" ]
           # Speculative decoding
