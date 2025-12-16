@@ -1,29 +1,28 @@
 { ... }:
 
 # ============================================================
-# Packages Module Aggregator
+# Packages Module - Isolated Per-Package Architecture
 # ============================================================
-# Purpose: Import all package management modules
-# Categories: .deb packages, flatpak, appimage, etc.
+# Each package is 100% self-contained in its own folder.
+# No shared libraries, no cross-package dependencies.
+# Easy debugging: problems are isolated to single folders.
 # ============================================================
 
 {
   imports = [
-    # Declarative .deb package management
-    ./deb-packages
+    # Templates (not imported, just for reference)
+    # ./_templates/tar-package
+    # ./_templates/deb-package
+    # ./_templates/npm-package
 
-    # Declarative .tar.gz package management
-    ./tar-packages
+    # Active packages - each is completely self-contained
+    ./zellij
+    ./gemini-cli
+    ./lynis
+    ./protonpass
 
-    # Declarative .js package management
-    ./js-packages
-
-    # Native derivations (nixpkgs-style)
+    # Legacy support - will be migrated
+    # TODO: Migrate remaining packages from old structure
     ./appflowy.nix
-
-    # Future: Add other package format integrations here
-    # ./flatpak
-    # ./appimage
-    # ./snap
   ];
 }
