@@ -4,6 +4,6 @@
   imports = [
     ./packages/cursor.nix
     ./packages/protonvpn.nix
-    ./packages/protonpass.nix
+
   ];
 }
