@@ -194,91 +194,38 @@ in
     };
 
     # ═══════════════════════════════════════════════════════════════
-    # WIREPLUMBER - FIX PARA MICROFONE P2 MUTANDO SPEAKER
+    # CONFIGURAÇÕES GLOBAIS (SPEECH-DISPATCHER + WIREPLUMBER)
     # ═══════════════════════════════════════════════════════════════
-    environment.etc = mkIf cfg.fixHeadphoneMute {
-      # Regra 1: Desabilitar troca automática de perfil quando mic é plugado
-      "wireplumber/main.lua.d/51-disable-auto-switch-profile.lua".text = ''
-        -- Desabilita troca automática de perfil quando dispositivo é plugado
-        -- Isso previne que o speaker seja mutado quando mic P2 é conectado
+    environment.etc = mkMerge [
+      # SPEECH-DISPATCHER - Módulos mínimos para evitar zumbis
+      {
+        "speech-dispatcher/modules/espeak-ng.conf".text = ''
+          GenericExecuteSynth "echo \'$DATA\' | espeak-ng -v $VOICE --stdin"
+          GenericStripPunctChars ""
+          GenericRecodeFallback "UTF-8"
+          AddVoice "en" "MALE1" "en"
+        '';
+      }
 
-        rule = {
-          matches = {
-            {
-              { "device.name", "matches", "alsa_card.pci-0000_00_1f.3*" },
+      # WIREPLUMBER - Configuração conservadora (apenas se fixHeadphoneMute ativo)
+      (mkIf cfg.fixHeadphoneMute {
+        "wireplumber/main.lua.d/53-speaker-priority.lua".text = ''
+          -- Prioridade elevada para speaker (mas não extrema)
+          rule = {
+            matches = {
+              {
+                { "node.name", "matches", "*Speaker*" },
+              },
             },
-          },
-          apply_properties = {
-            -- Desabilita auto-switching de perfil
-            ["api.alsa.ignore-dB"] = false,
-            ["api.acp.auto-port"] = false,
-            ["api.acp.auto-profile"] = false,
-            -- Força soft-mixer para evitar hardware mute
-            ["api.alsa.soft-mixer"] = true,
-            ["api.alsa.soft-dB"] = true,
-          },
-        }
-        table.insert(alsa_monitor.rules, rule)
-      '';
-
-      # Regra 2: NUNCA usar "Pro 7" como default sink (é o mic headset fake)
-      "wireplumber/main.lua.d/52-disable-pro7-as-default.lua".text = ''
-        -- Quando mic headset é plugado, aparece "cAVS Pro 7" como sink
-        -- Mas é só mic, não tem output real - NUNCA usar como default
-
-        rule = {
-          matches = {
-            {
-              { "node.name", "matches", "*Pro*7*" },
+            apply_properties = {
+              ["priority.driver"] = 1000,  -- Reduzido de 2000 para 1000
+              ["priority.session"] = 1000,
             },
-            {
-              { "node.description", "matches", "*Pro 7*" },
-            },
-          },
-          apply_properties = {
-            -- Desabilita como default
-            ["priority.driver"] = 0,
-            ["priority.session"] = 0,
-            -- Marca como não-preferido
-            ["node.plugged"] = -1,
-          },
-        }
-        table.insert(alsa_monitor.rules, rule)
-      '';
-
-      # Regra 3: Manter speaker SEMPRE como prioridade máxima
-      "wireplumber/main.lua.d/53-speaker-priority.lua".text = ''
-        -- Garante que speaker interno sempre tenha prioridade máxima
-
-        rule = {
-          matches = {
-            {
-              { "node.name", "matches", "*Speaker*" },
-            },
-          },
-          apply_properties = {
-            ["priority.driver"] = 2000,
-            ["priority.session"] = 2000,
-            ["node.pause-on-idle"] = false,
-          },
-        }
-        table.insert(alsa_monitor.rules, rule)
-      '';
-
-      # Regra 4: Desabilitar auto-switch global para sinks
-      "wireplumber/wireplumber.conf.d/50-no-auto-switch.conf".text = ''
-        # Desabilita troca automática de sink quando dispositivo é plugado
-        wireplumber.settings = {
-          bluetooth.autoswitch-to-headset-profile = false
-          
-          # Stream settings - NÃO trocar automaticamente
-          stream.restore-default-targets = true
-          
-          # Device settings
-          device.restore-default-target = true
-        }
-      '';
-    };
+          }
+          table.insert(alsa_monitor.rules, rule)
+        '';
+      })
+    ];
 
     # ═══════════════════════════════════════════════════════════════
     # PIPEWIRE - BAIXA LATÊNCIA PARA STREAMING

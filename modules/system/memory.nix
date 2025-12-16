@@ -26,11 +26,11 @@ with lib;
       "vm.panic_on_oom" = 0;
       "vm.oom_kill_allocating_task" = 1;
 
-      # Memory optimization for compilation workloads
-      "vm.swappiness" = 100; # Aggressive swap for build processes (was 80)
-      "vm.vfs_cache_pressure" = 200; # Release file cache quickly
-      "vm.dirty_ratio" = 10; # Flush dirty pages early
-      "vm.dirty_background_ratio" = 5; # Start background flush sooner
+      # Memory optimization - BALANCED for daily use + occasional builds
+      "vm.swappiness" = 10; # Prioritize RAM over SWAP (was 100)
+      "vm.vfs_cache_pressure" = 50; # Keep cache longer (was 200)
+      "vm.dirty_ratio" = 15; # SSD-optimized (was 10)
+      "vm.dirty_background_ratio" = 10; # SSD-optimized (was 5)
       "vm.overcommit_memory" = 2; # Don't overcommit
       "vm.overcommit_ratio" = 80; # Conservative overcommit
 
@@ -64,13 +64,13 @@ with lib;
     };
 
     # Traditional swap file
-    swapDevices = [
-      {
-        device = "/swapfile";
-        size = 16096;
-        priority = 5;
-      }
-    ];
+    #swapDevices = [
+    #{
+    #device = "/swapfile";
+    #size = 16096;
+    #priority = 5;
+    #}
+    #];
 
     # Aggressive log rotation to prevent I/O bottleneck
     services.journald.extraConfig = ''
@@ -92,13 +92,13 @@ with lib;
           # If memory > 90%, take action
           if [ "$mem_used" -gt 90 ]; then
             echo "High memory usage detected: $mem_used%"
-            
+
             # Drop caches
             echo 3 > /proc/sys/vm/drop_caches
-            
+
             # Compact memory
             echo 1 > /proc/sys/vm/compact_memory || true
-            
+
             echo "Memory pressure relief completed"
           else
             echo "Memory usage OK: $mem_used%"
