@@ -686,11 +686,7 @@
       hakrawler
       python313Packages.pyyaml
 
-      # obs-studio moved to modules/audio/video-production.nix
-      # pavucontrol and ffmpeg-full also included in that module
-      mpv
-
-      awscli # AWS CLI v1 (stable) - awscli2 has hash mismatch in prompt-toolkit
+      awscli
 
       invidious
 
@@ -702,18 +698,15 @@
       git-lfs
       promptfoo
 
-      libreoffice
-      onlyoffice-desktopeditors
+      #libreoffice
+      #onlyoffice-desktopeditors
 
       certbot
 
-      python313Packages.groq
       flameshot
 
       claude-code
       qwen-code
-
-      python313Packages.openai
 
       alacritty
       xclip
@@ -738,9 +731,6 @@
       terraform-providers.carlpett_sops
       terraform-providers.hashicorp_vault
 
-      # GNOME extensions removed - not using GNOME desktop
-      # gnomeExtensions.gtile
-      # gnomeExtensions.awesome-tiles
     ];
   };
 
@@ -759,11 +749,6 @@
       enableSSHSupport = true;
     };
     ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
-
-    # ============================================
-    # SWAY - DISABLED (using Hyprland exclusively)
-    # ============================================
-    sway.enable = false;
 
     # CognitiveVault - Secure Password Manager
     cognitive-vault.enable = true;
