@@ -168,7 +168,7 @@
       nodejs.enable = true;
       nix.enable = true;
       jupyter = {
-        enable = true;
+        enable = false;
         kernels = {
           python.enable = true;
           rust.enable = true;
@@ -199,11 +199,11 @@
     containers = {
       docker.enable = true;
       podman = {
-        enable = true; # Set to true to use Podman instead of/alongside Docker
+        enable = false; # Set to true to use Podman instead of/alongside Docker
         dockerCompat = false; # Enable Docker CLI compatibility (creates docker -> podman alias)
         enableNvidia = true; # NVIDIA GPU support for containers
       };
-      nixos.enable = true;
+      nixos.enable = false;
     };
 
     virtualization = {
