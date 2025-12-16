@@ -24,7 +24,6 @@
     ./infrastructure
     ./services
     ./orchestration
-    ./applications
     ./integrations
   ];
 }
