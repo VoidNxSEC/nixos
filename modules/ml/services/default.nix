@@ -11,6 +11,7 @@
 {
   imports = [
     ./llama-cpp.nix
+    ./llama-cpp-turbo.nix
     #./llama-cpp-swap.nix
     ./ollama
 
