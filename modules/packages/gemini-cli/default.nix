@@ -14,10 +14,10 @@ let
 
     src = pkgs.fetchzip {
       url = "https://github.com/google-gemini/gemini-cli/archive/refs/tags/v0.21.0-nightly.20251217.db643e916.tar.gz";
-      hash = lib.fakeHash; # Run build to get real hash
+      hash = "sha256-k57rmQB7LdNh73o8p1M0w8HqH5JkvmXU65g8lQFmZyY="; # Run build to get real hash
     };
 
-    npmDepsHash = lib.fakeHash; # Run build to get real hash
+    npmDepsHash = "sha256-Z9dlZEEM3q6pRIVEn/uR6j2d0vjFBETb2FuQBosaCyM="; # Run build to get real hash
 
     # Dependências de compilação (necessárias apenas para construir o pacote)
     nativeBuildInputs = with pkgs; [
