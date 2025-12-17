@@ -1,7 +1,7 @@
 # NixOS Architecture Analysis Report
 
 > **Professional Edition v3.0.0**
-> **Generated**: 2025-12-16 08:31:20 -02
+> **Generated**: 2025-12-16 20:25:25 -02
 > **Location**: `/etc/nixos`
 
 ---
@@ -24,12 +24,12 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Files** | 910 |
-| **Total Directories** | 277 |
+| **Total Files** | 889 |
+| **Total Directories** | 273 |
 | **Repository Size** | 2.4G |
 | **Git Branch** | `main` |
-| **Git Commit** | `58218681` |
-| **Total Commits** | 269 |
+| **Git Commit** | `45223370` |
+| **Total Commits** | 283 |
 | **Contributors** | 3 |
 | **Repository Age** | 0 days |
 
@@ -37,10 +37,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **.nix files** | 299 (56704 lines) |
-| **Total modules** | 179 |
+| **.nix files** | 281 (52793 lines) |
+| **Total modules** | 176 |
 | **Module categories** | 12 |
-| **Modules size** | 1.2G |
+| **Modules size** | 1.0G |
 
 ### Health Metrics
 
@@ -56,14 +56,14 @@
 
 | Category | Modules | Lines | Description |
 |----------|---------|-------|-------------|
-| **packages** | 36 | 3151 | Custom packages and overlays |
 | **shell** | 34 | 5222 | Shell configuration and aliases |
-| **ml** | 20 | 2362 | Machine learning infrastructure |
+| **packages** | 33 | 2950 | Custom packages and overlays |
+| **ml** | 20 | 2365 | Machine learning infrastructure |
 | **security** | 17 | 2317 | Security hardening and policies |
 | **services** | 16 | 3046 | System services and daemons |
 | **network** | 13 | 2842 | Network configuration and services |
 | **hardware** | 12 | 2712 | Hardware configurations (GPU, CPU, peripherals) |
-| **system** | 10 | 1193 | Core system configuration |
+| **system** | 10 | 1192 | Core system configuration |
 | **applications** | 8 | 1778 | User applications and tools |
 | **development** | 5 | 973 | Development environments and tools |
 | **virtualization** | 4 | 1971 | VMs, QEMU, libvirt |
@@ -117,16 +117,16 @@
 
 | Type | Count | Lines |
 |------|-------|-------|
-| .nix | 299 | 56704 |
-| .sh | 108 | 19030 |
-| .md | 258 | 98355 |
+| .nix | 281 | 52793 |
+| .sh | 101 | 16559 |
+| .md | 261 | 100130 |
 | .yaml | 14 | - |
 
 ### Directory Sizes
 
 | Directory | Size |
 |-----------|------|
-| modules/ | 1.2G |
+| modules/ | 1.0G |
 | docs/ | 2.0M |
 | scripts/ | 1.5M |
 | **Total** | **2.4G** |
@@ -149,7 +149,8 @@
 │   │   ├── snapshot-20251216-011215.txt
 │   │   ├── snapshot-20251216-011243.txt
 │   │   ├── snapshot-20251216-011332.txt
-│   │   └── snapshot-20251216-011451.txt
+│   │   ├── snapshot-20251216-011451.txt
+│   │   └── snapshot-20251216-083118.txt
 │   ├── AI-ARCHITECTURE-REPORT.json
 │   ├── AI-ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.json
@@ -159,31 +160,6 @@
 │   ├── ARCHITECTURE-TREE.txt
 │   ├── dependency-graph.mmd
 │   └── README.md
-├── backups/
-│   ├── ollama_cleanup_20251216_080650/
-│   │   └── configuration.nix*
-│   └── ollama_cleanup_20251216_080716/
-│       ├── agent-hub.nix
-│       ├── ai-compose-stack.sh*
-│       ├── ai-ml-stack.sh*
-│       ├── aliases.sh
-│       ├── configurations-template.nix*
-│       ├── database.nix
-│       ├── default.nix
-│       ├── firewall-zones.nix
-│       ├── gpu-management.sh
-│       ├── gpu-orchestration.nix
-│       ├── home.nix*
-│       ├── litellm_runtime_manager.sh*
-│       ├── ml-gpu-users.nix
-│       ├── multimodal.sh*
-│       ├── nginx-tailscale.nix
-│       ├── nixos-aliases.nix
-│       ├── nx.sh*
-│       ├── packages.nix*
-│       ├── phantom.nix
-│       ├── storage.nix*
-│       └── tailscale-services.nix
 ├── docs/
 │   ├── applications/
 │   │   └── ZELLIJ-GUIDE.md
@@ -260,9 +236,11 @@
 │   ├── GITHUB_CLI_AUTH.md
 │   ├── GITHUB-SOPS-INTEGRATION.md
 │   ├── GIT-WORKFLOW-TESTING-IMPROVEMENT-PLAN.md
+│   ├── GLASSMORPHISM-DESIGN-SYSTEM.md
 │   ├── GUIA-BACKUP-E-REINSTALACAO.md
 │   ├── GUIA-CORRECAO-DNS.md*
 │   ├── HANDOFF-TAILSCALE-E-INFRAESTRUTURA.md
+│   ├── HYPRLAND-KEYBINDINGS.md
 │   ├── IMPLEMENTATION-SUMMARY.md
 │   ├── INFRASTRUCTURE-FIX-SUMMARY.md
 │   ├── INSTRUCTIONS.md
@@ -549,9 +527,6 @@
 │   │   │   └── default.nix
 │   │   ├── lynis/
 │   │   │   └── default.nix
-│   │   ├── protonpass/
-│   │   │   ├── default.nix
-│   │   │   └── ProtonPass.deb
 │   │   ├── _sources/
 │   │   │   ├── generated.json
 │   │   │   └── generated.nix
@@ -888,7 +863,7 @@
 ├── shell.nix
 └── test_file.txt
 
-125 directories, 626 files
+121 directories, 605 files
 ```
 
 ---
@@ -896,7 +871,7 @@
 ## 📝 Metadata
 
 - **Report Version**: 3.0.0
-- **Generated**: 2025-12-16 08:31:20 -02
+- **Generated**: 2025-12-16 20:25:25 -02
 - **Tool**: NixOS Architecture Analysis Tool
 - **Repository**: /etc/nixos
 
