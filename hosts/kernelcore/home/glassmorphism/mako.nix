@@ -16,6 +16,10 @@
   ...
 }:
 
+let
+  # Import glassmorphism design tokens
+  colors = config.glassmorphism.colors;
+in
 {
   services.mako = {
     enable = true;
@@ -36,11 +40,11 @@
       height = 150;
 
       # Appearance
-      background-color = "#12121aE6"; # 90% opacity
-      text-color = "#e4e4e7";
+      background-color = "${colors.base.bg1}E6"; # 90% opacity
+      text-color = colors.base.fg1;
       border-size = 2;
-      border-color = "#7c3aed"; # Default: violet
-      border-radius = 12;
+      border-color = colors.accent.violet; # Default: violet
+      border-radius = colors.radius.medium;
 
       # Icons
       icons = true;
@@ -70,27 +74,27 @@
       # LOW URGENCY - Cyan accent
       # ============================================
       [urgency=low]
-      border-color=#00d4ff
-      background-color=#12121aCC
-      text-color=#a1a1aa
+      border-color=${colors.accent.cyan}
+      background-color=${colors.base.bg1}CC
+      text-color=${colors.base.fg2}
       default-timeout=3000
 
       # ============================================
       # NORMAL URGENCY - Violet accent (default)
       # ============================================
       [urgency=normal]
-      border-color=#7c3aed
-      background-color=#12121aE6
-      text-color=#e4e4e7
+      border-color=${colors.accent.violet}
+      background-color=${colors.base.bg1}E6
+      text-color=${colors.base.fg1}
       default-timeout=5000
 
       # ============================================
       # CRITICAL URGENCY - Magenta accent
       # ============================================
       [urgency=critical]
-      border-color=#ff00aa
+      border-color=${colors.accent.magenta}
       background-color=#1a0a12E6
-      text-color=#ffffff
+      text-color=${colors.base.fg0}
       default-timeout=0
       ignore-timeout=1
 
@@ -104,74 +108,74 @@
 
       # Spotify
       [app-name="Spotify"]
-      border-color=#1DB954
+      border-color=${colors.accent.green}
 
       # Firefox
       [app-name="Firefox"]
-      border-color=#FF7139
+      border-color=${colors.accent.orange}
 
       # Brave
       [app-name="Brave"]
-      border-color=#FB542B
+      border-color=${colors.accent.orange}
 
       # VSCode/VSCodium
       [app-name="Code"]
-      border-color=#007ACC
+      border-color=${colors.accent.blue}
 
       [app-name="VSCodium"]
-      border-color=#2F80ED
+      border-color=${colors.accent.blue}
 
       # Terminal notifications
       [app-name="Alacritty"]
-      border-color=#00d4ff
+      border-color=${colors.accent.cyan}
 
       [app-name="kitty"]
-      border-color=#67e8f9
+      border-color=${colors.accent.cyanLight}
 
       # Zellij notifications
       [app-name="zellij"]
-      border-color=#00d4ff
+      border-color=${colors.accent.cyan}
 
       # System notifications
       [app-name="notify-send"]
-      border-color=#7c3aed
+      border-color=${colors.accent.violet}
 
       # Screenshot notifications
       [app-name="Swappy"]
-      border-color=#00d4ff
+      border-color=${colors.accent.cyan}
 
       [app-name="grim"]
-      border-color=#00d4ff
+      border-color=${colors.accent.cyan}
 
       # Volume/Brightness OSD
       [app-name="pamixer"]
-      border-color=#7c3aed
+      border-color=${colors.accent.violet}
       max-visible=1
       default-timeout=1500
 
       [app-name="brightnessctl"]
-      border-color=#7c3aed
+      border-color=${colors.accent.violet}
       max-visible=1
       default-timeout=1500
 
       # Network Manager
       [app-name="NetworkManager"]
-      border-color=#22c55e
+      border-color=${colors.accent.green}
 
       [app-name="nm-applet"]
-      border-color=#22c55e
+      border-color=${colors.accent.green}
 
       # Bluetooth
       [app-name="blueman"]
-      border-color=#3b82f6
+      border-color=${colors.accent.blue}
 
       # KeePassXC
       [app-name="KeePassXC"]
-      border-color=#22c55e
+      border-color=${colors.accent.green}
 
       # Agent Hub placeholder
       [app-name="Agent Hub"]
-      border-color=#ff00aa
+      border-color=${colors.accent.magenta}
       background-color=#1a0a18E6
 
       # ============================================
