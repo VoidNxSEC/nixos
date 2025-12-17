@@ -48,6 +48,10 @@
       url = "git+file:///home/kernelcore/dev/projects/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    docker-hub = {
+      url = "git+file:///home/kernelcore/dev/projects/docker-hub";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # ═══════════════════════════════════════════════════════════════
     # PHANTOM - AI Document Intelligence Toolkit

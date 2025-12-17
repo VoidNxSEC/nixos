@@ -25,6 +25,16 @@ in
       default = true;
       description = "Ativa scripts de hardening user.js e isolamento via Firejail.";
     };
+
+    compatibilityMode = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Enable WebGL and WebRTC for compatibility with sites that require them.
+        WARNING: This reduces privacy protection but allows video calls (Meet, Zoom)
+        and 3D content (maps, games) to work properly.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -34,15 +44,15 @@ in
     # -------------------------------------------------------------------------
 
     # Garante que o subsistema gráfico tenha acesso às bibliotecas de decodificação
-    #hardware.graphics = {
-    #enable = true;
-    #extraPackages = with pkgs; [
-    #intel-media-driver   # Driver VA-API moderno para Broadwell+ (iHD)
-    #libvdpau-va-gl       # Backend VDPAU para VA-API
-    #libva                # Video Acceleration API
-    #ffmpeg_6-full        # Backend multimídia completo
-    #];
-    #};
+    hardware.graphics = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver # Driver VA-API moderno para Broadwell+ (iHD)
+        libvdpau-va-gl # Backend VDPAU para VA-API
+        libva # Video Acceleration API
+        ffmpeg_6-full # Backend multimídia completo
+      ];
+    };
 
     # Variáveis de ambiente globais para forçar o Firefox a usar a GPU correta
     environment.sessionVariables = {
@@ -120,10 +130,13 @@ in
         "privacy.fingerprintingProtection" = true; # Proteção adicional contra canvas/font fingerprinting
         "privacy.firstparty.isolate" = true; # Total State Partitioning (Cookies/Cache isolados por domínio)
 
-        # WebGL e WebRTC (Vetores de vazamento de IP e Fingerprinting)
-        "webgl.disabled" = true; # Desativa WebGL (Segurança extrema. Se quebrar sites, mude para false)
-        "media.peerconnection.enabled" = false; # Mata WebRTC (Impede vazamento de IP local)
-        "geo.enabled" = false; # Mata geolocalização
+        # WebGL and WebRTC - TOGGLEABLE based on compatibilityMode
+        # Default: disabled for maximum privacy
+        # With compatibilityMode: enabled for video calls and 3D content
+        "webgl.disabled" = !cfg.compatibilityMode; # WebGL: disabled by default
+        "media.peerconnection.enabled" = cfg.compatibilityMode; # WebRTC: disabled by default
+        "media.peerconnection.ice.no_host" = !cfg.compatibilityMode; # Hide local IP in WebRTC
+        "geo.enabled" = false; # Mata geolocalização (always off)
 
         # --- SEÇÃO 3: REDUÇÃO DE RUÍDO E TELEMETRIA (Air-gapped feel) ---
         "toolkit.telemetry.enabled" = false;

@@ -21,6 +21,10 @@
   ...
 }:
 
+let
+  # Import glassmorphism design tokens
+  colors = config.glassmorphism.colors;
+in
 {
   imports = [
     ./colors.nix
@@ -81,44 +85,45 @@
     };
   };
 
-  # GTK4 CSS for glassmorphism customizations
+  # GTK4 CSS for glassmorphism customizations (using design tokens)
   xdg.configFile."gtk-4.0/colors.css".text = ''
     /* ============================================
      * Glassmorphism GTK4 Color Overrides
+     * Using design tokens from colors.nix
      * ============================================ */
 
-    @define-color accent_bg_color #00d4ff;
-    @define-color accent_fg_color #0a0a0f;
-    @define-color accent_color #00d4ff;
+    @define-color accent_bg_color ${colors.accent.cyan};
+    @define-color accent_fg_color ${colors.base.bg0};
+    @define-color accent_color ${colors.accent.cyan};
 
-    @define-color window_bg_color #12121a;
-    @define-color window_fg_color #e4e4e7;
+    @define-color window_bg_color ${colors.base.bg1};
+    @define-color window_fg_color ${colors.base.fg1};
 
-    @define-color view_bg_color #0a0a0f;
-    @define-color view_fg_color #e4e4e7;
+    @define-color view_bg_color ${colors.base.bg0};
+    @define-color view_fg_color ${colors.base.fg1};
 
-    @define-color headerbar_bg_color #12121a;
-    @define-color headerbar_fg_color #e4e4e7;
-    @define-color headerbar_border_color rgba(255, 255, 255, 0.1);
+    @define-color headerbar_bg_color ${colors.base.bg1};
+    @define-color headerbar_fg_color ${colors.base.fg1};
+    @define-color headerbar_border_color ${colors.border.light};
 
-    @define-color card_bg_color #1a1a24;
-    @define-color card_fg_color #e4e4e7;
+    @define-color card_bg_color ${colors.base.bg2};
+    @define-color card_fg_color ${colors.base.fg1};
 
-    @define-color popover_bg_color #1a1a24;
-    @define-color popover_fg_color #e4e4e7;
+    @define-color popover_bg_color ${colors.base.bg2};
+    @define-color popover_fg_color ${colors.base.fg1};
 
-    @define-color dialog_bg_color #12121a;
-    @define-color dialog_fg_color #e4e4e7;
+    @define-color dialog_bg_color ${colors.base.bg1};
+    @define-color dialog_fg_color ${colors.base.fg1};
 
-    @define-color sidebar_bg_color #0a0a0f;
-    @define-color sidebar_fg_color #a1a1aa;
+    @define-color sidebar_bg_color ${colors.base.bg0};
+    @define-color sidebar_fg_color ${colors.base.fg2};
 
-    @define-color borders rgba(255, 255, 255, 0.08);
+    @define-color borders ${colors.border.lighter};
 
-    @define-color success_color #22c55e;
-    @define-color warning_color #eab308;
-    @define-color error_color #ff00aa;
-    @define-color destructive_color #ff00aa;
+    @define-color success_color ${colors.accent.green};
+    @define-color warning_color ${colors.accent.yellow};
+    @define-color error_color ${colors.accent.magenta};
+    @define-color destructive_color ${colors.accent.magenta};
   '';
 
   # ============================================

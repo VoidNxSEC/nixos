@@ -23,8 +23,8 @@
 
   # 2. IO SCHEDULER & BLOCK LAYER
   services.udev.extraRules = ''
-    # NVMe: 'none' is usually best, but 'kyber' can help latency under load
-    ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", ATTR{queue/scheduler}="none"
+    # NVMe: 'kyber' provides better latency for interactive workloads (Electron apps)
+    ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", ATTR{queue/scheduler}="kyber"
     # SATA SSD/HDD: 'bfq' is mandatory for desktop responsiveness
     ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
     ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"

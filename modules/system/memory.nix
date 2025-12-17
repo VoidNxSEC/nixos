@@ -20,57 +20,98 @@ with lib;
   };
 
   config = mkIf config.kernelcore.system.memory.optimizations.enable {
-    # Kernel memory management - Optimized for heavy build workloads
+    # ============================================
+    # KERNEL MEMORY MANAGEMENT - Cgroup v2 optimized
+    # ============================================
     boot.kernel.sysctl = {
       # Prevent kernel panics
       "vm.panic_on_oom" = 0;
       "vm.oom_kill_allocating_task" = 1;
 
-      # Memory optimization - BALANCED for daily use + occasional builds
-      "vm.swappiness" = 10; # Prioritize RAM over SWAP (was 100)
-      "vm.vfs_cache_pressure" = 50; # Keep cache longer (was 200)
-      "vm.dirty_ratio" = 15; # SSD-optimized (was 10)
-      "vm.dirty_background_ratio" = 10; # SSD-optimized (was 5)
-      "vm.overcommit_memory" = 2; # Don't overcommit
-      "vm.overcommit_ratio" = 80; # Conservative overcommit
+      # Memory optimization - OPTIMIZED for Electron apps + builds
+      "vm.swappiness" = 10; # Prioritize RAM over SWAP
+      "vm.vfs_cache_pressure" = 50; # Keep cache longer
+      "vm.dirty_ratio" = 30; # Larger buffer for 16GB RAM
+      "vm.dirty_background_ratio" = 20; # Background writes at 3GB
+
+      # Overcommit: 0=heuristic (safer than strict=2, allows flexibility)
+      "vm.overcommit_memory" = 0;
 
       # Additional build optimizations
-      "vm.min_free_kbytes" = 65536; # Keep 64MB free for emergencies
+      "vm.min_free_kbytes" = 131072; # Keep 128MB free for emergencies
       "vm.watermark_scale_factor" = 200; # More aggressive reclaim
+      "vm.admin_reserve_kbytes" = 131072; # 128MB reserved for admin recovery
     };
 
-    # Early OOM killer - AGGRESSIVE SETTINGS
+    # ============================================
+    # CGROUP V2 SLICES - Workload isolation
+    # ============================================
+
+    # Browser slice - isolate Electron/Chromium memory hogs
+    systemd.slices.browser = {
+      description = "Browser and Electron apps memory isolation";
+      sliceConfig = {
+        MemoryMax = "8G"; # Hard limit
+        MemoryHigh = "6G"; # Soft limit - triggers reclaim
+        MemoryLow = "512M"; # Minimum protection
+        MemoryZSwapMax = "2G"; # Limit ZRAM consumption
+        CPUWeight = 100; # Normal priority
+      };
+    };
+
+    # Build tools slice - compilation isolation
+    systemd.slices.build = {
+      description = "Compilation and build tools isolation";
+      sliceConfig = {
+        MemoryMax = "12G"; # Hard limit
+        MemoryHigh = "10G"; # Soft limit
+        MemoryLow = "1G"; # Minimum protection during build
+        CPUQuota = "300%"; # Allow 3 cores max
+        IOWeight = 50; # Lower I/O priority than interactive
+      };
+    };
+
+    # AI/ML slice - GPU workloads
+    systemd.slices.ml = {
+      description = "Machine learning and GPU workloads";
+      sliceConfig = {
+        MemoryMax = "14G"; # Allow most of RAM
+        MemoryHigh = "12G";
+        CPUWeight = 80; # Slightly lower than default
+      };
+    };
+
+    # Early OOM killer - TUNED for heavy workloads
     services.earlyoom = {
       enable = true;
-      freeMemThreshold = 5; # Kill processes when <5% RAM free (was 8%)
-      freeSwapThreshold = 10; # Kill when <10% swap free (was 20%)
+      freeMemThreshold = 3; # Kill processes when <3% RAM free
+      freeSwapThreshold = 5; # Kill when <5% swap free
       enableNotifications = true;
-      # Kill the largest memory consumer first
       extraArgs = [
         "-g" # Kill entire process group
         "--prefer"
         "(cc1|rustc|ld|cargo|nix-build)" # Prefer killing build processes
         "--avoid"
-        "(X|plasma|gnome|firefox|chrome)" # Avoid killing desktop
+        "(X|plasma|gnome|firefox|chrome|hyprland|waybar)" # Avoid killing desktop
       ];
     };
 
-    # ZRAM swap - Enhanced for heavy compilation (50% compression ratio)
+    # ZRAM swap - Enhanced for heavy compilation
     zramSwap = mkIf config.kernelcore.system.memory.zram.enable {
       enable = true;
       algorithm = "zstd"; # Best compression/speed balance
-      memoryPercent = 50; # Use 50% of RAM for compressed swap (was 25%)
+      memoryPercent = 50; # Use 50% of RAM for compressed swap
       priority = 10; # Higher priority than disk swap
     };
 
     # Traditional swap file
-    #swapDevices = [
-    #{
-    #device = "/swapfile";
-    #size = 16096;
-    #priority = 5;
-    #}
-    #];
+    swapDevices = [
+      {
+        device = "/swapfile";
+        size = 32768;
+        priority = 5;
+      }
+    ];
 
     # Aggressive log rotation to prevent I/O bottleneck
     services.journald.extraConfig = ''
@@ -153,6 +194,36 @@ with lib;
         OnBootSec = "10min";
         Persistent = true;
         Unit = "log-cleanup.service";
+      };
+    };
+
+    # Swap cleanup service - Clear residual swap when RAM is available
+    systemd.services.swap-cleanup = {
+      description = "Clear residual swap when RAM is available";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = pkgs.writeShellScript "swap-cleanup" ''
+          # Only run if we have >4GB free RAM and >1GB used swap
+          free_ram=$(${pkgs.procps}/bin/free -m | ${pkgs.gawk}/bin/awk '/^Mem:/{print $7}')
+          used_swap=$(${pkgs.procps}/bin/free -m | ${pkgs.gawk}/bin/awk '/^Swap:/{print $3}')
+
+          if [ "$free_ram" -gt 4096 ] && [ "$used_swap" -gt 1024 ]; then
+            echo "Clearing swap: $used_swap MB in use, $free_ram MB free RAM"
+            ${pkgs.util-linux}/bin/swapoff -a && ${pkgs.util-linux}/bin/swapon -a
+            echo "Swap cleared successfully"
+          else
+            echo "Swap cleanup not needed: $free_ram MB free RAM, $used_swap MB swap used"
+          fi
+        '';
+      };
+    };
+
+    systemd.timers.swap-cleanup = {
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnBootSec = "10min";
+        OnUnitActiveSec = "30min";
+        Unit = "swap-cleanup.service";
       };
     };
   };

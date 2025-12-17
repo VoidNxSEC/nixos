@@ -5,5 +5,6 @@
     ./debug-init.nix
     ./test-init.nix
     ./tools-integration.nix
+    ./io-monitor.nix
   ];
 }
