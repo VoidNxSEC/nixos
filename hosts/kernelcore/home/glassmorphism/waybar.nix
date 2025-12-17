@@ -22,6 +22,9 @@ let
   gpuMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/gpu-monitor.sh";
   diskMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/disk-monitor.sh";
   sshSessions = "${config.home.homeDirectory}/.config/waybar/scripts/ssh-sessions.sh";
+
+  # Import glassmorphism design tokens
+  colors = config.glassmorphism.colors;
 in
 {
   programs.waybar = {
@@ -283,12 +286,13 @@ in
     };
 
     # ============================================
-    # GLASSMORPHISM CSS STYLES
+    # GLASSMORPHISM CSS STYLES (using design tokens)
     # ============================================
     style = ''
       /* ============================================
        * Waybar - Glassmorphism Theme
        * Premium frosted glass with electric accents
+       * Using design tokens from colors.nix
        * ============================================ */
 
       /* Reset and base styles */
@@ -304,11 +308,11 @@ in
 
       /* Main bar - frosted glass background */
       window#waybar {
-        background: rgba(10, 10, 15, 0.75);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4),
-                    0 0 40px rgba(0, 212, 255, 0.05);
+        background: ${colors.hexToRgba colors.base.bg0 "0.75"};
+        border-radius: ${toString colors.radius.large}px;
+        border: 1px solid ${colors.border.light};
+        box-shadow: 0 4px 20px ${colors.shadow.dark},
+                    0 0 40px ${colors.hexToRgba colors.accent.cyan "0.05"};
       }
 
       window#waybar.hidden {
@@ -317,15 +321,15 @@ in
 
       /* Tooltip styling */
       tooltip {
-        background: rgba(18, 18, 26, 0.95);
-        border: 1px solid rgba(0, 212, 255, 0.3);
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5),
-                    0 0 20px rgba(0, 212, 255, 0.1);
+        background: ${colors.hexToRgba colors.base.bg1 "0.95"};
+        border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.3"};
+        border-radius: ${toString colors.radius.medium}px;
+        box-shadow: 0 4px 20px ${colors.shadow.dark},
+                    0 0 20px ${colors.hexToRgba colors.accent.cyan "0.1"};
       }
 
       tooltip label {
-        color: #e4e4e7;
+        color: ${colors.base.fg1};
         padding: 8px 12px;
       }
 
@@ -343,12 +347,12 @@ in
       #pulseaudio,
       #battery,
       #tray {
-        background: rgba(18, 18, 26, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 20px;
+        background: ${colors.hexToRgba colors.base.bg1 "0.8"};
+        border: 1px solid ${colors.border.lighter};
+        border-radius: ${toString colors.radius.pill}px;
         padding: 4px 16px;
         margin: 4px 4px;
-        color: #e4e4e7;
+        color: ${colors.base.fg1};
         transition: all 0.3s ease;
       }
 
@@ -366,9 +370,9 @@ in
       #pulseaudio:hover,
       #battery:hover,
       #tray:hover {
-        background: rgba(0, 212, 255, 0.15);
-        border-color: rgba(0, 212, 255, 0.4);
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        background: ${colors.hexToRgba colors.accent.cyan "0.15"};
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.4"};
+        box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.cyan "0.2"};
       }
 
       /* ============================================
@@ -380,36 +384,36 @@ in
 
       #workspaces button {
         background: transparent;
-        color: #71717a;
+        color: ${colors.base.fg3};
         padding: 4px 8px;
         margin: 2px;
-        border-radius: 12px;
+        border-radius: ${toString colors.radius.medium}px;
         transition: all 0.3s ease;
       }
 
       #workspaces button:hover {
-        background: rgba(0, 212, 255, 0.2);
-        color: #00d4ff;
+        background: ${colors.hexToRgba colors.accent.cyan "0.2"};
+        color: ${colors.accent.cyan};
       }
 
       #workspaces button.active {
-        background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
-        color: #00d4ff;
-        border: 1px solid rgba(0, 212, 255, 0.5);
-        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.cyan "0.3"}, ${colors.hexToRgba colors.accent.violet "0.3"});
+        color: ${colors.accent.cyan};
+        border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.5"};
+        box-shadow: 0 0 15px ${colors.hexToRgba colors.accent.cyan "0.3"};
       }
 
       #workspaces button.urgent {
-        background: rgba(255, 0, 170, 0.3);
-        color: #ff00aa;
-        border: 1px solid rgba(255, 0, 170, 0.5);
+        background: ${colors.hexToRgba colors.accent.magenta "0.3"};
+        color: ${colors.accent.magenta};
+        border: 1px solid ${colors.hexToRgba colors.accent.magenta "0.5"};
       }
 
       /* ============================================
        * WINDOW TITLE
        * ============================================ */
       #window {
-        color: #a1a1aa;
+        color: ${colors.base.fg2};
         font-weight: 500;
       }
 
@@ -424,173 +428,173 @@ in
        * CLOCK
        * ============================================ */
       #clock {
-        background: linear-gradient(135deg, rgba(18, 18, 26, 0.9), rgba(26, 26, 36, 0.8));
-        color: #ffffff;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.base.bg1 "0.9"}, ${colors.hexToRgba colors.base.bg2 "0.8"});
+        color: ${colors.base.fg0};
         font-weight: 600;
         font-size: 14px;
         padding: 4px 20px;
-        border: 1px solid rgba(0, 212, 255, 0.2);
+        border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.2"};
       }
 
       #clock:hover {
-        border-color: rgba(0, 212, 255, 0.5);
-        box-shadow: 0 0 25px rgba(0, 212, 255, 0.25);
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.5"};
+        box-shadow: 0 0 25px ${colors.hexToRgba colors.accent.cyan "0.25"};
       }
 
       /* ============================================
        * GPU MODULE
        * ============================================ */
       #custom-gpu {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(18, 18, 26, 0.8));
-        border-color: rgba(34, 197, 94, 0.2);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.green "0.15"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
+        border-color: ${colors.hexToRgba colors.accent.green "0.2"};
       }
 
       #custom-gpu.warning {
-        background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(18, 18, 26, 0.8));
-        border-color: rgba(234, 179, 8, 0.4);
-        color: #eab308;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.yellow "0.2"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
+        border-color: ${colors.hexToRgba colors.accent.yellow "0.4"};
+        color: ${colors.accent.yellow};
       }
 
       #custom-gpu.critical {
-        background: linear-gradient(135deg, rgba(255, 0, 170, 0.2), rgba(18, 18, 26, 0.8));
-        border-color: rgba(255, 0, 170, 0.4);
-        color: #ff00aa;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.magenta "0.2"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
+        border-color: ${colors.hexToRgba colors.accent.magenta "0.4"};
+        color: ${colors.accent.magenta};
       }
 
       #custom-gpu:hover {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(0, 212, 255, 0.15));
-        border-color: rgba(0, 212, 255, 0.4);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.green "0.25"}, ${colors.hexToRgba colors.accent.cyan "0.15"});
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.4"};
       }
 
       /* ============================================
        * DISK MODULE
        * ============================================ */
       #custom-disk {
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(18, 18, 26, 0.8));
-        border-color: rgba(124, 58, 237, 0.2);
-        color: #a78bfa;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.15"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
+        border-color: ${colors.hexToRgba colors.accent.violet "0.2"};
+        color: ${colors.accent.violetLight};
       }
 
       #custom-disk.warning {
-        background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(18, 18, 26, 0.8));
-        border-color: rgba(234, 179, 8, 0.4);
-        color: #eab308;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.yellow "0.2"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
+        border-color: ${colors.hexToRgba colors.accent.yellow "0.4"};
+        color: ${colors.accent.yellow};
       }
 
       #custom-disk.critical {
-        background: linear-gradient(135deg, rgba(255, 0, 170, 0.2), rgba(18, 18, 26, 0.8));
-        border-color: rgba(255, 0, 170, 0.4);
-        color: #ff00aa;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.magenta "0.2"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
+        border-color: ${colors.hexToRgba colors.accent.magenta "0.4"};
+        color: ${colors.accent.magenta};
       }
 
       #custom-disk:hover {
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(0, 212, 255, 0.15));
-        border-color: rgba(0, 212, 255, 0.4);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.25"}, ${colors.hexToRgba colors.accent.cyan "0.15"});
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.4"};
       }
 
       /* ============================================
        * SSH INDICATOR
        * ============================================ */
       #custom-ssh {
-        background: rgba(18, 18, 26, 0.8);
-        color: #71717a;
+        background: ${colors.hexToRgba colors.base.bg1 "0.8"};
+        color: ${colors.base.fg3};
       }
 
       #custom-ssh.active {
-        background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.15));
-        border-color: rgba(0, 212, 255, 0.4);
-        color: #00d4ff;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.cyan "0.2"}, ${colors.hexToRgba colors.accent.violet "0.15"});
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.4"};
+        color: ${colors.accent.cyan};
       }
 
       #custom-ssh.active:hover {
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.cyan "0.3"};
       }
 
       /* ============================================
        * NETWORK
        * ============================================ */
       #network {
-        color: #22c55e;
+        color: ${colors.accent.green};
       }
 
       #network.disconnected {
-        color: #ef4444;
-        background: rgba(239, 68, 68, 0.1);
-        border-color: rgba(239, 68, 68, 0.3);
+        color: ${colors.accent.red};
+        background: ${colors.hexToRgba colors.accent.red "0.1"};
+        border-color: ${colors.hexToRgba colors.accent.red "0.3"};
       }
 
       #network.wifi {
-        color: #00d4ff;
+        color: ${colors.accent.cyan};
       }
 
       /* ============================================
        * BLUETOOTH
        * ============================================ */
       #bluetooth {
-        color: #3b82f6;
+        color: ${colors.accent.blue};
       }
 
       #bluetooth.disabled {
-        color: #71717a;
+        color: ${colors.base.fg3};
       }
 
       #bluetooth.connected {
-        color: #00d4ff;
+        color: ${colors.accent.cyan};
       }
 
       /* ============================================
        * AUDIO
        * ============================================ */
       #pulseaudio {
-        color: #7c3aed;
+        color: ${colors.accent.violet};
       }
 
       #pulseaudio.muted {
-        color: #71717a;
-        background: rgba(113, 113, 122, 0.1);
+        color: ${colors.base.fg3};
+        background: ${colors.hexToRgba colors.base.fg3 "0.1"};
       }
 
       /* ============================================
        * BATTERY
        * ============================================ */
       #battery {
-        color: #22c55e;
+        color: ${colors.accent.green};
       }
 
       #battery.charging {
-        color: #00d4ff;
-        background: rgba(0, 212, 255, 0.1);
-        border-color: rgba(0, 212, 255, 0.3);
+        color: ${colors.accent.cyan};
+        background: ${colors.hexToRgba colors.accent.cyan "0.1"};
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.3"};
       }
 
       #battery.warning:not(.charging) {
-        color: #eab308;
-        background: rgba(234, 179, 8, 0.1);
-        border-color: rgba(234, 179, 8, 0.3);
+        color: ${colors.accent.yellow};
+        background: ${colors.hexToRgba colors.accent.yellow "0.1"};
+        border-color: ${colors.hexToRgba colors.accent.yellow "0.3"};
       }
 
       #battery.critical:not(.charging) {
-        color: #ff00aa;
-        background: rgba(255, 0, 170, 0.15);
-        border-color: rgba(255, 0, 170, 0.4);
+        color: ${colors.accent.magenta};
+        background: ${colors.hexToRgba colors.accent.magenta "0.15"};
+        border-color: ${colors.hexToRgba colors.accent.magenta "0.4"};
       }
 
       /* ============================================
        * AGENT HUB
        * ============================================ */
       #custom-agent-hub {
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(255, 0, 170, 0.1));
-        border-color: rgba(124, 58, 237, 0.3);
-        color: #7c3aed;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.2"}, ${colors.hexToRgba colors.accent.magenta "0.1"});
+        border-color: ${colors.hexToRgba colors.accent.violet "0.3"};
+        color: ${colors.accent.violet};
         font-size: 16px;
         padding: 4px 12px;
       }
 
       #custom-agent-hub:hover {
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(255, 0, 170, 0.2));
-        border-color: rgba(124, 58, 237, 0.5);
-        box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
-        color: #a78bfa;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.3"}, ${colors.hexToRgba colors.accent.magenta "0.2"});
+        border-color: ${colors.hexToRgba colors.accent.violet "0.5"};
+        box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.violet "0.3"};
+        color: ${colors.accent.violetLight};
       }
 
       /* ============================================
@@ -606,14 +610,14 @@ in
 
       #tray > .needs-attention {
         -gtk-icon-effect: highlight;
-        background: rgba(255, 0, 170, 0.1);
-        border-color: rgba(255, 0, 170, 0.3);
+        background: ${colors.hexToRgba colors.accent.magenta "0.1"};
+        border-color: ${colors.hexToRgba colors.accent.magenta "0.3"};
       }
 
       #tray menu {
-        background: rgba(18, 18, 26, 0.95);
-        border: 1px solid rgba(0, 212, 255, 0.3);
-        border-radius: 12px;
+        background: ${colors.hexToRgba colors.base.bg1 "0.95"};
+        border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.3"};
+        border-radius: ${toString colors.radius.medium}px;
       }
 
       #tray menu menuitem {
@@ -622,7 +626,7 @@ in
       }
 
       #tray menu menuitem:hover {
-        background: rgba(0, 212, 255, 0.15);
+        background: ${colors.hexToRgba colors.accent.cyan "0.15"};
       }
     '';
   };
@@ -752,10 +756,22 @@ in
         set -o pipefail
 
         get_system_stats() {
-          # CPU Usage (percentage)
+          # CPU Usage (percentage) - Works with both GNU top and BusyBox top
           local CPU_USAGE
-          CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print int(100 - $1)}')
+          # Try BusyBox format first: "CPU:  7.5% usr  6.0% sys  0.0% nic 82.7% idle"
+          CPU_USAGE=$(top -bn1 | awk '/^CPU:/ {gsub(/%/, "", $10); print int(100 - $10); exit}')
+
+          # If that didn't work, try GNU top format: "Cpu(s):  10.0%us,  5.0%sy, 85.0%id"
+          if [[ -z "$CPU_USAGE" ]] || [[ "$CPU_USAGE" == "0" ]]; then
+            CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print int(100 - $1)}')
+          fi
+
           CPU_USAGE=''${CPU_USAGE:-0}
+
+          # Sanity check: CPU should be between 0-100
+          if [[ "$CPU_USAGE" -lt 0 ]] || [[ "$CPU_USAGE" -gt 100 ]]; then
+            CPU_USAGE=0
+          fi
 
           # Memory Usage
           local MEM_INFO
