@@ -1,13 +1,12 @@
 # ============================================
-# Agent Hub - AI Agent Integration Placeholder
+# Agent Hub - AI Agent Integration with API Chat
 # ============================================
-# Future AI agent integration framework for:
-# - Systray icon with quick agent access
-# - Chat/prompt window for AI agents
+# Full AI agent integration framework:
+# - Local LLaMA.cpp API chat
+# - Wofi-based quick prompt
+# - Floating chat window for Hyprland
 # - Agent status monitoring
-# - Quick action dispatching
-#
-# This is a PLACEHOLDER module - expand as needed
+# - Waybar integration
 # ============================================
 
 {
@@ -18,169 +17,281 @@
 }:
 
 let
-  # Available agents configuration
-  agents = {
-    roo = {
-      name = "Roo (Claude)";
-      icon = "󰚩";
-      color = "#00d4ff";
-      command = "code --goto";
-      description = "VSCode AI assistant powered by Claude";
-    };
-    codex = {
-      name = "Codex";
-      icon = "󰧑";
-      color = "#7c3aed";
-      command = "codex";
-      description = "OpenAI Codex CLI agent";
-    };
-    gemini = {
-      name = "Gemini";
-      icon = "󰊤";
-      color = "#4285f4";
-      command = "gemini-cli";
-      description = "Google Gemini CLI agent";
-    };
-    #  icon = "󰊠";
-    #  color = "#22c55e";
-    #};
+  # API Configuration - uses your local llama.cpp server
+  llamaCppApi = {
+    host = "127.0.0.1";
+    port = 8080;
+    model = "local"; # Name for display
   };
+
+  # Color palette for agents
+  colors = import ./colors.nix { inherit lib; };
 in
 {
+  # Required packages
+  home.packages = with pkgs; [
+    jq
+    curl
+    wl-clipboard
+    libnotify
+  ];
+
   # ============================================
   # AGENT HUB SCRIPTS
   # ============================================
   home.file = {
-    # Main agent launcher menu (wofi-based)
-    ".config/agent-hub/agent-launcher.sh" = {
+    # AI Chat script - sends prompt to local LLaMA.cpp
+    ".config/agent-hub/ai-chat.sh" = {
       executable = true;
       text = ''
         #!/usr/bin/env bash
         # ============================================
-        # Agent Hub - AI Agent Launcher
-        # Quick access to AI coding assistants
+        # Agent Hub - AI Chat API Client
+        # Sends prompts to local LLaMA.cpp server
         # ============================================
 
-        # Define agents
-        declare -A AGENTS=(
-          ["󰚩 Roo (Claude) - VSCode AI Assistant"]="code"
-          ["󰧑 Codex - CLI Agent"]="alacritty -e codex"
-          ["󰊤 Gemini - Google AI"]="alacritty -e gemini-cli"
-          ["󰋼 Quick Question"]="agent-quick-prompt"
-        )
+        API_HOST="${llamaCppApi.host}"
+        API_PORT="${toString llamaCppApi.port}"
+        API_URL="http://$API_HOST:$API_PORT/v1/chat/completions"
+        HISTORY_FILE="$HOME/.cache/agent-hub/chat-history.json"
 
-        # Build menu
-        MENU=""
-        for key in "''${!AGENTS[@]}"; do
-          MENU+="$key\n"
-        done
+        # Colors
+        CYAN='\033[0;36m'
+        GREEN='\033[0;32m'
+        YELLOW='\033[1;33m'
+        NC='\033[0m'
 
-        # Show menu with wofi
-        SELECTED=$(echo -e "$MENU" | wofi --dmenu --prompt="Agent Hub 󰚩" --width=450 --height=280 --cache-file=/dev/null)
+        # Ensure cache directory exists
+        mkdir -p "$(dirname "$HISTORY_FILE")"
 
-        if [[ -n "$SELECTED" ]]; then
-          CMD="''${AGENTS[$SELECTED]}"
-          if [[ -n "$CMD" ]]; then
-            eval "$CMD" &
+        # Check if API is available
+        check_api() {
+          curl -s --connect-timeout 2 "http://$API_HOST:$API_PORT/health" > /dev/null 2>&1
+          return $?
+        }
+
+        # Send message to LLaMA.cpp
+        send_message() {
+          local prompt="$1"
+          local response
+
+          response=$(curl -s "$API_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"model\": \"${llamaCppApi.model}\",
+              \"messages\": [
+                {\"role\": \"system\", \"content\": \"You are a helpful AI assistant. Be concise and direct.\"},
+                {\"role\": \"user\", \"content\": \"$prompt\"}
+              ],
+              \"temperature\": 0.7,
+              \"max_tokens\": 2048,
+              \"stream\": false
+            }" 2>/dev/null)
+
+          if [[ -n "$response" ]]; then
+            echo "$response" | ${pkgs.jq}/bin/jq -r '.choices[0].message.content // .error.message // "No response"'
+          else
+            echo "Error: Could not connect to LLaMA.cpp API"
+            return 1
           fi
-        fi
+        }
+
+        # Interactive mode
+        interactive_chat() {
+          echo -e "''${CYAN}╔══════════════════════════════════════════════╗''${NC}"
+          echo -e "''${CYAN}║      󰚩 Agent Hub - AI Chat                 ║''${NC}"
+          echo -e "''${CYAN}╚══════════════════════════════════════════════╝''${NC}"
+          echo ""
+
+          if ! check_api; then
+            echo -e "''${YELLOW}⚠ LLaMA.cpp API not available at $API_URL''${NC}"
+            echo -e "''${YELLOW}  Start with: systemctl start llamacpp''${NC}"
+            exit 1
+          fi
+
+          echo -e "''${GREEN}✓ Connected to LLaMA.cpp API''${NC}"
+          echo "Type 'exit' or Ctrl+D to quit"
+          echo ""
+
+          while true; do
+            echo -en "''${CYAN}You: ''${NC}"
+            read -r prompt
+            
+            [[ -z "$prompt" ]] && continue
+            [[ "$prompt" == "exit" ]] && break
+            
+            echo -en "''${GREEN}AI: ''${NC}"
+            send_message "$prompt"
+            echo ""
+          done
+        }
+
+        # Quick prompt mode (from wofi)
+        quick_prompt() {
+          local prompt="$1"
+          
+          if ! check_api; then
+            ${pkgs.libnotify}/bin/notify-send -a "Agent Hub" "󰚩 AI Chat" "LLaMA.cpp API not available"
+            exit 1
+          fi
+
+          local response
+          response=$(send_message "$prompt")
+          
+          if [[ -n "$response" ]]; then
+            echo "$response" | ${pkgs.wl-clipboard}/bin/wl-copy
+            ${pkgs.libnotify}/bin/notify-send -a "Agent Hub" "󰚩 AI Response" "$(echo "$response" | head -c 300)...\n\n✓ Copied to clipboard"
+          fi
+        }
+
+        # Main
+        case "''${1:-interactive}" in
+          -q|--quick)
+            shift
+            quick_prompt "$*"
+            ;;
+          -c|--check)
+            if check_api; then
+              echo "API available at $API_URL"
+              exit 0
+            else
+              echo "API not available"
+              exit 1
+            fi
+            ;;
+          *)
+            interactive_chat
+            ;;
+        esac
       '';
     };
 
-    # Quick prompt dialog
+    # Main agent launcher menu (wofi-based)
+    ".config/agent-hub/agent-launcher.sh" = {
+      executable = true;
+      text = ''
+                #!/usr/bin/env bash
+                # ============================================
+                # Agent Hub - AI Agent Launcher
+                # Quick access to AI coding assistants
+                # ============================================
+
+                # Menu options
+                MENU="󰚩 AI Chat (Local LLaMA.cpp)
+        󰋼 Quick Question
+        󰧑 Codex - CLI Agent
+        󰊤 Gemini - Google AI
+        󰜈 Antigravity (Gemini CLI)
+        ━━━━━━━━━━━━━━━━━━━━━━━━
+        󰁖 Agent Status
+        󰁔 Open Chat Terminal"
+
+                # Show menu with wofi
+                SELECTED=$(echo -e "$MENU" | wofi --dmenu --prompt="Agent Hub 󰚩" --width=400 --height=350 --cache-file=/dev/null)
+
+                case "$SELECTED" in
+                  "󰚩 AI Chat (Local LLaMA.cpp)")
+                    # Open floating terminal with AI chat
+                    alacritty --class="agent-hub-chat" -e "$HOME/.config/agent-hub/ai-chat.sh" &
+                    ;;
+                  "󰋼 Quick Question")
+                    "$HOME/.config/agent-hub/quick-prompt.sh"
+                    ;;
+                  "󰧑 Codex - CLI Agent")
+                    alacritty --class="agent-hub-codex" -e codex &
+                    ;;
+                  "󰊤 Gemini - Google AI")
+                    alacritty --class="agent-hub-gemini" -e gemini-cli &
+                    ;;
+                  "󰜈 Antigravity (Gemini CLI)")
+                    alacritty --class="agent-hub-antigravity" -e gemini &
+                    ;;
+                  "󰁖 Agent Status")
+                    "$HOME/.config/agent-hub/agent-status.sh" | wofi --dmenu --prompt="Status" --width=500 --height=400 --cache-file=/dev/null
+                    ;;
+                  "󰁔 Open Chat Terminal")
+                    alacritty --class="agent-hub-chat" -e "$HOME/.config/agent-hub/ai-chat.sh" &
+                    ;;
+                esac
+      '';
+    };
+
+    # Quick prompt dialog - sends to local LLaMA.cpp
     ".config/agent-hub/quick-prompt.sh" = {
       executable = true;
       text = ''
         #!/usr/bin/env bash
         # ============================================
         # Agent Hub - Quick Prompt
-        # Send quick questions to AI agents
+        # Wofi input → LLaMA.cpp API → Clipboard
         # ============================================
 
         # Get prompt from wofi
-        PROMPT=$(wofi --dmenu --prompt="Ask AI 󰋼" --width=600 --height=50 --lines=1)
+        PROMPT=$(wofi --dmenu --prompt="Ask AI 󰋼" --width=700 --height=50 --lines=1)
 
-        if [[ -z "$PROMPT" ]]; then
-          exit 0
-        fi
+        [[ -z "$PROMPT" ]] && exit 0
 
-        # Select agent
-        AGENTS="󰚩 Claude (via API)\n󰊤 Gemini"
-        AGENT=$(echo -e "$AGENTS" | wofi --dmenu --prompt="Select Agent" --width=300 --height=150 --cache-file=/dev/null)
+        # Show loading notification
+        ${pkgs.libnotify}/bin/notify-send -a "Agent Hub" "󰋼 Thinking..." "$PROMPT" &
 
-        case "$AGENT" in
-          "󰚩 Claude (via API)")
-            # Placeholder - would require Claude API
-            notify-send -a "Agent Hub" "󰚩 Claude" "API integration coming soon"
-            ;;
-          "󰊤 Gemini")
-            # Use gemini-cli if available
-            if command -v gemini-cli &> /dev/null; then
-              RESPONSE=$(echo "$PROMPT" | gemini-cli 2>/dev/null)
-              if [[ -n "$RESPONSE" ]]; then
-                echo "$RESPONSE" | wl-copy
-                notify-send -a "Agent Hub" "󰊤 Gemini Response" "$(echo "$RESPONSE" | head -c 200)...\n\nCopied to clipboard!"
-              fi
-            else
-              notify-send -a "Agent Hub" "󰊤 Gemini" "gemini-cli not installed"
-            fi
-            ;;
-          #    if [[ -n "$RESPONSE" ]]; then
-          #      echo "$RESPONSE" | wl-copy
-          #    fi
-          #  else
-          #  fi
-          #  ;;
-        esac
+        # Send to AI
+        "$HOME/.config/agent-hub/ai-chat.sh" --quick "$PROMPT"
       '';
     };
 
-    # Agent status checker
+    # Agent status checker with API health
     ".config/agent-hub/agent-status.sh" = {
       executable = true;
       text = ''
         #!/usr/bin/env bash
         # ============================================
         # Agent Hub - Status Checker
-        # Check availability of AI agents
         # ============================================
 
-        echo "Agent Hub Status"
+        echo "󰚩 Agent Hub Status"
         echo "════════════════════════════════════════"
         echo ""
 
-        # Check Roo/Claude Code
-        if pgrep -f "claude" &> /dev/null || pgrep -f "roo-code" &> /dev/null; then
-          echo "󰚩 Roo (Claude): ✅ Running"
+        # LLaMA.cpp API
+        if curl -s --connect-timeout 2 "http://${llamaCppApi.host}:${toString llamaCppApi.port}/health" > /dev/null 2>&1; then
+          echo "󰊤 LLaMA.cpp API: ✅ Online (port ${toString llamaCppApi.port})"
         else
-          echo "󰚩 Roo (Claude): 󰋗 Not active"
+          echo "󰊤 LLaMA.cpp API: ❌ Offline"
         fi
 
-        # Check Codex
+        # LLaMA.cpp Service
+        if systemctl is-active --quiet llamacpp.service 2>/dev/null; then
+          echo "󰊤 LLaMA.cpp Service: ✅ Running"
+        else
+          echo "󰊤 LLaMA.cpp Service: 󰋗 Stopped"
+        fi
+
+        # Codex CLI
         if command -v codex &> /dev/null; then
           echo "󰧑 Codex: ✅ Available"
         else
           echo "󰧑 Codex: ❌ Not installed"
         fi
 
-        # Check Gemini CLI
+        # Gemini CLI
         if command -v gemini-cli &> /dev/null; then
           echo "󰊤 Gemini CLI: ✅ Available"
         else
           echo "󰊤 Gemini CLI: ❌ Not installed"
         fi
 
-        #  if curl -s localhost:11434 &> /dev/null; then
-        #  else
-        #  fi
-        #else
-        #fi
-
-        # Check LLaMA.cpp
-        if systemctl is-active --quiet llamacpp.service 2>/dev/null; then
-          echo "󰊤 LLaMA.cpp: ✅ Service running"
+        # Antigravity (gemini command)
+        if command -v gemini &> /dev/null; then
+          echo "󰜈 Antigravity: ✅ Available"
         else
-          echo "󰊤 LLaMA.cpp: 󰋗 Service not active"
+          echo "󰜈 Antigravity: ❌ Not installed"
+        fi
+
+        # VSCode with Roo
+        if pgrep -f "code" &> /dev/null; then
+          echo "󰚩 VSCode: ✅ Running"
+        else
+          echo "󰚩 VSCode: 󰋗 Not running"
         fi
 
         echo ""
@@ -188,7 +299,7 @@ in
       '';
     };
 
-    # Waybar module configuration (JSON output for custom module)
+    # Waybar module with API status
     ".config/agent-hub/waybar-module.sh" = {
       executable = true;
       text = ''
@@ -198,51 +309,49 @@ in
         # JSON output for waybar custom module
         # ============================================
 
-        # Count active agents
         ACTIVE=0
-        TOOLTIP="AI Agent Hub\n━━━━━━━━━━━━━━━━━━━━━━"
+        TOOLTIP="󰚩 AI Agent Hub\n━━━━━━━━━━━━━━━━━━━━━━"
 
-        # Check various agents
-        if pgrep -f "claude" &> /dev/null; then
+        # Check LLaMA.cpp API
+        if curl -s --connect-timeout 1 "http://${llamaCppApi.host}:${toString llamaCppApi.port}/health" > /dev/null 2>&1; then
           ((ACTIVE++))
-          TOOLTIP+="\n󰚩 Claude: Active"
+          TOOLTIP+="\n󰊤 LLaMA.cpp: Online"
+        else
+          TOOLTIP+="\n󰊤 LLaMA.cpp: Offline"
         fi
 
+        # Check active agents
         if pgrep -f "codex" &> /dev/null; then
           ((ACTIVE++))
           TOOLTIP+="\n󰧑 Codex: Active"
         fi
 
-        #if curl -s localhost:11434 &> /dev/null 2>&1; then
-        #  ((ACTIVE++))
-        #fi
-
-        if systemctl is-active --quiet llamacpp.service 2>/dev/null; then
+        if pgrep -f "gemini" &> /dev/null; then
           ((ACTIVE++))
-          TOOLTIP+="\n󰊤 LLaMA.cpp: Running"
+          TOOLTIP+="\n󰊤 Gemini: Active"
         fi
 
-        TOOLTIP+="\n\nClick to open Agent Hub"
+        TOOLTIP+="\n\nClick: Open Agent Hub\nRight-click: Quick Prompt"
 
         # Output JSON
         if [[ $ACTIVE -gt 0 ]]; then
-          echo "{\"text\": \"󰚩 $ACTIVE\", \"tooltip\": \"$TOOLTIP\", \"class\": \"active\"}"
+          echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"active\", \"alt\": \"$ACTIVE\"}"
         else
-          echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"inactive\"}"
+          echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"inactive\", \"alt\": \"0\"}"
         fi
       '';
     };
   };
 
   # ============================================
-  # DESKTOP ENTRY FOR AGENT HUB
+  # DESKTOP ENTRY
   # ============================================
   xdg.desktopEntries.agent-hub = {
     name = "Agent Hub";
     genericName = "AI Agent Launcher";
     comment = "Launch and manage AI coding assistants";
     exec = "${config.home.homeDirectory}/.config/agent-hub/agent-launcher.sh";
-    icon = "utilities-terminal"; # Using standard icon
+    icon = "utilities-terminal";
     terminal = false;
     type = "Application";
     categories = [
@@ -251,33 +360,17 @@ in
     ];
   };
 
-  # ============================================
-  # FUTURE EXPANSION NOTES
-  # ============================================
-  # TODO: When expanding this module, consider:
-  #
-  # 1. GTK4/Libadwaita app for native systray icon
-  #    - Use gtk4-layer-shell for Wayland integration
-  #    - Real-time agent status monitoring
-  #    - Quick action buttons
-  #
-  # 2. Dedicated chat window
-  #    - Floating Hyprland window rule
-  #    - WebView for rich markdown rendering
-  #    - History persistence
-  #
-  # 3. Agent orchestration
-  #    - Route tasks to appropriate agents
-  #    - Chain multiple agents for complex tasks
-  #    - Cost/performance optimization
-  #
-  # 4. MCP integration
-  #    - Connect to existing MCP server
-  #    - Shared context between agents
-  #    - Tool/resource access
-  #
-  # 5. Keyboard shortcuts
-  #    - Global hotkey for quick prompt
-  #    - Agent-specific shortcuts
-  #    - Context-aware suggestions
+  xdg.desktopEntries.ai-chat = {
+    name = "AI Chat";
+    genericName = "Local AI Chat";
+    comment = "Chat with local LLaMA.cpp AI";
+    exec = "alacritty --class agent-hub-chat -e ${config.home.homeDirectory}/.config/agent-hub/ai-chat.sh";
+    icon = "utilities-terminal";
+    terminal = false;
+    type = "Application";
+    categories = [
+      "Development"
+      "Utility"
+    ];
+  };
 }
