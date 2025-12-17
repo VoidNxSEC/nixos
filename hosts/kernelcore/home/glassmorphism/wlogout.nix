@@ -15,6 +15,10 @@
   ...
 }:
 
+let
+  # Import glassmorphism design tokens
+  colors = config.glassmorphism.colors;
+in
 {
   programs.wlogout = {
     enable = true;
@@ -62,6 +66,7 @@
       /* ============================================
        * Wlogout - Glassmorphism Theme
        * Premium frosted glass logout menu
+       * Using design tokens from colors.nix
        * ============================================ */
 
       /* Reset */
@@ -73,40 +78,40 @@
 
       /* Main window - dark overlay with blur */
       window {
-        background-color: rgba(10, 10, 15, 0.85);
+        background-color: ${colors.hexToRgba colors.base.bg0 "0.85"};
       }
 
       /* Button container */
       button {
-        background: rgba(18, 18, 26, 0.7);
-        border: 2px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
+        background: ${colors.hexToRgba colors.base.bg1 "0.7"};
+        border: 2px solid ${colors.border.lighter};
+        border-radius: ${toString colors.radius.large}px;
         margin: 12px;
         padding: 0;
-        color: #e4e4e7;
+        color: ${colors.base.fg1};
         font-size: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 20px ${colors.shadow.medium};
         transition: all 0.3s ease;
       }
 
       button:hover {
-        background: rgba(0, 212, 255, 0.15);
-        border-color: rgba(0, 212, 255, 0.5);
-        box-shadow: 0 0 30px rgba(0, 212, 255, 0.25),
-                    0 4px 20px rgba(0, 0, 0, 0.3);
-        color: #00d4ff;
+        background: ${colors.hexToRgba colors.accent.cyan "0.15"};
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.5"};
+        box-shadow: 0 0 30px ${colors.hexToRgba colors.accent.cyan "0.25"},
+                    0 4px 20px ${colors.shadow.medium};
+        color: ${colors.accent.cyan};
       }
 
       button:focus {
-        background: rgba(0, 212, 255, 0.2);
-        border-color: rgba(0, 212, 255, 0.6);
-        box-shadow: 0 0 40px rgba(0, 212, 255, 0.3),
-                    0 4px 20px rgba(0, 0, 0, 0.3);
+        background: ${colors.hexToRgba colors.accent.cyan "0.2"};
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.6"};
+        box-shadow: 0 0 40px ${colors.hexToRgba colors.accent.cyan "0.3"},
+                    0 4px 20px ${colors.shadow.medium};
         outline: none;
       }
 
       button:active {
-        background: rgba(0, 212, 255, 0.25);
+        background: ${colors.hexToRgba colors.accent.cyan "0.25"};
         transform: scale(0.95);
       }
 
@@ -116,79 +121,79 @@
 
       /* Lock - Cyan */
       #lock {
-        background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(18, 18, 26, 0.7));
-        border-color: rgba(0, 212, 255, 0.2);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.cyan "0.1"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.2"};
       }
 
       #lock:hover {
-        background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(18, 18, 26, 0.7));
-        border-color: rgba(0, 212, 255, 0.6);
-        box-shadow: 0 0 35px rgba(0, 212, 255, 0.3);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.cyan "0.25"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.6"};
+        box-shadow: 0 0 35px ${colors.hexToRgba colors.accent.cyan "0.3"};
       }
 
       /* Logout - Violet */
       #logout {
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(18, 18, 26, 0.7));
-        border-color: rgba(124, 58, 237, 0.2);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.1"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.violet "0.2"};
       }
 
       #logout:hover {
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(18, 18, 26, 0.7));
-        border-color: rgba(124, 58, 237, 0.6);
-        box-shadow: 0 0 35px rgba(124, 58, 237, 0.3);
-        color: #a78bfa;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.25"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.violet "0.6"};
+        box-shadow: 0 0 35px ${colors.hexToRgba colors.accent.violet "0.3"};
+        color: ${colors.accent.violetLight};
       }
 
       /* Suspend - Blue */
       #suspend {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(18, 18, 26, 0.7));
-        border-color: rgba(59, 130, 246, 0.2);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.blue "0.1"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.blue "0.2"};
       }
 
       #suspend:hover {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(18, 18, 26, 0.7));
-        border-color: rgba(59, 130, 246, 0.6);
-        box-shadow: 0 0 35px rgba(59, 130, 246, 0.3);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.blue "0.25"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.blue "0.6"};
+        box-shadow: 0 0 35px ${colors.hexToRgba colors.accent.blue "0.3"};
         color: #60a5fa;
       }
 
       /* Hibernate - Green */
       #hibernate {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(18, 18, 26, 0.7));
-        border-color: rgba(34, 197, 94, 0.2);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.green "0.1"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.green "0.2"};
       }
 
       #hibernate:hover {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(18, 18, 26, 0.7));
-        border-color: rgba(34, 197, 94, 0.6);
-        box-shadow: 0 0 35px rgba(34, 197, 94, 0.3);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.green "0.25"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.green "0.6"};
+        box-shadow: 0 0 35px ${colors.hexToRgba colors.accent.green "0.3"};
         color: #4ade80;
       }
 
       /* Reboot - Yellow/Orange */
       #reboot {
-        background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(18, 18, 26, 0.7));
-        border-color: rgba(234, 179, 8, 0.2);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.yellow "0.1"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.yellow "0.2"};
       }
 
       #reboot:hover {
-        background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(18, 18, 26, 0.7));
-        border-color: rgba(234, 179, 8, 0.6);
-        box-shadow: 0 0 35px rgba(234, 179, 8, 0.3);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.yellow "0.25"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.yellow "0.6"};
+        box-shadow: 0 0 35px ${colors.hexToRgba colors.accent.yellow "0.3"};
         color: #facc15;
       }
 
       /* Shutdown - Magenta/Red */
       #shutdown {
-        background: linear-gradient(135deg, rgba(255, 0, 170, 0.1), rgba(18, 18, 26, 0.7));
-        border-color: rgba(255, 0, 170, 0.2);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.magenta "0.1"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.magenta "0.2"};
       }
 
       #shutdown:hover {
-        background: linear-gradient(135deg, rgba(255, 0, 170, 0.25), rgba(18, 18, 26, 0.7));
-        border-color: rgba(255, 0, 170, 0.6);
-        box-shadow: 0 0 35px rgba(255, 0, 170, 0.3);
-        color: #ff00aa;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.magenta "0.25"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
+        border-color: ${colors.hexToRgba colors.accent.magenta "0.6"};
+        box-shadow: 0 0 35px ${colors.hexToRgba colors.accent.magenta "0.3"};
+        color: ${colors.accent.magenta};
       }
     '';
   };
