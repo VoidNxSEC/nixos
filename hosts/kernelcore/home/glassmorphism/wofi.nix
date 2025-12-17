@@ -15,6 +15,10 @@
   ...
 }:
 
+let
+  # Import glassmorphism design tokens
+  colors = config.glassmorphism.colors;
+in
 {
   programs.wofi = {
     enable = true;
@@ -63,6 +67,7 @@
       /* ============================================
        * Wofi - Glassmorphism Theme
        * Premium frosted glass launcher
+       * Using design tokens from colors.nix
        * ============================================ */
 
       /* Reset */
@@ -74,13 +79,13 @@
 
       /* Main window - frosted glass */
       window {
-        background: rgba(10, 10, 15, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5),
-                    0 0 60px rgba(0, 212, 255, 0.08);
+        background: ${colors.hexToRgba colors.base.bg0 "0.85"};
+        border: 1px solid ${colors.border.light};
+        border-radius: ${toString colors.radius.large}px;
+        box-shadow: 0 8px 40px ${colors.shadow.dark},
+                    0 0 60px ${colors.hexToRgba colors.accent.cyan "0.08"};
         margin: 0;
-        padding: 16px;
+        padding: ${toString colors.spacing.md}px;
       }
 
       /* Outer container */
@@ -93,30 +98,30 @@
 
       /* Input/search box - glass pill */
       #input {
-        background: rgba(18, 18, 26, 0.9);
-        border: 1px solid rgba(0, 212, 255, 0.3);
-        border-radius: 12px;
+        background: ${colors.hexToRgba colors.base.bg1 "0.9"};
+        border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.3"};
+        border-radius: ${toString colors.radius.medium}px;
         padding: 12px 20px;
-        margin-bottom: 16px;
-        color: #ffffff;
+        margin-bottom: ${toString colors.spacing.md}px;
+        color: ${colors.base.fg0};
         font-size: 15px;
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.cyan "0.1"};
         transition: all 0.3s ease;
       }
 
       #input:focus {
-        border-color: rgba(0, 212, 255, 0.6);
-        box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.6"};
+        box-shadow: 0 0 30px ${colors.hexToRgba colors.accent.cyan "0.2"};
       }
 
       #input image {
-        color: #00d4ff;
+        color: ${colors.accent.cyan};
         margin-right: 12px;
       }
 
       /* Placeholder text */
       #input:placeholder {
-        color: #71717a;
+        color: ${colors.base.fg3};
       }
 
       /* Scrollable area */
@@ -135,8 +140,8 @@
 
       /* Individual result entries */
       #entry {
-        background: rgba(18, 18, 26, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: ${colors.hexToRgba colors.base.bg1 "0.6"};
+        border: 1px solid ${colors.border.lighter};
         border-radius: 10px;
         padding: 10px 16px;
         margin: 4px 0;
@@ -144,33 +149,33 @@
       }
 
       #entry:hover {
-        background: rgba(0, 212, 255, 0.12);
-        border-color: rgba(0, 212, 255, 0.3);
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+        background: ${colors.hexToRgba colors.accent.cyan "0.12"};
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.3"};
+        box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.cyan "0.15"};
       }
 
       #entry:selected {
-        background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.15));
-        border-color: rgba(0, 212, 255, 0.5);
-        box-shadow: 0 0 25px rgba(0, 212, 255, 0.2);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.cyan "0.2"}, ${colors.hexToRgba colors.accent.violet "0.15"});
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.5"};
+        box-shadow: 0 0 25px ${colors.hexToRgba colors.accent.cyan "0.2"};
       }
 
       #entry:selected:hover {
-        background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(124, 58, 237, 0.2));
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.cyan "0.25"}, ${colors.hexToRgba colors.accent.violet "0.2"});
       }
 
       /* Text styling */
       #text {
-        color: #e4e4e7;
+        color: ${colors.base.fg1};
         margin-left: 12px;
       }
 
       #text:selected {
-        color: #ffffff;
+        color: ${colors.base.fg0};
       }
 
       #entry:selected #text {
-        color: #00d4ff;
+        color: ${colors.accent.cyan};
         font-weight: 500;
       }
 
@@ -178,17 +183,17 @@
       #img {
         margin-right: 8px;
         border-radius: 8px;
-        background: rgba(34, 34, 46, 0.8);
+        background: ${colors.hexToRgba colors.base.bg3 "0.8"};
         padding: 4px;
       }
 
       /* Expander (submenu arrow) */
       #expander {
-        color: #71717a;
+        color: ${colors.base.fg3};
       }
 
       #expander:selected {
-        color: #00d4ff;
+        color: ${colors.accent.cyan};
       }
 
       /* Scrollbar */
@@ -200,23 +205,23 @@
       }
 
       scrollbar slider {
-        background: rgba(0, 212, 255, 0.3);
+        background: ${colors.hexToRgba colors.accent.cyan "0.3"};
         border-radius: 3px;
         min-height: 30px;
       }
 
       scrollbar slider:hover {
-        background: rgba(0, 212, 255, 0.5);
+        background: ${colors.hexToRgba colors.accent.cyan "0.5"};
       }
 
       /* Unmatched text (fuzzy search) */
       #unmatched {
-        color: #71717a;
+        color: ${colors.base.fg3};
       }
 
       /* Matched text highlight */
       #matched {
-        color: #00d4ff;
+        color: ${colors.accent.cyan};
         font-weight: 600;
       }
 
@@ -224,32 +229,32 @@
 
       /* Run mode */
       window#run #input {
-        border-color: rgba(124, 58, 237, 0.3);
+        border-color: ${colors.hexToRgba colors.accent.violet "0.3"};
       }
 
       window#run #input:focus {
-        border-color: rgba(124, 58, 237, 0.6);
-        box-shadow: 0 0 30px rgba(124, 58, 237, 0.2);
+        border-color: ${colors.hexToRgba colors.accent.violet "0.6"};
+        box-shadow: 0 0 30px ${colors.hexToRgba colors.accent.violet "0.2"};
       }
 
       window#run #entry:selected {
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(255, 0, 170, 0.1));
-        border-color: rgba(124, 58, 237, 0.5);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.2"}, ${colors.hexToRgba colors.accent.magenta "0.1"});
+        border-color: ${colors.hexToRgba colors.accent.violet "0.5"};
       }
 
       /* Dmenu mode */
       window#dmenu #input {
-        border-color: rgba(255, 0, 170, 0.3);
+        border-color: ${colors.hexToRgba colors.accent.magenta "0.3"};
       }
 
       window#dmenu #input:focus {
-        border-color: rgba(255, 0, 170, 0.6);
-        box-shadow: 0 0 30px rgba(255, 0, 170, 0.2);
+        border-color: ${colors.hexToRgba colors.accent.magenta "0.6"};
+        box-shadow: 0 0 30px ${colors.hexToRgba colors.accent.magenta "0.2"};
       }
 
       window#dmenu #entry:selected {
-        background: linear-gradient(135deg, rgba(255, 0, 170, 0.2), rgba(124, 58, 237, 0.1));
-        border-color: rgba(255, 0, 170, 0.5);
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.magenta "0.2"}, ${colors.hexToRgba colors.accent.violet "0.1"});
+        border-color: ${colors.hexToRgba colors.accent.magenta "0.5"};
       }
     '';
   };

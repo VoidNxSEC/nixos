@@ -17,6 +17,7 @@
     ./gpu-flags.nix
     ./aliases
     ./training-logger.nix
+    ./cli-helpers.nix # rebuild, dbg, nix-debug, audit-system, lynis-report
   ];
 
   # ============================================================

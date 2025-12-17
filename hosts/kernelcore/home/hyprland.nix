@@ -172,8 +172,10 @@
           "border, 1, 8, gentle"
           "borderangle, 1, 50, linear, loop"
 
-          # Workspace transitions (smooth slide)
+          # Workspace transitions - NEW in 0.52: separate in/out
           "workspaces, 1, 5, slide, slide"
+          "workspacesIn, 1, 4, snappy, slide" # 0.52: entering workspace
+          "workspacesOut, 1, 3, smoothOut, slide" # 0.52: leaving workspace
           "specialWorkspace, 1, 4, snappy, slidevert"
 
           # Layers (waybar, notifications)
@@ -203,16 +205,18 @@
       # LAYER RULES - Blur for glassmorphism
       # ============================================
       layerrule = [
-        # Waybar - full blur
+        # Waybar - full blur + privacy
         "blur, waybar"
         "blurpopups, waybar"
         "ignorezero, waybar"
         "ignorealpha 0.3, waybar"
+        "noscreenshare, waybar" # 0.52: exclude from screenshare
 
-        # Mako notifications - blur
+        # Mako notifications - blur + privacy
         "blur, notifications"
         "ignorezero, notifications"
         "ignorealpha 0.3, notifications"
+        "noscreenshare, notifications" # 0.52: exclude from screenshare
 
         # Wofi launcher - blur
         "blur, wofi"
@@ -370,6 +374,14 @@
         "float, title:^(Save As)$"
         "float, title:^(Choose Files)$"
         "float, title:^(Confirm)$"
+
+        # ==========================================
+        # CATEGORY: Modal Dialogs (0.52 feature)
+        # ==========================================
+        "modal, class:^(polkit-gnome-authentication-agent-1)$"
+        "modal, title:^(Confirm)$"
+        "modal, title:^(Delete)$"
+        "modal, title:^(Warning)$"
         "float, title:^(File Operation Progress)$"
       ];
 
@@ -454,6 +466,7 @@
         enable_hyprcursor = true;
         hide_on_key_press = true;
         inactive_timeout = 5;
+        zoom_disable_aa = false; # 0.52: false=smooth zoom, true=pixelated
       };
 
       # ============================================
@@ -592,6 +605,9 @@
 
         # Lock screen
         "$mainMod CTRL, L, exec, hyprlock"
+
+        # Force idle (0.52) - trigger idle immediately
+        "$mainMod CTRL ALT, L, exec, hyprctl dispatch forceidle"
 
         # Logout menu
         "$mainMod, Escape, exec, wlogout -p layer-shell"
