@@ -19,6 +19,8 @@
     ./flameshot.nix # Screenshot tool (legacy - swappy preferred)
     ./glassmorphism # Glassmorphism design system (replaces theme.nix)
     ./brave.nix # Brave browser configuration
+    ./electron-config.nix # Electron app performance optimization
+    ./firefox.nix # Self-hosted Firefox (extensions in Nix store)
   ];
 
   # ============================================================
