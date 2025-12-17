@@ -376,13 +376,39 @@
         "float, title:^(Confirm)$"
 
         # ==========================================
-        # CATEGORY: Modal Dialogs (0.52 feature)
+        # CATEGORY: Modal Dialogs & Authentication (0.52+ feature)
         # ==========================================
-        "modal, class:^(polkit-gnome-authentication-agent-1)$"
-        "modal, title:^(Confirm)$"
-        "modal, title:^(Delete)$"
-        "modal, title:^(Warning)$"
+        # Polkit authentication dialog - modern syntax
+        "float, class:^(polkit-gnome-authentication-agent-1)$"
+        "pin, class:^(polkit-gnome-authentication-agent-1)$"
+        "stayfocused, class:^(polkit-gnome-authentication-agent-1)$"
+        "size 450 200, class:^(polkit-gnome-authentication-agent-1)$"
+        "center, class:^(polkit-gnome-authentication-agent-1)$"
+        "dimaround, class:^(polkit-gnome-authentication-agent-1)$"
+
+        # Confirmation dialogs - modern window rule syntax
+        "float, title:^(Confirm)$"
+        "pin, title:^(Confirm)$"
+        "stayfocused, title:^(Confirm)$"
+        "center, title:^(Confirm)$"
+        "dimaround, title:^(Confirm)$"
+
+        "float, title:^(Delete)$"
+        "pin, title:^(Delete)$"
+        "stayfocused, title:^(Delete)$"
+        "center, title:^(Delete)$"
+        "dimaround, title:^(Delete)$"
+
+        "float, title:^(Warning)$"
+        "pin, title:^(Warning)$"
+        "stayfocused, title:^(Warning)$"
+        "center, title:^(Warning)$"
+        "dimaround, title:^(Warning)$"
+
+        # File operation dialogs
         "float, title:^(File Operation Progress)$"
+        "pin, title:^(File Operation Progress)$"
+        "center, title:^(File Operation Progress)$"
       ];
 
       # ============================================
