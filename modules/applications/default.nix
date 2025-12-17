@@ -9,6 +9,10 @@
 
 {
   imports = [
+    # Performance Optimizations
+    ./cache-optimization.nix
+    ./electron-tuning.nix
+
     # Browsers
     ./firefox-privacy.nix
     ./brave-secure.nix

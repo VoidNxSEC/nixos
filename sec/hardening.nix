@@ -46,21 +46,6 @@ with lib;
     ];
   };
 
-  # 🛡️ Hardening flags globai
-  #nixpkgs.overlays = [
-  #  (self: super: {
-  #    stdenv = super.stdenvAdapters.withCFlags [
-  #      "-D_FORTIFY_SOURCE=3" # 🎯 Proteção contra buffer overflow
-  #      "-fstack-protector-strong" # 🎯 Stack canaries
-  #      "-fPIE" # 🎯 Position Independent Executables
-  #      "-Wformat" # 🎯 Avisos de formato
-  #      "-Wformat-security" # 🎯 Avisos de segurança em printf
-  #      "-Werror=format-security" # 🎯 Transforma warnings em erros
-  #      "-fstack-clash-protection" # 🎯 Proteção contra stack clash
-  #    ] super.stdenv;
-  #  })
-  #];
-
   security.pam = {
     sshAgentAuth.enable = true;
     loginLimits = [
@@ -305,7 +290,7 @@ with lib;
     "vm.mmap_rnd_compat_bits" = 16;
     "kernel.panic_on_oops" = 1;
     "kernel.panic" = 60;
-    #"vm.mmap_min_addr" = 65536;
+    "vm.mmap_min_addr" = 65536;
     "vm.max_map_count" = 262144;
   };
 

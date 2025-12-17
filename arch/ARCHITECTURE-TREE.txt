@@ -2,9 +2,9 @@
 ║                    NIXOS ARCHITECTURE TREE                                ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
-Generated: 2025-12-16 08:31:20 -02
+Generated: 2025-12-16 20:25:25 -02
 Location:  /etc/nixos
-Branch:    main (58218681)
+Branch:    main (45223370)
 
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -21,7 +21,8 @@ Branch:    main (58218681)
 │   │   ├── snapshot-20251216-011215.txt
 │   │   ├── snapshot-20251216-011243.txt
 │   │   ├── snapshot-20251216-011332.txt
-│   │   └── snapshot-20251216-011451.txt
+│   │   ├── snapshot-20251216-011451.txt
+│   │   └── snapshot-20251216-083118.txt
 │   ├── AI-ARCHITECTURE-REPORT.json
 │   ├── AI-ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.json
@@ -31,31 +32,6 @@ Branch:    main (58218681)
 │   ├── ARCHITECTURE-TREE.txt
 │   ├── dependency-graph.mmd
 │   └── README.md
-├── backups/
-│   ├── ollama_cleanup_20251216_080650/
-│   │   └── configuration.nix*
-│   └── ollama_cleanup_20251216_080716/
-│       ├── agent-hub.nix
-│       ├── ai-compose-stack.sh*
-│       ├── ai-ml-stack.sh*
-│       ├── aliases.sh
-│       ├── configurations-template.nix*
-│       ├── database.nix
-│       ├── default.nix
-│       ├── firewall-zones.nix
-│       ├── gpu-management.sh
-│       ├── gpu-orchestration.nix
-│       ├── home.nix*
-│       ├── litellm_runtime_manager.sh*
-│       ├── ml-gpu-users.nix
-│       ├── multimodal.sh*
-│       ├── nginx-tailscale.nix
-│       ├── nixos-aliases.nix
-│       ├── nx.sh*
-│       ├── packages.nix*
-│       ├── phantom.nix
-│       ├── storage.nix*
-│       └── tailscale-services.nix
 ├── docs/
 │   ├── applications/
 │   │   └── ZELLIJ-GUIDE.md
@@ -132,9 +108,11 @@ Branch:    main (58218681)
 │   ├── GITHUB_CLI_AUTH.md
 │   ├── GITHUB-SOPS-INTEGRATION.md
 │   ├── GIT-WORKFLOW-TESTING-IMPROVEMENT-PLAN.md
+│   ├── GLASSMORPHISM-DESIGN-SYSTEM.md
 │   ├── GUIA-BACKUP-E-REINSTALACAO.md
 │   ├── GUIA-CORRECAO-DNS.md*
 │   ├── HANDOFF-TAILSCALE-E-INFRAESTRUTURA.md
+│   ├── HYPRLAND-KEYBINDINGS.md
 │   ├── IMPLEMENTATION-SUMMARY.md
 │   ├── INFRASTRUCTURE-FIX-SUMMARY.md
 │   ├── INSTRUCTIONS.md
@@ -421,9 +399,6 @@ Branch:    main (58218681)
 │   │   │   └── default.nix
 │   │   ├── lynis/
 │   │   │   └── default.nix
-│   │   ├── protonpass/
-│   │   │   ├── default.nix
-│   │   │   └── ProtonPass.deb
 │   │   ├── _sources/
 │   │   │   ├── generated.json
 │   │   │   └── generated.nix
@@ -760,6 +735,6 @@ Branch:    main (58218681)
 ├── shell.nix
 └── test_file.txt
 
-125 directories, 626 files
+121 directories, 605 files
 
 ═══════════════════════════════════════════════════════════════════════════

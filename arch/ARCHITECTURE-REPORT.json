@@ -1,43 +1,43 @@
 {
   "metadata": {
     "version": "3.0.0",
-    "generated": "2025-12-16T10:31:20Z",
+    "generated": "2025-12-16T22:25:25Z",
     "location": "/etc/nixos",
     "hostname": "nx"
   },
   "git": {
     "branch": "main",
-    "commit": "58218681",
-    "commit_long": "58218681ed5bc34cb8fa2a67575c109f3892602c",
-    "commit_date": "2025-12-16 07:24:06",
-    "total_commits": 269,
+    "commit": "45223370",
+    "commit_long": "45223370947ec3c041a7edd33b605c47282f07b6",
+    "commit_date": "2025-12-16 13:53:21",
+    "total_commits": 283,
     "contributors": 3,
     "last_tag": "ml-restructure-complete",
     "repo_age_days": 0
   },
   "statistics": {
     "files": {
-      "total": 910,
-      "nix": 299,
-      "sh": 108,
-      "md": 258,
+      "total": 889,
+      "nix": 281,
+      "sh": 101,
+      "md": 261,
       "yaml": 14
     },
     "lines": {
-      "nix": 56704,
-      "sh": 19030,
-      "md": 98355
+      "nix": 52793,
+      "sh": 16559,
+      "md": 100130
     },
-    "directories": 277,
+    "directories": 273,
     "sizes": {
-      "modules": "1.2G",
+      "modules": "1.0G",
       "docs": "2.0M",
       "scripts": "1.5M",
       "total": "2.4G"
     }
   },
   "modules": {
-    "total": 179,
+    "total": 176,
     "categories": 12,
     "by_category": {
       "shell": {
@@ -54,7 +54,7 @@
       },
       "system": {
         "count": 10,
-        "lines": 1193
+        "lines": 1192
       },
       "hardware": {
         "count": 12,
@@ -70,7 +70,7 @@
       },
       "ml": {
         "count": 20,
-        "lines": 2362
+        "lines": 2365
       },
       "containers": {
         "count": 4,
@@ -81,15 +81,15 @@
         "lines": 2317
       },
       "packages": {
-        "count": 36,
-        "lines": 3151
+        "count": 33,
+        "lines": 2950
       },
       "services": {
         "count": 16,
         "lines": 3046
       }
     },
-    "orphaned": 171
+    "orphaned": 169
   },
   "health": {
     "overall": 65,

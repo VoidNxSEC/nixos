@@ -184,7 +184,7 @@
         platforms = {
           github = true; # GitHub CLI and tools
           gitlab = false; # Use GitHub Actions instead of local GitLab runners
-          gitea = true; # Offload automation to GitHub hosted runners
+          gitea = false; # Offload automation to GitHub hosted runners
         };
         pre-commit = {
           enable = true; # ENABLED: For auto-commit hooks
@@ -207,7 +207,7 @@
     };
 
     virtualization = {
-      enable = true;
+      enable = false;
       virt-manager = true;
       libvirtdGroup = [ "kernelcore" ];
       virtiofs.enable = true;
@@ -495,8 +495,8 @@
       n_threads_batch = 12;
 
       # GPU configuration (~4GB VRAM for 8B Q4)
-      n_gpu_layers = 30;
-      mainGpu = 1;
+      n_gpu_layers = 36;
+      mainGpu = 0;
 
       # Context & batching
       n_parallel = 4; # 4 concurrent requests
