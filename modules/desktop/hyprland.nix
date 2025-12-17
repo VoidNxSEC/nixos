@@ -183,6 +183,26 @@ in
     };
 
     # ============================================
+    # XDG DESKTOP PORTAL GTK - File Picker Service
+    # ============================================
+    # Ensure GTK portal starts for file save/open dialogs
+    systemd.user.services.xdg-desktop-portal-gtk = {
+      description = "Portal service (GTK/GNOME implementation) for file dialogs";
+      wantedBy = [ "graphical-session.target" ];
+      after = [ "xdg-desktop-portal.service" ];
+      partOf = [ "graphical-session.target" ];
+      serviceConfig = {
+        # Clear existing ExecStart before setting new one
+        ExecStart = [
+          "" # Clear
+          "${pkgs.xdg-desktop-portal-gtk}/libexec/xdg-desktop-portal-gtk"
+        ];
+        Restart = "on-failure";
+        RestartSec = 1;
+      };
+    };
+
+    # ============================================
     # ENVIRONMENT VARIABLES - Wayland Native
     # ============================================
     environment.sessionVariables = mkMerge [
