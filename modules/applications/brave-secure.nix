@@ -50,8 +50,8 @@ in
     environment.etc."firejail/brave.local".text = ''
       # GPU memory limiting and security profile for Brave
 
-      # Networking
-      net none
+      # Networking - use filtered instead of blocking
+      # NOTE: "net none" was breaking all networking!
       netfilter
 
       # Filesystem restrictions
@@ -61,7 +61,7 @@ in
       # Disable unnecessary features
       noroot
       nogroups
-      nosound
+      # NOTE: "nosound" was breaking audio playback!
 
       # Seccomp filter
       seccomp
