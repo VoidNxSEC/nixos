@@ -57,6 +57,7 @@ in
           "custom/gpu"
           "custom/disk"
           "custom/ssh"
+          "custom/agent-hub"
           "network"
           "bluetooth"
           "pulseaudio"
@@ -203,6 +204,17 @@ in
           format = "{}";
           tooltip = true;
           on-click = "alacritty -e htop -p $(pgrep -d, ssh)";
+        };
+
+        # Agent Hub - AI Agent Integration
+        "custom/agent-hub" = {
+          exec = "${config.home.homeDirectory}/.config/agent-hub/waybar-module.sh";
+          return-type = "json";
+          interval = 10;
+          format = "{}";
+          tooltip = true;
+          on-click = "${config.home.homeDirectory}/.config/agent-hub/agent-launcher.sh";
+          on-click-right = "${config.home.homeDirectory}/.config/agent-hub/quick-prompt.sh";
         };
 
         "network" = {
@@ -758,8 +770,18 @@ in
         get_system_stats() {
           # CPU Usage (percentage) - Works with both GNU top and BusyBox top
           local CPU_USAGE
-          # Try BusyBox format first: "CPU:  7.5% usr  6.0% sys  0.0% nic 82.7% idle"
-          CPU_USAGE=$(top -bn1 | awk '/^CPU:/ {gsub(/%/, "", $10); print int(100 - $10); exit}')
+          # Try BusyBox format first: "CPU: 11.9% usr 1.5% sys 0.0% nic 84.9% idle 0.7% io"
+          # Parse idle value by searching for "idle" keyword and extracting the percentage before it
+          CPU_USAGE=$(top -bn1 | awk '/^CPU:/ {
+            for(i=1; i<=NF; i++) {
+              if($i == "idle" && i > 1) {
+                idle=$(i-1);
+                gsub(/%/, "", idle);
+                print int(100 - idle);
+                exit;
+              }
+            }
+          }')
 
           # If that didn't work, try GNU top format: "Cpu(s):  10.0%us,  5.0%sy, 85.0%id"
           if [[ -z "$CPU_USAGE" ]] || [[ "$CPU_USAGE" == "0" ]]; then
