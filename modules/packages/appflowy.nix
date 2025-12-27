@@ -1,5 +1,5 @@
 # AppFlowy - derivation based on nixpkgs official
-# Updated for version 0.10.6
+# Updated for version 0.10.8
 {
   pkgs,
   lib,
@@ -9,7 +9,7 @@
 let
   appflowy = pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
     pname = "appflowy";
-    version = "0.10.6";
+    version = "0.10.8";
 
     src = pkgs.fetchzip {
       url = "https://github.com/AppFlowy-IO/appflowy/releases/download/${finalAttrs.version}/AppFlowy-${finalAttrs.version}-linux-x86_64.tar.gz";
@@ -24,7 +24,7 @@ let
     ];
 
     buildInputs = [
-      pkgs.gtk3
+      pkgs.gtk4
       pkgs.keybinder3
       pkgs.libnotify
       pkgs.gst_all_1.gstreamer
@@ -50,6 +50,13 @@ let
       install -Dm444 data/flutter_assets/assets/images/flowy_logo.svg $out/share/icons/hicolor/scalable/apps/appflowy.svg
 
       runHook postInstall
+    '';
+
+    postInstall = ''
+            # Fix version.json mismatch (upstream bug: release 0.10.8 still reports 0.10.6)
+            cat > $out/opt/data/flutter_assets/version.json << EOF
+      {"app_name":"appflowy","version":"${finalAttrs.version}","package_name":"appflowy"}
+      EOF
     '';
 
     preFixup = ''
