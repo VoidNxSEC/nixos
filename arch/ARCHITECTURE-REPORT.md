@@ -1,7 +1,7 @@
 # NixOS Architecture Analysis Report
 
 > **Professional Edition v3.0.0**
-> **Generated**: 2025-12-16 20:25:25 -02
+> **Generated**: 2025-12-26 08:12:49 -02
 > **Location**: `/etc/nixos`
 
 ---
@@ -24,21 +24,21 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Files** | 889 |
-| **Total Directories** | 273 |
+| **Total Files** | 903 |
+| **Total Directories** | 277 |
 | **Repository Size** | 2.4G |
 | **Git Branch** | `main` |
-| **Git Commit** | `45223370` |
-| **Total Commits** | 283 |
+| **Git Commit** | `9a57df48` |
+| **Total Commits** | 286 |
 | **Contributors** | 3 |
-| **Repository Age** | 0 days |
+| **Repository Age** | 9 days |
 
 ### NixOS Configuration
 
 | Metric | Value |
 |--------|-------|
-| **.nix files** | 281 (52793 lines) |
-| **Total modules** | 176 |
+| **.nix files** | 291 (55284 lines) |
+| **Total modules** | 180 |
 | **Module categories** | 12 |
 | **Modules size** | 1.0G |
 
@@ -48,7 +48,7 @@
 |--------|-------|--------|
 | **Overall Health** | 65/100 | ⚠️ Needs Work |
 | **Security** | 100/100 | ✅ Strong |
-| **Documentation** | 51/100 | ⚠️ Needs Work |
+| **Documentation** | 52/100 | ⚠️ Needs Work |
 
 ---
 
@@ -56,18 +56,18 @@
 
 | Category | Modules | Lines | Description |
 |----------|---------|-------|-------------|
-| **shell** | 34 | 5222 | Shell configuration and aliases |
+| **shell** | 35 | 5651 | Shell configuration and aliases |
 | **packages** | 33 | 2950 | Custom packages and overlays |
 | **ml** | 20 | 2365 | Machine learning infrastructure |
 | **security** | 17 | 2317 | Security hardening and policies |
 | **services** | 16 | 3046 | System services and daemons |
 | **network** | 13 | 2842 | Network configuration and services |
 | **hardware** | 12 | 2712 | Hardware configurations (GPU, CPU, peripherals) |
-| **system** | 10 | 1192 | Core system configuration |
-| **applications** | 8 | 1778 | User applications and tools |
+| **system** | 10 | 1263 | Core system configuration |
+| **applications** | 10 | 2019 | User applications and tools |
 | **development** | 5 | 973 | Development environments and tools |
+| **containers** | 5 | 631 | Docker, Podman, NixOS containers |
 | **virtualization** | 4 | 1971 | VMs, QEMU, libvirt |
-| **containers** | 4 | 361 | Docker, Podman, NixOS containers |
 
 ---
 
@@ -91,7 +91,7 @@
 
 | Component | Score |
 |-----------|-------|
-| Documentation | 51/100 |
+| Documentation | 52/100 |
 | Security | 100/100 |
 | Structure | 100/100 |
 
@@ -103,7 +103,7 @@
 
 ### 📚 Documentation
 
-- **Current**: 51%
+- **Current**: 52%
 - **Target**: 80%+
 - **Action**: Add `description` fields to module options
 - **Benefit**: Better maintainability and onboarding
@@ -117,9 +117,9 @@
 
 | Type | Count | Lines |
 |------|-------|-------|
-| .nix | 281 | 52793 |
-| .sh | 101 | 16559 |
-| .md | 261 | 100130 |
+| .nix | 291 | 55284 |
+| .sh | 102 | 16709 |
+| .md | 261 | 100105 |
 | .yaml | 14 | - |
 
 ### Directory Sizes
@@ -150,7 +150,8 @@
 │   │   ├── snapshot-20251216-011243.txt
 │   │   ├── snapshot-20251216-011332.txt
 │   │   ├── snapshot-20251216-011451.txt
-│   │   └── snapshot-20251216-083118.txt
+│   │   ├── snapshot-20251216-083118.txt
+│   │   └── snapshot-20251216-202522.txt
 │   ├── AI-ARCHITECTURE-REPORT.json
 │   ├── AI-ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.json
@@ -360,6 +361,8 @@
 │   │   │   │   └── zsh.nix
 │   │   │   ├── alacritty.nix
 │   │   │   ├── brave.nix
+│   │   │   ├── electron-config.nix
+│   │   │   ├── firefox.nix
 │   │   │   ├── flameshot.nix
 │   │   │   ├── git.nix
 │   │   │   ├── home.nix
@@ -381,8 +384,10 @@
 ├── modules/
 │   ├── applications/
 │   │   ├── brave-secure.nix*
+│   │   ├── cache-optimization.nix
 │   │   ├── chromium.nix
 │   │   ├── default.nix
+│   │   ├── electron-tuning.nix
 │   │   ├── firefox-privacy.nix*
 │   │   ├── nemo-full.nix
 │   │   ├── nixos.code-workspace
@@ -394,14 +399,20 @@
 │   │   ├── production.nix
 │   │   ├── README.md
 │   │   └── video-production.nix
+│   ├── blockchain/
+│   │   └── algorand/
+│   │       ├── dao.nix
+│   │       └── default.nix
 │   ├── containers/
 │   │   ├── default.nix
+│   │   ├── docker-hub.nix
 │   │   ├── docker.nix*
 │   │   ├── nixos-containers.nix*
 │   │   └── podman.nix
 │   ├── debug/
 │   │   ├── debug-init.nix*
 │   │   ├── default.nix
+│   │   ├── io-monitor.nix
 │   │   ├── test-init.nix*
 │   │   └── tools-integration.nix
 │   ├── desktop/
@@ -642,6 +653,7 @@
 │   │   │   ├── bash/
 │   │   │   └── python/
 │   │   ├── templates/
+│   │   ├── cli-helpers.nix
 │   │   ├── default.nix*
 │   │   ├── gpu-flags.nix*
 │   │   ├── INTEGRATION.md*
@@ -649,6 +661,10 @@
 │   ├── soc/
 │   │   ├── alerting/
 │   │   │   └── alerting.nix
+│   │   ├── anduril/
+│   │   │   ├── default.nix
+│   │   │   ├── ### Findings - All
+│   │   │   └── stig-database.json
 │   │   ├── dashboards/
 │   │   │   └── grafana.nix
 │   │   ├── edr/
@@ -709,6 +725,8 @@
 │   ├── hyprland.nix
 │   ├── python-packages.nix
 │   └── README.md
+├── pinix/
+│   └── audit.sh*
 ├── projects/
 ├── reports/
 │   ├── audit_report_20251214_simple.md
@@ -863,7 +881,7 @@
 ├── shell.nix
 └── test_file.txt
 
-121 directories, 605 files
+125 directories, 619 files
 ```
 
 ---
@@ -871,7 +889,7 @@
 ## 📝 Metadata
 
 - **Report Version**: 3.0.0
-- **Generated**: 2025-12-16 20:25:25 -02
+- **Generated**: 2025-12-26 08:12:49 -02
 - **Tool**: NixOS Architecture Analysis Tool
 - **Repository**: /etc/nixos
 
