@@ -1,34 +1,34 @@
 {
   "metadata": {
     "version": "3.0.0",
-    "generated": "2025-12-26T10:12:49Z",
+    "generated": "2025-12-16T22:25:25Z",
     "location": "/etc/nixos",
     "hostname": "nx"
   },
   "git": {
     "branch": "main",
-    "commit": "9a57df48",
-    "commit_long": "9a57df48cdaeca0e03ee25480412505ed519ab6d",
-    "commit_date": "2025-12-17 07:59:46",
-    "total_commits": 286,
+    "commit": "45223370",
+    "commit_long": "45223370947ec3c041a7edd33b605c47282f07b6",
+    "commit_date": "2025-12-16 13:53:21",
+    "total_commits": 283,
     "contributors": 3,
     "last_tag": "ml-restructure-complete",
-    "repo_age_days": 9
+    "repo_age_days": 0
   },
   "statistics": {
     "files": {
-      "total": 903,
-      "nix": 291,
-      "sh": 102,
+      "total": 889,
+      "nix": 281,
+      "sh": 101,
       "md": 261,
       "yaml": 14
     },
     "lines": {
-      "nix": 55284,
-      "sh": 16709,
-      "md": 100105
+      "nix": 52793,
+      "sh": 16559,
+      "md": 100130
     },
-    "directories": 277,
+    "directories": 273,
     "sizes": {
       "modules": "1.0G",
       "docs": "2.0M",
@@ -37,24 +37,24 @@
     }
   },
   "modules": {
-    "total": 180,
+    "total": 176,
     "categories": 12,
     "by_category": {
       "shell": {
-        "count": 35,
-        "lines": 5651
+        "count": 34,
+        "lines": 5222
       },
       "virtualization": {
         "count": 4,
         "lines": 1971
       },
       "applications": {
-        "count": 10,
-        "lines": 2019
+        "count": 8,
+        "lines": 1778
       },
       "system": {
         "count": 10,
-        "lines": 1263
+        "lines": 1192
       },
       "hardware": {
         "count": 12,
@@ -73,8 +73,8 @@
         "lines": 2365
       },
       "containers": {
-        "count": 5,
-        "lines": 631
+        "count": 4,
+        "lines": 361
       },
       "security": {
         "count": 17,
@@ -89,11 +89,11 @@
         "lines": 3046
       }
     },
-    "orphaned": 175
+    "orphaned": 169
   },
   "health": {
     "overall": 65,
-    "documentation": 52,
+    "documentation": 51,
     "security": 100
   },
   "security": {
