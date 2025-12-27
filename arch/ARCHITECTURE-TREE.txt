@@ -2,9 +2,9 @@
 ║                    NIXOS ARCHITECTURE TREE                                ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
-Generated: 2025-12-16 20:25:25 -02
+Generated: 2025-12-26 08:12:49 -02
 Location:  /etc/nixos
-Branch:    main (45223370)
+Branch:    main (9a57df48)
 
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -22,7 +22,8 @@ Branch:    main (45223370)
 │   │   ├── snapshot-20251216-011243.txt
 │   │   ├── snapshot-20251216-011332.txt
 │   │   ├── snapshot-20251216-011451.txt
-│   │   └── snapshot-20251216-083118.txt
+│   │   ├── snapshot-20251216-083118.txt
+│   │   └── snapshot-20251216-202522.txt
 │   ├── AI-ARCHITECTURE-REPORT.json
 │   ├── AI-ARCHITECTURE-REPORT.md
 │   ├── ARCHITECTURE-REPORT.json
@@ -232,6 +233,8 @@ Branch:    main (45223370)
 │   │   │   │   └── zsh.nix
 │   │   │   ├── alacritty.nix
 │   │   │   ├── brave.nix
+│   │   │   ├── electron-config.nix
+│   │   │   ├── firefox.nix
 │   │   │   ├── flameshot.nix
 │   │   │   ├── git.nix
 │   │   │   ├── home.nix
@@ -253,8 +256,10 @@ Branch:    main (45223370)
 ├── modules/
 │   ├── applications/
 │   │   ├── brave-secure.nix*
+│   │   ├── cache-optimization.nix
 │   │   ├── chromium.nix
 │   │   ├── default.nix
+│   │   ├── electron-tuning.nix
 │   │   ├── firefox-privacy.nix*
 │   │   ├── nemo-full.nix
 │   │   ├── nixos.code-workspace
@@ -266,14 +271,20 @@ Branch:    main (45223370)
 │   │   ├── production.nix
 │   │   ├── README.md
 │   │   └── video-production.nix
+│   ├── blockchain/
+│   │   └── algorand/
+│   │       ├── dao.nix
+│   │       └── default.nix
 │   ├── containers/
 │   │   ├── default.nix
+│   │   ├── docker-hub.nix
 │   │   ├── docker.nix*
 │   │   ├── nixos-containers.nix*
 │   │   └── podman.nix
 │   ├── debug/
 │   │   ├── debug-init.nix*
 │   │   ├── default.nix
+│   │   ├── io-monitor.nix
 │   │   ├── test-init.nix*
 │   │   └── tools-integration.nix
 │   ├── desktop/
@@ -514,6 +525,7 @@ Branch:    main (45223370)
 │   │   │   ├── bash/
 │   │   │   └── python/
 │   │   ├── templates/
+│   │   ├── cli-helpers.nix
 │   │   ├── default.nix*
 │   │   ├── gpu-flags.nix*
 │   │   ├── INTEGRATION.md*
@@ -521,6 +533,10 @@ Branch:    main (45223370)
 │   ├── soc/
 │   │   ├── alerting/
 │   │   │   └── alerting.nix
+│   │   ├── anduril/
+│   │   │   ├── default.nix
+│   │   │   ├── ### Findings - All
+│   │   │   └── stig-database.json
 │   │   ├── dashboards/
 │   │   │   └── grafana.nix
 │   │   ├── edr/
@@ -581,6 +597,8 @@ Branch:    main (45223370)
 │   ├── hyprland.nix
 │   ├── python-packages.nix
 │   └── README.md
+├── pinix/
+│   └── audit.sh*
 ├── projects/
 ├── reports/
 │   ├── audit_report_20251214_simple.md
@@ -735,6 +753,6 @@ Branch:    main (45223370)
 ├── shell.nix
 └── test_file.txt
 
-121 directories, 605 files
+125 directories, 619 files
 
 ═══════════════════════════════════════════════════════════════════════════
