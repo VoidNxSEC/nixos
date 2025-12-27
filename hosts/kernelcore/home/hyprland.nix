@@ -62,7 +62,7 @@
       input = {
         kb_layout = "br";
         follow_mouse = 1;
-        sensitivity = 1.0;
+        sensitivity = 1.2;
         accel_profile = "flat";
         touchpad = {
           natural_scroll = false;
