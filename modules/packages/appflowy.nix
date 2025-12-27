@@ -24,9 +24,15 @@ let
     ];
 
     buildInputs = [
-      pkgs.gtk4
+      pkgs.gtk3
+      pkgs.gsettings-desktop-schemas
       pkgs.keybinder3
       pkgs.libnotify
+      # File picker support (Flutter file_picker package requires zenity)
+      pkgs.zenity
+      pkgs.xdg-utils
+      pkgs.dbus
+      # GStreamer for media support
       pkgs.gst_all_1.gstreamer
       pkgs.gst_all_1.gst-plugins-base
       pkgs.gst_all_1.gst-plugins-good
@@ -63,7 +69,16 @@ let
       # Add missing libraries to appflowy using the ones it comes with
       makeWrapper $out/opt/AppFlowy $out/bin/appflowy \
         --set LD_LIBRARY_PATH "$out/opt/lib/" \
-        --prefix PATH : "${lib.makeBinPath [ pkgs.xdg-user-dirs ]}"
+        --prefix PATH : "${
+          lib.makeBinPath [
+            pkgs.xdg-user-dirs
+            pkgs.xdg-utils
+            pkgs.zenity
+          ]
+        }" \
+        --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}" \
+        --set-default XDG_RUNTIME_DIR "/run/user/$UID" \
+        --unset DBUS_SESSION_BUS_ADDRESS
     '';
 
     desktopItems = [
