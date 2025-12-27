@@ -320,7 +320,7 @@ in
 
     enableAutoFailover = mkOption {
       type = types.bool;
-      default = false;
+      default = true;
       description = "Enable automatic failover to local network on poor connectivity";
     };
 

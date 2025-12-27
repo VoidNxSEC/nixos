@@ -1,0 +1,10 @@
+# Git LFS configuration for .deb packages
+# This ensures .deb files are stored efficiently with Git LFS
+
+# Track all .deb files with Git LFS
+*.deb filter=lfs diff=lfs merge=lfs -text
+
+# Also track compressed archives if needed
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.tar.xz filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
