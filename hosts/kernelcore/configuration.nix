@@ -182,7 +182,7 @@
         platforms = {
           github = true; # GitHub CLI and tools
           gitlab = false; # Use GitHub Actions instead of local GitLab runners
-          gitea = true; # Offload automation to GitHub hosted runners
+          gitea = false; # Offload automation to GitHub hosted runners
         };
         pre-commit = {
           enable = true; # ENABLED: For auto-commit hooks
@@ -489,7 +489,7 @@
       n_threads_batch = 12;
 
       # GPU configuration (~4GB VRAM for 8B Q4)
-      n_gpu_layers = 30;
+      n_gpu_layers = 35;
       mainGpu = 1;
 
       # Context & batching
@@ -710,15 +710,11 @@
       git-lfs
       promptfoo
 
-      #libreoffice
-      #onlyoffice-desktopeditors
-
       certbot
 
       flameshot
 
       claude-code
-      qwen-code
 
       alacritty
       xclip
@@ -732,8 +728,6 @@
 
       yt-dlg
       tts
-      spotify
-      spotifyd
 
       antigravity
       zed-editor
@@ -851,6 +845,7 @@
     enable = true;
   };
 
+  # TODO: This issue need fix with more analysis
   boot.initrd.prepend = [
     "${
       pkgs.runCommand "acpi-override"
@@ -871,7 +866,7 @@
     }/acpi_override.cpio"
   ];
 
-  services.i915-governor.enable = false;
+  services.i915-governor.enable = false; # WARNING: This service need to be documented
 
   # OBS Studio configuration moved to modules/audio/video-production.nix
   # Enable with: modules.audio.videoProduction.enable = true;

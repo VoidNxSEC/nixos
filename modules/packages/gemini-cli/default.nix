@@ -10,19 +10,19 @@ let
 
   package = pkgs.buildNpmPackage {
     pname = "gemini-cli";
-    version = "0.21.0-nightly.20251216";
+    version = "0.24.0-nightly.20251227";
 
     src = pkgs.fetchzip {
-      url = "https://github.com/google-gemini/gemini-cli/archive/refs/tags/v0.21.0-nightly.20251217.db643e916.tar.gz";
-      hash = "sha256-k57rmQB7LdNh73o8p1M0w8HqH5JkvmXU65g8lQFmZyY="; # Run build to get real hash
+      url = "https://github.com/google-gemini/gemini-cli/archive/refs/tags/v0.24.0-nightly.20251227.37be16243.tar.gz";
+      hash = "sha256-Js6D/qdIbJFeWqgJKoCwAT3+HOylPPYSQT+msyRAUI4="; # Run build to get real hash
     };
 
-    npmDepsHash = "sha256-Z9dlZEEM3q6pRIVEn/uR6j2d0vjFBETb2FuQBosaCyM="; # Run build to get real hash
+    npmDepsHash = "sha256-UidGkH05tU/Bd9F9dT845WU3XhrVtGWgeENkEqJp/IY="; # Run build to get real hash
 
     # Dependências de compilação (necessárias apenas para construir o pacote)
     nativeBuildInputs = with pkgs; [
       pkg-config
-      python3
+      python313
       git
       makeBinaryWrapper
     ];
@@ -35,6 +35,9 @@ let
     npmFlags = [ "--legacy-peer-deps" ];
     dontNpmInstall = true;
 
+    # Desabilitar autopatchelf - gemini-cli é JavaScript, não binário ELF
+    dontAutoPatchelf = true;
+
     installPhase = ''
       runHook preInstall
 
@@ -45,6 +48,10 @@ let
 
       # Copia node_modules dereferenciando links simbólicos
       cp -rL node_modules $out/lib/gemini-cli/ || cp -r node_modules $out/lib/gemini-cli/
+
+      # Remove symlinks quebrados que apontam para /build
+      find $out/lib/gemini-cli -xtype l -delete 2>/dev/null || true
+      find $out/lib/gemini-cli -type l -lname '/build/*' -delete 2>/dev/null || true
 
       # CRIAR WRAPPER ROBUSTO
       # Aqui está a correção dos erros de grep/git:
