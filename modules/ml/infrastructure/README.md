@@ -52,7 +52,9 @@ VRAM monitoring and metrics collection.
 - Integration with offload manager
 - Metrics export for monitoring systems
 
-### vram/scheduler.nix (TODO)
+### vram/scheduler.nix
+
+**Status**: Planned (Future Enhancement)
 
 Central GPU allocation scheduler.
 
@@ -62,7 +64,9 @@ Central GPU allocation scheduler.
 - Automatic load balancing
 - Resource quotas per service
 
-### hardware/cuda.nix (TODO)
+### hardware/cuda.nix
+
+**Status**: Planned (Future Enhancement)
 
 CUDA and GPU-specific configurations.
 
