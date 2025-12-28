@@ -178,7 +178,7 @@
             ./modules
 
             # ═══════════════════════════════════════════════════════════
-            # FEATURE FLAGS & CONFIGURATION
+            # FEATURE FLAGS & CONFIGURATION /* TODO: move to configuration.nix in hosts/kernelcore/configuration.nix */
             # ═══════════════════════════════════════════════════════════
             {
               # SecureLLM MCP Server
@@ -205,7 +205,7 @@
               # Swissknife Debug Tools
               kernelcore.swissknife.enable = true;
             }
-
+            # END TODO
             # ═══════════════════════════════════════════════════════════
             # SOPS-NIX SECRETS MANAGEMENT
             # ═══════════════════════════════════════════════════════════
