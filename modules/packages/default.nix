@@ -21,7 +21,7 @@
     ./lynis
 
     # Legacy support - will be migrated
-    # TODO: Migrate remaining packages from old structure
+    # Modular package structure with sandboxing and audit support
     ./appflowy.nix
   ];
 }
