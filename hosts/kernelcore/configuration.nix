@@ -316,7 +316,9 @@
     };
 
     services.gpu-orchestration = {
-      enable = true;
+      enable = false; # DISABLED: Laptop doesn't need GPU mode switching (desktop-only feature)
+      # This was stopping llamacpp-turbo on boot (defaulting to Docker mode)
+      # See: /home/kernelcore/.gemini/antigravity/brain/*/root_cause_analysis.md
       defaultMode = "docker"; # Docker containers get GPU priority by default
     };
 
@@ -462,9 +464,10 @@
       };
     };
 
-    # Offload build server - permite laptop buildar remotamente neste desktop
+    # Offload build server - DISABLED (this is the laptop, not the desktop)
+    # Desktop server is at 192.168.15.7 - connects via Tailscale
     offload-server = {
-      enable = true;
+      enable = false; # Changed from true - this is laptop client, not server
       cachePort = 5000; # nix-serve porta
       builderUser = "nix-builder";
       cacheKeyPath = "/var/cache-priv-key.pem";
@@ -489,11 +492,11 @@
       n_threads_batch = 12;
 
       # GPU configuration (~4GB VRAM for 8B Q4)
-      n_gpu_layers = 30;
+      n_gpu_layers = 35;
       mainGpu = 1;
 
       # Context & batching
-      n_parallel = 4; # 4 concurrent requests
+      n_parallel = 1; # Dedicated server - give full context to 1 slot
       n_ctx = 8192; # 8K context window
       n_batch = 2048;
       n_ubatch = 512;
