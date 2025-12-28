@@ -24,7 +24,7 @@
       # Local binary cache - uses offload-server's nix-serve
       binary-cache = {
         enable = true;
-        local.enable = true;
+        local.enable = false;
         # URL: http://192.168.15.9:5000 (default)
       };
     };
@@ -284,7 +284,7 @@
     services.github-runner = {
       # Self-hosted GitHub Actions runner
       # Requires secrets/github.yaml to be configured with registration token
-      enable = false;
+      enable = true;
       useSops = true; # SOPS for secure token management
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos"; # Repository URL
