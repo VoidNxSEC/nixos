@@ -33,6 +33,7 @@
     # Endpoint Detection & Response
     ./edr/edr.nix
     ./edr/fim.nix
+    # TODO: Future integration, template in Notion ./edr/agent.nix, ./edr/server.nix, ./edr/endpoint-protection.nix
 
     # Network security
     ./network/netflow.nix
