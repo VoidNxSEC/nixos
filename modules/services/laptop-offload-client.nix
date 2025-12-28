@@ -21,7 +21,7 @@ in
   # ===== REMOTE BUILDERS CONFIGURATION =====
   nix.settings = {
     # Enable distributed builds (optional - only used when desktop is available)
-    builders = lib.mkForce [
+    builders = lib.mkDefault [
       "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1 nixos-test,benchmark,big-parallel - -"
     ];
 
