@@ -41,7 +41,7 @@ with lib;
     systemd.targets.gpu-local-mode = {
       description = "GPU Local Mode - Systemd services active";
       wants = [
-        "llamacpp.service"
+        "llamacpp-turbo.service"
       ];
       conflicts = [ "gpu-docker-mode.target" ];
     };
@@ -50,7 +50,7 @@ with lib;
       description = "GPU Docker Mode - Docker containers get GPU priority";
       conflicts = [
         "gpu-local-mode.target"
-        "llamacpp.service"
+        "llamacpp-turbo.service"
       ];
     };
 
@@ -58,8 +58,8 @@ with lib;
     # Service Modifications for GPU Management
     # ═══════════════════════════════════════════════════════════
 
-    # Modify llamacpp to support GPU modes
-    systemd.services.llama-cpp = mkIf config.services.llama-cpp.enable {
+    # Modify llamacpp-turbo to support GPU modes
+    systemd.services.llamacpp-turbo = mkIf config.services.llamacpp-turbo.enable {
       conflicts = [ "gpu-docker-mode.target" ];
       partOf = [ "gpu-local-mode.target" ];
 
@@ -103,7 +103,7 @@ with lib;
         # Start GPU local mode
         echo "▶️  Starting systemd GPU services..."
         sudo ${pkgs.systemd}/bin/systemctl start gpu-local-mode.target
-        sudo ${pkgs.systemd}/bin/systemctl start llamacpp.service
+        sudo ${pkgs.systemd}/bin/systemctl start llamacpp-turbo.service
 
         sleep 3
 
@@ -111,7 +111,7 @@ with lib;
         echo "✅ GPU Local Mode Active"
         echo ""
         echo "Services:"
-        sudo ${pkgs.systemd}/bin/systemctl status llamacpp.service --no-pager -l | head -3
+        sudo ${pkgs.systemd}/bin/systemctl status llamacpp-turbo.service --no-pager -l | head -3
 
         echo ""
         echo "Access:"
@@ -129,7 +129,7 @@ with lib;
 
         # Stop systemd GPU services
         echo "⏹️  Stopping systemd GPU services..."
-        sudo ${pkgs.systemd}/bin/systemctl stop llamacpp.service 2>/dev/null || true
+        sudo ${pkgs.systemd}/bin/systemctl stop llamacpp-turbo.service 2>/dev/null || true
         sudo ${pkgs.systemd}/bin/systemctl stop gpu-local-mode.target 2>/dev/null || true
 
         # Wait for GPU to be released
@@ -174,11 +174,11 @@ with lib;
         # Show active mode
         echo "───────────────────────────────────────────────────────────"
         echo "Active Mode:"
-        if sudo ${pkgs.systemd}/bin/systemctl is-active llamacpp.service &>/dev/null; then
+        if sudo ${pkgs.systemd}/bin/systemctl is-active llamacpp-turbo.service &>/dev/null; then
           echo "  🟢 GPU Local Mode (systemd services)"
           echo ""
           echo "  Running services:"
-          sudo ${pkgs.systemd}/bin/systemctl is-active llamacpp.service &>/dev/null && echo "    - llamacpp ✓"
+          sudo ${pkgs.systemd}/bin/systemctl is-active llamacpp-turbo.service &>/dev/null && echo "    - llamacpp ✓"
         elif ${pkgs.docker}/bin/docker ps | grep -qE "gpu-api|jupyter-gpu|koboldcpp"; then
           echo "  🐳 GPU Docker Mode (containers)"
           echo ""
@@ -236,7 +236,7 @@ with lib;
 
       script = ''
         # Default to docker mode (containers get GPU priority)
-        ${pkgs.systemd}/bin/systemctl stop llamacpp.service || true
+        ${pkgs.systemd}/bin/systemctl stop llamacpp-turbo.service || true
 
         echo "GPU Orchestration: Defaulting to Docker mode (containers get GPU)"
         echo "Use 'gpu-mode-local' to switch to systemd services mode"
