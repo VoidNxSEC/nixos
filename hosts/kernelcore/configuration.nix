@@ -316,17 +316,13 @@
     };
 
     services.gpu-orchestration = {
-      enable = false; # DISABLED: Laptop doesn't need GPU mode switching (desktop-only feature)
-      # This was stopping llamacpp-turbo on boot (defaulting to Docker mode)
-      # See: /home/kernelcore/.gemini/antigravity/brain/*/root_cause_analysis.md
-      defaultMode = "docker"; # Docker containers get GPU priority by default
+      enable = true;
+      defaultMode = "local";
     };
 
-    # services.users.gemini-agent removed for security hardening
-
     services.gitlab-runner = {
-      enable = false; # Set to true to enable GitLab CI/CD runner
-      useSops = false; # Enable when you have secrets/gitlab.yaml configured
+      enable = false;
+      useSops = false;
       runnerName = "nixos-gitlab-runner";
       url = "https://gitlab.com"; # Or your self-hosted GitLab instance
       executor = "shell"; # Options: shell, docker, docker+machine, kubernetes
@@ -519,14 +515,6 @@
       # API settings
       metricsEndpoint = false; # Prometheus metrics at /metrics
     };
-
-    # Legacy llamacpp (disabled - replaced by turbo)
-    #llamacpp.enable = false;
-
-    #enable = false;
-    # To re-enable: set enable = true;
-    # port = 11434;
-    #};
 
     gitea = {
       enable = false; # Disabled - causing systemd loops during rebuild
