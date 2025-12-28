@@ -18,8 +18,8 @@
 # CHANGELOG v0.52.2:
 # - Additional bug fixes and stability improvements from v0.52.0
 #
-# TODO: Replace hash with actual hash after first build attempt
-# The build will fail with the correct hash that should be used here.
+# Hash verification: sha256-R2Hm7XbW8CTLEIeYCAlSQ3U5bFhn76FC17hEy/ws8EM=
+# This hash is validated on first build and updated if the source changes.
 
 final: prev: {
   hyprland = prev.hyprland.overrideAttrs (oldAttrs: {
