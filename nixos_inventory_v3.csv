@@ -1,0 +1,809 @@
+Name,Path,Type,Status,Extension,Depth
+❄️ flake.nix,flake.nix,System Core,Analyzing,Nix,0
+❄️ shell.nix,shell.nix,System Core,Analyzing,Nix,0
+🐍 audit_docker_hub.py,audit_docker_hub.py,Automation,Analyzing,Python,0
+🐍 generate_inventory.py,generate_inventory.py,Automation,Analyzing,Python,0
+🐚 find_patterns.sh,find_patterns.sh,Automation,Analyzing,Shell,0
+🐚 run-lynis-audits.sh,run-lynis-audits.sh,Automation,Analyzing,Shell,0
+📘 .tree-commands.md,.tree-commands.md,Documentation,Analyzing,Docs,0
+📘 CLAUDE.md,CLAUDE.md,Documentation,Analyzing,Docs,0
+📘 README.md,README.md,Documentation,Analyzing,Docs,0
+📦 .mcp.json,.mcp.json,Data,Analyzing,Json,0
+❄️ TEMPLATE.nix,modules/TEMPLATE.nix,System Core,Analyzing,Nix,1
+❄️ clean-sudo.nix,scripts/clean-sudo.nix,System Core,Analyzing,Nix,1
+❄️ default.nix,modules/default.nix,System Core,Analyzing,Nix,1
+❄️ default.nix,tests/default.nix,System Core,Analyzing,Nix,1
+❄️ default.nix,overlays/default.nix,System Core,Analyzing,Nix,1
+❄️ desktop-cfg.nix,scripts/desktop-cfg.nix,System Core,Analyzing,Nix,1
+❄️ desktop-cfg2.nix,scripts/desktop-cfg2.nix,System Core,Analyzing,Nix,1
+❄️ desktop-config-backup.nix,scripts/desktop-config-backup.nix,System Core,Analyzing,Nix,1
+❄️ desktop-config-clean.nix,scripts/desktop-config-clean.nix,System Core,Analyzing,Nix,1
+❄️ fix-sudo.nix,scripts/fix-sudo.nix,System Core,Analyzing,Nix,1
+❄️ fix-sudo2.nix,scripts/fix-sudo2.nix,System Core,Analyzing,Nix,1
+❄️ fix-sudo3.nix,scripts/fix-sudo3.nix,System Core,Analyzing,Nix,1
+❄️ hardening.nix,sec/hardening.nix,System Core,Analyzing,Nix,1
+❄️ hyprland.nix,overlays/hyprland.nix,System Core,Analyzing,Nix,1
+❄️ packages.nix,lib/packages.nix,System Core,Analyzing,Nix,1
+❄️ python-packages.nix,overlays/python-packages.nix,System Core,Analyzing,Nix,1
+❄️ shell.nix,lib/shell.nix,System Core,Analyzing,Nix,1
+❄️ shells.nix,lib/shells.nix,System Core,Analyzing,Nix,1
+❄️ tailscale-integration-test.nix,tests/tailscale-integration-test.nix,System Core,Analyzing,Nix,1
+❄️ test-remote-build.nix,scripts/test-remote-build.nix,System Core,Analyzing,Nix,1
+🐍 _name_generation.py,scripts/_name_generation.py,Automation,Analyzing,Python,1
+🐍 arch-analyzer.py,scripts/arch-analyzer.py,Automation,Analyzing,Python,1
+🐍 audit-config.py,scripts/audit-config.py,Automation,Analyzing,Python,1
+🐍 check-module-options.py,scripts/check-module-options.py,Automation,Analyzing,Python,1
+🐍 delete_large_files.py,scripts/delete_large_files.py,Automation,Analyzing,Python,1
+🐍 elasticsearch_5.py,scripts/elasticsearch_5.py,Automation,Analyzing,Python,1
+🐍 geminisdk.py,scripts/geminisdk.py,Automation,Analyzing,Python,1
+🐍 health_check.py,scripts/health_check.py,Automation,Analyzing,Python,1
+🐍 lynis-report-generator.py,scripts/lynis-report-generator.py,Automation,Analyzing,Python,1
+🐍 notiondb_1.py,scripts/notiondb_1.py,Automation,Analyzing,Python,1
+🐍 nuke.py,scripts/nuke.py,Automation,Analyzing,Python,1
+🐍 perform_web_search.py,scripts/perform_web_search.py,Automation,Analyzing,Python,1
+🐍 performance-profiler.py,scripts/performance-profiler.py,Automation,Analyzing,Python,1
+🐍 pipeline_flax_stable_diffusion_xl.py,scripts/pipeline_flax_stable_diffusion_xl.py,Automation,Analyzing,Python,1
+🐍 pipeline_flux.py,scripts/pipeline_flux.py,Automation,Analyzing,Python,1
+🐍 project_analyzer.py,scripts/project_analyzer.py,Automation,Analyzing,Python,1
+🐍 remote_device.py,scripts/remote_device.py,Automation,Analyzing,Python,1
+🐍 remote_module.py,scripts/remote_module.py,Automation,Analyzing,Python,1
+🐍 renaming.py,scripts/renaming.py,Automation,Analyzing,Python,1
+🐍 replicate_1.py,scripts/replicate_1.py,Automation,Analyzing,Python,1
+🐍 replicate_client.py,scripts/replicate_client.py,Automation,Analyzing,Python,1
+🐍 repo_auditor.py,scripts/repo_auditor.py,Automation,Analyzing,Python,1
+🐍 smart-commit.py,scripts/smart-commit.py,Automation,Analyzing,Python,1
+🐍 sse_transport.py,scripts/sse_transport.py,Automation,Analyzing,Python,1
+🐍 ssh.py,scripts/ssh.py,Automation,Analyzing,Python,1
+🐍 swiss-monitor.py,scripts/swiss-monitor.py,Automation,Analyzing,Python,1
+🐍 web_base_1.py,scripts/web_base_1.py,Automation,Analyzing,Python,1
+🐍 webmisc.py,scripts/webmisc.py,Automation,Analyzing,Python,1
+🐚 add-secret.sh,scripts/add-secret.sh,Automation,Analyzing,Shell,1
+🐚 add-to-sops.sh,scripts/add-to-sops.sh,Automation,Analyzing,Shell,1
+🐚 alias-inspector.sh,scripts/alias-inspector.sh,Automation,Analyzing,Shell,1
+🐚 audit-config-simple.sh,scripts/audit-config-simple.sh,Automation,Analyzing,Shell,1
+🐚 audit.sh,pinix/audit.sh,Automation,Analyzing,Shell,1
+🐚 auditoria-disco.sh,scripts/auditoria-disco.sh,Automation,Analyzing,Shell,1
+🐚 auto-commit.sh,scripts/auto-commit.sh,Automation,Analyzing,Shell,1
+🐚 backup-rapido.sh,scripts/backup-rapido.sh,Automation,Analyzing,Shell,1
+🐚 create.sh,scripts/create.sh,Automation,Analyzing,Shell,1
+🐚 detecta-anomalias.sh,scripts/detecta-anomalias.sh,Automation,Analyzing,Shell,1
+🐚 diagnose-home-manager.sh,scripts/diagnose-home-manager.sh,Automation,Analyzing,Shell,1
+🐚 diagnostico-detalhado.sh,scripts/diagnostico-detalhado.sh,Automation,Analyzing,Shell,1
+🐚 diagnostico-disco.sh,scripts/diagnostico-disco.sh,Automation,Analyzing,Shell,1
+🐚 dns-diagnostics.sh,scripts/dns-diagnostics.sh,Automation,Analyzing,Shell,1
+🐚 fix-mcp-configs.sh,scripts/fix-mcp-configs.sh,Automation,Analyzing,Shell,1
+🐚 fix-secrets-permissions.sh,scripts/fix-secrets-permissions.sh,Automation,Analyzing,Shell,1
+🐚 generate-architecture-tree.sh,scripts/generate-architecture-tree.sh,Automation,Analyzing,Shell,1
+🐚 generate-docs.sh,scripts/generate-docs.sh,Automation,Analyzing,Shell,1
+🐚 generate-mcp-config.sh,scripts/generate-mcp-config.sh,Automation,Analyzing,Shell,1
+🐚 generate-tree-diagram.sh,scripts/generate-tree-diagram.sh,Automation,Analyzing,Shell,1
+🐚 intel-dev.sh,scripts/intel-dev.sh,Automation,Analyzing,Shell,1
+🐚 intel-health.sh,scripts/intel-health.sh,Automation,Analyzing,Shell,1
+🐚 intel-nix.sh,scripts/intel-nix.sh,Automation,Analyzing,Shell,1
+🐚 intel-scan.sh,scripts/intel-scan.sh,Automation,Analyzing,Shell,1
+🐚 intel-score.sh,scripts/intel-score.sh,Automation,Analyzing,Shell,1
+🐚 intel.sh,scripts/intel.sh,Automation,Analyzing,Shell,1
+🐚 interage-llm.sh,scripts/interage-llm.sh,Automation,Analyzing,Shell,1
+🐚 investigate-infra.sh,scripts/investigate-infra.sh,Automation,Analyzing,Shell,1
+🐚 jsonl2pretty.sh,scripts/jsonl2pretty.sh,Automation,Analyzing,Shell,1
+🐚 kill-children.sh,scripts/kill-children.sh,Automation,Analyzing,Shell,1
+🐚 limpa-processos.sh,scripts/limpa-processos.sh,Automation,Analyzing,Shell,1
+🐚 limpeza-agressiva.sh,scripts/limpeza-agressiva.sh,Automation,Analyzing,Shell,1
+🐚 load-api-keys.sh,scripts/load-api-keys.sh,Automation,Analyzing,Shell,1
+🐚 load-aws-bedrock.sh,scripts/load-aws-bedrock.sh,Automation,Analyzing,Shell,1
+🐚 mcp-health-check.sh,scripts/mcp-health-check.sh,Automation,Analyzing,Shell,1
+🐚 mcp-helper.sh,scripts/mcp-helper.sh,Automation,Analyzing,Shell,1
+🐚 migrate-projects.sh,scripts/migrate-projects.sh,Automation,Analyzing,Shell,1
+🐚 migrate-sec-to-sops.sh,scripts/migrate-sec-to-sops.sh,Automation,Analyzing,Shell,1
+🐚 monitor-nix-store.sh,scripts/monitor-nix-store.sh,Automation,Analyzing,Shell,1
+🐚 monitor-rebuild-attach.sh,scripts/monitor-rebuild-attach.sh,Automation,Analyzing,Shell,1
+🐚 monitor-rebuild-complete.sh,scripts/monitor-rebuild-complete.sh,Automation,Analyzing,Shell,1
+🐚 monitor-rebuild.sh,scripts/monitor-rebuild.sh,Automation,Analyzing,Shell,1
+🐚 monitora-logs-seguranca.sh,scripts/monitora-logs-seguranca.sh,Automation,Analyzing,Shell,1
+🐚 monitora-processos-detalhado.sh,scripts/monitora-processos-detalhado.sh,Automation,Analyzing,Shell,1
+🐚 monitora-rede.sh,scripts/monitora-rede.sh,Automation,Analyzing,Shell,1
+🐚 nfs-tests.sh,hooks/nfs-tests.sh,Automation,Analyzing,Shell,1
+🐚 nix-emergency.sh,scripts/nix-emergency.sh,Automation,Analyzing,Shell,1
+🐚 nix-hard-reset.sh,scripts/nix-hard-reset.sh,Automation,Analyzing,Shell,1
+🐚 nixos-perfect-install.sh,scripts/nixos-perfect-install.sh,Automation,Analyzing,Shell,1
+🐚 pipeline-check.sh,scripts/pipeline-check.sh,Automation,Analyzing,Shell,1
+🐚 post-rebuild-validate.sh,scripts/post-rebuild-validate.sh,Automation,Analyzing,Shell,1
+🐚 pre-commit.sh,scripts/pre-commit.sh,Automation,Analyzing,Shell,1
+🐚 pre_processa_dados_llm.sh,scripts/pre_processa_dados_llm.sh,Automation,Analyzing,Shell,1
+🐚 push-all-projects.sh,scripts/push-all-projects.sh,Automation,Analyzing,Shell,1
+🐚 remove_ollama_lines.sh,scripts/remove_ollama_lines.sh,Automation,Analyzing,Shell,1
+🐚 scan.sh,scripts/scan.sh,Automation,Analyzing,Shell,1
+🐚 setup-claude-secrets.sh,scripts/setup-claude-secrets.sh,Automation,Analyzing,Shell,1
+🐚 setup-desktop-offload.sh,scripts/setup-desktop-offload.sh,Automation,Analyzing,Shell,1
+🐚 setup-git-hooks.sh,scripts/setup-git-hooks.sh,Automation,Analyzing,Shell,1
+🐚 setup-offload-keys.sh,scripts/setup-offload-keys.sh,Automation,Analyzing,Shell,1
+🐚 simple-update.sh,scripts/simple-update.sh,Automation,Analyzing,Shell,1
+🐚 sops-editor.sh,scripts/sops-editor.sh,Automation,Analyzing,Shell,1
+🐚 ssh-diagnostics.sh,scripts/ssh-diagnostics.sh,Automation,Analyzing,Shell,1
+🐚 sync-from-desktop.sh,scripts/sync-from-desktop.sh,Automation,Analyzing,Shell,1
+🐚 sync-github-secrets.sh,scripts/sync-github-secrets.sh,Automation,Analyzing,Shell,1
+🐚 sync-to-desktop.sh,scripts/sync-to-desktop.sh,Automation,Analyzing,Shell,1
+🐚 tailscale-catchall.sh,scripts/tailscale-catchall.sh,Automation,Analyzing,Shell,1
+🐚 tailscale-quick-setup.sh,scripts/tailscale-quick-setup.sh,Automation,Analyzing,Shell,1
+🐚 tailscale-subnet-setup.sh,scripts/tailscale-subnet-setup.sh,Automation,Analyzing,Shell,1
+🐚 tauri-stop-dev-processes.sh,scripts/tauri-stop-dev-processes.sh,Automation,Analyzing,Shell,1
+🐚 test-alacritty.sh,scripts/test-alacritty.sh,Automation,Analyzing,Shell,1
+🐚 test-coverage.sh,scripts/test-coverage.sh,Automation,Analyzing,Shell,1
+🐚 update-api-secrets.sh,scripts/update-api-secrets.sh,Automation,Analyzing,Shell,1
+🐚 update-npm-package.sh,scripts/update-npm-package.sh,Automation,Analyzing,Shell,1
+🐚 update-packages.sh,scripts/update-packages.sh,Automation,Analyzing,Shell,1
+🐚 update-rust-package.sh,scripts/update-rust-package.sh,Automation,Analyzing,Shell,1
+🐚 update-secrets.sh,scripts/update-secrets.sh,Automation,Analyzing,Shell,1
+🐚 vram_examples.sh,scripts/vram_examples.sh,Automation,Analyzing,Shell,1
+🐚 vscode-ssh-diagnostic.sh,scripts/vscode-ssh-diagnostic.sh,Automation,Analyzing,Shell,1
+🐚 vscodium-wrapper.sh,scripts/vscodium-wrapper.sh,Automation,Analyzing,Shell,1
+🐚 wifi-diagnostics.sh,scripts/wifi-diagnostics.sh,Automation,Analyzing,Shell,1
+📘 AGENT-EMPOWERMENT-TOOLKIT.md,docs/AGENT-EMPOWERMENT-TOOLKIT.md,Documentation,Analyzing,Docs,1
+📘 AGENT-TOOLKIT-QUICKSTART.md,docs/AGENT-TOOLKIT-QUICKSTART.md,Documentation,Analyzing,Docs,1
+📘 AI-ARCHITECTURE-REPORT.md,arch/AI-ARCHITECTURE-REPORT.md,Documentation,Analyzing,Docs,1
+📘 ALTERNATIVA-REINSTALACAO-LIMPA.md,docs/ALTERNATIVA-REINSTALACAO-LIMPA.md,Documentation,Analyzing,Docs,1
+📘 ANALISE-SSH-CONFIG-PROBLEMAS.md,docs/ANALISE-SSH-CONFIG-PROBLEMAS.md,Documentation,Analyzing,Docs,1
+📘 ARCHITECTURE-BLUEPRINT.md,docs/ARCHITECTURE-BLUEPRINT.md,Documentation,Analyzing,Docs,1
+📘 ARCHITECTURE-REPORT.md,arch/ARCHITECTURE-REPORT.md,Documentation,Analyzing,Docs,1
+📘 ARCHITECTURE-TRACKING.md,docs/ARCHITECTURE-TRACKING.md,Documentation,Analyzing,Docs,1
+📘 ARCHITECTURE-TREE.md,docs/ARCHITECTURE-TREE.md,Documentation,Analyzing,Docs,1
+📘 ARCHITECTURE-TREE.md,arch/ARCHITECTURE-TREE.md,Documentation,Analyzing,Docs,1
+📘 AUDIO_TROUBLESHOOTING.md,docs/AUDIO_TROUBLESHOOTING.md,Documentation,Analyzing,Docs,1
+📘 AUDITD_INVESTIGATION.md,docs/AUDITD_INVESTIGATION.md,Documentation,Analyzing,Docs,1
+📘 AUDITORIA-DISCO-FERRAMENTAS.md,docs/AUDITORIA-DISCO-FERRAMENTAS.md,Documentation,Analyzing,Docs,1
+📘 BINARY-CACHE-SETUP.md,docs/BINARY-CACHE-SETUP.md,Documentation,Analyzing,Docs,1
+📘 BUILD-OPTIMIZATION-2025-11-22.md,docs/BUILD-OPTIMIZATION-2025-11-22.md,Documentation,Analyzing,Docs,1
+📘 CENTRALIZACAO-LOGS-DESKTOP.md,docs/CENTRALIZACAO-LOGS-DESKTOP.md,Documentation,Analyzing,Docs,1
+📘 CI-CD-ARCHITECTURE.md,docs/CI-CD-ARCHITECTURE.md,Documentation,Analyzing,Docs,1
+📘 CLAUDE.md,.claude/CLAUDE.md,Documentation,Analyzing,Docs,1
+📘 CONFIGURATION_ENHANCEMENTS.md,docs/CONFIGURATION_ENHANCEMENTS.md,Documentation,Analyzing,Docs,1
+📘 DECISOES-CRITICAS.md,docs/DECISOES-CRITICAS.md,Documentation,Analyzing,Docs,1
+📘 DESKTOP-OFFLOAD-QUICKSTART.md,docs/DESKTOP-OFFLOAD-QUICKSTART.md,Documentation,Analyzing,Docs,1
+📘 DESKTOP-OFFLOAD-SETUP.md,docs/DESKTOP-OFFLOAD-SETUP.md,Documentation,Analyzing,Docs,1
+📘 DESKTOP-QUICK-SETUP.md,docs/DESKTOP-QUICK-SETUP.md,Documentation,Analyzing,Docs,1
+📘 DESKTOP-SETUP-REQUIRED.md,docs/DESKTOP-SETUP-REQUIRED.md,Documentation,Analyzing,Docs,1
+📘 DESKTOP-TROUBLESHOOTING.md,docs/DESKTOP-TROUBLESHOOTING.md,Documentation,Analyzing,Docs,1
+📘 DEV-DIRECTORY-SECURITY.md,docs/DEV-DIRECTORY-SECURITY.md,Documentation,Analyzing,Docs,1
+📘 DNS_FIX_SUMMARY.md,docs/DNS_FIX_SUMMARY.md,Documentation,Analyzing,Docs,1
+📘 DNS_WORKING_CONFIG.md,docs/DNS_WORKING_CONFIG.md,Documentation,Analyzing,Docs,1
+📘 ECONOMIA-ESPACO.md,docs/ECONOMIA-ESPACO.md,Documentation,Analyzing,Docs,1
+📘 EMERGENCIA-LIBERAR-ESPACO.md,docs/EMERGENCIA-LIBERAR-ESPACO.md,Documentation,Analyzing,Docs,1
+📘 ESTRATEGIA-FINAL-COMPLETA.md,docs/ESTRATEGIA-FINAL-COMPLETA.md,Documentation,Analyzing,Docs,1
+📘 EXEC-SUMMARY-LYNIS.md,docs/EXEC-SUMMARY-LYNIS.md,Documentation,Analyzing,Docs,1
+📘 EXECUTAR-AGORA.md,docs/EXECUTAR-AGORA.md,Documentation,Analyzing,Docs,1
+📘 EXEMPLO-INTEGRACAO-HOST.md,docs/EXEMPLO-INTEGRACAO-HOST.md,Documentation,Analyzing,Docs,1
+📘 FINAL-STATUS-REPORT.md,docs/FINAL-STATUS-REPORT.md,Documentation,Analyzing,Docs,1
+📘 GIT-WORKFLOW-TESTING-IMPROVEMENT-PLAN.md,docs/GIT-WORKFLOW-TESTING-IMPROVEMENT-PLAN.md,Documentation,Analyzing,Docs,1
+📘 GITHUB-ACTIONS-RUNNER-CONFIG-EXAMPLES.md,docs/GITHUB-ACTIONS-RUNNER-CONFIG-EXAMPLES.md,Documentation,Analyzing,Docs,1
+📘 GITHUB-ACTIONS-RUNNER-FIX.md,docs/GITHUB-ACTIONS-RUNNER-FIX.md,Documentation,Analyzing,Docs,1
+📘 GITHUB-SOPS-INTEGRATION.md,docs/GITHUB-SOPS-INTEGRATION.md,Documentation,Analyzing,Docs,1
+📘 GITHUB_ACTIONS_SETUP.md,docs/GITHUB_ACTIONS_SETUP.md,Documentation,Analyzing,Docs,1
+📘 GITHUB_CLI_AUTH.md,docs/GITHUB_CLI_AUTH.md,Documentation,Analyzing,Docs,1
+📘 GLASSMORPHISM-DESIGN-SYSTEM.md,docs/GLASSMORPHISM-DESIGN-SYSTEM.md,Documentation,Analyzing,Docs,1
+📘 GUIA-BACKUP-E-REINSTALACAO.md,docs/GUIA-BACKUP-E-REINSTALACAO.md,Documentation,Analyzing,Docs,1
+📘 GUIA-CORRECAO-DNS.md,docs/GUIA-CORRECAO-DNS.md,Documentation,Analyzing,Docs,1
+📘 HANDOFF-TAILSCALE-E-INFRAESTRUTURA.md,docs/HANDOFF-TAILSCALE-E-INFRAESTRUTURA.md,Documentation,Analyzing,Docs,1
+📘 HYPRLAND-DESIGN-OVERHAUL.md,.claude/HYPRLAND-DESIGN-OVERHAUL.md,Documentation,Analyzing,Docs,1
+📘 HYPRLAND-KEYBINDINGS.md,docs/HYPRLAND-KEYBINDINGS.md,Documentation,Analyzing,Docs,1
+📘 IMPLEMENTATION-SUMMARY.md,docs/IMPLEMENTATION-SUMMARY.md,Documentation,Analyzing,Docs,1
+📘 INFRASTRUCTURE-FIX-SUMMARY.md,docs/INFRASTRUCTURE-FIX-SUMMARY.md,Documentation,Analyzing,Docs,1
+📘 INSTRUCTIONS.md,docs/INSTRUCTIONS.md,Documentation,Analyzing,Docs,1
+📘 LAPTOP-BUILD-SETUP.md,docs/LAPTOP-BUILD-SETUP.md,Documentation,Analyzing,Docs,1
+📘 LAPTOP-DEFENSE-FRAMEWORK.md,docs/LAPTOP-DEFENSE-FRAMEWORK.md,Documentation,Analyzing,Docs,1
+📘 LAPTOP-QUICK-SETUP.md,docs/LAPTOP-QUICK-SETUP.md,Documentation,Analyzing,Docs,1
+📘 LLM-WORKFLOW-DEBUG-FRICTION-REPORT.md,docs/LLM-WORKFLOW-DEBUG-FRICTION-REPORT.md,Documentation,Analyzing,Docs,1
+📘 LOGSTREAM-INTELLIGENCE-DESIGN.md,docs/LOGSTREAM-INTELLIGENCE-DESIGN.md,Documentation,Analyzing,Docs,1
+📘 LYNIS-ENHANCEMENTS.md,docs/LYNIS-ENHANCEMENTS.md,Documentation,Analyzing,Docs,1
+📘 MCP-ARCHITECTURE-ACCESS.md,docs/MCP-ARCHITECTURE-ACCESS.md,Documentation,Analyzing,Docs,1
+📘 MCP-CLAUDE-CODE-SETUP.md,docs/MCP-CLAUDE-CODE-SETUP.md,Documentation,Analyzing,Docs,1
+📘 MCP-CODEX-INTEGRATION.md,docs/MCP-CODEX-INTEGRATION.md,Documentation,Analyzing,Docs,1
+📘 MCP-EXTENDED-TOOLS-DESIGN.md,docs/MCP-EXTENDED-TOOLS-DESIGN.md,Documentation,Analyzing,Docs,1
+📘 MCP-EXTENDED-TOOLS-FINAL-REPORT.md,docs/MCP-EXTENDED-TOOLS-FINAL-REPORT.md,Documentation,Analyzing,Docs,1
+📘 MCP-EXTENDED-TOOLS-PROGRESS.md,docs/MCP-EXTENDED-TOOLS-PROGRESS.md,Documentation,Analyzing,Docs,1
+📘 MCP-INTEGRATION-GUIDE.md,docs/MCP-INTEGRATION-GUIDE.md,Documentation,Analyzing,Docs,1
+📘 MCP-KNOWLEDGE-DB-FIX.md,docs/MCP-KNOWLEDGE-DB-FIX.md,Documentation,Analyzing,Docs,1
+📘 MCP-KNOWLEDGE-EXTENSION-PLAN.md,docs/MCP-KNOWLEDGE-EXTENSION-PLAN.md,Documentation,Analyzing,Docs,1
+📘 MCP-KNOWLEDGE-STABILIZATION.md,docs/MCP-KNOWLEDGE-STABILIZATION.md,Documentation,Analyzing,Docs,1
+📘 MCP-PROJECT-ROOT-ANALYSIS.md,docs/MCP-PROJECT-ROOT-ANALYSIS.md,Documentation,Analyzing,Docs,1
+📘 MCP-QUICK-REFERENCE.md,docs/MCP-QUICK-REFERENCE.md,Documentation,Analyzing,Docs,1
+📘 MCP-SECURE-ARCHITECTURE.md,docs/MCP-SECURE-ARCHITECTURE.md,Documentation,Analyzing,Docs,1
+📘 MCP-SERVER-HEALTH-REPORT.md,docs/MCP-SERVER-HEALTH-REPORT.md,Documentation,Analyzing,Docs,1
+📘 MCP-SERVER-PACKAGE.md,docs/MCP-SERVER-PACKAGE.md,Documentation,Analyzing,Docs,1
+📘 MCP-SESSION-HANDOFF.md,docs/MCP-SESSION-HANDOFF.md,Documentation,Analyzing,Docs,1
+📘 MCP-SYNC-SUMMARY.md,docs/MCP-SYNC-SUMMARY.md,Documentation,Analyzing,Docs,1
+📘 MCP-TOOLS-USAGE-GUIDE.md,docs/MCP-TOOLS-USAGE-GUIDE.md,Documentation,Analyzing,Docs,1
+📘 MCP-TROUBLESHOOTING.md,docs/MCP-TROUBLESHOOTING.md,Documentation,Analyzing,Docs,1
+📘 ML-ARCHITECTURE-REFACTORING.md,docs/ML-ARCHITECTURE-REFACTORING.md,Documentation,Analyzing,Docs,1
+📘 ML-MODULES-RESTRUCTURE-PLAN.md,docs/ML-MODULES-RESTRUCTURE-PLAN.md,Documentation,Analyzing,Docs,1
+📘 MONITOR-REBUILD-USAGE.md,scripts/MONITOR-REBUILD-USAGE.md,Documentation,Analyzing,Docs,1
+📘 NEXT-SESSION-PROMPT.md,docs/NEXT-SESSION-PROMPT.md,Documentation,Analyzing,Docs,1
+📘 NIX-EMERGENCY-PROCEDURES.md,docs/NIX-EMERGENCY-PROCEDURES.md,Documentation,Analyzing,Docs,1
+📘 OS-KEYRING-SETUP.md,docs/OS-KEYRING-SETUP.md,Documentation,Analyzing,Docs,1
+📘 PACKAGE-UPDATE-GUIDE.md,docs/PACKAGE-UPDATE-GUIDE.md,Documentation,Analyzing,Docs,1
+📘 PHASE2-IMPLEMENTATION-ROADMAP.md,docs/PHASE2-IMPLEMENTATION-ROADMAP.md,Documentation,Analyzing,Docs,1
+📘 PHASE2-UNIFIED-ARCHITECTURE.md,docs/PHASE2-UNIFIED-ARCHITECTURE.md,Documentation,Analyzing,Docs,1
+📘 PLANO-ACAO-LIMPEZA.md,docs/PLANO-ACAO-LIMPEZA.md,Documentation,Analyzing,Docs,1
+📘 PLANO-INTEROPERABILIDADE-LAPTOP-DESKTOP.md,docs/PLANO-INTEROPERABILIDADE-LAPTOP-DESKTOP.md,Documentation,Analyzing,Docs,1
+📘 PROTONPASS-STATUS.md,docs/PROTONPASS-STATUS.md,Documentation,Analyzing,Docs,1
+📘 QUICK-START-IMPROVEMENTS.md,docs/QUICK-START-IMPROVEMENTS.md,Documentation,Analyzing,Docs,1
+📘 README-20251110.md,archive/README-20251110.md,Documentation,Analyzing,Docs,1
+📘 README-STACK-SETUP.md,docs/README-STACK-SETUP.md,Documentation,Analyzing,Docs,1
+📘 README.md,tests/README.md,Documentation,Analyzing,Docs,1
+📘 README.md,.github/README.md,Documentation,Analyzing,Docs,1
+📘 README.md,overlays/README.md,Documentation,Analyzing,Docs,1
+📘 README.md,docs/README.md,Documentation,Analyzing,Docs,1
+📘 README.md,arch/README.md,Documentation,Analyzing,Docs,1
+📘 REBUILD-FIX.md,docs/REBUILD-FIX.md,Documentation,Analyzing,Docs,1
+📘 REFATORACAO-ARQUITETURA-2025.md,docs/REFATORACAO-ARQUITETURA-2025.md,Documentation,Analyzing,Docs,1
+📘 REMOTE-BUILDER-CACHE-GUIDE.md,docs/REMOTE-BUILDER-CACHE-GUIDE.md,Documentation,Analyzing,Docs,1
+📘 REPOSITORY-ANALYSIS.md,docs/REPOSITORY-ANALYSIS.md,Documentation,Analyzing,Docs,1
+📘 RESTRUCTURING-MISSION.md,docs/RESTRUCTURING-MISSION.md,Documentation,Analyzing,Docs,1
+📘 RSYNC-GUIDE.md,docs/RSYNC-GUIDE.md,Documentation,Analyzing,Docs,1
+📘 SECURITY-HARDENING-STATUS.md,docs/SECURITY-HARDENING-STATUS.md,Documentation,Analyzing,Docs,1
+📘 SESSION-1-SUMMARY.md,docs/SESSION-1-SUMMARY.md,Documentation,Analyzing,Docs,1
+📘 SIEM-INTEGRATION.md,docs/SIEM-INTEGRATION.md,Documentation,Analyzing,Docs,1
+📘 SOPS-TROUBLESHOOTING.md,docs/SOPS-TROUBLESHOOTING.md,Documentation,Analyzing,Docs,1
+📘 STACK-SERVER-CLIENT-COMPLETE-GUIDE.md,docs/STACK-SERVER-CLIENT-COMPLETE-GUIDE.md,Documentation,Analyzing,Docs,1
+📘 SUMMARY.md,docs/SUMMARY.md,Documentation,Analyzing,Docs,1
+📘 SYSTEMD_CENTRALIZATION_INDEX.md,docs/SYSTEMD_CENTRALIZATION_INDEX.md,Documentation,Analyzing,Docs,1
+📘 SYSTEMD_SERVICES_INVENTORY.md,docs/SYSTEMD_SERVICES_INVENTORY.md,Documentation,Analyzing,Docs,1
+📘 TAILSCALE-CHEATSHEET.md,docs/TAILSCALE-CHEATSHEET.md,Documentation,Analyzing,Docs,1
+📘 TAILSCALE-COMPLETE-SETUP.md,docs/TAILSCALE-COMPLETE-SETUP.md,Documentation,Analyzing,Docs,1
+📘 TAILSCALE-DEPLOYMENT-STATUS.md,docs/TAILSCALE-DEPLOYMENT-STATUS.md,Documentation,Analyzing,Docs,1
+📘 TAILSCALE-QUICKSTART-GUIDE.md,docs/TAILSCALE-QUICKSTART-GUIDE.md,Documentation,Analyzing,Docs,1
+📘 TAILSCALE-SUBNET-ROUTING-GUIDE.md,docs/TAILSCALE-SUBNET-ROUTING-GUIDE.md,Documentation,Analyzing,Docs,1
+📘 TEMPLATE_GUIDE.md,modules/TEMPLATE_GUIDE.md,Documentation,Analyzing,Docs,1
+📘 TODO.md,docs/TODO.md,Documentation,Analyzing,Docs,1
+📘 VM-CLIPBOARD-SETUP.md,docs/VM-CLIPBOARD-SETUP.md,Documentation,Analyzing,Docs,1
+📘 VMCTL-USAGE.md,docs/VMCTL-USAGE.md,Documentation,Analyzing,Docs,1
+📘 WEB-SEARCH-TOOLS.md,docs/WEB-SEARCH-TOOLS.md,Documentation,Analyzing,Docs,1
+📘 alacritty-enhancements-summary.md,scripts/alacritty-enhancements-summary.md,Documentation,Analyzing,Docs,1
+📘 alacritty-regex-error-report.md,docs/alacritty-regex-error-report.md,Documentation,Analyzing,Docs,1
+📘 audit_report_20251214_simple.md,reports/audit_report_20251214_simple.md,Documentation,Analyzing,Docs,1
+📘 config_summary.md,reports/config_summary.md,Documentation,Analyzing,Docs,1
+📘 mcp-server-implementation.md,.claude/mcp-server-implementation.md,Documentation,Analyzing,Docs,1
+📘 ml-offload-phase2-design.md,docs/ml-offload-phase2-design.md,Documentation,Analyzing,Docs,1
+📘 ml-offload-testing-plan.md,docs/ml-offload-testing-plan.md,Documentation,Analyzing,Docs,1
+📘 mobile-workspace-setup-complete.md,docs/mobile-workspace-setup-complete.md,Documentation,Analyzing,Docs,1
+📘 mosh-connection-test.md,docs/mosh-connection-test.md,Documentation,Analyzing,Docs,1
+📘 neovim-integration-analysis.md,docs/neovim-integration-analysis.md,Documentation,Analyzing,Docs,1
+📘 pull_request_template.md,.github/pull_request_template.md,Documentation,Analyzing,Docs,1
+📘 relatorio.md,docs/relatorio.md,Documentation,Analyzing,Docs,1
+📘 sample.md,docs/sample.md,Documentation,Analyzing,Docs,1
+📘 ssh-mosh-setup-complete.md,docs/ssh-mosh-setup-complete.md,Documentation,Analyzing,Docs,1
+📘 test.md,docs/test.md,Documentation,Analyzing,Docs,1
+📘 vscode-remote-test-summary.md,scripts/vscode-remote-test-summary.md,Documentation,Analyzing,Docs,1
+📦 AI-ARCHITECTURE-REPORT.json,arch/AI-ARCHITECTURE-REPORT.json,Data,Analyzing,Json,1
+📦 ARCHITECTURE-REPORT.json,arch/ARCHITECTURE-REPORT.json,Data,Analyzing,Json,1
+📦 settings.local.json,.claude/settings.local.json,Data,Analyzing,Json,1
+❄️ KERNELCORE-TAILSCALE-CONFIG.nix,docs/guides/KERNELCORE-TAILSCALE-CONFIG.nix,System Core,Analyzing,Nix,2
+❄️ TAILSCALE-LAPTOP-CLIENT.nix,docs/guides/TAILSCALE-LAPTOP-CLIENT.nix,System Core,Analyzing,Nix,2
+❄️ TAILSCALE-QUICK-START.nix,docs/guides/TAILSCALE-QUICK-START.nix,System Core,Analyzing,Nix,2
+❄️ ai-stack.nix,archive/modules/ai-stack.nix,System Core,Analyzing,Nix,2
+❄️ aide.nix,modules/security/aide.nix,System Core,Analyzing,Nix,2
+❄️ aliases.nix,archive/nix/aliases.nix,System Core,Analyzing,Nix,2
+❄️ aliases.nix,modules/system/aliases.nix,System Core,Analyzing,Nix,2
+❄️ api-keys.nix,modules/secrets/api-keys.nix,System Core,Analyzing,Nix,2
+❄️ appflowy.nix,modules/packages/appflowy.nix,System Core,Analyzing,Nix,2
+❄️ audit.nix,modules/security/audit.nix,System Core,Analyzing,Nix,2
+❄️ auto-upgrade.nix,modules/security/auto-upgrade.nix,System Core,Analyzing,Nix,2
+❄️ aws-bedrock.nix,modules/secrets/aws-bedrock.nix,System Core,Analyzing,Nix,2
+❄️ binary-cache.nix,modules/system/binary-cache.nix,System Core,Analyzing,Nix,2
+❄️ bluetooth.nix,modules/hardware/bluetooth.nix,System Core,Analyzing,Nix,2
+❄️ boot.nix,modules/security/boot.nix,System Core,Analyzing,Nix,2
+❄️ brave-secure.nix,modules/applications/brave-secure.nix,System Core,Analyzing,Nix,2
+❄️ bridge.nix,modules/network/bridge.nix,System Core,Analyzing,Nix,2
+❄️ cache-optimization.nix,modules/applications/cache-optimization.nix,System Core,Analyzing,Nix,2
+❄️ chromium.nix,modules/applications/chromium.nix,System Core,Analyzing,Nix,2
+❄️ cicd.nix,modules/development/cicd.nix,System Core,Analyzing,Nix,2
+❄️ clamav.nix,modules/security/clamav.nix,System Core,Analyzing,Nix,2
+❄️ claude-profiles.nix,modules/development/claude-profiles.nix,System Core,Analyzing,Nix,2
+❄️ cli-helpers.nix,modules/shell/cli-helpers.nix,System Core,Analyzing,Nix,2
+❄️ cognitive-vault.nix,modules/programs/cognitive-vault.nix,System Core,Analyzing,Nix,2
+❄️ compiler-hardening.nix,modules/security/compiler-hardening.nix,System Core,Analyzing,Nix,2
+❄️ config-auditor.nix,modules/services/config-auditor.nix,System Core,Analyzing,Nix,2
+❄️ configuration.nix,hosts/workstation/configuration.nix,System Core,Analyzing,Nix,2
+❄️ configuration.nix,hosts/kernelcore/configuration.nix,System Core,Analyzing,Nix,2
+❄️ configurations-template.nix,hosts/kernelcore/configurations-template.nix,System Core,Analyzing,Nix,2
+❄️ debug-init.nix,modules/debug/debug-init.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/development/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/tools/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/shell/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/hardware/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/network/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/containers/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/debug/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/applications/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/services/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/system/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/desktop/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/ml/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/security/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/virtualization/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/packages/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/soc/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/programs/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/audio/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,modules/secrets/default.nix,System Core,Analyzing,Nix,2
+❄️ default.nix,hosts/kernelcore/default.nix,System Core,Analyzing,Nix,2
+❄️ dev-directory-hardening.nix,modules/security/dev-directory-hardening.nix,System Core,Analyzing,Nix,2
+❄️ dev.nix,modules/tools/dev.nix,System Core,Analyzing,Nix,2
+❄️ diagnostics.nix,modules/tools/diagnostics.nix,System Core,Analyzing,Nix,2
+❄️ dns-resolver.nix,modules/network/dns-resolver.nix,System Core,Analyzing,Nix,2
+❄️ docker-build.nix,archive/old-aliases-20251101/docker-build.nix,System Core,Analyzing,Nix,2
+❄️ docker-hub.nix,modules/containers/docker-hub.nix,System Core,Analyzing,Nix,2
+❄️ docker-nix.nix,archive/modules/docker-nix.nix,System Core,Analyzing,Nix,2
+❄️ docker-services.nix,tests/integration/docker-services.nix,System Core,Analyzing,Nix,2
+❄️ docker.nix,modules/containers/docker.nix,System Core,Analyzing,Nix,2
+❄️ electron-tuning.nix,modules/applications/electron-tuning.nix,System Core,Analyzing,Nix,2
+❄️ emergency-monitor.nix,modules/system/emergency-monitor.nix,System Core,Analyzing,Nix,2
+❄️ environments.nix,modules/development/environments.nix,System Core,Analyzing,Nix,2
+❄️ firefox-privacy.nix,modules/applications/firefox-privacy.nix,System Core,Analyzing,Nix,2
+❄️ gcloud-k8s.nix,archive/old-aliases-20251101/gcloud-k8s.nix,System Core,Analyzing,Nix,2
+❄️ generated.nix,modules/_sources/generated.nix,System Core,Analyzing,Nix,2
+❄️ gpu-compute.nix,archive/modules/gpu-compute.nix,System Core,Analyzing,Nix,2
+❄️ gpu-flags.nix,modules/shell/gpu-flags.nix,System Core,Analyzing,Nix,2
+❄️ gpu-orchestration.nix,modules/services/gpu-orchestration.nix,System Core,Analyzing,Nix,2
+❄️ hardening-template.nix,modules/security/hardening-template.nix,System Core,Analyzing,Nix,2
+❄️ hardening.nix,modules/security/hardening.nix,System Core,Analyzing,Nix,2
+❄️ hardware-configuration.nix,hosts/kernelcore/hardware-configuration.nix,System Core,Analyzing,Nix,2
+❄️ hyperlab.nix,archive/modules/hyperlab.nix,System Core,Analyzing,Nix,2
+❄️ hyprland.nix,modules/desktop/hyprland.nix,System Core,Analyzing,Nix,2
+❄️ i3-lightweight.nix,modules/desktop/i3-lightweight.nix,System Core,Analyzing,Nix,2
+❄️ intel.nix,modules/tools/intel.nix,System Core,Analyzing,Nix,2
+❄️ intel.nix,modules/hardware/intel.nix,System Core,Analyzing,Nix,2
+❄️ io-monitor.nix,modules/debug/io-monitor.nix,System Core,Analyzing,Nix,2
+❄️ io-scheduler.nix,modules/system/io-scheduler.nix,System Core,Analyzing,Nix,2
+❄️ jupyter.nix,modules/development/jupyter.nix,System Core,Analyzing,Nix,2
+❄️ kernel.nix,modules/security/kernel.nix,System Core,Analyzing,Nix,2
+❄️ keyring.nix,modules/security/keyring.nix,System Core,Analyzing,Nix,2
+❄️ laptop-builder-client.nix,modules/services/laptop-builder-client.nix,System Core,Analyzing,Nix,2
+❄️ laptop-offload-client.nix,modules/services/laptop-offload-client.nix,System Core,Analyzing,Nix,2
+❄️ lenovo-throttled.nix,modules/hardware/lenovo-throttled.nix,System Core,Analyzing,Nix,2
+❄️ llm.nix,modules/tools/llm.nix,System Core,Analyzing,Nix,2
+❄️ macos-kvm.nix,modules/virtualization/macos-kvm.nix,System Core,Analyzing,Nix,2
+❄️ macos-vm.nix,archive/modules/macos-vm.nix,System Core,Analyzing,Nix,2
+❄️ mcp-server.nix,modules/services/mcp-server.nix,System Core,Analyzing,Nix,2
+❄️ mcp.nix,modules/tools/mcp.nix,System Core,Analyzing,Nix,2
+❄️ memory.nix,modules/system/memory.nix,System Core,Analyzing,Nix,2
+❄️ ml-gpu-users.nix,modules/system/ml-gpu-users.nix,System Core,Analyzing,Nix,2
+❄️ mobile-workspace.nix,modules/services/mobile-workspace.nix,System Core,Analyzing,Nix,2
+❄️ monitoring.nix,archive/modules/monitoring.nix,System Core,Analyzing,Nix,2
+❄️ mosh.nix,modules/services/mosh.nix,System Core,Analyzing,Nix,2
+❄️ nemo-full.nix,modules/applications/nemo-full.nix,System Core,Analyzing,Nix,2
+❄️ network.nix,modules/security/network.nix,System Core,Analyzing,Nix,2
+❄️ networking.nix,tests/integration/networking.nix,System Core,Analyzing,Nix,2
+❄️ nix-daemon.nix,modules/security/nix-daemon.nix,System Core,Analyzing,Nix,2
+❄️ nix-utils.nix,modules/tools/nix-utils.nix,System Core,Analyzing,Nix,2
+❄️ nix.nix,modules/system/nix.nix,System Core,Analyzing,Nix,2
+❄️ nixos-containers.nix,modules/containers/nixos-containers.nix,System Core,Analyzing,Nix,2
+❄️ nvidia.nix,modules/hardware/nvidia.nix,System Core,Analyzing,Nix,2
+❄️ offload-server.nix,modules/services/offload-server.nix,System Core,Analyzing,Nix,2
+❄️ options.nix,modules/soc/options.nix,System Core,Analyzing,Nix,2
+❄️ packages.nix,modules/security/packages.nix,System Core,Analyzing,Nix,2
+❄️ pam.nix,modules/security/pam.nix,System Core,Analyzing,Nix,2
+❄️ phantom.nix,modules/programs/phantom.nix,System Core,Analyzing,Nix,2
+❄️ podman.nix,modules/containers/podman.nix,System Core,Analyzing,Nix,2
+❄️ production.nix,modules/audio/production.nix,System Core,Analyzing,Nix,2
+❄️ scripts.nix,modules/services/scripts.nix,System Core,Analyzing,Nix,2
+❄️ secops.nix,modules/tools/secops.nix,System Core,Analyzing,Nix,2
+❄️ secrets.nix,modules/tools/secrets.nix,System Core,Analyzing,Nix,2
+❄️ security-hardening.nix,tests/integration/security-hardening.nix,System Core,Analyzing,Nix,2
+❄️ services.nix,modules/system/services.nix,System Core,Analyzing,Nix,2
+❄️ sops-config.nix,modules/secrets/sops-config.nix,System Core,Analyzing,Nix,2
+❄️ ssh-config.nix,modules/system/ssh-config.nix,System Core,Analyzing,Nix,2
+❄️ ssh.nix,modules/security/ssh.nix,System Core,Analyzing,Nix,2
+❄️ tailscale.nix,modules/secrets/tailscale.nix,System Core,Analyzing,Nix,2
+❄️ test-helpers.nix,tests/lib/test-helpers.nix,System Core,Analyzing,Nix,2
+❄️ test-init.nix,modules/debug/test-init.nix,System Core,Analyzing,Nix,2
+❄️ thermal-profiles.nix,modules/hardware/thermal-profiles.nix,System Core,Analyzing,Nix,2
+❄️ tools-integration.nix,modules/debug/tools-integration.nix,System Core,Analyzing,Nix,2
+❄️ tools.nix,modules/soc/tools.nix,System Core,Analyzing,Nix,2
+❄️ training-logger.nix,modules/shell/training-logger.nix,System Core,Analyzing,Nix,2
+❄️ trezor.nix,modules/hardware/trezor.nix,System Core,Analyzing,Nix,2
+❄️ video-production.nix,modules/audio/video-production.nix,System Core,Analyzing,Nix,2
+❄️ vmctl.nix,modules/virtualization/vmctl.nix,System Core,Analyzing,Nix,2
+❄️ vmctl.nix,modules/programs/vmctl.nix,System Core,Analyzing,Nix,2
+❄️ vms.nix,modules/virtualization/vms.nix,System Core,Analyzing,Nix,2
+❄️ vscode-secure.nix,modules/applications/vscode-secure.nix,System Core,Analyzing,Nix,2
+❄️ vscodium-secure.nix,modules/applications/vscodium-secure.nix,System Core,Analyzing,Nix,2
+❄️ wifi-optimization.nix,modules/hardware/wifi-optimization.nix,System Core,Analyzing,Nix,2
+❄️ zellij.nix,modules/applications/zellij.nix,System Core,Analyzing,Nix,2
+🐚 io-surgeon.sh,scripts/surgical/io-surgeon.sh,Automation,Analyzing,Shell,2
+🐚 log-viewer.sh,scripts/nix-tools/log-viewer.sh,Automation,Analyzing,Shell,2
+🐚 module-catalog.sh,scripts/surgical/module-catalog.sh,Automation,Analyzing,Shell,2
+🐚 net-conflict.sh,scripts/surgical/net-conflict.sh,Automation,Analyzing,Shell,2
+🐚 ps-advanced.sh,scripts/surgical/ps-advanced.sh,Automation,Analyzing,Shell,2
+🐚 psi-sentinel.sh,scripts/surgical/psi-sentinel.sh,Automation,Analyzing,Shell,2
+📘 AWS-BEDROCK-SETUP.md,docs/guides/AWS-BEDROCK-SETUP.md,Documentation,Analyzing,Docs,2
+📘 CI_CD_README.md,docs/reports/CI_CD_README.md,Documentation,Analyzing,Docs,2
+📘 COMPONENT-MAP.md,docs/architecture/COMPONENT-MAP.md,Documentation,Analyzing,Docs,2
+📘 DEB-PACKAGES-GUIDE.md,docs/guides/DEB-PACKAGES-GUIDE.md,Documentation,Analyzing,Docs,2
+📘 DOCUMENTATION.md,modules/packages/DOCUMENTATION.md,Documentation,Analyzing,Docs,2
+📘 INTEGRATION.md,modules/shell/INTEGRATION.md,Documentation,Analyzing,Docs,2
+📘 MODULES-INDEX.md,docs/architecture/MODULES-INDEX.md,Documentation,Analyzing,Docs,2
+📘 MULTI-HOST-SETUP.md,docs/guides/MULTI-HOST-SETUP.md,Documentation,Analyzing,Docs,2
+📘 PACKAGES-STATUS.md,modules/packages/PACKAGES-STATUS.md,Documentation,Analyzing,Docs,2
+📘 QUICK-REFERENCE.md,docs/architecture/QUICK-REFERENCE.md,Documentation,Analyzing,Docs,2
+📘 README.md,scripts/nixos-shell/README.md,Documentation,Analyzing,Docs,2
+📘 README.md,scripts/nixos-ssh/README.md,Documentation,Analyzing,Docs,2
+📘 README.md,.claude/skills/README.md,Documentation,Analyzing,Docs,2
+📘 README.md,.claude/agents/README.md,Documentation,Analyzing,Docs,2
+📘 README.md,.claude/workflows/README.md,Documentation,Analyzing,Docs,2
+📘 README.md,modules/ml/README.md,Documentation,Analyzing,Docs,2
+📘 README.md,modules/packages/README.md,Documentation,Analyzing,Docs,2
+📘 README.md,modules/audio/README.md,Documentation,Analyzing,Docs,2
+📘 README.md,docs/architecture/README.md,Documentation,Analyzing,Docs,2
+📘 REBUILD-GUIDE.md,docs/system/REBUILD-GUIDE.md,Documentation,Analyzing,Docs,2
+📘 REBUILD-PROFESSIONAL.md,docs/system/REBUILD-PROFESSIONAL.md,Documentation,Analyzing,Docs,2
+📘 SECRETS.md,docs/guides/SECRETS.md,Documentation,Analyzing,Docs,2
+📘 SECURITY_AUDIT_REPORT.md,docs/reports/SECURITY_AUDIT_REPORT.md,Documentation,Analyzing,Docs,2
+📘 SERVICES_MIGRATION_PLAN.md,docs/reports/SERVICES_MIGRATION_PLAN.md,Documentation,Analyzing,Docs,2
+📘 SETUP-SOPS-FINAL.md,docs/guides/SETUP-SOPS-FINAL.md,Documentation,Analyzing,Docs,2
+📘 SETUP.md,modules/packages/SETUP.md,Documentation,Analyzing,Docs,2
+📘 SSH-CONFIGURATION.md,docs/guides/SSH-CONFIGURATION.md,Documentation,Analyzing,Docs,2
+📘 TAILSCALE-IMPLEMENTATION-SUMMARY.md,docs/guides/TAILSCALE-IMPLEMENTATION-SUMMARY.md,Documentation,Analyzing,Docs,2
+📘 TAILSCALE-MESH-NETWORK.md,docs/guides/TAILSCALE-MESH-NETWORK.md,Documentation,Analyzing,Docs,2
+📘 VISUAL-ARCHITECTURE.md,docs/architecture/VISUAL-ARCHITECTURE.md,Documentation,Analyzing,Docs,2
+📘 ZELLIJ-GUIDE.md,docs/applications/ZELLIJ-GUIDE.md,Documentation,Analyzing,Docs,2
+📘 agent-template.md,.claude/agents/agent-template.md,Documentation,Analyzing,Docs,2
+📘 bedrock-investigation-brief.md,scripts/SecOps/bedrock-investigation-brief.md,Documentation,Analyzing,Docs,2
+📘 bug_report.md,.github/ISSUE_TEMPLATE/bug_report.md,Documentation,Analyzing,Docs,2
+📘 feature_request.md,.github/ISSUE_TEMPLATE/feature_request.md,Documentation,Analyzing,Docs,2
+📘 ml-offload-phase1-test-report.md,docs/reports/ml-offload-phase1-test-report.md,Documentation,Analyzing,Docs,2
+📘 security_issue.md,.github/ISSUE_TEMPLATE/security_issue.md,Documentation,Analyzing,Docs,2
+📘 tree-ignore.md,archive/nix/tree-ignore.md,Documentation,Analyzing,Docs,2
+📦 generated.json,modules/_sources/generated.json,Data,Analyzing,Json,2
+📦 settings.local.json,scripts/.claude/settings.local.json,Data,Analyzing,Json,2
+📦 settings.local.json,docs/.claude/settings.local.json,Data,Analyzing,Json,2
+❄️ actions.nix,modules/services/users/actions.nix,System Core,Analyzing,Nix,3
+❄️ alacritty.nix,hosts/kernelcore/home/alacritty.nix,System Core,Analyzing,Nix,3
+❄️ alerting.nix,modules/soc/alerting/alerting.nix,System Core,Analyzing,Nix,3
+❄️ brave.nix,hosts/kernelcore/home/brave.nix,System Core,Analyzing,Nix,3
+❄️ claude-code.nix,modules/services/users/claude-code.nix,System Core,Analyzing,Nix,3
+❄️ codex-agent.nix,modules/services/users/codex-agent.nix,System Core,Analyzing,Nix,3
+❄️ dao.nix,modules/blockchain/algorand/dao.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/tools/arch-analyzer/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/shell/aliases/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/hardware/i915-governor/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/network/proxy/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/network/dns/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/blockchain/algorand/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/services/users/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/ml/integrations/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/ml/services/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/ml/infrastructure/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/ml/orchestration/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/packages/zellij/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/packages/lynis/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/packages/gemini-cli/default.nix,System Core,Analyzing,Nix,3
+❄️ default.nix,modules/soc/anduril/default.nix,System Core,Analyzing,Nix,3
+❄️ dns-monitor.nix,modules/soc/network/dns-monitor.nix,System Core,Analyzing,Nix,3
+❄️ edr.nix,modules/soc/edr/edr.nix,System Core,Analyzing,Nix,3
+❄️ electron-config.nix,hosts/kernelcore/home/electron-config.nix,System Core,Analyzing,Nix,3
+❄️ emergency.nix,modules/shell/aliases/emergency.nix,System Core,Analyzing,Nix,3
+❄️ fim.nix,modules/soc/edr/fim.nix,System Core,Analyzing,Nix,3
+❄️ firefox.nix,hosts/kernelcore/home/firefox.nix,System Core,Analyzing,Nix,3
+❄️ firewall-zones.nix,modules/network/security/firewall-zones.nix,System Core,Analyzing,Nix,3
+❄️ flake.nix,archive/merged-repos/nixtrap/flake.nix,System Core,Analyzing,Nix,3
+❄️ flake.nix,modules/hardware/laptop-defense/flake.nix,System Core,Analyzing,Nix,3
+❄️ flake.nix,modules/ml/orchestration/flake.nix,System Core,Analyzing,Nix,3
+❄️ flameshot.nix,hosts/kernelcore/home/flameshot.nix,System Core,Analyzing,Nix,3
+❄️ gemini-agent.nix,modules/services/users/gemini-agent.nix,System Core,Analyzing,Nix,3
+❄️ generated.nix,modules/packages/_sources/generated.nix,System Core,Analyzing,Nix,3
+❄️ git.nix,hosts/kernelcore/home/git.nix,System Core,Analyzing,Nix,3
+❄️ gitlab-runner.nix,modules/services/users/gitlab-runner.nix,System Core,Analyzing,Nix,3
+❄️ grafana.nix,modules/soc/dashboards/grafana.nix,System Core,Analyzing,Nix,3
+❄️ home.nix,hosts/kernelcore/home/home.nix,System Core,Analyzing,Nix,3
+❄️ hyprland.nix,hosts/kernelcore/home/hyprland.nix,System Core,Analyzing,Nix,3
+❄️ laptop-defense.nix,modules/shell/aliases/laptop-defense.nix,System Core,Analyzing,Nix,3
+❄️ llama-cpp-turbo.nix,modules/ml/services/llama-cpp-turbo.nix,System Core,Analyzing,Nix,3
+❄️ log-aggregator.nix,modules/soc/siem/log-aggregator.nix,System Core,Analyzing,Nix,3
+❄️ macos-kvm.nix,modules/shell/aliases/macos-kvm.nix,System Core,Analyzing,Nix,3
+❄️ manager.nix,modules/ml/orchestration/manager.nix,System Core,Analyzing,Nix,3
+❄️ mcp-integration.nix,modules/hardware/laptop-defense/mcp-integration.nix,System Core,Analyzing,Nix,3
+❄️ mcp.nix,modules/shell/aliases/mcp.nix,System Core,Analyzing,Nix,3
+❄️ netflow.nix,modules/soc/network/netflow.nix,System Core,Analyzing,Nix,3
+❄️ nginx-tailscale.nix,modules/network/proxy/nginx-tailscale.nix,System Core,Analyzing,Nix,3
+❄️ nixos-explorer.nix,modules/shell/aliases/nixos-explorer.nix,System Core,Analyzing,Nix,3
+❄️ nordvpn.nix,modules/network/vpn/nordvpn.nix,System Core,Analyzing,Nix,3
+❄️ opensearch.nix,modules/soc/siem/opensearch.nix,System Core,Analyzing,Nix,3
+❄️ rebuild-hooks.nix,modules/hardware/laptop-defense/rebuild-hooks.nix,System Core,Analyzing,Nix,3
+❄️ service-control.nix,modules/shell/aliases/service-control.nix,System Core,Analyzing,Nix,3
+❄️ storage.nix,modules/ml/infrastructure/storage.nix,System Core,Analyzing,Nix,3
+❄️ suricata.nix,modules/soc/ids/suricata.nix,System Core,Analyzing,Nix,3
+❄️ sync.nix,modules/shell/aliases/sync.nix,System Core,Analyzing,Nix,3
+❄️ tailscale-desktop.nix,modules/network/vpn/tailscale-desktop.nix,System Core,Analyzing,Nix,3
+❄️ tailscale-laptop.nix,modules/network/vpn/tailscale-laptop.nix,System Core,Analyzing,Nix,3
+❄️ tailscale-monitor.nix,modules/network/monitoring/tailscale-monitor.nix,System Core,Analyzing,Nix,3
+❄️ tailscale-services.nix,modules/network/proxy/tailscale-services.nix,System Core,Analyzing,Nix,3
+❄️ tailscale.nix,modules/network/vpn/tailscale.nix,System Core,Analyzing,Nix,3
+❄️ theme.nix,hosts/kernelcore/home/theme.nix,System Core,Analyzing,Nix,3
+❄️ threat-intel.nix,modules/soc/ids/threat-intel.nix,System Core,Analyzing,Nix,3
+❄️ tmux.nix,hosts/kernelcore/home/tmux.nix,System Core,Analyzing,Nix,3
+❄️ vllm.nix,modules/ml/services/vllm.nix,System Core,Analyzing,Nix,3
+❄️ wazuh.nix,modules/soc/siem/wazuh.nix,System Core,Analyzing,Nix,3
+❄️ yazi.nix,modules/desktop/yazi/yazi.nix,System Core,Analyzing,Nix,3
+❄️ yazi.nix,hosts/kernelcore/home/yazi.nix,System Core,Analyzing,Nix,3
+🐍 auditor.py,modules/soc/anduril/auditor.py,Automation,Analyzing,Python,3
+🐍 gpu_monitor.py,scripts/nixos-shell/scripts/gpu_monitor.py,Automation,Analyzing,Python,3
+🐍 model_manager.py,scripts/nixos-shell/scripts/model_manager.py,Automation,Analyzing,Python,3
+🐚 start.sh,archive/merged-repos/nixtrap/start.sh,Automation,Analyzing,Shell,3
+🐚 void.sh,modules/system/bash/void.sh,Automation,Analyzing,Shell,3
+📘 ALIAS-TRACKING-GUIDE.md,modules/shell/aliases/ALIAS-TRACKING-GUIDE.md,Documentation,Analyzing,Docs,3
+📘 CLAUDE.md,archive/merged-repos/nixtrap/CLAUDE.md,Documentation,Analyzing,Docs,3
+📘 NAVIGATION-GUIDE.md,modules/shell/aliases/NAVIGATION-GUIDE.md,Documentation,Analyzing,Docs,3
+📘 README.md,archive/merged-repos/nixtrap/README.md,Documentation,Analyzing,Docs,3
+📘 README.md,modules/shell/aliases/README.md,Documentation,Analyzing,Docs,3
+📘 README.md,modules/network/dns/README.md,Documentation,Analyzing,Docs,3
+📘 README.md,modules/ml/integrations/README.md,Documentation,Analyzing,Docs,3
+📘 README.md,modules/ml/services/README.md,Documentation,Analyzing,Docs,3
+📘 README.md,modules/ml/infrastructure/README.md,Documentation,Analyzing,Docs,3
+📘 README.md,modules/ml/orchestration/README.md,Documentation,Analyzing,Docs,3
+📘 UPDATED-REPORT.md,archive/merged-repos/nixtrap/UPDATED-REPORT.md,Documentation,Analyzing,Docs,3
+📦 config.example.json,modules/network/dns/config.example.json,Data,Analyzing,Json,3
+📦 generated.json,modules/packages/_sources/generated.json,Data,Analyzing,Json,3
+📦 stig-database.json,modules/soc/anduril/stig-database.json,Data,Analyzing,Json,3
+❄️ agent-hub.nix,hosts/kernelcore/home/glassmorphism/agent-hub.nix,System Core,Analyzing,Nix,4
+❄️ analytics.nix,modules/shell/aliases/nix/analytics.nix,System Core,Analyzing,Nix,4
+❄️ api-server.nix,archive/merged-repos/nixtrap/modules/api-server.nix,System Core,Analyzing,Nix,4
+❄️ audit.nix,modules/packages/_archive/deb-packages/audit.nix,System Core,Analyzing,Nix,4
+❄️ aws.nix,modules/shell/aliases/amazon/aws.nix,System Core,Analyzing,Nix,4
+❄️ bash.nix,hosts/kernelcore/home/shell/bash.nix,System Core,Analyzing,Nix,4
+❄️ build-gemini.nix,modules/packages/_archive/js-packages/build-gemini.nix,System Core,Analyzing,Nix,4
+❄️ build.nix,modules/shell/aliases/docker/build.nix,System Core,Analyzing,Nix,4
+❄️ builder.nix,modules/packages/_archive/deb-packages/builder.nix,System Core,Analyzing,Nix,4
+❄️ builder.nix,modules/packages/_archive/js-packages/builder.nix,System Core,Analyzing,Nix,4
+❄️ builder.nix,modules/packages/_archive/tar-packages/builder.nix,System Core,Analyzing,Nix,4
+❄️ builders.nix,modules/packages/_archive/lib/builders.nix,System Core,Analyzing,Nix,4
+❄️ cache-bucket-setup.nix,archive/merged-repos/nixtrap/nixtrap2/cache-bucket-setup.nix,System Core,Analyzing,Nix,4
+❄️ cache-bucket-setup.nix,archive/merged-repos/nixtrap/modules/cache-bucket-setup.nix,System Core,Analyzing,Nix,4
+❄️ cache-server-nixtrap1.nix,archive/merged-repos/nixtrap/modules/cache-server-nixtrap1.nix,System Core,Analyzing,Nix,4
+❄️ cache-server.nix,archive/merged-repos/nixtrap/nixtrap2/cache-server.nix,System Core,Analyzing,Nix,4
+❄️ cache-server.nix,archive/merged-repos/nixtrap/modules/cache-server.nix,System Core,Analyzing,Nix,4
+❄️ caddy-module.nix,archive/merged-repos/nixtrap/nixtrap2/caddy-module.nix,System Core,Analyzing,Nix,4
+❄️ colors.nix,hosts/kernelcore/home/glassmorphism/colors.nix,System Core,Analyzing,Nix,4
+❄️ compose.nix,modules/shell/aliases/docker/compose.nix,System Core,Analyzing,Nix,4
+❄️ config.nix,modules/ml/integrations/mcp/config.nix,System Core,Analyzing,Nix,4
+❄️ configuration.nix,archive/merged-repos/nixtrap/nixtrap2/configuration.nix,System Core,Analyzing,Nix,4
+❄️ configuration.nix,archive/merged-repos/nixtrap/nixtrap1/configuration.nix,System Core,Analyzing,Nix,4
+❄️ database.nix,modules/ml/orchestration/registry/database.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/shell/aliases/kubernetes/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/shell/aliases/system/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/shell/aliases/docker/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/shell/aliases/desktop/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/shell/aliases/security/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/shell/aliases/gcloud/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/shell/aliases/amazon/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/shell/aliases/ai/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/shell/aliases/nix/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/ml/integrations/mcp/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/ml/integrations/neovim/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/ml/infrastructure/hardware/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/ml/infrastructure/vram/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/ml/orchestration/backends/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/ml/orchestration/registry/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/packages/_archive/deb-packages/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/packages/_archive/js-packages/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/packages/_archive/tar-packages/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/packages/_templates/tar-package/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/packages/_templates/deb-package/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,modules/packages/_templates/npm-package/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,hosts/kernelcore/home/shell/default.nix,System Core,Analyzing,Nix,4
+❄️ default.nix,hosts/kernelcore/home/glassmorphism/default.nix,System Core,Analyzing,Nix,4
+❄️ fetchers.nix,modules/packages/_archive/lib/fetchers.nix,System Core,Analyzing,Nix,4
+❄️ flake.nix,archive/merged-repos/nixtrap/nixtrap2/flake.nix,System Core,Analyzing,Nix,4
+❄️ flake.nix,archive/merged-repos/nixtrap/nixtrap1/flake.nix,System Core,Analyzing,Nix,4
+❄️ flake.nix,archive/merged-repos/nixtrap/terraform-ci/flake.nix,System Core,Analyzing,Nix,4
+❄️ gcloud.nix,modules/shell/aliases/gcloud/gcloud.nix,System Core,Analyzing,Nix,4
+❄️ gemini-cli.nix,modules/packages/_archive/js-packages/gemini-cli.nix,System Core,Analyzing,Nix,4
+❄️ hardware-configuration.nix,archive/merged-repos/nixtrap/nixtrap2/hardware-configuration.nix,System Core,Analyzing,Nix,4
+❄️ home.nix,archive/merged-repos/nixtrap/nixtrap2/home.nix,System Core,Analyzing,Nix,4
+❄️ hyprland.nix,modules/shell/aliases/desktop/hyprland.nix,System Core,Analyzing,Nix,4
+❄️ hyprlock.nix,hosts/kernelcore/home/glassmorphism/hyprlock.nix,System Core,Analyzing,Nix,4
+❄️ js-packages.nix,modules/packages/_archive/js-packages/js-packages.nix,System Core,Analyzing,Nix,4
+❄️ kitty.nix,hosts/kernelcore/home/glassmorphism/kitty.nix,System Core,Analyzing,Nix,4
+❄️ kubectl.nix,modules/shell/aliases/kubernetes/kubectl.nix,System Core,Analyzing,Nix,4
+❄️ laptop-offload-client.nix,archive/merged-repos/nixtrap/nixtrap2/laptop-offload-client.nix,System Core,Analyzing,Nix,4
+❄️ laptop-offload-client.nix,archive/merged-repos/nixtrap/modules/laptop-offload-client.nix,System Core,Analyzing,Nix,4
+❄️ mako.nix,hosts/kernelcore/home/glassmorphism/mako.nix,System Core,Analyzing,Nix,4
+❄️ mcp-offload-automation.nix,archive/merged-repos/nixtrap/nixtrap2/mcp-offload-automation.nix,System Core,Analyzing,Nix,4
+❄️ mcp-offload-automation.nix,archive/merged-repos/nixtrap/modules/mcp-offload-automation.nix,System Core,Analyzing,Nix,4
+❄️ monitoring.nix,archive/merged-repos/nixtrap/modules/monitoring.nix,System Core,Analyzing,Nix,4
+❄️ monitoring.nix,modules/ml/infrastructure/vram/monitoring.nix,System Core,Analyzing,Nix,4
+❄️ nar-server.nix,archive/merged-repos/nixtrap/nixtrap2/nar-server.nix,System Core,Analyzing,Nix,4
+❄️ nar-server.nix,archive/merged-repos/nixtrap/modules/nar-server.nix,System Core,Analyzing,Nix,4
+❄️ navigation.nix,modules/shell/aliases/system/navigation.nix,System Core,Analyzing,Nix,4
+❄️ nginx-module.nix,archive/merged-repos/nixtrap/nixtrap2/nginx-module.nix,System Core,Analyzing,Nix,4
+❄️ nginx-module.nix,archive/merged-repos/nixtrap/modules/nginx-module.nix,System Core,Analyzing,Nix,4
+❄️ nixos-aliases.nix,hosts/kernelcore/home/aliases/nixos-aliases.nix,System Core,Analyzing,Nix,4
+❄️ offload-server.nix,archive/merged-repos/nixtrap/nixtrap2/offload-server.nix,System Core,Analyzing,Nix,4
+❄️ offload-server.nix,archive/merged-repos/nixtrap/modules/offload-server.nix,System Core,Analyzing,Nix,4
+❄️ options.nix,hosts/kernelcore/home/shell/options.nix,System Core,Analyzing,Nix,4
+❄️ rebuild-advanced.nix,modules/shell/aliases/nix/rebuild-advanced.nix,System Core,Analyzing,Nix,4
+❄️ rebuild-helpers.nix,modules/shell/aliases/nix/rebuild-helpers.nix,System Core,Analyzing,Nix,4
+❄️ run.nix,modules/shell/aliases/docker/run.nix,System Core,Analyzing,Nix,4
+❄️ sandbox.nix,modules/packages/_archive/deb-packages/sandbox.nix,System Core,Analyzing,Nix,4
+❄️ sandbox.nix,modules/packages/_archive/lib/sandbox.nix,System Core,Analyzing,Nix,4
+❄️ secrets.nix,modules/shell/aliases/security/secrets.nix,System Core,Analyzing,Nix,4
+❄️ swappy.nix,hosts/kernelcore/home/glassmorphism/swappy.nix,System Core,Analyzing,Nix,4
+❄️ system.nix,modules/shell/aliases/nix/system.nix,System Core,Analyzing,Nix,4
+❄️ types.nix,modules/packages/_archive/lib/types.nix,System Core,Analyzing,Nix,4
+❄️ utils.nix,modules/shell/aliases/system/utils.nix,System Core,Analyzing,Nix,4
+❄️ vllm-driver.nix,modules/ml/orchestration/backends/vllm-driver.nix,System Core,Analyzing,Nix,4
+❄️ wallpaper.nix,hosts/kernelcore/home/glassmorphism/wallpaper.nix,System Core,Analyzing,Nix,4
+❄️ waybar.nix,hosts/kernelcore/home/glassmorphism/waybar.nix,System Core,Analyzing,Nix,4
+❄️ wlogout.nix,hosts/kernelcore/home/glassmorphism/wlogout.nix,System Core,Analyzing,Nix,4
+❄️ wofi.nix,hosts/kernelcore/home/glassmorphism/wofi.nix,System Core,Analyzing,Nix,4
+❄️ zellij.nix,hosts/kernelcore/home/glassmorphism/zellij.nix,System Core,Analyzing,Nix,4
+❄️ zsh.nix,hosts/kernelcore/home/shell/zsh.nix,System Core,Analyzing,Nix,4
+🐍 __init__.py,modules/tools/arch-analyzer/python/__init__.py,Automation,Analyzing,Python,4
+🐍 analyzer.py,modules/tools/arch-analyzer/python/analyzer.py,Automation,Analyzing,Python,4
+🐍 gpu_monitor.py,modules/shell/scripts/python/gpu_monitor.py,Automation,Analyzing,Python,4
+🐍 model_manager.py,modules/shell/scripts/python/model_manager.py,Automation,Analyzing,Python,4
+🐍 models.py,modules/tools/arch-analyzer/python/models.py,Automation,Analyzing,Python,4
+🐍 prompts.py,modules/tools/arch-analyzer/python/prompts.py,Automation,Analyzing,Python,4
+🐚 CHEATSHEET.sh,archive/merged-repos/nixtrap/nixtrap1/CHEATSHEET.sh,Automation,Analyzing,Shell,4
+🐚 DESKTOP-ADD-KEY.sh,archive/merged-repos/nixtrap/DebugLand/DESKTOP-ADD-KEY.sh,Automation,Analyzing,Shell,4
+🐚 DESKTOP-BUILDER-SETUP.sh,archive/merged-repos/nixtrap/DebugLand/DESKTOP-BUILDER-SETUP.sh,Automation,Analyzing,Shell,4
+🐚 FOR-DESKTOP-CLAUDE.sh,archive/merged-repos/nixtrap/DebugLand/FOR-DESKTOP-CLAUDE.sh,Automation,Analyzing,Shell,4
+🐚 ai-compose-stack.sh,hosts/kernelcore/home/aliases/ai-compose-stack.sh,Automation,Analyzing,Shell,4
+🐚 ai-ml-stack.sh,hosts/kernelcore/home/aliases/ai-ml-stack.sh,Automation,Analyzing,Shell,4
+🐚 aliases.sh,hosts/kernelcore/home/aliases/aliases.sh,Automation,Analyzing,Shell,4
+🐚 cache-api-server.sh,archive/merged-repos/nixtrap/nixtrap1/cache-api-server.sh,Automation,Analyzing,Shell,4
+🐚 gcloud.sh,hosts/kernelcore/home/aliases/gcloud.sh,Automation,Analyzing,Shell,4
+🐚 gpu-docker-core.sh,hosts/kernelcore/home/aliases/gpu-docker-core.sh,Automation,Analyzing,Shell,4
+🐚 gpu-management.sh,hosts/kernelcore/home/aliases/gpu-management.sh,Automation,Analyzing,Shell,4
+🐚 gpu.sh,hosts/kernelcore/home/aliases/gpu.sh,Automation,Analyzing,Shell,4
+🐚 install.sh,archive/merged-repos/nixtrap/nixtrap2/install.sh,Automation,Analyzing,Shell,4
+🐚 install.sh,archive/merged-repos/nixtrap/nixtrap1/install.sh,Automation,Analyzing,Shell,4
+🐚 litellm_runtime_manager.sh,hosts/kernelcore/home/aliases/litellm_runtime_manager.sh,Automation,Analyzing,Shell,4
+🐚 multimodal.sh,hosts/kernelcore/home/aliases/multimodal.sh,Automation,Analyzing,Shell,4
+🐚 nixos-cache-bootstrap.sh,archive/merged-repos/nixtrap/nixtrap1/nixos-cache-bootstrap.sh,Automation,Analyzing,Shell,4
+🐚 nx.sh,hosts/kernelcore/home/aliases/nx.sh,Automation,Analyzing,Shell,4
+📘 CLAUDE.md,archive/merged-repos/nixtrap/nixtrap2/CLAUDE.md,Documentation,Analyzing,Docs,4
+📘 DESKTOP-BUILDER-SETUP.md,archive/merged-repos/nixtrap/DebugLand/DESKTOP-BUILDER-SETUP.md,Documentation,Analyzing,Docs,4
+📘 DESKTOP-TRUSTED-USERS.md,archive/merged-repos/nixtrap/DebugLand/DESKTOP-TRUSTED-USERS.md,Documentation,Analyzing,Docs,4
+📘 FLAKE-GUIDE.md,archive/merged-repos/nixtrap/nixtrap1/FLAKE-GUIDE.md,Documentation,Analyzing,Docs,4
+📘 README-COMPLETO.md,archive/merged-repos/nixtrap/nixtrap1/README-COMPLETO.md,Documentation,Analyzing,Docs,4
+📘 README.md,archive/merged-repos/nixtrap/nixtrap2/README.md,Documentation,Analyzing,Docs,4
+📘 README.md,archive/merged-repos/nixtrap/nixtrap1/README.md,Documentation,Analyzing,Docs,4
+📘 README.md,modules/ml/integrations/neovim/README.md,Documentation,Analyzing,Docs,4
+📘 README.md,modules/packages/_archive/deb-packages/README.md,Documentation,Analyzing,Docs,4
+📘 README.md,modules/packages/_archive/tar-packages/README.md,Documentation,Analyzing,Docs,4
+📘 README.md,hosts/kernelcore/home/shell/README.md,Documentation,Analyzing,Docs,4
+📘 README.md,hosts/kernelcore/home/glassmorphism/README.md,Documentation,Analyzing,Docs,4
+📦 package.json,archive/merged-repos/nixtrap/nixtrap1/package.json,Data,Analyzing,Json,4
+📦 settings.local.json,archive/merged-repos/nixtrap/.claude/settings.local.json,Data,Analyzing,Json,4
+📦 tsconfig.json,archive/merged-repos/nixtrap/nixtrap1/tsconfig.json,Data,Analyzing,Json,4
+❄️ all.nix,modules/packages/_archive/deb-packages/packages/all.nix,System Core,Analyzing,Nix,5
+❄️ antigravity.nix,modules/packages/_archive/tar-packages/packages/antigravity.nix,System Core,Analyzing,Nix,5
+❄️ api-server.nix,archive/merged-repos/nixtrap/nixtrap1/modules/api-server.nix,System Core,Analyzing,Nix,5
+❄️ appflowy.nix,modules/packages/_archive/tar-packages/packages/appflowy.nix,System Core,Analyzing,Nix,5
+❄️ cache-server.nix,archive/merged-repos/nixtrap/nixtrap1/modules/cache-server.nix,System Core,Analyzing,Nix,5
+❄️ codex.nix,modules/packages/_archive/tar-packages/packages/codex.nix,System Core,Analyzing,Nix,5
+❄️ configuration.nix,archive/merged-repos/nixtrap/templates/desktop/configuration.nix,System Core,Analyzing,Nix,5
+❄️ configuration.nix,archive/merged-repos/nixtrap/configurations/cache-server/configuration.nix,System Core,Analyzing,Nix,5
+❄️ configuration.nix,archive/merged-repos/nixtrap/configurations/desktop/configuration.nix,System Core,Analyzing,Nix,5
+❄️ configuration.nix,archive/merged-repos/nixtrap/configurations/hybrid/configuration.nix,System Core,Analyzing,Nix,5
+❄️ cursor.nix,modules/packages/_archive/deb-packages/packages/cursor.nix,System Core,Analyzing,Nix,5
+❄️ example.nix,modules/packages/_archive/deb-packages/packages/example.nix,System Core,Analyzing,Nix,5
+❄️ flake.nix,archive/merged-repos/nixtrap/templates/desktop/flake.nix,System Core,Analyzing,Nix,5
+❄️ hardware-configuration.nix,archive/merged-repos/nixtrap/configurations/desktop/hardware-configuration.nix,System Core,Analyzing,Nix,5
+❄️ hardware-configuration.nix,archive/merged-repos/nixtrap/configurations/hybrid/hardware-configuration.nix,System Core,Analyzing,Nix,5
+❄️ home.nix,archive/merged-repos/nixtrap/templates/desktop/home.nix,System Core,Analyzing,Nix,5
+❄️ lynis.nix,modules/packages/_archive/tar-packages/packages/lynis.nix,System Core,Analyzing,Nix,5
+❄️ monitoring.nix,archive/merged-repos/nixtrap/nixtrap1/modules/monitoring.nix,System Core,Analyzing,Nix,5
+❄️ protonvpn.nix,modules/packages/_archive/deb-packages/packages/protonvpn.nix,System Core,Analyzing,Nix,5
+❄️ zellij.nix,modules/packages/_archive/tar-packages/packages/zellij.nix,System Core,Analyzing,Nix,5
+📘 README.md,archive/merged-repos/nixtrap/templates/desktop/README.md,Documentation,Analyzing,Docs,5
+📘 README.md,archive/merged-repos/nixtrap/configurations/cache-server/README.md,Documentation,Analyzing,Docs,5
+📘 README.md,archive/merged-repos/nixtrap/configurations/desktop/README.md,Documentation,Analyzing,Docs,5
+📘 README.md,archive/merged-repos/nixtrap/configurations/hybrid/README.md,Documentation,Analyzing,Docs,5
+📘 README.md,modules/packages/_archive/deb-packages/storage/README.md,Documentation,Analyzing,Docs,5
+📘 README.md,modules/packages/_archive/deb-packages/packages/README.md,Documentation,Analyzing,Docs,5
+📘 README.md,modules/packages/_archive/js-packages/storage/README.md,Documentation,Analyzing,Docs,5
+❄️ flake.nix,archive/merged-repos/nixtrap/nixtrap1/templates/minimal/flake.nix,System Core,Analyzing,Nix,6
+❄️ flake.nix,archive/merged-repos/nixtrap/nixtrap1/templates/full/flake.nix,System Core,Analyzing,Nix,6
+📘 CONTRIBUTING.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/CONTRIBUTING.md,Documentation,Analyzing,Docs,6
+📘 GEMINI.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/GEMINI.md,Documentation,Analyzing,Docs,6
+📘 README.md,archive/merged-repos/nixtrap/nixtrap1/templates/minimal/README.md,Documentation,Analyzing,Docs,6
+📘 README.md,archive/merged-repos/nixtrap/nixtrap1/templates/full/README.md,Documentation,Analyzing,Docs,6
+📘 README.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/README.md,Documentation,Analyzing,Docs,6
+📘 ROADMAP.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/ROADMAP.md,Documentation,Analyzing,Docs,6
+📘 SECURITY.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/SECURITY.md,Documentation,Analyzing,Docs,6
+📦 .prettierrc.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/.prettierrc.json,Data,Analyzing,Json,6
+📦 package-lock.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/package-lock.json,Data,Analyzing,Json,6
+📦 package.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/package.json,Data,Analyzing,Json,6
+📦 tsconfig.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/tsconfig.json,Data,Analyzing,Json,6
+🐚 create_alias.sh,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/scripts/create_alias.sh,Automation,Analyzing,Shell,7
+📘 CONTRIBUTING.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/CONTRIBUTING.md,Documentation,Analyzing,Docs,7
+📘 architecture.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/architecture.md,Documentation,Analyzing,Docs,7
+📘 faq.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/faq.md,Documentation,Analyzing,Docs,7
+📘 index.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/index.md,Documentation,Analyzing,Docs,7
+📘 integration-tests.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/integration-tests.md,Documentation,Analyzing,Docs,7
+📘 issue-and-pr-automation.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/issue-and-pr-automation.md,Documentation,Analyzing,Docs,7
+📘 local-development.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/local-development.md,Documentation,Analyzing,Docs,7
+📘 npm.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/npm.md,Documentation,Analyzing,Docs,7
+📘 pull_request_template.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/.github/pull_request_template.md,Documentation,Analyzing,Docs,7
+📘 quota-and-pricing.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/quota-and-pricing.md,Documentation,Analyzing,Docs,7
+📘 release-confidence.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/release-confidence.md,Documentation,Analyzing,Docs,7
+📘 releases.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/releases.md,Documentation,Analyzing,Docs,7
+📘 tos-privacy.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/tos-privacy.md,Documentation,Analyzing,Docs,7
+📘 troubleshooting.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/troubleshooting.md,Documentation,Analyzing,Docs,7
+📦 gemini-extension.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/hello/gemini-extension.json,Data,Analyzing,Json,7
+📦 settings.schema.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/schemas/settings.schema.json,Data,Analyzing,Json,7
+📦 sidebar.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/sidebar.json,Data,Analyzing,Json,7
+📦 tsconfig.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/integration-tests/tsconfig.json,Data,Analyzing,Json,7
+🐚 pr-triage.sh,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/.github/scripts/pr-triage.sh,Automation,Analyzing,Shell,8
+📘 README.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/vscode-ide-companion/README.md,Documentation,Analyzing,Docs,8
+📘 README.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/a2a-server/README.md,Documentation,Analyzing,Docs,8
+📘 authentication.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/authentication.md,Documentation,Analyzing,Docs,8
+📘 authentication.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/get-started/authentication.md,Documentation,Analyzing,Docs,8
+📘 checkpointing.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/checkpointing.md,Documentation,Analyzing,Docs,8
+📘 commands.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/commands.md,Documentation,Analyzing,Docs,8
+📘 configuration-v1.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/get-started/configuration-v1.md,Documentation,Analyzing,Docs,8
+📘 configuration.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/configuration.md,Documentation,Analyzing,Docs,8
+📘 configuration.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/get-started/configuration.md,Documentation,Analyzing,Docs,8
+📘 custom-commands.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/custom-commands.md,Documentation,Analyzing,Docs,8
+📘 deployment.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/get-started/deployment.md,Documentation,Analyzing,Docs,8
+📘 development-extension-rfc.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/a2a-server/development-extension-rfc.md,Documentation,Analyzing,Docs,8
+📘 development.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/vscode-ide-companion/development.md,Documentation,Analyzing,Docs,8
+📘 enterprise.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/enterprise.md,Documentation,Analyzing,Docs,8
+📘 examples.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/get-started/examples.md,Documentation,Analyzing,Docs,8
+📘 extension-releasing.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/extensions/extension-releasing.md,Documentation,Analyzing,Docs,8
+📘 file-system.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/tools/file-system.md,Documentation,Analyzing,Docs,8
+📘 gemini-3.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/get-started/gemini-3.md,Documentation,Analyzing,Docs,8
+📘 gemini-ignore.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/gemini-ignore.md,Documentation,Analyzing,Docs,8
+📘 gemini-md.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/gemini-md.md,Documentation,Analyzing,Docs,8
+📘 getting-started-extensions.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/extensions/getting-started-extensions.md,Documentation,Analyzing,Docs,8
+📘 headless.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/headless.md,Documentation,Analyzing,Docs,8
+📘 ide-companion-spec.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/ide-integration/ide-companion-spec.md,Documentation,Analyzing,Docs,8
+📘 index.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/tools/index.md,Documentation,Analyzing,Docs,8
+📘 index.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/changelogs/index.md,Documentation,Analyzing,Docs,8
+📘 index.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/index.md,Documentation,Analyzing,Docs,8
+📘 index.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/get-started/index.md,Documentation,Analyzing,Docs,8
+📘 index.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/ide-integration/index.md,Documentation,Analyzing,Docs,8
+📘 index.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/extensions/index.md,Documentation,Analyzing,Docs,8
+📘 index.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/core/index.md,Documentation,Analyzing,Docs,8
+📘 installation.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/get-started/installation.md,Documentation,Analyzing,Docs,8
+📘 keyboard-shortcuts.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/keyboard-shortcuts.md,Documentation,Analyzing,Docs,8
+📘 mcp-server.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/tools/mcp-server.md,Documentation,Analyzing,Docs,8
+📘 memory.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/tools/memory.md,Documentation,Analyzing,Docs,8
+📘 memport.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/core/memport.md,Documentation,Analyzing,Docs,8
+📘 model-routing.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/model-routing.md,Documentation,Analyzing,Docs,8
+📘 model.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/model.md,Documentation,Analyzing,Docs,8
+📘 policy-engine.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/core/policy-engine.md,Documentation,Analyzing,Docs,8
+📘 proxy-script.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/examples/proxy-script.md,Documentation,Analyzing,Docs,8
+📘 sandbox.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/sandbox.md,Documentation,Analyzing,Docs,8
+📘 settings.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/settings.md,Documentation,Analyzing,Docs,8
+📘 shell.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/tools/shell.md,Documentation,Analyzing,Docs,8
+📘 telemetry.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/telemetry.md,Documentation,Analyzing,Docs,8
+📘 themes.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/themes.md,Documentation,Analyzing,Docs,8
+📘 todos.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/tools/todos.md,Documentation,Analyzing,Docs,8
+📘 token-caching.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/token-caching.md,Documentation,Analyzing,Docs,8
+📘 tools-api.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/core/tools-api.md,Documentation,Analyzing,Docs,8
+📘 trusted-folders.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/trusted-folders.md,Documentation,Analyzing,Docs,8
+📘 tutorials.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/tutorials.md,Documentation,Analyzing,Docs,8
+📘 uninstall.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/cli/uninstall.md,Documentation,Analyzing,Docs,8
+📘 web-fetch.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/tools/web-fetch.md,Documentation,Analyzing,Docs,8
+📘 web-search.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/docs/tools/web-search.md,Documentation,Analyzing,Docs,8
+📦 package.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/vscode-ide-companion/package.json,Data,Analyzing,Json,8
+📦 package.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/test-utils/package.json,Data,Analyzing,Json,8
+📦 package.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/cli/package.json,Data,Analyzing,Json,8
+📦 package.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/a2a-server/package.json,Data,Analyzing,Json,8
+📦 package.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/core/package.json,Data,Analyzing,Json,8
+📦 package.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/third_party/get-ripgrep/package.json,Data,Analyzing,Json,8
+📦 tsconfig.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/vscode-ide-companion/tsconfig.json,Data,Analyzing,Json,8
+📦 tsconfig.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/test-utils/tsconfig.json,Data,Analyzing,Json,8
+📦 tsconfig.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/cli/tsconfig.json,Data,Analyzing,Json,8
+📦 tsconfig.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/a2a-server/tsconfig.json,Data,Analyzing,Json,8
+📦 tsconfig.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/core/tsconfig.json,Data,Analyzing,Json,8
+📦 resolved-aliases.golden.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/core/src/services/test-data/resolved-aliases.golden.json,Data,Analyzing,Json,11
+📘 GEMINI.md,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/cli/src/commands/extensions/examples/context/GEMINI.md,Documentation,Analyzing,Docs,13
+📦 gemini-extension.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/cli/src/commands/extensions/examples/custom-commands/gemini-extension.json,Data,Analyzing,Json,13
+📦 gemini-extension.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/cli/src/commands/extensions/examples/exclude-tools/gemini-extension.json,Data,Analyzing,Json,13
+📦 gemini-extension.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/cli/src/commands/extensions/examples/mcp-server/gemini-extension.json,Data,Analyzing,Json,13
+📦 gemini-extension.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/cli/src/commands/extensions/examples/context/gemini-extension.json,Data,Analyzing,Json,13
+📦 package.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/cli/src/commands/extensions/examples/mcp-server/package.json,Data,Analyzing,Json,13
+📦 tsconfig.json,modules/packages/_archive/js-packages/storage/gemini-cli-0.19.0-nightly.20251124.e177314a4/packages/cli/src/commands/extensions/examples/mcp-server/tsconfig.json,Data,Analyzing,Json,13
