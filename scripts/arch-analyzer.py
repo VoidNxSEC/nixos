@@ -2,12 +2,12 @@
 # ═══════════════════════════════════════════════════════════════════════════
 # Architecture Analyzer with LLM Integration
 # ═══════════════════════════════════════════════════════════════════════════
-# High-performance automated architecture documentation using local Ollama
+# High-performance automated architecture documentation using local llama.cpp
 # Model: qwen2.5-coder:7b-instruct (optimized for code understanding)
 #
 # Features:
 #   • Async/parallel processing for maximum throughput
-#   • Semantic code understanding with local LLM
+#   • Semantic code understanding with local LLM (llama.cpp)
 #   • Dependency graph generation (Mermaid)
 #   • Security posture assessment
 #   • Architecture pattern recognition
@@ -46,8 +46,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # Configuration
 # ═══════════════════════════════════════════════════════════════════════════
 
-DEFAULT_MODEL = "qwen2.5-coder:7b-instruct"
-OLLAMA_BASE_URL = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+DEFAULT_MODEL = "unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf"
+LLAMACPP_BASE_URL = os.getenv("LLAMACPP_BASE_URL", "http://localhost:8080")
 MAX_CONCURRENT = int(os.getenv("LLM_PARALLEL", "8"))
 REQUEST_TIMEOUT = int(os.getenv("LLM_TIMEOUT", "120"))
 
@@ -101,16 +101,16 @@ class ArchitectureReport:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Ollama Client (stdlib-based, no external dependencies)
+# Llama.cpp Client (stdlib-based, OpenAI-compatible API)
 # ═══════════════════════════════════════════════════════════════════════════
 
-class OllamaClient:
-    """High-performance Ollama client using stdlib (no aiohttp dependency)."""
+class LlamaCppClient:
+    """High-performance llama.cpp client using OpenAI-compatible API (stdlib only)."""
 
     def __init__(
         self,
         model: str = DEFAULT_MODEL,
-        base_url: str = OLLAMA_BASE_URL,
+        base_url: str = LLAMACPP_BASE_URL,
         timeout: int = REQUEST_TIMEOUT,
         max_retries: int = 3,
         max_concurrent: int = MAX_CONCURRENT
@@ -154,20 +154,19 @@ class OllamaClient:
             raise ConnectionError(f"Connection failed: {e.reason}")
 
     def check_health_sync(self) -> bool:
-        """Check if Ollama is available and model is loaded (sync)."""
+        """Check if llama.cpp is available (sync)."""
         try:
-            status, body = self._sync_request(f"{self.base_url}/api/tags")
+            status, body = self._sync_request(f"{self.base_url}/v1/models")
             if status == 200:
-                data = json.loads(body)
-                models = [m.get("name", "") for m in data.get("models", [])]
-                model_base = self.model.split(":")[0]
-                return any(model_base in m for m in models)
+                # OpenAI-compatible endpoint returns model list
+                # For llama.cpp, just check if endpoint responds
+                return True
         except Exception as e:
-            log.error(f"Ollama health check failed: {e}")
+            log.error(f"llama.cpp health check failed: {e}")
         return False
 
     async def check_health(self) -> bool:
-        """Check if Ollama is available (async wrapper)."""
+        """Check if llama.cpp is available (async wrapper)."""
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(self._executor, self.check_health_sync)
 
@@ -178,31 +177,34 @@ class OllamaClient:
         temperature: float = 0.1,
         max_tokens: int = 2048
     ) -> str:
-        """Generate completion synchronously with retry logic."""
+        """Generate completion synchronously with retry logic (OpenAI format)."""
+        # Combine system and prompt for OpenAI-compatible format
+        full_prompt = prompt
+        if system:
+            full_prompt = f"{system}\n\n{prompt}"
+        
         payload = {
             "model": self.model,
-            "prompt": prompt,
-            "stream": False,
-            "options": {
-                "temperature": temperature,
-                "num_predict": max_tokens,
-            }
+            "prompt": full_prompt,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "stream": False
         }
-        if system:
-            payload["system"] = system
 
         data = json.dumps(payload).encode()
 
         for attempt in range(self.max_retries):
             try:
                 status, body = self._sync_request(
-                    f"{self.base_url}/api/generate",
+                    f"{self.base_url}/v1/completions",
                     data
                 )
                 if status == 200:
-                    return json.loads(body).get("response", "")
+                    response_data = json.loads(body)
+                    # OpenAI format: choices[0].text
+                    return response_data.get("choices", [{}])[0].get("text", "")
                 else:
-                    log.warning(f"Ollama error (attempt {attempt+1}): {body[:100]}")
+                    log.warning(f"llama.cpp error (attempt {attempt+1}): {body[:100]}")
             except ConnectionError as e:
                 log.warning(f"Connection error (attempt {attempt+1}): {e}")
             except Exception as e:
@@ -316,7 +318,7 @@ class CodeAnalyzer:
     OPTION_PATTERN = re.compile(r'(\w+)\s*=\s*(?:mkOption|mkEnableOption)')
     MKIF_PATTERN = re.compile(r'mkIf\s+config\.([^\s]+)')
 
-    def __init__(self, client: OllamaClient, repo_root: Path):
+    def __init__(self, client: LlamaCppClient, repo_root: Path):
         self.client = client
         self.repo_root = repo_root
         self._cache: dict[str, ModuleAnalysis] = {}
@@ -475,7 +477,7 @@ class CodeAnalyzer:
 class ArchitectureInterpreter:
     """High-level architecture analysis and pattern recognition."""
 
-    def __init__(self, client: OllamaClient):
+    def __init__(self, client: LlamaCppClient):
         self.client = client
 
     def build_dependency_graph(
@@ -854,13 +856,13 @@ async def run_analysis(
     log.info(f"📁 Found {len(nix_files)} Nix modules to analyze")
 
     # Initialize client and analyzers
-    async with OllamaClient(model=model) as client:
-        # Health check
+    async with LlamaCppClient(model=model) as client:
+        # Verify connection
         if not await client.check_health():
-            log.error(f"❌ Ollama not available or model '{model}' not found")
-            log.error(f"   Try: ollama pull {model}")
+            log.error(f"❌ llama.cpp not available")
+            log.error(f"   Ensure llama.cpp is running: systemctl status llama-cpp")
             sys.exit(1)
-        log.info(f"✓ Ollama connection verified")
+        log.info(f"✓ llama.cpp connection verified")
 
         # Analyze modules
         analyzer = CodeAnalyzer(client, repo_root)

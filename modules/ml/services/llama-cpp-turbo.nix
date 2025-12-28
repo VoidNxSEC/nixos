@@ -95,7 +95,7 @@ in
 
     mainGpu = lib.mkOption {
       type = lib.types.int;
-      default = 0;
+      default = 1;
       description = "Main GPU index for inference (0 = first GPU).";
     };
 
