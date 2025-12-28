@@ -1,3 +1,4 @@
+# TODO: Refactoring the refactoring plan and update or archive this document
 # NixOS Repository Restructuring Plan
 
 > **Status**: Draft - Comprehensive Repository Reorganization
