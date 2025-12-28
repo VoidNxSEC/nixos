@@ -1,3 +1,4 @@
+# MOVE: Script, template from the Cypher host remote server, rename for cypher-host.nix
 {
   config,
   lib,
