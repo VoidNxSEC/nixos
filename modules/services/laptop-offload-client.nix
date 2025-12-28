@@ -39,8 +39,6 @@ in
       "cache-key:02WKFpKSXrblw9GTALpIE9qAMu5oGebPfpCizFCwHWE=" # Desktop cache key
     ];
 
-    # Optimize for offload usage
-    # max-jobs = lib.mkForce 0; # DISABLED: Allow local builds when desktop unavailable
     max-jobs = 4; # Allow local builds as fallback
 
     # Build optimization
