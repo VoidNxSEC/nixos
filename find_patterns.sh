@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# MOVE: Script
 # Padrão base
 PATTERN="\.programs\.[a-zA-Z0-9_-]+"
 

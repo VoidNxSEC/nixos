@@ -1,3 +1,4 @@
+# MOVE: Documentation
 # Nix Module Template Usage Guide
 
 This guide explains how to use the `TEMPLATE.nix` file to create new modules for your NixOS configuration.
