@@ -21,7 +21,7 @@ Offload orchestration logic and coordination.
 Model discovery and database management.
 
 **database.nix**: SQLite registry for models
-**discovery.nix** (TODO): Automatic model discovery
+**discovery.nix**: Planned - Automatic model discovery (future enhancement)
 
 ### backends/
 
@@ -30,8 +30,19 @@ Support for multiple inference backends.
 **Available Backends**:
 - **ollama.nix**: Ollama backend
 - **llamacpp.nix**: llama.cpp backend
-- **vllm.nix**: vLLM backend (TODO)
-- **tgi.nix**: Text Generation Inference backend (TODO)
+- **vllm.nix**: Planned - vLLM backend for high-throughput scenarios
+- **tgi.nix**: Planned - Text Generation Inference for production deployments
+
+### Implementation Status
+
+**Production Ready**:
+- ✅ **ollama.nix** - Ollama backend with GPU support
+- ✅ **llamacpp.nix** - llama.cpp backend with VRAM monitoring
+
+**Planned (Future Enhancements)**:
+- 📋 **vllm.nix** - Will be added when high-throughput is required
+- 📋 **tgi.nix** - Will be added for production deployments
+- 📋 **discovery.nix** - Automatic model registry discovery
 
 ### api/
 
