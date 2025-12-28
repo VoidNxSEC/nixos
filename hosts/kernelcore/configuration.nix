@@ -317,14 +317,12 @@
 
     services.gpu-orchestration = {
       enable = true;
-      defaultMode = "docker"; # Docker containers get GPU priority by default
+      defaultMode = "local";
     };
 
-    # services.users.gemini-agent removed for security hardening
-
     services.gitlab-runner = {
-      enable = false; # Set to true to enable GitLab CI/CD runner
-      useSops = false; # Enable when you have secrets/gitlab.yaml configured
+      enable = false;
+      useSops = false;
       runnerName = "nixos-gitlab-runner";
       url = "https://gitlab.com"; # Or your self-hosted GitLab instance
       executor = "shell"; # Options: shell, docker, docker+machine, kubernetes
@@ -462,9 +460,10 @@
       };
     };
 
-    # Offload build server - permite laptop buildar remotamente neste desktop
+    # Offload build server - DISABLED (this is the laptop, not the desktop)
+    # Desktop server is at 192.168.15.7 - connects via Tailscale
     offload-server = {
-      enable = true;
+      enable = false; # Changed from true - this is laptop client, not server
       cachePort = 5000; # nix-serve porta
       builderUser = "nix-builder";
       cacheKeyPath = "/var/cache-priv-key.pem";
@@ -493,7 +492,7 @@
       mainGpu = 1;
 
       # Context & batching
-      n_parallel = 4; # 4 concurrent requests
+      n_parallel = 1; # Dedicated server - give full context to 1 slot
       n_ctx = 8192; # 8K context window
       n_batch = 2048;
       n_ubatch = 512;
@@ -516,14 +515,6 @@
       # API settings
       metricsEndpoint = false; # Prometheus metrics at /metrics
     };
-
-    # Legacy llamacpp (disabled - replaced by turbo)
-    #llamacpp.enable = false;
-
-    #enable = false;
-    # To re-enable: set enable = true;
-    # port = 11434;
-    #};
 
     gitea = {
       enable = false; # Disabled - causing systemd loops during rebuild

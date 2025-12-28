@@ -9,7 +9,7 @@ import re
 
 # Configuration - llama.cpp TURBO
 API_URL = os.environ.get("LLAMACPP_URL", "http://127.0.0.1:8080") + "/v1/chat/completions"
-MODEL_NAME = "default"
+MODEL_NAME = "unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf"
 MAX_DIFF_SIZE = 4000  # Characters
 
 def run_command(command):

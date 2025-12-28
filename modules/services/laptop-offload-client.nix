@@ -10,8 +10,8 @@
 
 let
   # CONFIGURE THESE VALUES FOR YOUR SETUP
-  desktopIP = "192.168.15.9"; # Desktop server IP (CORRIGIDO - IP real confirmado)
-  laptopIP = "192.168.15.9"; # Laptop IP (mesma máquina que desktop)
+  desktopIP = "192.168.15.7"; # Desktop server IP (Build server)
+  laptopIP = "192.168.15.9"; # Laptop IP (this machine)
 
   # SSH key path for builder authentication
   builderKeyPath = "/etc/nix/builder_key";
@@ -39,8 +39,6 @@ in
       "cache-key:02WKFpKSXrblw9GTALpIE9qAMu5oGebPfpCizFCwHWE=" # Desktop cache key
     ];
 
-    # Optimize for offload usage
-    # max-jobs = lib.mkForce 0; # DISABLED: Allow local builds when desktop unavailable
     max-jobs = 4; # Allow local builds as fallback
 
     # Build optimization
@@ -278,14 +276,26 @@ in
     wantedBy = [ "multi-user.target" ];
 
     script = ''
-      # Wait for network and desktop availability
-      sleep 10
+      # Smart network check - max 5 seconds total wait
+      MAX_WAIT=10  # 10 iterations of 0.5s = 5 seconds max
+      WAIT_COUNT=0
 
-      # Try to mount if desktop is reachable
-      if ping -c 1 -W 5 ${desktopIP} >/dev/null 2>&1; then
-        mount /nix/store-remote 2>/dev/null || true
-        mount /var/lib/nix-offload-remote 2>/dev/null || true
-      fi
+      echo "🔍 Checking desktop availability at ${desktopIP}..."
+
+      # Poll every 0.5s until desktop is reachable or timeout
+      while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
+        if ping -c 1 -W 1 ${desktopIP} > /dev/null 2>&1; then
+          echo "✅ Desktop reachable, mounting NFS shares..."
+          mount /nix/store-remote 2>/dev/null || true
+          mount /var/lib/nix-offload-remote 2>/dev/null || true
+          exit 0
+        fi
+        sleep 0.5
+        WAIT_COUNT=$((WAIT_COUNT + 1))
+      done
+
+      # Desktop not reachable - exit cleanly (laptop can work offline)
+      echo "⚠️  Desktop ${desktopIP} not reachable after 5s, skipping NFS mounts (working offline)"
     '';
 
     serviceConfig = {
