@@ -1,3 +1,4 @@
+# MOVE: Scaffold
 # ============================================================
 # Module Name/Title
 # ============================================================
@@ -17,7 +18,6 @@ with lib;
 
 let
   # Define the configuration namespace
-  # TODO: Change 'category.module-name' to your actual path (e.g., programs.myapp or services.myservice)
   cfg = config.category.module-name;
 in
 {
@@ -44,7 +44,7 @@ in
     # Package option example (allow overriding the package)
     package = mkOption {
       type = types.package;
-      default = pkgs.hello; # TODO: Replace with actual package
+      default = pkgs.hello;
       description = "Package to use for this module";
     };
 
