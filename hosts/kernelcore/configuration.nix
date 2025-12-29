@@ -152,10 +152,9 @@
     # Packages - isolated per-package architecture
     packages.zellij.enable = true;
     packages.lynis.enable = true;
-
+    packages.hyprland.enable = true; # Hyprland v0.53.0
+    packages.claude.enable = true;
     packages.gemini-cli.enable = true;
-
-    # services.users."codex-agent" removed for security hardening
 
     hardware.wifi-optimization.enable = true;
 
@@ -398,6 +397,38 @@
     system.ml-gpu-users.enable = true;
   };
 
+  # ═══════════════════════════════════════════════════════════
+  # FEATURE FLAGS - Service Configuration (migrated from flake.nix)
+  # ═══════════════════════════════════════════════════════════
+
+  # SecureLLM MCP Server
+  services.securellm-mcp = {
+    enable = true;
+    daemon.enable = true;
+    daemon.logLevel = "INFO";
+  };
+
+  # Tools Suite
+  kernelcore.tools = {
+    enable = true;
+    intel.enable = true;
+    secops.enable = true;
+    nix-utils.enable = true;
+    dev.enable = true;
+    secrets.enable = true;
+    diagnostics.enable = true;
+    llm.enable = true;
+    mcp.enable = true;
+    arch-analyzer.enable = true;
+  };
+
+  # Swissknife Debug Tools
+  kernelcore.swissknife.enable = true;
+
+  # ═══════════════════════════════════════════════════════════
+  # ADDITIONAL SERVICES
+  # ═══════════════════════════════════════════════════════════
+
   # Enable the configuration auditor tool
   services.config-auditor.enable = true;
 
@@ -479,7 +510,7 @@
     # - Continuous Batching (concurrent requests)
     llamacpp-turbo = {
       enable = true;
-      model = "/var/lib/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
+      model = "/var/lib/llamacpp/models/Qwen2.5_Coder_7B_Instruct";
       host = "127.0.0.1";
       port = 8080;
 
@@ -872,8 +903,6 @@
       };
     };
   };
-
-  # services.blueman.enable = true;
 
   system.stateVersion = "26.05";
 }
