@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1765876757,
-        "narHash": "sha256-p25bBqn2C7zzlD3nT9IVFWVSWVQIqpWYP4MjM5IRGAY=",
+        "lastModified": 1767025390,
+        "narHash": "sha256-oeXWLDWFJXOYH6VMF4J+sQ/mv8hgDM554eD35U4P/Jc=",
         "ref": "refs/heads/main",
-        "rev": "fee26e929ecc8b9f208ac20e646104f91b8c1744",
-        "revCount": 3,
+        "rev": "c3b29a2fe77ef2a022393bfaee740c3d0e3a79ab",
+        "revCount": 5,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/arch-analyzer"
       },
