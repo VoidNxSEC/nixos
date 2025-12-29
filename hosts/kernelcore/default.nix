@@ -1,4 +1,6 @@
 { ... }:
 {
-  programs.sway.enable = true;
+  imports = [
+    ./users # User accounts and configurations
+  ];
 }
