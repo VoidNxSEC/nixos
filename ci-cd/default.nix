@@ -2,6 +2,11 @@
   pkgs ? import <nixpkgs> { },
 }:
 
+# Import buildbot modules if directory exists
+let
+  buildbot = if builtins.pathExists ./buildbot then import ./buildbot else { };
+in
+
 let
   lib = pkgs.lib;
 
