@@ -13,13 +13,16 @@
 let
   cfg = config.kernelcore.packages.lynis;
 
-  # Source from nvfetcher (auto-updated)
-  sources = pkgs.callPackage ../../_sources/generated.nix { };
-
   package = pkgs.stdenv.mkDerivation {
     pname = "lynis";
-    version = sources.lynis.version;
-    src = sources.lynis.src;
+    version = "3.1.6";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/CISOfy/lynis/archive/3.1.6.tar.gz";
+      sha256 = "sha256-KjHj4CjWufDo9QJAKtZ1KwafkIKJNRTIwCOWL1eGs7Y=";
+    };
+
+    nativeBuildInputs = [ pkgs.makeWrapper ];
 
     dontBuild = true;
 
@@ -27,15 +30,14 @@ let
       mkdir -p $out/bin $out/share/lynis
       cp -r * $out/share/lynis/
 
-      # Create wrapper script
-      cat > $out/bin/lynis << 'EOF'
-      #!/bin/sh
-      exec /bin/sh $out/share/lynis/lynis "$@"
-      EOF
-      chmod +x $out/bin/lynis
-
-      # Fix the wrapper to use actual path
-      substituteInPlace $out/bin/lynis --replace '$out' "$out"
+      makeWrapper $out/share/lynis/lynis $out/bin/lynis \
+        --prefix PATH : ${
+          lib.makeBinPath [
+            pkgs.gawk
+            pkgs.gnugrep
+            pkgs.gnused
+          ]
+        }
     '';
 
     meta = {

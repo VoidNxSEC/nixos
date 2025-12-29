@@ -3,12 +3,12 @@
 ║                        Professional Edition v3.0.0                        ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
-Generated:     2025-12-29 17:59:51 -02
+Generated:     2025-12-28 17:52:50 -02
 Location:      /etc/nixos
 Hostname:      nx
 Git Branch:    refactor/cleanup
-Git Commit:    d9a54dcd (2025-12-29 14:23:35)
-Total Commits: 311
+Git Commit:    07957d4c (2025-12-28 17:51:48)
+Total Commits: 305
 Contributors:  3
 Last Tag:      ml-restructure-complete
 Repo Age:      0 days
@@ -20,30 +20,30 @@ Repo Age:      0 days
 └─────────────────────────────────────────────────────────────────────────┘
 
 Repository Overview:
-  • Total Files:           637
-  • Total Directories:     130
+  • Total Files:           626
+  • Total Directories:     123
   • Repository Size:       1,9G
 
 NixOS Configuration:
-  • .nix files:            268 (52985 lines)
-  • Total modules:         148
+  • .nix files:            261 (52637 lines)
+  • Total modules:         152
   • Module categories:     12
   • Modules size:          543M
 
 Documentation:
-  • .md files:             188 (84426 lines)
+  • .md files:             186 (83864 lines)
   • Documentation size:    2,1M
-  • Doc coverage:          52%
+  • Doc coverage:          53%
 
 Scripts & Automation:
-  • .sh files:             100 (16903 lines)
-  • Scripts size:          1,4M
+  • .sh files:             99 (16526 lines)
+  • Scripts size:          1,6M
 
 Health Metrics:
   • Overall Health:        65/100
   • Security Score:        100/100
-  • Documentation:         52/100
-  • Orphaned modules:      145
+  • Documentation:         53/100
+  • Orphaned modules:      151
 
 
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -59,22 +59,22 @@ Health Metrics:
   security        ██████████████░░░░░░░░░░░░░░░░  17 modules (  2317 lines)
                  Security hardening and policies
 
+  services        █████████████░░░░░░░░░░░░░░░░░  16 modules (  3056 lines)
+                 System services and daemons
+
   network         ███████████░░░░░░░░░░░░░░░░░░░  13 modules (  2860 lines)
                  Network configuration and services
 
   hardware        ██████████░░░░░░░░░░░░░░░░░░░░  12 modules (  2712 lines)
                  Hardware configurations (GPU, CPU, peripherals)
 
-  system          ████████░░░░░░░░░░░░░░░░░░░░░░  10 modules (  1264 lines)
+  system          ████████░░░░░░░░░░░░░░░░░░░░░░  10 modules (  1263 lines)
                  Core system configuration
-
-  services        ████████░░░░░░░░░░░░░░░░░░░░░░  10 modules (  2275 lines)
-                 System services and daemons
 
   applications    ████████░░░░░░░░░░░░░░░░░░░░░░  10 modules (  2019 lines)
                  User applications and tools
 
-  packages        ██████░░░░░░░░░░░░░░░░░░░░░░░░   7 modules (   441 lines)
+  packages        ████░░░░░░░░░░░░░░░░░░░░░░░░░░   5 modules (   345 lines)
                  Custom packages and overlays
 
   development     ████░░░░░░░░░░░░░░░░░░░░░░░░░░   5 modules (   973 lines)
@@ -107,7 +107,7 @@ Security Configuration:
 └─────────────────────────────────────────────────────────────────────────┘
 
 Component Scores:
-  • Documentation:         52/100
+  • Documentation:         53/100
   • Security:              100/100
   • Structure:             100/100
 
@@ -122,13 +122,13 @@ Overall Health:            65/100
 └─────────────────────────────────────────────────────────────────────────┘
 
   📚 Documentation:
-    - Current coverage: 52%
+    - Current coverage: 53%
     - Target: 80%+
     - Action: Add 'description' fields to module options
     - Benefit: Better maintainability and onboarding
 
   ⚠ Orphaned Modules:
-    - Found: 145 potentially unused modules
+    - Found: 151 potentially unused modules
     - Action: Review and either import or remove
     - Benefit: Cleaner codebase, faster rebuilds
 
@@ -136,7 +136,7 @@ Overall Health:            65/100
 ═══════════════════════════════════════════════════════════════════════════
 
 Generated by: NixOS Architecture Analysis Tool v3.0.0
-Report Date:  2025-12-29 17:59:51
+Report Date:  2025-12-28 17:52:50
 Script Path:  ./generate-architecture-tree.sh
 
 To regenerate this report:
