@@ -1129,6 +1129,7 @@ main() {
   # Create snapshot
   log "Creating versioned snapshot..."
   cp "$OUTPUT_REPORT_TXT" "$SNAPSHOT_FILE"
+  chmod 644 "$SNAPSHOT_FILE"  # Ensure readable permissions
   success "Snapshot: $SNAPSHOT_FILE"
 
   # Phase 4: AI-Powered Analysis

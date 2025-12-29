@@ -10,5 +10,5 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
-# Run the python implementation
-python3 "$DIR/smart-commit.py" "$@"
+# Run the V2 implementation with chain-of-thought reasoning
+python3 "$DIR/smart-commit-v2.py" "$@"
