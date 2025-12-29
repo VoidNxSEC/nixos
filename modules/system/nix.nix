@@ -43,7 +43,8 @@ with lib;
           # Total concurrent threads: 2 jobs × 2 cores = 4 threads (was 12)
 
           # Kill builds that take too long (prevents zombie builds)
-          timeout = mkDefault 3600; # 1 hour timeout for heavy builds (llama-cpp with CUDA)
+          # Increased to 3 hours for LLVM/Rust compilation (was 1h)
+          timeout = mkDefault 10800; # 3 hours for ultra-heavy builds
 
           trusted-users = [
             "root"

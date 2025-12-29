@@ -3,8 +3,9 @@
 [
   # Python package fixes (test failures, resource issues)
   (import ./python-packages.nix)
+  (import ./python-tests-fix.nix) # Disable flaky pytest-xdist tests
 
-  # Hyprland v0.52.0 custom build
+  # Hyprland v0.53.0 custom build (overlay compiles, module configures)
   (import ./hyprland.nix)
 
   # Add more overlays here as needed:
