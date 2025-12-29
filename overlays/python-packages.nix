@@ -17,6 +17,11 @@ final: prev: {
       jax = pyprev.jax.overridePythonAttrs (old: {
         doCheck = false;
       });
+
+      # mypy: Tests are very slow and resource intensive
+      mypy = pyprev.mypy.overridePythonAttrs (old: {
+        doCheck = false;
+      });
     };
   };
 
@@ -34,6 +39,11 @@ final: prev: {
 
       # jax: Tests fail with "can't start new thread" (resource exhaustion)
       jax = pyprev.jax.overridePythonAttrs (old: {
+        doCheck = false;
+      });
+
+      # mypy: Tests are very slow and resource intensive
+      mypy = pyprev.mypy.overridePythonAttrs (old: {
         doCheck = false;
       });
     };
