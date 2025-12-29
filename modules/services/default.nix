@@ -10,7 +10,6 @@
 {
   imports = [
     # User Management
-    ./users
 
     # Offload & Build Services
     ./offload-server.nix

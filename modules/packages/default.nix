@@ -17,11 +17,10 @@
 
     # Active packages - each is completely self-contained
     ./zellij
-    ./gemini-cli
+    ./gemini
+    ./claude
     ./lynis
-
-    # Legacy support - will be migrated
-    # Modular package structure with sandboxing and audit support
-    ./appflowy.nix
+    ./hyprland
+    ./appflowy
   ];
 }
