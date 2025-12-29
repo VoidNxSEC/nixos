@@ -39,8 +39,11 @@
       aide.enable = true;
 
       # Antivirus scanning for malware detection
-      # DISABLED: ClamAV consumes 2.7GB RAM + 1.2GB swap (causes system slowdown)
-      # See REFATORACAO-ARQUITETURA-2025.md for optimized configuration
+      # Note: ClamAV consumes ~2.7GB RAM + swap during full scans
+      # Configured with optimizations in modules/security/clamav.nix:
+      # - Weekly scans (not continuous)
+      # - Low priority (Nice=19, IOSchedulingClass=idle)
+      # - Home directory only (excludes /nix/store, /proc, /sys)
       clamav.enable = true;
 
       # Enhanced SSH security hardening

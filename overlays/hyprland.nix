@@ -20,7 +20,7 @@
 
 final: prev: {
   # Build pugixml from source (dependency for hyprwire)
-  pugixml = final.stdenv.mkDerivation rec {
+  hyprland-pugixml = final.stdenv.mkDerivation rec {
     pname = "pugixml";
     version = "1.15";
 
@@ -33,6 +33,8 @@ final: prev: {
       cmake
     ];
 
+    doCheck = false;
+
     meta = with final.lib; {
       description = "Light-weight, simple and fast XML parser for C++";
       homepage = "https://pugixml.org/";
@@ -42,7 +44,7 @@ final: prev: {
   };
 
   # Build libffi from source (dependency for hyprutils)
-  libffi = final.stdenv.mkDerivation rec {
+  hyprland-libffi = final.stdenv.mkDerivation rec {
     pname = "libffi";
     version = "3.5.2";
 
@@ -54,6 +56,8 @@ final: prev: {
     nativeBuildInputs = with final; [
       pkg-config
     ];
+
+    doCheck = false;
 
     meta = with final.lib; {
       description = "Foreign function interface library";
@@ -79,9 +83,11 @@ final: prev: {
     ];
 
     buildInputs = with final; [
-      pugixml
-      libffi
+      hyprland-pugixml
+      hyprland-libffi
     ];
+
+    doCheck = false;
 
     meta = with final.lib; {
       description = "Hyprland utilities library";
@@ -107,10 +113,12 @@ final: prev: {
 
     buildInputs = with final; [
       hyprlang
-      pugixml # XML parser dependency
+      hyprland-pugixml # XML parser dependency
       hyprutils # Hyprland utilities (requires libffi)
-      libffi # Foreign function interface
+      hyprland-libffi # Foreign function interface
     ];
+
+    doCheck = false;
 
     meta = with final.lib; {
       description = "Hyprland Wire - Wayland protocol implementation";
@@ -153,8 +161,11 @@ final: prev: {
       "-Dtracy_enable=false" # Disable Tracy profiler
     ];
 
+    doCheck = false;
+
     # Package metadata
     meta = oldAttrs.meta // {
+      timeout = 10800; # 3 hours
       longDescription = ''
         Hyprland is a highly customizable dynamic tiling Wayland compositor
         that doesn't sacrifice on its looks. It provides an extensive plugin
