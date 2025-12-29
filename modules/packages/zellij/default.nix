@@ -13,14 +13,15 @@
 let
   cfg = config.kernelcore.packages.zellij;
 
-  # Source from nvfetcher (auto-updated)
-  sources = pkgs.callPackage ../../_sources/generated.nix { };
-
   # Zellij is a static MUSL binary - just extract and use
   package = pkgs.stdenv.mkDerivation {
     pname = "zellij";
-    version = sources.zellij.version;
-    src = sources.zellij.src;
+    version = "v0.43.1";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/zellij-org/zellij/releases/download/v0.43.1/zellij-x86_64-unknown-linux-musl.tar.gz";
+      sha256 = "sha256-VB2Y7+9VWCk++FrZrNKeTZILbogVE7nnclXYIHAg11o=";
+    };
 
     # No build needed - pre-compiled static binary
     dontBuild = true;
