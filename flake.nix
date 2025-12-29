@@ -53,6 +53,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # TODO: Add notion-exporter from ~/dev/projects/notion-exporter
+
     # ═══════════════════════════════════════════════════════════════
     # PHANTOM - AI Document Intelligence Toolkit
     # ═══════════════════════════════════════════════════════════════
@@ -166,10 +168,12 @@
               nixpkgs.config.allowUnfree = true;
             }
 
+            # TODO: Isolate imports with default.nix file calling just ./hosts/kernelcore, and add the hosts/kernelcore/configuration.nix and hardware-configuration.nix files in default.nix imports, and remove the ./hosts/kernelcore/hardware-configuration.nix and ./hosts/kernelcore files from here
             # ═══════════════════════════════════════════════════════════
             # HOST-SPECIFIC CONFIGURATION
             # ═══════════════════════════════════════════════════════════
             ./hosts/kernelcore/hardware-configuration.nix
+            ./hosts/kernelcore
             ./hosts/kernelcore/configuration.nix
 
             # ═══════════════════════════════════════════════════════════
@@ -177,35 +181,9 @@
             # ═══════════════════════════════════════════════════════════
             ./modules
 
-            # ═══════════════════════════════════════════════════════════
-            # FEATURE FLAGS & CONFIGURATION /* TODO: move to configuration.nix in hosts/kernelcore/configuration.nix */
-            # ═══════════════════════════════════════════════════════════
-            {
-              # SecureLLM MCP Server
-              services.securellm-mcp = {
-                enable = true;
-                daemon.enable = true;
-                daemon.logLevel = "INFO";
-              };
+            # NOTE: Feature flags and service configuration moved to:
+            #       ./hosts/kernelcore/configuration.nix (lines 400-427)
 
-              # Tools Suite
-              kernelcore.tools = {
-                enable = true;
-                intel.enable = true;
-                secops.enable = true;
-                nix-utils.enable = true;
-                dev.enable = true;
-                secrets.enable = true;
-                diagnostics.enable = true;
-                llm.enable = true;
-                mcp.enable = true;
-                arch-analyzer.enable = true;
-              };
-
-              # Swissknife Debug Tools
-              kernelcore.swissknife.enable = true;
-            }
-            # END TODO
             # ═══════════════════════════════════════════════════════════
             # SOPS-NIX SECRETS MANAGEMENT
             # ═══════════════════════════════════════════════════════════
