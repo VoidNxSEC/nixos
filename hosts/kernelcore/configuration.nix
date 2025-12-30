@@ -435,20 +435,6 @@
   # Enable the configuration auditor tool
   services.config-auditor.enable = true;
 
-  #services.llama-swap = {
-  #enable = true;
-  #port = 8080;
-  #};
-  #models = {
-  # O "alias" que você chama na API = O caminho do arquivo real
-  #"Coder-7B-Instruct-GGUF_qwen2" = " "/var/lib/llamacpp/models/Qwen_Qwen2.5-Coder-7B-Instruct-GGUF_qwen2.5-coder-7b-instruct-q6_k-00001-of-00002.gguf"";
-  #"Coder-7B-Instruct-GGUF_qwen2" = " "/var/lib/llamacpp/models/Qwen_Qwen2.5-Coder-7B-Instruct-GGUF_qwen2.5-coder-7b-instruct-q6_k-00002-of-00002.gguf"";
-  #"deepseek" = "/caminho/para/deepseek.gguf";
-  #};
-  # Argumentos padrão para todos (ex: forçar GPU)
-  #extraFlags = [ "-ngl 999" "-c 4096" ];
-  #};
-
   services = {
 
     # ============================================
@@ -659,7 +645,7 @@
   security.rtkit.enable = true;
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
-  # hardware.nvidia-container-toolkit.enable moved to modules/hardware/nvidia.nix
+
   #hardware.nvidia.datacenter.enable = true; # Conflicting with xserver drivers
 
   services.udisks2.enable = true;
@@ -722,7 +708,7 @@
       waybackurls
       hakrawler
       python313Packages.pyyaml
-
+      python313Packages.langchain
       awscli
 
       invidious
