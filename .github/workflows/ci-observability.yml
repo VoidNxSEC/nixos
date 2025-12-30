@@ -1,0 +1,409 @@
+name: CI Observability & Debug
+
+# Workflow com observabilidade completa e debug remoto via tmate
+# - Métricas de build detalhadas
+# - Logs estruturados
+# - Alertas instantâneos em caso de erro
+# - Debug remoto via tmate quando necessário
+
+on:
+  workflow_call:
+    inputs:
+      enable-tmate:
+        description: 'Enable tmate debug session'
+        required: false
+        type: boolean
+        default: false
+      tmate-on-failure:
+        description: 'Enable tmate only on failure'
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      DISCORD_WEBHOOK:
+        required: false
+      TELEGRAM_BOT_TOKEN:
+        required: false
+      TELEGRAM_CHAT_ID:
+        required: false
+      SLACK_WEBHOOK:
+        required: false
+
+  workflow_dispatch:
+    inputs:
+      enable-tmate:
+        description: 'Enable tmate debug session'
+        required: false
+        type: boolean
+        default: false
+      test-notifications:
+        description: 'Test notification system'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  # Workflow metadata
+  WORKFLOW_START: ${{ github.event_name }}
+  COMMIT_SHA: ${{ github.sha }}
+  COMMIT_MSG: ${{ github.event.head_commit.message }}
+  ACTOR: ${{ github.actor }}
+
+jobs:
+  # Job 1: Setup observability
+  setup-observability:
+    name: Setup Observability
+    runs-on: ubuntu-latest
+    outputs:
+      job-id: ${{ steps.gen-id.outputs.job-id }}
+      start-time: ${{ steps.timestamp.outputs.start-time }}
+    steps:
+      - name: Generate Job ID
+        id: gen-id
+        run: echo "job-id=$(uuidgen || echo $RANDOM-$RANDOM-$RANDOM)" >> $GITHUB_OUTPUT
+
+      - name: Record Start Time
+        id: timestamp
+        run: echo "start-time=$(date +%s)" >> $GITHUB_OUTPUT
+
+      - name: Send Start Notification
+        if: inputs.test-notifications || github.event_name == 'workflow_dispatch'
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # Discord notification
+          if [ -n "$DISCORD_WEBHOOK" ]; then
+            curl -X POST "$DISCORD_WEBHOOK" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"embeds\": [{
+                  \"title\": \"🚀 CI Started\",
+                  \"description\": \"**Workflow**: ${GITHUB_WORKFLOW}\n**Trigger**: ${GITHUB_EVENT_NAME}\n**Branch**: ${GITHUB_REF_NAME}\",
+                  \"color\": 3447003,
+                  \"fields\": [
+                    {\"name\": \"Commit\", \"value\": \"[\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})\", \"inline\": true},
+                    {\"name\": \"Actor\", \"value\": \"${GITHUB_ACTOR}\", \"inline\": true},
+                    {\"name\": \"Run\", \"value\": \"[#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})\", \"inline\": true}
+                  ],
+                  \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+                }]
+              }" || echo "Discord notification failed"
+          fi
+
+          # Telegram notification
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            MESSAGE="🚀 *CI Started*
+
+*Workflow*: ${GITHUB_WORKFLOW}
+*Trigger*: ${GITHUB_EVENT_NAME}
+*Branch*: ${GITHUB_REF_NAME}
+*Commit*: [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})
+*Actor*: ${GITHUB_ACTOR}
+*Run*: [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
+
+            curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -d "chat_id=${TELEGRAM_CHAT_ID}" \
+              -d "text=${MESSAGE}" \
+              -d "parse_mode=Markdown" \
+              -d "disable_web_page_preview=true" || echo "Telegram notification failed"
+          fi
+
+  # Job 2: Main Build with Debug Support
+  build-with-observability:
+    name: Build with Observability
+    runs-on: [self-hosted, nixos]
+    needs: setup-observability
+    env:
+      JOB_ID: ${{ needs.setup-observability.outputs.job-id }}
+      START_TIME: ${{ needs.setup-observability.outputs.start-time }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # tmate Debug Session - Before Build (if requested)
+      - name: Setup tmate session (pre-build)
+        uses: mxschmitt/action-tmate@v3
+        if: inputs.enable-tmate == true
+        with:
+          limit-access-to-actor: true
+          detached: true
+
+      - name: Setup Nix
+        run: |
+          echo "🔧 Nix version: $(nix --version)"
+          echo "📊 System info:"
+          nix-info -m
+
+      - name: Build NixOS Configuration
+        id: build
+        continue-on-error: true
+        run: |
+          set +e  # Don't exit on error
+
+          echo "::group::Build Output"
+          START=$(date +%s)
+
+          # Run build with timing
+          nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
+            --show-trace \
+            --print-build-logs 2>&1 | tee build.log
+
+          BUILD_EXIT_CODE=$?
+          END=$(date +%s)
+          DURATION=$((END - START))
+
+          echo "::endgroup::"
+
+          # Export metrics
+          echo "build-duration=${DURATION}" >> $GITHUB_OUTPUT
+          echo "build-exit-code=${BUILD_EXIT_CODE}" >> $GITHUB_OUTPUT
+          echo "build-log-size=$(wc -c < build.log)" >> $GITHUB_OUTPUT
+
+          # Check for common errors
+          if grep -q "error: " build.log; then
+            ERROR_COUNT=$(grep -c "error: " build.log)
+            echo "error-count=${ERROR_COUNT}" >> $GITHUB_OUTPUT
+            echo "::error::Build failed with ${ERROR_COUNT} errors"
+          fi
+
+          exit $BUILD_EXIT_CODE
+
+      # tmate Debug Session - On Failure
+      - name: Setup tmate session (on failure)
+        uses: mxschmitt/action-tmate@v3
+        if: |
+          failure() &&
+          (inputs.tmate-on-failure == true || inputs.enable-tmate == true)
+        with:
+          limit-access-to-actor: true
+          timeout-minutes: 30
+
+      - name: Collect Build Metrics
+        if: always()
+        id: metrics
+        run: |
+          # Calculate metrics
+          END_TIME=$(date +%s)
+          TOTAL_DURATION=$((END_TIME - START_TIME))
+
+          # Nix store stats
+          STORE_SIZE=$(du -sh /nix/store 2>/dev/null | cut -f1 || echo "unknown")
+
+          # System resources
+          MEMORY_USED=$(free -h | grep Mem | awk '{print $3}')
+          DISK_USED=$(df -h / | tail -1 | awk '{print $3}')
+
+          # Export metrics
+          echo "total-duration=${TOTAL_DURATION}" >> $GITHUB_OUTPUT
+          echo "store-size=${STORE_SIZE}" >> $GITHUB_OUTPUT
+          echo "memory-used=${MEMORY_USED}" >> $GITHUB_OUTPUT
+          echo "disk-used=${DISK_USED}" >> $GITHUB_OUTPUT
+
+          # Create metrics report
+          cat > metrics.json <<EOF
+          {
+            "job_id": "${JOB_ID}",
+            "workflow": "${GITHUB_WORKFLOW}",
+            "run_number": ${GITHUB_RUN_NUMBER},
+            "run_id": "${GITHUB_RUN_ID}",
+            "commit": "${GITHUB_SHA:0:7}",
+            "ref": "${GITHUB_REF_NAME}",
+            "actor": "${GITHUB_ACTOR}",
+            "event": "${GITHUB_EVENT_NAME}",
+            "start_time": ${START_TIME},
+            "end_time": ${END_TIME},
+            "duration_seconds": ${TOTAL_DURATION},
+            "build_duration_seconds": ${{ steps.build.outputs.build-duration || 0 }},
+            "build_exit_code": ${{ steps.build.outputs.build-exit-code || 0 }},
+            "build_log_size_bytes": ${{ steps.build.outputs.build-log-size || 0 }},
+            "error_count": ${{ steps.build.outputs.error-count || 0 }},
+            "store_size": "${STORE_SIZE}",
+            "memory_used": "${MEMORY_USED}",
+            "disk_used": "${DISK_USED}",
+            "status": "${{ job.status }}"
+          }
+          EOF
+
+          echo "📊 Metrics Report:"
+          cat metrics.json | jq '.'
+
+      - name: Upload Build Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ github.run_number }}
+          path: |
+            build.log
+            metrics.json
+          retention-days: 30
+
+      - name: Send Success Notification
+        if: success()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          BUILD_DURATION: ${{ steps.build.outputs.build-duration }}
+          TOTAL_DURATION: ${{ steps.metrics.outputs.total-duration }}
+        run: |
+          # Discord success
+          if [ -n "$DISCORD_WEBHOOK" ]; then
+            curl -X POST "$DISCORD_WEBHOOK" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"embeds\": [{
+                  \"title\": \"✅ CI Passed\",
+                  \"description\": \"**Workflow**: ${GITHUB_WORKFLOW}\n**Branch**: ${GITHUB_REF_NAME}\",
+                  \"color\": 3066993,
+                  \"fields\": [
+                    {\"name\": \"Commit\", \"value\": \"[\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})\", \"inline\": true},
+                    {\"name\": \"Build Time\", \"value\": \"${BUILD_DURATION}s\", \"inline\": true},
+                    {\"name\": \"Total Time\", \"value\": \"${TOTAL_DURATION}s\", \"inline\": true},
+                    {\"name\": \"Store Size\", \"value\": \"${{ steps.metrics.outputs.store-size }}\", \"inline\": true},
+                    {\"name\": \"Memory\", \"value\": \"${{ steps.metrics.outputs.memory-used }}\", \"inline\": true}
+                  ],
+                  \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+                }]
+              }"
+          fi
+
+          # Telegram success
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            MESSAGE="✅ *CI Passed*
+
+*Branch*: ${GITHUB_REF_NAME}
+*Commit*: [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})
+*Build Time*: ${BUILD_DURATION}s
+*Total Time*: ${TOTAL_DURATION}s
+*Run*: [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
+
+            curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -d "chat_id=${TELEGRAM_CHAT_ID}" \
+              -d "text=${MESSAGE}" \
+              -d "parse_mode=Markdown"
+          fi
+
+      - name: Send Failure Notification
+        if: failure()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ERROR_COUNT: ${{ steps.build.outputs.error-count || 0 }}
+        run: |
+          # Extract error snippet from build log
+          ERROR_SNIPPET=$(tail -50 build.log | grep -A 5 "error:" | head -20 || echo "See full log for details")
+
+          # Discord failure notification
+          if [ -n "$DISCORD_WEBHOOK" ]; then
+            curl -X POST "$DISCORD_WEBHOOK" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"embeds\": [{
+                  \"title\": \"❌ CI Failed\",
+                  \"description\": \"**Workflow**: ${GITHUB_WORKFLOW}\n**Branch**: ${GITHUB_REF_NAME}\",
+                  \"color\": 15158332,
+                  \"fields\": [
+                    {\"name\": \"Commit\", \"value\": \"[\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})\", \"inline\": true},
+                    {\"name\": \"Errors\", \"value\": \"${ERROR_COUNT}\", \"inline\": true},
+                    {\"name\": \"Run\", \"value\": \"[#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})\", \"inline\": true},
+                    {\"name\": \"Error Preview\", \"value\": \"\`\`\`\n${ERROR_SNIPPET:0:500}\n\`\`\`\", \"inline\": false}
+                  ],
+                  \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+                }]
+              }"
+          fi
+
+          # Telegram failure notification (with tmate info if active)
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            TMATE_INFO=""
+            if [ "${{ inputs.tmate-on-failure }}" == "true" ] || [ "${{ inputs.enable-tmate }}" == "true" ]; then
+              TMATE_INFO="
+🐛 *tmate session active* - check Actions logs for SSH connection"
+            fi
+
+            MESSAGE="❌ *CI Failed*
+
+*Branch*: ${GITHUB_REF_NAME}
+*Commit*: [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})
+*Errors*: ${ERROR_COUNT}
+*Run*: [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})${TMATE_INFO}
+
+\`\`\`
+${ERROR_SNIPPET:0:400}
+\`\`\`"
+
+            curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -d "chat_id=${TELEGRAM_CHAT_ID}" \
+              -d "text=${MESSAGE}" \
+              -d "parse_mode=Markdown"
+          fi
+
+  # Job 3: Generate Observability Report
+  generate-report:
+    name: Generate Observability Report
+    runs-on: ubuntu-latest
+    needs: [setup-observability, build-with-observability]
+    if: always()
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-${{ github.run_number }}
+
+      - name: Generate HTML Report
+        run: |
+          cat > report.html <<'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>CI Observability Report</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+              .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+              h1 { color: #333; }
+              .metric { display: inline-block; margin: 10px; padding: 15px; background: #f0f0f0; border-radius: 5px; }
+              .metric-label { font-weight: bold; color: #666; }
+              .metric-value { font-size: 24px; color: #333; }
+              .success { color: #28a745; }
+              .failure { color: #dc3545; }
+              pre { background: #f8f8f8; padding: 10px; border-radius: 5px; overflow-x: auto; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>CI Observability Report</h1>
+              <h2>Workflow Metrics</h2>
+              <div id="metrics"></div>
+              <h2>Build Log</h2>
+              <pre id="log"></pre>
+            </div>
+            <script>
+              fetch('metrics.json').then(r => r.json()).then(data => {
+                const metricsDiv = document.getElementById('metrics');
+                Object.entries(data).forEach(([key, value]) => {
+                  const div = document.createElement('div');
+                  div.className = 'metric';
+                  div.innerHTML = `<div class="metric-label">${key}</div><div class="metric-value">${value}</div>`;
+                  metricsDiv.appendChild(div);
+                });
+              });
+
+              fetch('build.log').then(r => r.text()).then(log => {
+                document.getElementById('log').textContent = log;
+              });
+            </script>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: observability-report-${{ github.run_number }}
+          path: report.html
+          retention-days: 90
