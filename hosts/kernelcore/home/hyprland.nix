@@ -531,7 +531,7 @@
         swallow_regex = "^(kitty|Alacritty)$";
 
         # Background apps (allow while unfocused)
-        background_color = 0 x000000;
+        background_color = "0x000000";
 
         # Layer positioning
         layers_hog_keyboard_focus = true;
