@@ -299,34 +299,44 @@ in
       '';
     };
 
-    # Waybar module with API status
+    # Waybar module with API status (OPTIMIZED)
     ".config/agent-hub/waybar-module.sh" = {
       executable = true;
       text = ''
         #!/usr/bin/env bash
         # ============================================
-        # Agent Hub - Waybar Module
+        # Agent Hub - Waybar Module (OPTIMIZED)
         # JSON output for waybar custom module
+        # Optimizations:
+        # - Reduced timeout for API check
+        # - Efficient process checking
+        # - Single pgrep call for all agents
         # ============================================
+
+        CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/agent-hub"
+        mkdir -p "$CACHE_DIR"
 
         ACTIVE=0
         TOOLTIP="󰚩 AI Agent Hub\n━━━━━━━━━━━━━━━━━━━━━━"
 
-        # Check LLaMA.cpp API
-        if curl -s --connect-timeout 1 "http://${llamaCppApi.host}:${toString llamaCppApi.port}/health" > /dev/null 2>&1; then
+        # Check LLaMA.cpp API (short timeout)
+        if timeout 0.5s bash -c "exec 3<>/dev/tcp/${llamaCppApi.host}/${toString llamaCppApi.port}" 2>/dev/null; then
           ((ACTIVE++))
           TOOLTIP+="\n󰊤 LLaMA.cpp: Online"
         else
           TOOLTIP+="\n󰊤 LLaMA.cpp: Offline"
         fi
 
-        # Check active agents
-        if pgrep -f "codex" &> /dev/null; then
+        # Check active agents with single pgrep
+        local agents
+        agents=$(pgrep -f "codex|gemini" 2>/dev/null || true)
+
+        if echo "$agents" | grep -q "codex"; then
           ((ACTIVE++))
           TOOLTIP+="\n󰧑 Codex: Active"
         fi
 
-        if pgrep -f "gemini" &> /dev/null; then
+        if echo "$agents" | grep -q "gemini"; then
           ((ACTIVE++))
           TOOLTIP+="\n󰊤 Gemini: Active"
         fi
@@ -334,7 +344,7 @@ in
         TOOLTIP+="\n\nClick: Open Agent Hub\nRight-click: Quick Prompt"
 
         # Output JSON
-        if [[ $ACTIVE -gt 0 ]]; then
+        if ((ACTIVE > 0)); then
           echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"active\", \"alt\": \"$ACTIVE\"}"
         else
           echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"inactive\", \"alt\": \"0\"}"
