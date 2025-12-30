@@ -37,15 +37,11 @@ jobs:
     name: Check Formatting
     runs-on: [self-hosted, nixos]
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Ensure Git tracking for Nix
@@ -83,15 +79,11 @@ jobs:
     name: Validate Flake
     runs-on: [self-hosted, nixos]
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Ensure Git tracking for Nix
@@ -128,15 +120,11 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: [format-check, flake-check]
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Ensure Git tracking for Nix
@@ -182,15 +170,11 @@ jobs:
     needs: build-test
     continue-on-error: true
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Ensure Git tracking for Nix
