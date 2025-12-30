@@ -2,10 +2,8 @@
 # Each overlay is imported from a separate file for better organization
 [
   # Python package fixes (test failures, resource issues)
-  # DISABLED: These overlays invalidate binary cache and force full Python rebuild
-  # Use binary cache instead - packages are already tested on Hydra
-  # (import ./python-packages.nix)
-  # (import ./python-tests-fix.nix)
+  (import ./python-packages.nix)
+  (import ./python-tests-fix.nix) # Disable flaky pytest-xdist tests
 
   # Hyprland: Now using OFFICIAL flake overlay (see flake.nix inputs)
   # Custom overlay disabled to avoid build issues
