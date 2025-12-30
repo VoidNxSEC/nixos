@@ -12,6 +12,16 @@ on:
         required: false
         default: false
         type: boolean
+      enable-tmate:
+        description: "Enable tmate debug session"
+        required: false
+        default: false
+        type: boolean
+      tmate-on-failure:
+        description: "Enable tmate only on failure"
+        required: false
+        default: true
+        type: boolean
 
 env:
   CACHIX_CACHE_NAME: marcosfpina
