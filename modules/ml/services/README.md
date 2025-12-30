@@ -1,6 +1,6 @@
 # ML Services Layer
 
-Systemd services for ML inference: llama.cpp and Ollama.
+Systemd services for ML inference with llama.cpp (CUDA-optimized).
 
 ## Components
 
@@ -50,54 +50,6 @@ curl http://127.0.0.1:8080/v1/chat/completions \
 - Systemd hardening (sandboxed)
 - Graceful shutdown for GPU release
 
-### ollama/
-
-Ollama service with automatic GPU memory management.
-
-#### service.nix (Base Service)
-
-Standard Ollama service configuration.
-
-```nix
-services.ollama = {
-  enable = true;
-  # Standard Ollama configuration
-};
-```
-
-#### gpu-manager.nix
-
-Automatic GPU memory management for Ollama.
-
-**Configuration**:
-```nix
-services.ollama-gpu-manager = {
-  enable = true;
-  unloadOnShellExit = true;   # Trap shell exit
-  idleTimeout = 300;           # 5 minutes
-  monitoringInterval = 30;     # Check every 30s
-};
-```
-
-**Features**:
-- Auto-unload models after idle timeout
-- Shell exit hook for cleanup
-- Idle detection and offloading
-- Manual unload command: `ollama-unload`
-
-**Aliases**:
-- `ollama-unload` - Manually unload models from GPU
-- `ollama-status` - Check loaded models (JSON)
-- `ollama-models` - List available models
-
-**Service**:
-```bash
-# Check idle monitor
-systemctl status ollama-gpu-idle-monitor
-
-# Logs
-journalctl -xeu ollama-gpu-idle-monitor
-```
 
 ## Architecture
 
@@ -107,8 +59,6 @@ User Request
      ▼
 ┌─────────────────┐
 │ llama.cpp       │  Port 8080
-│ or              │
-│ Ollama          │  Port 11434
 └────────┬────────┘
          │
          ▼
@@ -130,22 +80,6 @@ curl http://127.0.0.1:8080/v1/chat/completions \
   }'
 ```
 
-### Ollama
-
-```bash
-# List models
-ollama list
-
-# Run model
-ollama run llama3.2
-
-# Check status
-ollama-status
-
-# Unload from GPU
-ollama-unload
-```
-
 ## Troubleshooting
 
 ### VRAM Issues
@@ -154,10 +88,9 @@ ollama-unload
 # Check VRAM
 nvidia-smi
 
-# Unload Ollama
-ollama-unload
+# Restart llama.cpp to
 
-# Restart llama.cpp
+ free VRAM
 systemctl restart llamacpp
 ```
 
@@ -166,7 +99,6 @@ systemctl restart llamacpp
 ```bash
 # Check logs
 journalctl -xeu llamacpp
-journalctl -xeu ollama
 
 # Check GPU access
 ls -l /dev/nvidia*
