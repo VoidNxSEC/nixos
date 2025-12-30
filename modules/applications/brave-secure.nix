@@ -97,7 +97,7 @@ in
       blacklist /media
       blacklist /mnt
       blacklist /selinux
-      blacklist /sys
+      # blacklist /sys  # DISABLED: Breaks Wayland/Hyprland GPU/DRM access
       blacklist /proc/kcore
     '';
 

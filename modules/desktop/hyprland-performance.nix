@@ -85,7 +85,7 @@ in
         ExecStart = pkgs.writeShellScript "protect-hyprland" ''
           sleep 2 # Wait for Hyprland to start
 
-          HYPR_PID=$(pgrep -x Hyprland || echo "")
+          HYPR_PID=$(${pkgs.procps}/bin/pgrep -x Hyprland || echo "")
 
           if [ -n "$HYPR_PID" ]; then
             # -1000 = Never kill this process
@@ -141,7 +141,7 @@ in
         ExecStart = pkgs.writeShellScript "move-to-slice" ''
           sleep 2
 
-          HYPR_PID=$(pgrep -x Hyprland || echo "")
+          HYPR_PID=$(${pkgs.procps}/bin/pgrep -x Hyprland || echo "")
 
           if [ -n "$HYPR_PID" ]; then
             # Move Hyprland to compositor.slice
