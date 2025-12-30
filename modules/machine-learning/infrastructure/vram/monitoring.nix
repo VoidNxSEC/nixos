@@ -22,15 +22,15 @@
 # - Integration with ML Offload Manager API
 #
 # Usage:
-#   kernelcore.ml.offload.vramIntelligence.enable = true;
-#   kernelcore.ml.offload.vramIntelligence.monitoringInterval = 5;
-#   kernelcore.ml.offload.vramIntelligence.autoScaling.threshold = 85;
+#   kernelcore.ml.vramIntelligence.enable = true;
+#   kernelcore.ml.vramIntelligence.dataDir = "/var/lib/ml-vram";
+#   kernelcore.ml.vramIntelligence.monitoringInterval = 5;
+#   kernelcore.ml.vramIntelligence.autoScaling.threshold = 85;
 
 with lib;
 
 let
-  cfg = config.kernelcore.ml.offload.vramIntelligence;
-  offloadCfg = config.kernelcore.ml.offload;
+  cfg = config.kernelcore.ml.vramIntelligence;
 
   # Python environment with all required dependencies
   pythonEnv = pkgs.python313.withPackages (
@@ -48,9 +48,9 @@ let
     # Continuously monitors NVIDIA GPU memory and triggers actions
 
     INTERVAL=${toString cfg.monitoringInterval}
-    DB_PATH="${offloadCfg.dataDir}/registry.db"
-    LOG_FILE="${offloadCfg.dataDir}/logs/vram-monitor.log"
-    STATE_FILE="${offloadCfg.dataDir}/vram-state.json"
+    DB_PATH="${cfg.dataDir}/registry.db"
+    LOG_FILE="${cfg.dataDir}/logs/vram-monitor.log"
+    STATE_FILE="${cfg.dataDir}/vram-state.json"
 
     echo "[$(date -Iseconds)] Starting VRAM Intelligence Monitor (interval: ''${INTERVAL}s)" >> "$LOG_FILE"
 
@@ -66,8 +66,14 @@ let
 
 in
 {
-  options.kernelcore.ml.offload.vramIntelligence = {
+  options.kernelcore.ml.vramIntelligence = {
     enable = mkEnableOption "VRAM Intelligence System with monitoring and scheduling";
+
+    dataDir = mkOption {
+      type = types.str;
+      default = "/var/lib/ml-vram";
+      description = "Directory for VRAM monitoring data and logs";
+    };
 
     monitoringInterval = mkOption {
       type = types.int;
@@ -170,35 +176,41 @@ in
     };
   };
 
-  config = mkIf (offloadCfg.enable && cfg.enable) {
+  config = mkIf cfg.enable {
+    # Create ml-vram user and group
+    users.users.ml-vram = {
+      isSystemUser = true;
+      group = "ml-vram";
+      description = "ML VRAM monitoring service user";
+    };
+    users.groups.ml-vram = { };
+
     # Ensure nvidia-smi is available
     environment.systemPackages = with pkgs; [
       linuxPackages.nvidia_x11
       # nvidia-ml-py is already included in pythonEnv (line 36-41)
     ];
 
-    # Create VRAM state file
+    # Create data directory and VRAM state file
     systemd.tmpfiles.rules = [
-      "f '${offloadCfg.dataDir}/vram-state.json' 0644 ml-offload ml-offload -"
+      "d ${cfg.dataDir} 0755 ml-vram ml-vram -"
+      "d ${cfg.dataDir}/logs 0755 ml-vram ml-vram -"
+      "f '${cfg.dataDir}/vram-state.json' 0644 ml-vram ml-vram -"
     ];
 
     # VRAM Monitor Service (continuous)
     systemd.services.ml-vram-monitor = {
       description = "ML VRAM Intelligence Monitor";
-      documentation = [ "file:///etc/nixos/modules/ml/offload/vram-intelligence.nix" ];
+      documentation = [ "file:///etc/nixos/modules/machine-learning/infrastructure/vram/monitoring.nix" ];
       wantedBy = [ "multi-user.target" ];
 
-      # Start after ML Offload Manager API
-      after = [
-        "network.target"
-        "ml-offload-api.service"
-      ];
-      wants = [ "ml-offload-api.service" ];
+      # Start after network
+      after = [ "network.target" ];
 
       serviceConfig = {
         Type = "simple";
-        User = "ml-offload";
-        Group = "ml-offload";
+        User = "ml-vram";
+        Group = "ml-vram";
         ExecStart = "${vramMonitorScript}";
         Restart = "always";
         RestartSec = "10s";
@@ -209,7 +221,7 @@ in
         ProtectSystem = "strict";
         ProtectHome = true;
         ReadWritePaths = [
-          offloadCfg.dataDir
+          cfg.dataDir
         ];
 
         # Need access to NVIDIA devices for monitoring
@@ -233,7 +245,7 @@ in
     # Shell aliases
     programs.bash.shellAliases = {
       ml-vram = "sudo systemctl status ml-vram-monitor.service";
-      ml-vram-status = "${pythonEnv}/bin/python3 ${./api/vram_monitor.py} status --state-file ${offloadCfg.dataDir}/vram-state.json";
+      ml-vram-status = "${pythonEnv}/bin/python3 ${./api/vram_monitor.py} status --state-file ${cfg.dataDir}/vram-state.json";
       ml-vram-log = "sudo journalctl -u ml-vram-monitor.service -n 50 -f";
       ml-vram-restart = "sudo systemctl restart ml-vram-monitor.service";
     };
