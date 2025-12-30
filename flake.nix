@@ -141,18 +141,22 @@
         };
       };
 
-      # checks que o CI pode rodar (fmt, flake check, builds importantes)
+      # Fast checks for CI/CD (heavy builds moved to packages)
+      # Run with: nix flake check
+      # For full builds use: nix build .#iso or .#vm-image
       checks.${system} = {
+        # Format check (fast)
         fmt = pkgs.runCommand "fmt-check" { buildInputs = [ pkgs.nixfmt-rfc-style ]; } ''
           nixfmt --check ${self}
           touch $out
         '';
-        iso = self.packages.${system}.iso;
-        vm = self.packages.${system}.vm-image;
-        docker-app = self.packages.${system}.image-app;
+
+        # Package builds (relatively fast)
         mcp-server = self.packages.${system}.securellm-mcp;
         llm-bridge = self.packages.${system}.securellm-bridge;
 
+        # NOTE: Heavy builds (iso, vm, docker-app) removed from checks for performance
+        # These are still available via packages: nix build .#iso, .#vm-image, .#image-app
       };
 
       nixosConfigurations = {
@@ -241,6 +245,11 @@
                 imports = [ "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix" ];
               }
             )
+            # Add sops-nix module for user configurations that depend on it
+            sops-nix.nixosModules.sops
+            {
+              sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+            }
             ./hosts/kernelcore
           ];
         };
