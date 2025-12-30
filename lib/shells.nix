@@ -136,8 +136,12 @@ let
       '';
     };
   };
-  # Seleciona python 3.13 se existir no seu canal; senão cai pra 3.12.
-  py = if pkgs ? python313 then pkgs.python313 else pkgs.python312;
+  # Seleciona python 3.13 (custom ML build) se existir no seu canal; senão cai pra 3.12.
+  py =
+    if pkgs ? python313_ml then
+      pkgs.python313_ml
+    else
+      (if pkgs ? python313 then pkgs.python313 else pkgs.python312);
 
 in
 {
