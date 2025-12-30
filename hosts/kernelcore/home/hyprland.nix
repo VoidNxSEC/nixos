@@ -409,6 +409,45 @@
         "float, title:^(File Operation Progress)$"
         "pin, title:^(File Operation Progress)$"
         "center, title:^(File Operation Progress)$"
+
+        # ==========================================
+        # CATEGORY: Performance Optimizations
+        # ==========================================
+        # Disable animations for some windows (better performance)
+        "noanim, class:^(wofi)$" # Launcher feels snappier without anim
+        "noanim, title:^(wlogout)$"
+
+        # Immediate rendering for terminals (reduce input latency)
+        "immediate, class:^(kitty)$"
+        "immediate, class:^(Alacritty)$"
+
+        # Tearing allowed for games (reduce input lag)
+        "immediate, class:^(steam_app_).*$"
+        "immediate, class:^(gamescope)$"
+
+        # ==========================================
+        # CATEGORY: Agent Hub Windows
+        # ==========================================
+        "float, class:^(agent-hub-chat)$"
+        "size 1000 700, class:^(agent-hub-chat)$"
+        "center, class:^(agent-hub-chat)$"
+        "opacity 0.95 0.90, class:^(agent-hub-chat)$"
+
+        "float, class:^(agent-hub-codex)$"
+        "size 1200 800, class:^(agent-hub-codex)$"
+        "center, class:^(agent-hub-codex)$"
+
+        "float, class:^(agent-hub-gemini)$"
+        "size 1200 800, class:^(agent-hub-gemini)$"
+        "center, class:^(agent-hub-gemini)$"
+
+        # ==========================================
+        # CATEGORY: Workspace Auto-assignment (Optional)
+        # ==========================================
+        # Uncomment to enable automatic workspace assignment
+        # "workspace 1 silent, class:^(kitty)$"
+        # "workspace 3 silent, class:^(firefox)$"
+        # "workspace 4 silent, class:^(discord)$"
       ];
 
       # ============================================
@@ -470,7 +509,7 @@
         # VRR (Variable Refresh Rate) for 144Hz
         vrr = 1;
 
-        # Performance
+        # Performance - VFR saves power
         vfr = true;
 
         # Focus
@@ -482,6 +521,26 @@
 
         # New window behavior
         new_window_takes_over_fullscreen = 2;
+
+        # Rendering optimizations
+        render_ahead_of_time = false; # Better for VRR
+        render_ahead_safezone = 1; # Minimal safezone for 144Hz
+
+        # Window swallowing (terminal opens GUI app, terminal hides)
+        enable_swallow = true;
+        swallow_regex = "^(kitty|Alacritty)$";
+
+        # Background apps (allow while unfocused)
+        background_color = 0 x000000;
+
+        # Layer positioning
+        layers_hog_keyboard_focus = true;
+
+        # Initial workspace tracking
+        initial_workspace_tracking = 2;
+
+        # Middle click paste
+        middle_click_paste = false; # Disable for better clipboard control
       };
 
       # ============================================
@@ -644,6 +703,43 @@
 
         # Reload waybar
         "$mainMod SHIFT, W, exec, killall waybar; waybar &"
+
+        # Agent Hub integration
+        "$mainMod, A, exec, $HOME/.config/agent-hub/agent-launcher.sh"
+        "$mainMod SHIFT, A, exec, $HOME/.config/agent-hub/quick-prompt.sh"
+
+        # Clipboard history
+        "$mainMod, C, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
+
+        # Calculator (if bc installed)
+        "$mainMod, EQUAL, exec, wofi --dmenu --prompt=Calculator | bc -l | wl-copy"
+
+        # Power management
+        "$mainMod SHIFT, Escape, exec, systemctl suspend"
+        "$mainMod CTRL SHIFT, Escape, exec, systemctl reboot"
+        "$mainMod ALT SHIFT, Escape, exec, systemctl poweroff"
+
+        # Window management enhancements
+        "$mainMod, Z, togglesplit" # Toggle split direction
+        "$mainMod, X, pin" # Pin window (keep on all workspaces)
+        "$mainMod, C, centerwindow" # Center floating window
+
+        # Quick workspace switching
+        "$mainMod ALT, left, workspace, e-1"
+        "$mainMod ALT, right, workspace, e+1"
+
+        # Move window to workspace and follow
+        "$mainMod CTRL SHIFT, 1, movetoworkspace, 1"
+        "$mainMod CTRL SHIFT, 2, movetoworkspace, 2"
+        "$mainMod CTRL SHIFT, 3, movetoworkspace, 3"
+        "$mainMod CTRL SHIFT, 4, movetoworkspace, 4"
+        "$mainMod CTRL SHIFT, 5, movetoworkspace, 5"
+
+        # Emergency kill (force kill active window)
+        "$mainMod SHIFT CTRL, Q, exec, hyprctl kill"
+
+        # Focus urgent window
+        "$mainMod, U, focusurgentorlast"
       ];
 
       # Repeating binds
