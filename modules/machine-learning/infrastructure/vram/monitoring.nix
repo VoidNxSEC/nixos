@@ -33,7 +33,7 @@ let
   offloadCfg = config.kernelcore.ml.offload;
 
   # Python environment with all required dependencies
-  pythonEnv = pkgs.python311.withPackages (
+  pythonEnv = pkgs.python313.withPackages (
     ps: with ps; [
       nvidia-ml-py
       requests
@@ -174,7 +174,7 @@ in
     # Ensure nvidia-smi is available
     environment.systemPackages = with pkgs; [
       linuxPackages.nvidia_x11
-      python311Packages.nvidia-ml-py # Python NVIDIA Management Library
+      # nvidia-ml-py is already included in pythonEnv (line 36-41)
     ];
 
     # Create VRAM state file
