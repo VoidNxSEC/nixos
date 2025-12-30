@@ -6,7 +6,7 @@ Integrar `smart-commit.py` com `sync-showcase-projects.sh` para gerar commits co
 ## Proposta de Implementação
 
 ### 1. Commits Inteligentes por Projeto
-Ao invés de:
+Ao invés de: # NO
 ```
 chore: sync showcase project - 2025-12-30
 ```
@@ -15,34 +15,36 @@ Teríamos:
 ```
 feat(ml-offload): add GPU memory optimization for llama.cpp
 refactor(nixos-hyperlab): migrate to nix2container v2
-docs(shadow-debug): update privacy patterns documentation
+docs(shadow-debug): update privacy patterns documentation # NO NO NO
 ```
 
-### 2. Bulk Commits por Categoria
-Agrupar projetos relacionados em commits batch:
+# TODO: The idea is excelent, the essence are captured, but the execution is not so smooth.
+
+
+### 2. Bulk Commits por Categoria (TODO: The CLAUDE is crazy.)
+Agrupar projetos relacionados em commits batch de maneira heuristica, baseada em tags de commits e arquivos modificados:
 
 **Categoria: ML/AI Projects**
-- ml-offload-api
-- ai-agent-os
-- (outros ML-related)
+- ml-offload-api [Rust REST API for LLM Offload]
+- ai-agent-os [Rust OS for AI Agents] > This project is fantastic, underrated and briliant, simple and powerfull.
 
 **Categoria: Security & SIEM**
-- securellm-mcp
-- securellm-bridge
-- O.W.A.S.A.K.A.
-- phantom
+- securellm-mcp [Local Only MCP ] > stdio
+- securellm-bridge [HTTP Only Bridge ] > HTTP Server Exposure
+- O.W.A.S.A.K.A. [SIEM Tool in Pilot Phase, maybe can be a good idea if it is not too late]
+- phantom [ETL Pipeline Forensic for data sanitization and pseudonymization, focused on privacy and security]
 
 **Categoria: Infrastructure & DevOps**
-- nixos-hyperlab
-- docker-hub
-- vmctl
-- swissknife
+- nixos-hyperlab [Hyperlab Cyberpunk Frankstein OS era Orquestrator] > MacOS, Linux, Windows(Soon later), iOS, Android. <<>> This project need more attention. the cappabilities for the developer can code in multiple platforms and operational systems is a logic right. Fuck big techs. (legit)
+- docker-hub [Multiple Docker Instances Container Orquestrator] > Esse é maneiro, mas precisa de oreganização por que ele está atualmente aninhado, pode ser dividido em dois repositorios. >> TODO: The same case of vmctl, this project is basically a shell aliases project, with a lot of effort and work that doesn't justify the result. && stage and analyze more. (refactor)
+- vmctl [ Virtual Manager VM CLI Wrapper Orquestrator] > Eu descontinuaria esse aqui tranquilamente, não vale o trabalho. >> This is a shell aliases project, with a lot of effort and work that doesn't justify the result. && Convert, archive and organize this project. (refactor)
+- swissknife [OS Health and Security Script Arsenal Orquestrator] > NSA Level Security, READY. > The real projects need your place. (legit)
 
 **Categoria: Development Tools**
-- shadow-debug-pipeline
-- arch-analyzer
-- notion-exporter
-- cognitive-vault
+- shadow-debug-pipeline [Paranoid Debug Pipeline] > This project is so magic, i can debug commands with a lot of logs, is chaotic. (work-in-progress)
+- arch-analyzer [Container Orquestrator] > I love this project, but it's not ready yet. Is real. (work-in-progress)
+- notion-exporter [Container Orquestrator] > Ironically created because Notion is a lock in blackbox organization. And I'm not kidding. (work-in-progress) -> 16 days for make happens.
+- cognitive-vault [Local Only Secrets Management ] > Created because Proton is a lock in blackbox organization. (work-in-progress)
 
 ### 3. Workflow Proposto
 

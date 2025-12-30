@@ -36,10 +36,11 @@
     # Default 60 -> 10. Only swap when RAM is actually full.
     "vm.swappiness" = 10;
 
-    # Dirty Pages: Write to disk sooner but in smaller chunks.
-    # Prevents "system freeze" when flushing huge buffers.
-    "vm.dirty_background_ratio" = 5;
-    "vm.dirty_ratio" = 15;
+    # Dirty Pages: Optimized for 16GB RAM + interactive workloads
+    # Higher values reduce I/O spikes and stuttering in Wayland compositors
+    # Background writes start at 1.6GB, hard flush at 4.8GB
+    "vm.dirty_background_ratio" = 10; # was 5 - reduces frequent flushes
+    "vm.dirty_ratio" = 30; # was 15 - allows larger buffer before forced flush
 
     # Improve inode cache retention (makes `ls` and file searches faster)
     "vm.vfs_cache_pressure" = 50;
