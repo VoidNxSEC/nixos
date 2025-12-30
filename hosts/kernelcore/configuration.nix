@@ -563,7 +563,7 @@
       # Gitea repository automation (declarative)
       gitea = {
         adminTokenFile = "/run/secrets/gitea-admin-token";
-        autoInitRepos = true; # Automatically create repos on first boot
+        autoInitRepos = false; # Disabled: Requires manual Gitea setup first
       };
 
       # Auto-mirror every hour (declarative)
