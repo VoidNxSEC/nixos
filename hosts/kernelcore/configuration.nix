@@ -155,7 +155,7 @@
     # Packages - isolated per-package architecture
     packages.zellij.enable = true;
     packages.lynis.enable = true;
-    packages.hyprland.enable = true; # Hyprland v0.53.0
+    # packages.hyprland.enable = true; # DEPRECATED: Now using official flake input (see flake.nix)
     #packages.claude.enable = true;
     packages.gemini-cli.enable = true;
 
