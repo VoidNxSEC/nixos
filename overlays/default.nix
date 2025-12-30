@@ -3,7 +3,7 @@
 [
   # Python package fixes (test failures, resource issues)
   (import ./python-packages.nix)
-  (import ./python-tests-fix.nix) # Disable flaky pytest-xdist tests
+  # (import ./python-tests-fix.nix) # Merged into python-packages.nix to avoid global rebuilds
 
   # Hyprland: Now using OFFICIAL flake overlay (see flake.nix inputs)
   # Custom overlay disabled to avoid build issues
