@@ -328,7 +328,6 @@ in
         fi
 
         # Check active agents with single pgrep
-        local agents
         agents=$(pgrep -f "codex|gemini" 2>/dev/null || true)
 
         if echo "$agents" | grep -q "codex"; then

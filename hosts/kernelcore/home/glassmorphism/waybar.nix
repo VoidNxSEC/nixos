@@ -34,7 +34,7 @@ in
       mainBar = {
         layer = "top";
         position = "top";
-        height = 42;
+        height = 52;
         spacing = 8;
         margin-top = 8;
         margin-left = 16;
@@ -313,9 +313,6 @@ in
         border-radius: 0;
         font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", monospace;
         font-size: 13px;
-        min-height: 0;
-        margin: 0;
-        padding: 0;
       }
 
       /* Main bar - frosted glass background */
@@ -662,7 +659,6 @@ in
         -gtk-icon-effect: highlight;
         background: ${colors.hexToRgba colors.accent.magenta "0.15"};
         border: 1px solid ${colors.hexToRgba colors.accent.magenta "0.4"};
-        animation: tray-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
 
       /* Tray context menu - glassmorphism */
@@ -688,18 +684,8 @@ in
       }
 
       #tray menu separator {
-        background: ${colors.hexToRgba colors.border.light "0.5"};
+        background: ${colors.hexToRgba colors.base.fg0 "0.2"};
         margin: 4px 8px;
-      }
-
-      /* Keyframe animations (must be at root level) */
-      @keyframes tray-pulse {
-        0%, 100% {
-          box-shadow: 0 0 12px ${colors.hexToRgba colors.accent.magenta "0.3"};
-        }
-        50% {
-          box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.magenta "0.6"};
-        }
       }
     '';
   };
@@ -811,13 +797,6 @@ in
         case "$1" in
           menu)
             show_menu
-            exit 0
-            ;;
-          rebuild)
-            echo "Starting NixOS Rebuild (Switch)..."
-            sudo nixos-rebuild switch --flake "$FLAKE_DIR"
-            echo ""
-            read -rp "Press Enter to close..."
             exit 0
             ;;
         esac
