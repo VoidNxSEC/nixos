@@ -5,25 +5,23 @@
   ...
 }:
 
-# ML Modules - Main Aggregator
+# Machine Learning Modules - Main Aggregator
 #
-# Modular ML infrastructure for NixOS with:
+# Core ML infrastructure for NixOS:
 # - Infrastructure: Storage, VRAM monitoring, hardware configs
-# - Services: llama.cpp, Ollama inference services
-# - Orchestration: Offload manager, model registry, backends
-# - Applications: SecureLLM Bridge (secure LLM proxy)
+# - Services: llama.cpp-turbo, vLLM inference services
 # - Integrations: MCP servers, Neovim integration
 #
-# Usage:
-#   imports = [ ./modules/ml ];
+# Note: ML Offload API (orchestration) moved to separate repo:
+#   https://github.com/VoidNxSEC/ml-offload-api
 #
-# See modules/ml/README.md for detailed documentation.
+# Usage:
+#   imports = [ ./modules/machine-learning ];
 
 {
   imports = [
     ./infrastructure
     ./services
-    ./orchestration
     ./integrations
   ];
 }
