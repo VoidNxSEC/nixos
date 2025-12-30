@@ -36,69 +36,23 @@ in
     # ============================================
     # HYPRLAND COMPOSITOR
     # ============================================
+    # Note: programs.hyprland is provided by inputs.hyprland.nixosModules.default
+    # We just configure it here
     programs.hyprland = {
       enable = true;
       xwayland.enable = true;
-      # Use the Hyprland package from nixpkgs (stable)
-      package = pkgs.hyprland;
+      # Package comes from inputs.hyprland.overlays.default
+      # Don't override it to avoid conflicts
     };
 
     # ============================================
-    # XDG DESKTOP PORTAL - Per Hyprland Wiki
-    # https://wiki.hypr.land/Hypr-Ecosystem/xdg-desktop-portal-hyprland/
+    # XDG DESKTOP PORTAL
     # ============================================
+    # Note: Portal configuration is handled by inputs.hyprland.nixosModules.default
+    # We only add GTK portal for file pickers
     xdg.portal = {
       enable = true;
-
-      # Portal packages
-      extraPortals = with pkgs; [
-        xdg-desktop-portal-hyprland # For Hyprland-specific features
-        xdg-desktop-portal-gtk # For file pickers and other GTK dialogs
-      ];
-
-      # CRITICAL: Portal configuration per wiki
-      # This tells the system which portal handles which interface
-      config = {
-        common = {
-          # Default to gtk for most interfaces
-          default = [ "gtk" ];
-        };
-
-        hyprland = {
-          # Use hyprland portal for these specific interfaces
-          default = [
-            "hyprland"
-            "gtk"
-          ];
-
-          # Screenshot interface - use Hyprland
-          "org.freedesktop.impl.portal.Screenshot" = [ "hyprland" ];
-
-          # Screen sharing - use Hyprland
-          "org.freedesktop.impl.portal.Screencast" = [ "hyprland" ];
-
-          # File chooser - use GTK (better integration)
-          "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
-
-          # App chooser - use GTK
-          "org.freedesktop.impl.portal.AppChooser" = [ "gtk" ];
-
-          # Settings - use GTK
-          "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
-
-          # Inhibit (screen lock prevention) - use Hyprland
-          "org.freedesktop.impl.portal.Inhibit" = [ "hyprland" ];
-
-          # Access (permission dialogs) - use GTK
-          "org.freedesktop.impl.portal.Access" = [ "gtk" ];
-
-          # Notification - use GTK
-          "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
-        };
-      };
-
-      # Use xdg-desktop-portal-wlr for wlroots-based features
-      wlr.enable = false; # Disabled - we use hyprland portal instead
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     };
 
     # ============================================
@@ -183,24 +137,9 @@ in
     };
 
     # ============================================
-    # XDG DESKTOP PORTAL GTK - File Picker Service
+    # XDG DESKTOP PORTAL GTK
     # ============================================
-    # Ensure GTK portal starts for file save/open dialogs
-    systemd.user.services.xdg-desktop-portal-gtk = {
-      description = "Portal service (GTK/GNOME implementation) for file dialogs";
-      wantedBy = [ "graphical-session.target" ];
-      after = [ "xdg-desktop-portal.service" ];
-      partOf = [ "graphical-session.target" ];
-      serviceConfig = {
-        # Clear existing ExecStart before setting new one
-        ExecStart = [
-          "" # Clear
-          "${pkgs.xdg-desktop-portal-gtk}/libexec/xdg-desktop-portal-gtk"
-        ];
-        Restart = "on-failure";
-        RestartSec = 1;
-      };
-    };
+    # Service is automatically managed by xdg.portal.extraPortals
 
     # ============================================
     # ENVIRONMENT VARIABLES - Wayland Native
