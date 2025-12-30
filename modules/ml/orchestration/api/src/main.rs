@@ -17,6 +17,7 @@ use tracing::{info, warn};
 mod api;
 mod backends;
 mod db;
+mod errors;
 mod health;
 mod inference;
 mod models;
@@ -24,6 +25,7 @@ mod vram;
 mod websocket;
 
 use db::Database;
+use errors::{ApiError, ApiResult};
 use vram::VramMonitor;
 
 /// Application state shared across handlers
@@ -199,24 +201,9 @@ async fn health_handler(State(state): State<AppState>) -> impl IntoResponse {
 }
 
 async fn list_backends_handler() -> impl IntoResponse {
-    // TODO: Implement backend detection
-    let backends = vec![
-        serde_json::json!({
-            "name": "ollama",
-            "status": "unknown",
-            "type": "systemd",
-            "host": "127.0.0.1",
-            "port": 11434,
-        }),
-        serde_json::json!({
-            "name": "llamacpp",
-            "status": "unknown",
-            "type": "systemd",
-            "host": "127.0.0.1",
-            "port": 8080,
-        }),
-    ];
+    use backends::BackendDriver;
 
+    let backends = BackendDriver::list_backends().await;
     Json(backends)
 }
 
@@ -306,40 +293,104 @@ async fn vram_handler(State(state): State<AppState>) -> impl IntoResponse {
 }
 
 async fn load_model_handler(
-    State(_state): State<AppState>,
-    Json(_payload): Json<serde_json::Value>,
-) -> impl IntoResponse {
-    // TODO: Implement in Phase 2
-    (
-        StatusCode::NOT_IMPLEMENTED,
-        Json(serde_json::json!({
-            "error": "Model loading not yet implemented"
-        })),
-    )
+    State(state): State<AppState>,
+    Json(payload): Json<models::LoadRequest>,
+) -> Result<impl IntoResponse, ApiError> {
+    use backends::BackendDriver;
+
+    // Resolve model path from ID or use provided path
+    let model_path = if let Some(model_id) = payload.model_id {
+        let model = state
+            .db
+            .get_model_by_id(model_id)
+            .await?
+            .ok_or_else(|| ApiError::ModelNotFound(format!("Model ID: {}", model_id)))?;
+        model.path
+    } else if let Some(path) = payload.model_path {
+        path
+    } else {
+        return Err(ApiError::InvalidRequest(
+            "Must provide either model_id or model_path".to_string(),
+        ));
+    };
+
+    // Get model size for VRAM check if available
+    let model_size = if let Some(model_id) = payload.model_id {
+        state
+            .db
+            .get_model_by_id(model_id)
+            .await?
+            .map(|m| m.vram_estimate_gb)
+    } else {
+        None
+    };
+
+    // Load model on backend
+    BackendDriver::load_model(&payload.backend, &model_path, model_size, payload.gpu_layers)
+        .await?;
+
+    Ok(Json(serde_json::json!({
+        "success": true,
+        "message": format!("Model loading initiated on backend '{}'", payload.backend),
+        "backend": payload.backend,
+        "model_path": model_path,
+    })))
 }
 
 async fn unload_model_handler(
     State(_state): State<AppState>,
-    Json(_payload): Json<serde_json::Value>,
-) -> impl IntoResponse {
-    // TODO: Implement in Phase 2
-    (
-        StatusCode::NOT_IMPLEMENTED,
-        Json(serde_json::json!({
-            "error": "Model unloading not yet implemented"
-        })),
-    )
+    Json(payload): Json<models::UnloadRequest>,
+) -> Result<impl IntoResponse, ApiError> {
+    use backends::BackendDriver;
+
+    BackendDriver::unload_model(&payload.backend).await?;
+
+    Ok(Json(serde_json::json!({
+        "success": true,
+        "message": format!("Model unloading initiated on backend '{}'", payload.backend),
+        "backend": payload.backend,
+    })))
 }
 
 async fn switch_model_handler(
-    State(_state): State<AppState>,
-    Json(_payload): Json<serde_json::Value>,
-) -> impl IntoResponse {
-    // TODO: Implement in Phase 2
-    (
-        StatusCode::NOT_IMPLEMENTED,
-        Json(serde_json::json!({
-            "error": "Model switching not yet implemented"
-        })),
-    )
+    State(state): State<AppState>,
+    Json(payload): Json<models::SwitchRequest>,
+) -> Result<impl IntoResponse, ApiError> {
+    use backends::BackendDriver;
+
+    // Resolve model path
+    let model_path = if let Some(model_id) = payload.model_id {
+        let model = state
+            .db
+            .get_model_by_id(model_id)
+            .await?
+            .ok_or_else(|| ApiError::ModelNotFound(format!("Model ID: {}", model_id)))?;
+        model.path
+    } else if let Some(path) = payload.model_path {
+        path
+    } else {
+        return Err(ApiError::InvalidRequest(
+            "Must provide either model_id or model_path".to_string(),
+        ));
+    };
+
+    let model_size = if let Some(model_id) = payload.model_id {
+        state
+            .db
+            .get_model_by_id(model_id)
+            .await?
+            .map(|m| m.vram_estimate_gb)
+    } else {
+        None
+    };
+
+    BackendDriver::switch_model(&payload.backend, &model_path, model_size, payload.gpu_layers)
+        .await?;
+
+    Ok(Json(serde_json::json!({
+        "success": true,
+        "message": format!("Model switching initiated on backend '{}'", payload.backend),
+        "backend": payload.backend,
+        "model_path": model_path,
+    })))
 }

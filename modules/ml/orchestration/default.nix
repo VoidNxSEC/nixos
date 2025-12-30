@@ -8,7 +8,7 @@
 # ML Orchestration Layer
 #
 # Unified architecture for ML model offloading with:
-# - Multi-backend support (Ollama, llama.cpp, vLLM, TGI)
+# - Multi-backend support (llama.cpp, vLLM, TGI)
 # - Intelligent VRAM management (monitoring, scheduling, budget planning)
 # - Model registry with auto-discovery
 # - RESTful API for unified control
