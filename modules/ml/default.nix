@@ -4,12 +4,12 @@
   pkgs,
   ...
 }:
-
+# TODO: The ML module need more work and analysis, we don't manage softwares here
 # ML Modules - Main Aggregator
 #
 # Modular ML infrastructure for NixOS with:
 # - Infrastructure: Storage, VRAM monitoring, hardware configs
-# - Services: llama.cpp, Ollama inference services
+# - Services: llama.cpp inference service (CUDA-optimized)
 # - Orchestration: Offload manager, model registry, backends
 # - Applications: SecureLLM Bridge (secure LLM proxy)
 # - Integrations: MCP servers, Neovim integration
