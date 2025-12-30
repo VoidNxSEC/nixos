@@ -19,6 +19,9 @@
     # Compiler hardening (currently disabled - Nix 2.18+ compatibility)
     ./compiler-hardening.nix
 
+    # Dev directory hardening
+    ./dev-directory-hardening.nix
+
     # System hardening
     ./hardening.nix
     ./network.nix
