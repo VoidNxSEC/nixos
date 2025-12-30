@@ -1,8 +1,25 @@
-# Hyprland v0.53.0 - Package Availability Module
+# ⚠️  DEPRECATED - DO NOT USE ⚠️
 #
-# This module makes Hyprland v0.53.0 available system-wide.
-# The actual package build is done via overlay in /etc/nixos/overlays/hyprland.nix
-# The compositor configuration is done in /etc/nixos/modules/desktop/hyprland.nix
+# This module is DEPRECATED. Hyprland is now provided via official flake input.
+#
+# CURRENT APPROACH:
+# - Hyprland comes from: inputs.hyprland (flake.nix)
+# - Overlay: inputs.hyprland.overlays.default
+# - Module: inputs.hyprland.nixosModules.default
+# - Config: modules/desktop/hyprland.nix
+#
+# DO NOT ENABLE: kernelcore.packages.hyprland.enable
+# (Already commented in hosts/kernelcore/configuration.nix)
+#
+# ══════════════════════════════════════════════════════════════════════
+# LEGACY DOCUMENTATION
+# ══════════════════════════════════════════════════════════════════════
+#
+# Hyprland v0.53.0 - Package Availability Module (LEGACY)
+#
+# This module made Hyprland v0.53.0 available system-wide via custom overlay.
+# The actual package build was done via overlay in /etc/nixos/overlays/hyprland.nix
+# The compositor configuration is in /etc/nixos/modules/desktop/hyprland.nix
 #
 {
   config,
