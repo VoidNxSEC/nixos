@@ -14,6 +14,11 @@
     nix-colors.url = "github:misterio77/nix-colors";
 
     # ═══════════════════════════════════════════════════════════════
+    # HYPRLAND - Official Flake (replaces custom overlay)
+    # ═══════════════════════════════════════════════════════════════
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+
+    # ═══════════════════════════════════════════════════════════════
     # PROJECTS - Independent flakes on GitHub
     # ═══════════════════════════════════════════════════════════════
     securellm-mcp = {
@@ -157,6 +162,7 @@
             # ═══════════════════════════════════════════════════════════
             {
               nixpkgs.overlays = overlays ++ [
+                inputs.hyprland.overlays.default # Official Hyprland overlay
                 (final: prev: {
                   securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
                   securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
@@ -167,6 +173,11 @@
               ];
               nixpkgs.config.allowUnfree = true;
             }
+
+            # ═══════════════════════════════════════════════════════════
+            # HYPRLAND - Official Module
+            # ═══════════════════════════════════════════════════════════
+            inputs.hyprland.nixosModules.default
 
             # TODO: Isolate imports with default.nix file calling just ./hosts/kernelcore, and add the hosts/kernelcore/configuration.nix and hardware-configuration.nix files in default.nix imports, and remove the ./hosts/kernelcore/hardware-configuration.nix and ./hosts/kernelcore files from here
             # ═══════════════════════════════════════════════════════════
