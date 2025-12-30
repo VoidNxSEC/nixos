@@ -72,7 +72,7 @@ let
 
       cat > $out/bin/phantom-desktop << EOF
       #!/usr/bin/env bash
-      exec ${pkgs.python3}/bin/python3 $out/share/phantom/phantom-desktop.py "\$@"
+      exec ${pkgs.python313}/bin/python3 $out/share/phantom/phantom-desktop.py "\$@"
       EOF
       chmod +x $out/bin/phantom-desktop
 
