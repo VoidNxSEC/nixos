@@ -18,7 +18,7 @@
     # Active packages - each is completely self-contained
     ./zellij
     ./gemini
-    ./claude
+    #./claude
     ./lynis
     ./hyprland
     ./appflowy
