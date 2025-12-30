@@ -1,22 +1,35 @@
-# Hyprland v0.53.0 Custom Overlay
+# ⚠️  DEPRECATED - DO NOT USE ⚠️
 #
-# This overlay provides a custom build of Hyprland v0.53.0, overriding the
-# version currently in nixpkgs. This is a temporary solution until
-# nixpkgs upstream updates to v0.53.0.
+# This overlay is DEPRECATED and should NOT be enabled.
+# It builds Hyprland and all dependencies from source, which:
+# - Invalidates binary cache (forces local compilation)
+# - Takes hours to build on most systems
+# - Is unnecessary since we use the official Hyprland flake input
 #
-# WHY THIS OVERLAY:
-# - v0.53.0 introduces new features and bug fixes we need
-# - Maintains compatibility with existing nixpkgs infrastructure
-# - Allows testing the new version before it reaches nixpkgs stable
-# - Builds hyprwire from source (not yet in nixpkgs)
+# CURRENT APPROACH (RECOMMENDED):
+# - Hyprland is provided via official flake input in flake.nix
+# - Input: hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1"
+# - Applied via: inputs.hyprland.overlays.default
+# - Module: inputs.hyprland.nixosModules.default
 #
-# BREAKING CHANGES FROM v0.52.2:
-# - Performance improvements
-# - Bug fixes and stability improvements
-# - Requires hyprwire v0.2.1 (new dependency)
+# This file is kept for reference only.
+# DO NOT UNCOMMENT in overlays/default.nix
+#
+# ══════════════════════════════════════════════════════════════════════
+# LEGACY DOCUMENTATION (for historical reference)
+# ══════════════════════════════════════════════════════════════════════
+#
+# Hyprland v0.53.0 Custom Overlay (LEGACY - DO NOT USE)
+#
+# This overlay provided a custom build of Hyprland v0.53.0, overriding the
+# version in nixpkgs. This approach is no longer used.
+#
+# LEGACY BUILD INFO:
+# - Built hyprwire v0.2.1 from source
+# - Built pugixml, libffi, hyprutils from source
+# - Compiled Hyprland v0.53.0 with custom flags
 #
 # Hash verification: sha256-Y53Vjx/Lc1d3UoN/9DzzP9xGKkzWgVUFw1PS25bnT6Y=
-# This hash is validated on first build and updated if the source changes.
 
 final: prev: {
   # Build pugixml from source (dependency for hyprwire)
