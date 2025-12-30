@@ -14,7 +14,7 @@
 # - Continuous Batching: Dynamic batch processing for concurrent requests
 # - Memory-mapped I/O: Fast model loading with mmap/mlock
 #
-# Designed to replace Ollama with superior performance on NVIDIA GPUs.
+# CUDA-optimized llama.cpp service for NVIDIA GPUs with cuBLAS acceleration.
 
 let
   cfg = config.services.llamacpp-turbo;

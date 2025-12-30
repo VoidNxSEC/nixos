@@ -7,7 +7,7 @@ Multi-backend orchestration, model registry, and unified ML offload system.
 The orchestration layer provides:
 - **Offload Manager**: Coordinate inference across multiple backends
 - **Model Registry**: Discover and track available models
-- **Multi-Backend Support**: Ollama, llama.cpp, vLLM, TGI
+- **Multi-Backend Support**: llama.cpp, vLLM, TGI
 - **REST API**: Unified control interface (port 9000)
 
 ## Components
@@ -28,16 +28,14 @@ Model discovery and database management.
 Support for multiple inference backends.
 
 **Available Backends**:
-- **ollama.nix**: Ollama backend
-- **llamacpp.nix**: llama.cpp backend
+- **llamacpp.nix**: llama.cpp backend (primary, production-ready)
 - **vllm.nix**: Planned - vLLM backend for high-throughput scenarios
 - **tgi.nix**: Planned - Text Generation Inference for production deployments
 
 ### Implementation Status
 
 **Production Ready**:
-- ✅ **ollama.nix** - Ollama backend with GPU support
-- ✅ **llamacpp.nix** - llama.cpp backend with VRAM monitoring
+- ✅ **llamacpp.nix** - llama.cpp backend with CUDA optimization and VRAM monitoring
 
 **Planned (Future Enhancements)**:
 - 📋 **vllm.nix** - Will be added when high-throughput is required
@@ -91,8 +89,8 @@ Includes: fastapi, uvicorn, pydantic, aiohttp, psutil, nvidia-ml-py
      ┌───────┼───────┐
      │       │       │
 ┌────▼──┐ ┌──▼───┐ ┌▼────┐
-│Ollama │ │llama │ │vLLM │
-│Backend│ │.cpp  │ │     │
+│Llama  │ │      │ │vLLM │
+│cpp    │ │      │ │     │
 └───────┘ └──────┘ └─────┘
      │       │       │
      └───────┼───────┘
@@ -125,7 +123,7 @@ curl http://localhost:9000/inference \
   -d '{
     "model": "llama3.2",
     "prompt": "Explain quantum computing",
-    "backend": "ollama"
+    "backend": "llamacpp"
   }'
 ```
 
@@ -162,10 +160,9 @@ The offload manager automatically selects backends based on:
 4. **Model Size**: Match model to backend capacity
 
 **Priority Order** (default):
-1. llama.cpp (if model available, VRAM sufficient)
-2. Ollama (if model available)
-3. vLLM (for high-throughput scenarios)
-4. TGI (for production deployments)
+1. llama.cpp (primary, VRAM-aware)
+2. vLLM (for high-throughput scenarios)
+3. TGI (for production deployments)
 
 ## Integration with Applications
 
@@ -251,20 +248,18 @@ curl http://localhost:9000/vram/status
 # Check directly
 nvidia-smi
 
-# Offload models
-ollama-unload
+# Restart llama.cpp to free VRAM
+systemctl restart llamacpp-turbo
 ```
 
 ### Backend Not Available
 
 ```bash
 # Check backend services
-systemctl status llamacpp
-systemctl status ollama
+systemctl status llamacpp-turbo
 
 # Check backend health
 curl http://localhost:8080/health  # llama.cpp
-curl http://localhost:11434/api/tags  # Ollama
 ```
 
 ## See Also
