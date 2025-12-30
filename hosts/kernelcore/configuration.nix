@@ -710,6 +710,7 @@
       python313Packages.pyyaml
       python313Packages.langchain
       awscli
+      onlyoffice-desktopeditors
 
       invidious
 
