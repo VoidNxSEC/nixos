@@ -150,6 +150,9 @@ in
       };
     };
 
+    # Allow GitHub runner to access Nix daemon
+    nix.settings.trusted-users = [ "github-runner-${cfg.runnerName}" ];
+
     # Helpful packages for CI/CD (available system-wide)
     environment.systemPackages = with pkgs; [
       git
