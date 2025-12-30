@@ -109,10 +109,42 @@ in
     # ========================================
 
     # eCryptfs support (manual setup required)
-    environment.systemPackages = mkIf cfg.enableEncryption [
+    # Consolidated system packages for dev directory security
+    environment.systemPackages = [
+      # File integrity and encryption tools
+      pkgs.aide
+      pkgs.git-crypt
+
+      # Emergency lockdown script
+      (pkgs.writeScriptBin "dev-lockdown" ''
+        #!${pkgs.bash}/bin/bash
+        set -euo pipefail
+
+        echo "🚨 LOCKING DOWN ~/dev DIRECTORY..."
+
+        # Remove all permissions except for owner
+        chmod -R go-rwx ${cfg.path}
+
+        # Kill all processes accessing dev directory
+        ${pkgs.lsof}/bin/lsof +D ${cfg.path} | ${pkgs.gawk}/bin/awk 'NR>1 {print $2}' | xargs -r kill -9
+
+        # Create emergency backup
+        EMERGENCY_BACKUP="/backup/emergency-dev-$(date +%Y%m%d-%H%M%S).tar.gz.gpg"
+        ${pkgs.gnutar}/bin/tar -czf - -C "$(dirname ${cfg.path})" "$(basename ${cfg.path})" \
+          | ${pkgs.gnupg}/bin/gpg --encrypt --recipient ${cfg.user}@localhost \
+          --output "$EMERGENCY_BACKUP"
+
+        # Log incident
+        logger -t dev-security -p security.crit "EMERGENCY LOCKDOWN ACTIVATED"
+
+        echo "✅ Lockdown complete. Emergency backup: $EMERGENCY_BACKUP"
+      '')
+    ]
+    ++ (optionals cfg.enableEncryption [
+      # Optional: eCryptfs encryption
       pkgs.ecryptfs
       pkgs.ecryptfs-helper
-    ];
+    ]);
 
     # Note: eCryptfs setup must be done manually:
     # $ ecryptfs-setup-private --nopwcheck --noautomount
@@ -143,12 +175,6 @@ in
     # ========================================
     # Layer 4: File Integrity Monitoring
     # ========================================
-
-    # AIDE for file integrity
-    environment.systemPackages = [
-      pkgs.aide
-      pkgs.git-crypt
-    ];
 
     # AIDE configuration
     environment.etc."aide.conf".text = ''
@@ -346,32 +372,7 @@ in
     # Layer 8: Emergency Response
     # ========================================
 
-    # Panic script to lock down dev directory
-    environment.systemPackages = [
-      (pkgs.writeScriptBin "dev-lockdown" ''
-        #!${pkgs.bash}/bin/bash
-        set -euo pipefail
-
-        echo "🚨 LOCKING DOWN ~/dev DIRECTORY..."
-
-        # Remove all permissions except for owner
-        chmod -R go-rwx ${cfg.path}
-
-        # Kill all processes accessing dev directory
-        ${pkgs.lsof}/bin/lsof +D ${cfg.path} | ${pkgs.gawk}/bin/awk 'NR>1 {print $2}' | xargs -r kill -9
-
-        # Create emergency backup
-        EMERGENCY_BACKUP="/backup/emergency-dev-$(date +%Y%m%d-%H%M%S).tar.gz.gpg"
-        ${pkgs.gnutar}/bin/tar -czf - -C "$(dirname ${cfg.path})" "$(basename ${cfg.path})" \
-          | ${pkgs.gnupg}/bin/gpg --encrypt --recipient ${cfg.user}@localhost \
-          --output "$EMERGENCY_BACKUP"
-
-        # Log incident
-        logger -t dev-security -p security.crit "EMERGENCY LOCKDOWN ACTIVATED"
-
-        echo "✅ Lockdown complete. Emergency backup: $EMERGENCY_BACKUP"
-      '')
-    ];
+    # Note: dev-lockdown script defined in systemPackages above
 
     # ========================================
     # Documentation
@@ -440,5 +441,5 @@ in
     '';
   };
 
-  meta.maintainers = with lib.maintainers; [ ];
+  meta.maintainers = with lib.maintainers; [ marcosfpina ];
 }
