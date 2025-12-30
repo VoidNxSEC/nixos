@@ -4,7 +4,7 @@
 /// - Chat completions (POST /v1/chat/completions)
 /// - Embeddings (POST /v1/embeddings)
 ///
-/// These endpoints proxy to the active backend (Ollama, llama.cpp, vLLM, TGI)
+/// These endpoints proxy to the active backend (llama.cpp, vLLM, TGI)
 
 use axum::{
     extract::State,
