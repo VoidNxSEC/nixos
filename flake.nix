@@ -203,7 +203,7 @@
             }
 
             # ═══════════════════════════════════════════════════════════
-            # HYPRLAND - Official Module
+            # HYPRLAND - Official Module (provides programs.hyprland)
             # ═══════════════════════════════════════════════════════════
             inputs.hyprland.nixosModules.default
 
