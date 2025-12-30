@@ -19,11 +19,11 @@
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
 
     # ═══════════════════════════════════════════════════════════════
-    # PROJECTS - Independent flakes on GitHub
+    # PROJECTS - Independent flakes (local development)
     # ═══════════════════════════════════════════════════════════════
-    # ML Offload API - Multi-backend ML orchestration (private)
+    # ML Offload API - Multi-backend ML orchestration
     ml-offload-api = {
-      url = "github:VoidNxSEC/ml-offload-api";
+      url = "git+file:///home/kernelcore/dev/projects/ml-offload-api";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
