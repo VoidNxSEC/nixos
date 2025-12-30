@@ -23,7 +23,7 @@ let
     set -euo pipefail
     export PATH="${
       lib.makeBinPath [
-        pkgs.python3
+        pkgs.python313
         pkgs.dmg2img
         pkgs.curl
       ]
@@ -479,7 +479,7 @@ in
       pkgs.qemu
       pkgs.OVMF
       pkgs.dmg2img
-      pkgs.python3
+      pkgs.python313
       pkgs.socat # For QMP/monitor socket control
     ];
 
