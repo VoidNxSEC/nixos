@@ -522,10 +522,6 @@
         # New window behavior
         new_window_takes_over_fullscreen = 2;
 
-        # Rendering optimizations
-        render_ahead_of_time = false; # Better for VRR
-        render_ahead_safezone = 1; # Minimal safezone for 144Hz
-
         # Window swallowing (terminal opens GUI app, terminal hides)
         enable_swallow = true;
         swallow_regex = "^(kitty|Alacritty)$";
