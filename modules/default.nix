@@ -37,7 +37,7 @@
     # DEVELOPMENT & ML
     # ═══════════════════════════════════════════════════════════
     ./development # Dev environments, Claude profiles, Jupyter, CI/CD
-    ./ml # Machine Learning infrastructure (llama.cpp, orchestration)
+    ./machine-learning # Machine Learning infrastructure (llama.cpp-turbo, vLLM)
 
     # ═══════════════════════════════════════════════════════════
     # CONTAINERS & VIRTUALIZATION
