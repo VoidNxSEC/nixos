@@ -135,11 +135,11 @@ in
             weeks-pos = "right";
             on-scroll = 1;
             format = {
-              months = "<span color='#00d4ff'><b>{}</b></span>";
-              days = "<span color='#e4e4e7'>{}</span>";
-              weeks = "<span color='#7c3aed'><b>W{}</b></span>";
-              weekdays = "<span color='#a1a1aa'>{}</span>";
-              today = "<span color='#ff00aa'><b><u>{}</u></b></span>";
+              months = "<span color='${colors.accent.cyan}'><b>{}</b></span>";
+              days = "<span color='${colors.base.fg1}'>{}</span>";
+              weeks = "<span color='${colors.accent.violet}'><b>W{}</b></span>";
+              weekdays = "<span color='${colors.base.fg2}'>{}</span>";
+              today = "<span color='${colors.accent.magenta}'><b><u>{}</u></b></span>";
             };
           };
           actions = {
@@ -665,15 +665,6 @@ in
         animation: tray-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
 
-      @keyframes tray-pulse {
-        0%, 100% {
-          box-shadow: 0 0 12px ${colors.hexToRgba colors.accent.magenta "0.3"};
-        }
-        50% {
-          box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.magenta "0.6"};
-        }
-      }
-
       /* Tray context menu - glassmorphism */
       #tray menu {
         background: ${colors.hexToRgba colors.base.bg1 "0.95"};
@@ -699,6 +690,16 @@ in
       #tray menu separator {
         background: ${colors.hexToRgba colors.border.light "0.5"};
         margin: 4px 8px;
+      }
+
+      /* Keyframe animations (must be at root level) */
+      @keyframes tray-pulse {
+        0%, 100% {
+          box-shadow: 0 0 12px ${colors.hexToRgba colors.accent.magenta "0.3"};
+        }
+        50% {
+          box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.magenta "0.6"};
+        }
       }
     '';
   };
@@ -806,11 +807,20 @@ in
         # Run with error trap
         trap 'echo "{\"text\": \"󱉕 ERR\", \"tooltip\": \"Script error\", \"class\": \"warning\"}"' ERR
 
-        # Handle menu mode
-        if [[ "$1" == "menu" ]]; then
-          show_menu
-          exit 0
-        fi
+        # Handle modes
+        case "$1" in
+          menu)
+            show_menu
+            exit 0
+            ;;
+          rebuild)
+            echo "Starting NixOS Rebuild (Switch)..."
+            sudo nixos-rebuild switch --flake "$FLAKE_DIR"
+            echo ""
+            read -rp "Press Enter to close..."
+            exit 0
+            ;;
+        esac
 
         get_flake_status
       '';
