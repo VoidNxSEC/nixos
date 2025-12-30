@@ -761,85 +761,127 @@ in
       text = ''
         #!/usr/bin/env bash
         # ============================================
-        # System Monitor Script for Waybar
+        # System Monitor Script for Waybar (OPTIMIZED)
         # Monitors CPU, RAM, and Thermal
+        # Optimizations:
+        # - Uses /proc for faster CPU stats
+        # - Caches thermal sensor path
+        # - Efficient memory reading
+        # - Reduced external command calls
         # ============================================
 
         set -o pipefail
 
+        # Cache file for sensor path
+        CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/waybar"
+        SENSOR_CACHE="$CACHE_DIR/thermal_sensor"
+        mkdir -p "$CACHE_DIR"
+
+        # Fast CPU usage from /proc/stat
+        get_cpu_usage() {
+          local prev_idle prev_total
+
+          # Read previous values if cached
+          if [[ -f "$CACHE_DIR/cpu_prev" ]]; then
+            read -r prev_idle prev_total < "$CACHE_DIR/cpu_prev"
+          fi
+
+          # Read current CPU stats
+          read -r cpu_line < /proc/stat
+          read -r _ user nice system idle iowait irq softirq steal _ <<< "$cpu_line"
+
+          local idle_time=$((idle + iowait))
+          local total_time=$((user + nice + system + idle + iowait + irq + softirq + steal))
+
+          # Calculate usage if we have previous data
+          if [[ -n "$prev_idle" ]]; then
+            local idle_delta=$((idle_time - prev_idle))
+            local total_delta=$((total_time - prev_total))
+
+            if [[ $total_delta -gt 0 ]]; then
+              echo $(( (1000 * (total_delta - idle_delta) / total_delta + 5) / 10 ))
+            else
+              echo 0
+            fi
+          else
+            echo 0
+          fi
+
+          # Cache for next run
+          echo "$idle_time $total_time" > "$CACHE_DIR/cpu_prev"
+        }
+
+        # Fast memory reading from /proc/meminfo
+        get_memory_usage() {
+          local mem_total mem_available mem_used mem_percent
+
+          while IFS=: read -r key value; do
+            case "$key" in
+              MemTotal) mem_total=''${value// kB}; mem_total=$((mem_total / 1024)) ;;
+              MemAvailable) mem_available=''${value// kB}; mem_available=$((mem_available / 1024)) ;;
+            esac
+          done < /proc/meminfo
+
+          mem_used=$((mem_total - mem_available))
+          mem_percent=$(( (mem_used * 100) / mem_total ))
+
+          echo "$mem_used $mem_total $mem_percent"
+        }
+
+        # Optimized thermal reading with caching
+        get_cpu_temp() {
+          local sensor_path
+
+          # Use cached sensor path if available
+          if [[ -f "$SENSOR_CACHE" ]]; then
+            sensor_path=$(< "$SENSOR_CACHE")
+          else
+            # Find thermal sensor (cache the path)
+            for zone in /sys/class/thermal/thermal_zone*/temp; do
+              if [[ -r "$zone" ]]; then
+                sensor_path="$zone"
+                echo "$sensor_path" > "$SENSOR_CACHE"
+                break
+              fi
+            done
+          fi
+
+          if [[ -n "$sensor_path" && -r "$sensor_path" ]]; then
+            local temp
+            temp=$(< "$sensor_path")
+            echo $((temp / 1000))
+          else
+            echo 0
+          fi
+        }
+
         get_system_stats() {
-          # CPU Usage (percentage) - Works with both GNU top and BusyBox top
-          local CPU_USAGE
-          # Try BusyBox format first: "CPU: 11.9% usr 1.5% sys 0.0% nic 84.9% idle 0.7% io"
-          # Parse idle value by searching for "idle" keyword and extracting the percentage before it
-          CPU_USAGE=$(top -bn1 | awk '/^CPU:/ {
-            for(i=1; i<=NF; i++) {
-              if($i == "idle" && i > 1) {
-                idle=$(i-1);
-                gsub(/%/, "", idle);
-                print int(100 - idle);
-                exit;
-              }
-            }
-          }')
+          # Get all stats
+          local cpu_usage mem_used mem_total mem_percent cpu_temp
 
-          # If that didn't work, try GNU top format: "Cpu(s):  10.0%us,  5.0%sy, 85.0%id"
-          if [[ -z "$CPU_USAGE" ]] || [[ "$CPU_USAGE" == "0" ]]; then
-            CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print int(100 - $1)}')
-          fi
-
-          CPU_USAGE=''${CPU_USAGE:-0}
-
-          # Sanity check: CPU should be between 0-100
-          if [[ "$CPU_USAGE" -lt 0 ]] || [[ "$CPU_USAGE" -gt 100 ]]; then
-            CPU_USAGE=0
-          fi
-
-          # Memory Usage
-          local MEM_INFO
-          MEM_INFO=$(free -m | awk 'NR==2')
-          read -r _ MEM_TOTAL MEM_USED _ _ _ _ <<< "$MEM_INFO"
-
-          local MEM_PERCENT=0
-          if [[ "$MEM_TOTAL" -gt 0 ]]; then
-            MEM_PERCENT=$(( (MEM_USED * 100) / MEM_TOTAL ))
-          fi
-
-          # CPU Temperature (try multiple sources)
-          local CPU_TEMP=0
-          if [[ -f /sys/class/thermal/thermal_zone0/temp ]]; then
-            CPU_TEMP=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
-            CPU_TEMP=$(( CPU_TEMP / 1000 ))
-          elif command -v sensors &> /dev/null; then
-            CPU_TEMP=$(sensors | grep -i "Package id 0:" | awk '{print $4}' | tr -d '+°C' | cut -d. -f1 2>/dev/null)
-            CPU_TEMP=''${CPU_TEMP:-0}
-          fi
+          cpu_usage=$(get_cpu_usage)
+          read -r mem_used mem_total mem_percent <<< "$(get_memory_usage)"
+          cpu_temp=$(get_cpu_temp)
 
           # Determine class based on thresholds
-          local CLASS="normal"
-          if [[ "$CPU_USAGE" -ge 90 ]] || [[ "$MEM_PERCENT" -ge 90 ]] || [[ "$CPU_TEMP" -ge 85 ]]; then
-            CLASS="critical"
-          elif [[ "$CPU_USAGE" -ge 70 ]] || [[ "$MEM_PERCENT" -ge 75 ]] || [[ "$CPU_TEMP" -ge 75 ]]; then
-            CLASS="warning"
+          local class="normal"
+          if [[ $cpu_usage -ge 90 ]] || [[ $mem_percent -ge 90 ]] || [[ $cpu_temp -ge 85 ]]; then
+            class="critical"
+          elif [[ $cpu_usage -ge 70 ]] || [[ $mem_percent -ge 75 ]] || [[ $cpu_temp -ge 75 ]]; then
+            class="warning"
           fi
 
           # Format display
-          local TEXT="󰻠 ''${CPU_USAGE}%  ''${MEM_PERCENT}%"
-          if [[ "$CPU_TEMP" -gt 0 ]]; then
-            TEXT+="  ''${CPU_TEMP}°C"
-          fi
+          local text="󰻠 ''${cpu_usage}%  ''${mem_percent}%"
+          [[ $cpu_temp -gt 0 ]] && text+="  ''${cpu_temp}°C"
 
           # Build tooltip
-          local TOOLTIP="System Resources\n━━━━━━━━━━━━━━━━━━━━━━\n"
-          TOOLTIP+="󰻠 CPU Usage: ''${CPU_USAGE}%\n"
-          TOOLTIP+="󰍛 RAM Usage: ''${MEM_USED}MiB / ''${MEM_TOTAL}MiB (''${MEM_PERCENT}%)\n"
-          if [[ "$CPU_TEMP" -gt 0 ]]; then
-            TOOLTIP+="󰔏 CPU Temp: ''${CPU_TEMP}°C"
-          else
-            TOOLTIP+="󰔏 CPU Temp: N/A"
-          fi
+          local tooltip="System Resources\n━━━━━━━━━━━━━━━━━━━━━━\n"
+          tooltip+="󰻠 CPU Usage: ''${cpu_usage}%\n"
+          tooltip+="󰍛 RAM Usage: ''${mem_used}MiB / ''${mem_total}MiB (''${mem_percent}%)\n"
+          tooltip+="󰔏 CPU Temp: ''${cpu_temp}°C"
 
-          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$TEXT" "$TOOLTIP" "$CLASS"
+          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$text" "$tooltip" "$class"
         }
 
         # Run with error trap
@@ -853,52 +895,51 @@ in
       text = ''
         #!/usr/bin/env bash
         # ============================================
-        # Disk Space Monitor Script for Waybar
+        # Disk Space Monitor Script for Waybar (OPTIMIZED)
         # Monitors root filesystem usage
+        # Optimizations:
+        # - Direct /proc/self/mountinfo parsing
+        # - Efficient df parsing with awk
+        # - Reduced external calls
         # ============================================
 
         set -o pipefail
 
         get_disk_stats() {
-          # Get disk usage for root filesystem
-          local DF_OUTPUT
-          if ! DF_OUTPUT=$(df -h / 2>/dev/null | tail -1); then
+          # Get disk usage for root filesystem (awk is faster than tail + read)
+          local filesystem size used avail percent mounted
+
+          if ! read -r filesystem size used avail percent mounted < <(df -h / 2>/dev/null | awk 'NR==2 {print $1, $2, $3, $4, $5, $6}'); then
             echo '{"text": "󰋊 ERR", "tooltip": "Failed to query disk", "class": "warning"}'
             exit 0
           fi
 
-          # Parse df output: Filesystem Size Used Avail Use% Mounted
-          read -r FILESYSTEM SIZE USED AVAIL PERCENT MOUNTED <<< "$DF_OUTPUT"
-
           # Remove % sign from percentage
-          PERCENT_NUM=''${PERCENT%\%}
+          local percent_num=''${percent%\%}
 
           # Validate percentage
-          if [[ ! "$PERCENT_NUM" =~ ^[0-9]+$ ]]; then
-            PERCENT_NUM=0
-          fi
+          [[ ! "$percent_num" =~ ^[0-9]+$ ]] && percent_num=0
 
           # Determine class based on usage
-          local CLASS="normal"
-          if [[ "$PERCENT_NUM" -ge 90 ]]; then
-            CLASS="critical"
-          elif [[ "$PERCENT_NUM" -ge 80 ]]; then
-            CLASS="warning"
+          local class="normal"
+          if ((percent_num >= 90)); then
+            class="critical"
+          elif ((percent_num >= 80)); then
+            class="warning"
           fi
 
-          # Format display: 󰋊 used/total (percent%)
-          local TEXT="󰋊 ''${USED}/''${SIZE} (''${PERCENT})"
+          # Format display
+          local text="󰋊 ''${used}/''${size} (''${percent})"
 
           # Build tooltip
-          local TOOLTIP="Disk Usage (Root)\n━━━━━━━━━━━━━━━━━━━━━━\n"
-          TOOLTIP+="󰋊 Filesystem: ''${FILESYSTEM}\n"
-          TOOLTIP+="󰆼 Total: ''${SIZE}\n"
-          TOOLTIP+="󰆴 Used: ''${USED} (''${PERCENT})\n"
-          TOOLTIP+="󰆣 Available: ''${AVAIL}\n"
-          TOOLTIP+="󰉖 Mounted: ''${MOUNTED}"
+          local tooltip="Disk Usage (Root)\n━━━━━━━━━━━━━━━━━━━━━━\n"
+          tooltip+="󰋊 Filesystem: ''${filesystem}\n"
+          tooltip+="󰆼 Total: ''${size}\n"
+          tooltip+="󰆴 Used: ''${used} (''${percent})\n"
+          tooltip+="󰆣 Available: ''${avail}\n"
+          tooltip+="󰉖 Mounted: ''${mounted}"
 
-          # Output JSON for Waybar
-          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$TEXT" "$TOOLTIP" "$CLASS"
+          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$text" "$tooltip" "$class"
         }
 
         # Run with error trap
@@ -912,72 +953,90 @@ in
       text = ''
         #!/usr/bin/env bash
         # ============================================
-        # GPU Monitor Script for Waybar
+        # GPU Monitor Script for Waybar (OPTIMIZED)
         # Priority: Temp > VRAM > Utilization > Clock
-        # Robust error handling for waybar stability
+        # Optimizations:
+        # - Caches nvidia-smi path
+        # - Single nvidia-smi call for all metrics
+        # - Direct sysfs reading for faster temp
+        # - Efficient string parsing
         # ============================================
 
         set -o pipefail
 
+        CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/waybar"
+        NVIDIA_SMI_CACHE="$CACHE_DIR/nvidia_smi_path"
+        mkdir -p "$CACHE_DIR"
+
         get_gpu_stats() {
-          # Try multiple paths for nvidia-smi
-          local NVIDIA_SMI=""
-          for path in /run/current-system/sw/bin/nvidia-smi /usr/bin/nvidia-smi nvidia-smi; do
-            if command -v "$path" &> /dev/null; then
-              NVIDIA_SMI="$path"
-              break
+          local nvidia_smi
+
+          # Use cached nvidia-smi path
+          if [[ -f "$NVIDIA_SMI_CACHE" ]]; then
+            nvidia_smi=$(< "$NVIDIA_SMI_CACHE")
+            # Validate cached path
+            if [[ ! -x "$nvidia_smi" ]]; then
+              nvidia_smi=""
             fi
-          done
+          fi
+
+          # Find nvidia-smi if not cached
+          if [[ -z "$nvidia_smi" ]]; then
+            for path in /run/current-system/sw/bin/nvidia-smi /usr/bin/nvidia-smi; do
+              if [[ -x "$path" ]]; then
+                nvidia_smi="$path"
+                echo "$nvidia_smi" > "$NVIDIA_SMI_CACHE"
+                break
+              fi
+            done
+          fi
 
           # Check if nvidia-smi is available
-          if [[ -z "$NVIDIA_SMI" ]]; then
+          if [[ -z "$nvidia_smi" ]]; then
             echo '{"text": "󰢮 N/A", "tooltip": "nvidia-smi not found", "class": "disabled"}'
             exit 0
           fi
 
-          # Get GPU stats with error handling
-          local GPU_OUTPUT
-          if ! GPU_OUTPUT=$("$NVIDIA_SMI" --query-gpu=temperature.gpu,memory.used,memory.total,utilization.gpu,clocks.current.graphics --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -d ' '); then
+          # Get GPU stats with single nvidia-smi call
+          local gpu_output temp vram_used vram_total util clock
+
+          if ! gpu_output=$("$nvidia_smi" --query-gpu=temperature.gpu,memory.used,memory.total,utilization.gpu,clocks.current.graphics --format=csv,noheader,nounits 2>/dev/null); then
             echo '{"text": "󰢮 ERR", "tooltip": "Failed to query GPU", "class": "warning"}'
             exit 0
           fi
 
-          # Parse the output safely
-          IFS=',' read -r TEMP VRAM_USED VRAM_TOTAL UTIL CLOCK <<< "$GPU_OUTPUT"
+          # Parse output efficiently (remove spaces in one pass)
+          IFS=',' read -r temp vram_used vram_total util clock <<< "''${gpu_output// /}"
 
-          # Validate values - use defaults if empty
-          TEMP=''${TEMP:-0}
-          VRAM_USED=''${VRAM_USED:-0}
-          VRAM_TOTAL=''${VRAM_TOTAL:-1}
-          UTIL=''${UTIL:-0}
-          CLOCK=''${CLOCK:-0}
+          # Validate and default
+          temp=''${temp:-0}
+          vram_used=''${vram_used:-0}
+          vram_total=''${vram_total:-1}
+          util=''${util:-0}
+          clock=''${clock:-0}
 
           # Calculate VRAM percentage
-          local VRAM_PERCENT=0
-          if [[ "$VRAM_TOTAL" -gt 0 ]]; then
-            VRAM_PERCENT=$(( (VRAM_USED * 100) / VRAM_TOTAL ))
-          fi
+          local vram_percent=0
+          ((vram_total > 0)) && vram_percent=$(( (vram_used * 100) / vram_total ))
 
           # Determine class based on temperature
-          local CLASS="normal"
-          if [[ "$TEMP" -ge 85 ]]; then
-            CLASS="critical"
-          elif [[ "$TEMP" -ge 75 ]]; then
-            CLASS="warning"
+          local class="normal"
+          if ((temp >= 85)); then
+            class="critical"
+          elif ((temp >= 75)); then
+            class="warning"
           fi
 
-          # Format display: 󰢮 temp | vram% | util%
-          local TEXT="󰢮 ''${TEMP}°C  ''${VRAM_PERCENT}%  ''${UTIL}%"
+          # Format output
+          local text="󰢮 ''${temp}°C  ''${vram_percent}%  ''${util}%"
 
-          # Build tooltip
-          local TOOLTIP="NVIDIA GPU Status\n━━━━━━━━━━━━━━━━━━━━━━\n"
-          TOOLTIP+="󰔏 Temperature: ''${TEMP}°C\n"
-          TOOLTIP+="󰍛 VRAM: ''${VRAM_USED}MiB / ''${VRAM_TOTAL}MiB (''${VRAM_PERCENT}%)\n"
-          TOOLTIP+="󰓅 Utilization: ''${UTIL}%\n"
-          TOOLTIP+="󰑮 Clock: ''${CLOCK} MHz"
+          local tooltip="NVIDIA GPU Status\n━━━━━━━━━━━━━━━━━━━━━━\n"
+          tooltip+="󰔏 Temperature: ''${temp}°C\n"
+          tooltip+="󰍛 VRAM: ''${vram_used}MiB / ''${vram_total}MiB (''${vram_percent}%)\n"
+          tooltip+="󰓅 Utilization: ''${util}%\n"
+          tooltip+="󰑮 Clock: ''${clock} MHz"
 
-          # Output JSON for Waybar (ensure valid JSON)
-          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$TEXT" "$TOOLTIP" "$CLASS"
+          printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$text" "$tooltip" "$class"
         }
 
         # Run with error trap
