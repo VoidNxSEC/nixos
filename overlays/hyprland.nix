@@ -74,7 +74,7 @@ final: prev: {
 
     src = final.fetchurl {
       url = "https://github.com/hyprwm/hyprutils/archive/refs/tags/v${version}.tar.gz";
-      sha256 = "1ymiqzncppdik8lw3ad7xaqig6c7bjcy7crcwbq3rjfk2hrc8rmc";
+      sha256 = "sha256-Hwl+uZFQgfG5KZc3AWQ7zYWBtGnCQurlRGJ1sSCjsik=";
     };
 
     nativeBuildInputs = with final; [
