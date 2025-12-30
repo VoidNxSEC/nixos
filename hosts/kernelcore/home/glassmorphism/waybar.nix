@@ -638,24 +638,23 @@ in
       #tray > .passive {
         -gtk-icon-effect: none; /* Remove dim effect for better visibility */
         opacity: 0.75;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
       }
 
       #tray > .passive:hover {
         opacity: 1;
         background: ${colors.hexToRgba colors.accent.cyan "0.1"};
-        filter: drop-shadow(0 0 8px ${colors.hexToRgba colors.accent.cyan "0.4"});
+        box-shadow: 0 0 8px ${colors.hexToRgba colors.accent.cyan "0.4"};
       }
 
       /* Active icons - prominent with glow */
       #tray > .active {
         background: ${colors.hexToRgba colors.accent.cyan "0.08"};
-        filter: drop-shadow(0 0 6px ${colors.hexToRgba colors.accent.cyan "0.3"});
+        box-shadow: 0 0 6px ${colors.hexToRgba colors.accent.cyan "0.3"};
       }
 
       #tray > .active:hover {
         background: ${colors.hexToRgba colors.accent.cyan "0.15"};
-        filter: drop-shadow(0 0 10px ${colors.hexToRgba colors.accent.cyan "0.5"});
+        box-shadow: 0 0 10px ${colors.hexToRgba colors.accent.cyan "0.5"};
         transform: translateY(-1px);
       }
 
@@ -665,7 +664,6 @@ in
         background: ${colors.hexToRgba colors.accent.magenta "0.15"};
         border: 1px solid ${colors.hexToRgba colors.accent.magenta "0.4"};
         animation: tray-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        filter: drop-shadow(0 0 8px ${colors.hexToRgba colors.accent.magenta "0.5"});
       }
 
       @keyframes tray-pulse {
