@@ -459,7 +459,7 @@
       };
       # Disable SDDM
       sddm.enable = false;
-      # Default session is Hyprland
+      # Default session is Hyprland (programs.hyprland creates "hyprland" session)
       defaultSession = "hyprland";
     };
 
@@ -471,6 +471,15 @@
       enable = true;
       nvidia = true; # Enable NVIDIA optimizations
     };
+  };
+
+  # Hyprland Performance Optimizations - Reduce stuttering/lag
+  kernelcore.hyprland.performance = {
+    enable = true;
+    mode = "performance"; # balanced | performance | minimal-latency
+  };
+
+  services = {
 
     openssh = {
       enable = true;

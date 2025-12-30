@@ -290,8 +290,8 @@ in
         };
 
         "tray" = {
-          icon-size = 18;
-          spacing = 8;
+          icon-size = 22; # Increased from 18 for better visibility
+          spacing = 12; # More breathing room
           show-passive-items = true;
         };
       };
@@ -610,35 +610,99 @@ in
       }
 
       /* ============================================
-       * SYSTEM TRAY
+       * SYSTEM TRAY - PREMIUM REFINED ICONS
        * ============================================ */
       #tray {
-        padding: 4px 12px;
+        padding: 6px 16px;
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.base.bg1 "0.85"}, ${colors.hexToRgba colors.base.bg2 "0.75"});
+        border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.15"};
+        margin-left: 8px; /* Visual separator from other modules */
       }
 
+      #tray:hover {
+        background: linear-gradient(135deg, ${colors.hexToRgba colors.base.bg1 "0.9"}, ${colors.hexToRgba colors.base.bg2 "0.8"});
+        border-color: ${colors.hexToRgba colors.accent.cyan "0.3"};
+        box-shadow: 0 0 15px ${colors.hexToRgba colors.accent.cyan "0.15"},
+                    inset 0 0 10px ${colors.hexToRgba colors.accent.cyan "0.05"};
+      }
+
+      /* Tray icons - individual styling */
+      #tray > * {
+        padding: 4px;
+        margin: 0 2px;
+        border-radius: ${toString colors.radius.small}px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Passive icons - subtle but visible */
       #tray > .passive {
-        -gtk-icon-effect: dim;
+        -gtk-icon-effect: none; /* Remove dim effect for better visibility */
+        opacity: 0.75;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
       }
 
+      #tray > .passive:hover {
+        opacity: 1;
+        background: ${colors.hexToRgba colors.accent.cyan "0.1"};
+        filter: drop-shadow(0 0 8px ${colors.hexToRgba colors.accent.cyan "0.4"});
+      }
+
+      /* Active icons - prominent with glow */
+      #tray > .active {
+        background: ${colors.hexToRgba colors.accent.cyan "0.08"};
+        filter: drop-shadow(0 0 6px ${colors.hexToRgba colors.accent.cyan "0.3"});
+      }
+
+      #tray > .active:hover {
+        background: ${colors.hexToRgba colors.accent.cyan "0.15"};
+        filter: drop-shadow(0 0 10px ${colors.hexToRgba colors.accent.cyan "0.5"});
+        transform: translateY(-1px);
+      }
+
+      /* Attention-needed icons - magenta pulse effect */
       #tray > .needs-attention {
         -gtk-icon-effect: highlight;
-        background: ${colors.hexToRgba colors.accent.magenta "0.1"};
-        border-color: ${colors.hexToRgba colors.accent.magenta "0.3"};
+        background: ${colors.hexToRgba colors.accent.magenta "0.15"};
+        border: 1px solid ${colors.hexToRgba colors.accent.magenta "0.4"};
+        animation: tray-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        filter: drop-shadow(0 0 8px ${colors.hexToRgba colors.accent.magenta "0.5"});
       }
 
+      @keyframes tray-pulse {
+        0%, 100% {
+          box-shadow: 0 0 12px ${colors.hexToRgba colors.accent.magenta "0.3"};
+        }
+        50% {
+          box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.magenta "0.6"};
+        }
+      }
+
+      /* Tray context menu - glassmorphism */
       #tray menu {
         background: ${colors.hexToRgba colors.base.bg1 "0.95"};
         border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.3"};
         border-radius: ${toString colors.radius.medium}px;
+        padding: 6px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                    0 0 20px ${colors.hexToRgba colors.accent.cyan "0.15"};
       }
 
       #tray menu menuitem {
-        padding: 8px 12px;
-        transition: all 0.2s ease;
+        padding: 10px 14px;
+        border-radius: ${toString colors.radius.small}px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        margin: 2px 0;
       }
 
       #tray menu menuitem:hover {
-        background: ${colors.hexToRgba colors.accent.cyan "0.15"};
+        background: ${colors.hexToRgba colors.accent.cyan "0.2"};
+        box-shadow: 0 0 12px ${colors.hexToRgba colors.accent.cyan "0.2"};
+        transform: translateX(2px);
+      }
+
+      #tray menu separator {
+        background: ${colors.hexToRgba colors.border.light "0.5"};
+        margin: 4px 8px;
       }
     '';
   };
