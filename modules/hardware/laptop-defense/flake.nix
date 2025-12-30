@@ -23,7 +23,7 @@
           s-tui
           gnuplot
           jq
-          python3
+          python313
           curl
         ];
 

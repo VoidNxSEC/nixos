@@ -83,8 +83,8 @@
       nvidia-docker
 
       # Python para scripts
-      python3
-      python3Packages.pip
+      python313
+      python313Packages.pip
 
       # Utilitários
       jq
