@@ -124,7 +124,7 @@ in
       # Experimental: test both atomic modes
       # Comment out the one that doesn't work for you
       # WLR_DRM_NO_ATOMIC = "0";  # WITH atomic modesetting (try first)
-      WLR_DRM_NO_ATOMIC = "1"; # WITHOUT atomic (fallback)
+      # WLR_DRM_NO_ATOMIC = "1"; # WITHOUT atomic (fallback)
     };
 
     # ============================================
