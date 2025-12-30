@@ -64,6 +64,41 @@ in
         description = "Systemd timer interval for auto-mirror (hourly, daily, weekly)";
       };
     };
+
+    cloudflare = {
+      enable = mkEnableOption "Automatic Cloudflare DNS configuration";
+
+      zoneId = mkOption {
+        type = types.str;
+        default = "";
+        description = "Cloudflare Zone ID for domain";
+        example = "abc123def456...";
+      };
+
+      apiTokenFile = mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        description = "Path to file containing Cloudflare API token (use sops-nix)";
+        example = "/run/secrets/cloudflare-api-token";
+      };
+
+      updateInterval = mkOption {
+        type = types.str;
+        default = "hourly";
+        description = "How often to check and update DNS record";
+      };
+    };
+
+    gitea = {
+      adminTokenFile = mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        description = "Path to file containing Gitea admin API token (use sops-nix)";
+        example = "/run/secrets/gitea-admin-token";
+      };
+
+      autoInitRepos = mkEnableOption "Automatically create repositories on first boot";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -109,38 +144,192 @@ in
       };
     };
 
-    # SSL certificates setup
+    # SSL certificates setup - Copy certs with proper permissions
     systemd.tmpfiles.rules = [
       "d /var/lib/gitea/custom/https 0750 gitea gitea -"
-      "L+ /var/lib/gitea/custom/https/localhost.crt - - - - /home/kernelcore/localhost.crt"
-      "L+ /var/lib/gitea/custom/https/localhost.key - - - - /home/kernelcore/localhost.key"
+      "C /var/lib/gitea/custom/https/localhost.crt 0640 gitea gitea - /home/kernelcore/localhost.crt"
+      "C /var/lib/gitea/custom/https/localhost.key 0640 gitea gitea - /home/kernelcore/localhost.key"
     ];
 
-    # Auto-mirror script
-    systemd.services.gitea-mirror-showcases = mkIf cfg.autoMirror.enable {
-      description = "Mirror showcase projects to Gitea";
+    # Cloudflare DNS sync service (declarative)
+    systemd.services.gitea-cloudflare-dns = mkIf cfg.cloudflare.enable {
+      description = "Sync Gitea DNS record to Cloudflare";
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
 
       serviceConfig = {
         Type = "oneshot";
+        DynamicUser = true;
+        LoadCredential = mkIf (
+          cfg.cloudflare.apiTokenFile != null
+        ) "cloudflare-api-token:${cfg.cloudflare.apiTokenFile}";
+      };
+
+      script = ''
+        set -euo pipefail
+
+        # Load credentials
+        if [ -z "${cfg.cloudflare.zoneId}" ]; then
+          echo "⚠️  Cloudflare Zone ID not configured"
+          exit 1
+        fi
+
+        if [ ! -f "$CREDENTIALS_DIRECTORY/cloudflare-api-token" ]; then
+          echo "⚠️  Cloudflare API token not found in credentials"
+          exit 1
+        fi
+
+        API_TOKEN=$(cat "$CREDENTIALS_DIRECTORY/cloudflare-api-token")
+        ZONE_ID="${cfg.cloudflare.zoneId}"
+
+        # Detect public IP
+        PUBLIC_IP=$(${pkgs.curl}/bin/curl -s https://api.ipify.org 2>/dev/null || echo "")
+        if [ -z "$PUBLIC_IP" ]; then
+          echo "❌ Could not detect public IP"
+          exit 1
+        fi
+
+        echo "🔍 Public IP: $PUBLIC_IP"
+
+        # Check if DNS record exists
+        EXISTING=$(${pkgs.curl}/bin/curl -s -X GET \
+          "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records?name=${cfg.domain}" \
+          -H "Authorization: Bearer $API_TOKEN" \
+          -H "Content-Type: application/json" | ${pkgs.jq}/bin/jq -r '.result[0].id // empty')
+
+        if [ -n "$EXISTING" ]; then
+          # Update existing record
+          echo "🔧 Updating DNS record: ${cfg.domain} → $PUBLIC_IP"
+          RESULT=$(${pkgs.curl}/bin/curl -s -X PUT \
+            "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$EXISTING" \
+            -H "Authorization: Bearer $API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "{
+              \"type\": \"A\",
+              \"name\": \"${cfg.domain}\",
+              \"content\": \"$PUBLIC_IP\",
+              \"ttl\": 1,
+              \"proxied\": false
+            }")
+        else
+          # Create new record
+          echo "✨ Creating DNS record: ${cfg.domain} → $PUBLIC_IP"
+          RESULT=$(${pkgs.curl}/bin/curl -s -X POST \
+            "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records" \
+            -H "Authorization: Bearer $API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "{
+              \"type\": \"A\",
+              \"name\": \"${cfg.domain}\",
+              \"content\": \"$PUBLIC_IP\",
+              \"ttl\": 1,
+              \"proxied\": false
+            }")
+        fi
+
+        # Check result
+        SUCCESS=$(echo "$RESULT" | ${pkgs.jq}/bin/jq -r '.success // false')
+        if [ "$SUCCESS" = "true" ]; then
+          echo "✅ DNS record synced successfully"
+        else
+          echo "❌ Failed to sync DNS record:"
+          echo "$RESULT" | ${pkgs.jq}/bin/jq -r '.errors[]?.message // "Unknown error"'
+          exit 1
+        fi
+      '';
+    };
+
+    # Cloudflare DNS sync timer (declarative)
+    systemd.timers.gitea-cloudflare-dns = mkIf cfg.cloudflare.enable {
+      description = "Periodic Gitea Cloudflare DNS sync";
+      wantedBy = [ "timers.target" ];
+
+      timerConfig = {
+        OnBootSec = "5min";
+        OnCalendar = cfg.cloudflare.updateInterval;
+        Persistent = true;
+        RandomizedDelaySec = "2m";
+      };
+    };
+
+    # Gitea repository initialization (declarative, runs once)
+    systemd.services.gitea-init-repos = mkIf cfg.gitea.autoInitRepos {
+      description = "Initialize Gitea repositories";
+      after = [ "gitea.service" ];
+      requires = [ "gitea.service" ];
+      wantedBy = [ "multi-user.target" ];
+
+      unitConfig = {
+        ConditionPathExists = "!/var/lib/gitea/.repos-initialized";
+      };
+
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
         User = "gitea";
         Group = "gitea";
+        LoadCredential = mkIf (
+          cfg.gitea.adminTokenFile != null
+        ) "gitea-admin-token:${cfg.gitea.adminTokenFile}";
       };
 
       script = ''
         set -euo pipefail
 
         GITEA_URL="https://${cfg.domain}:${toString cfg.httpsPort}"
-        GITEA_TOKEN_FILE="/var/lib/gitea/api-token"
 
-        # Check if token exists, if not, print instructions
-        if [ ! -f "$GITEA_TOKEN_FILE" ]; then
-          echo "⚠️  Gitea API token not found!"
-          echo "   Create token in Gitea UI: Settings > Applications > Generate Token"
-          echo "   Save to: $GITEA_TOKEN_FILE (owned by gitea:gitea, mode 600)"
+        if [ ! -f "$CREDENTIALS_DIRECTORY/gitea-admin-token" ]; then
+          echo "⚠️  Gitea admin token not found in credentials"
           exit 1
         fi
 
-        GITEA_TOKEN=$(cat "$GITEA_TOKEN_FILE")
+        GITEA_TOKEN=$(cat "$CREDENTIALS_DIRECTORY/gitea-admin-token")
+
+        echo "🏗️  Initializing Gitea repositories..."
+
+        ${concatMapStringsSep "\n" (project: ''
+          echo "→ ${project}"
+          ${pkgs.curl}/bin/curl -k -X POST "$GITEA_URL/api/v1/user/repos" \
+            -H "Authorization: token $GITEA_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "${project}",
+              "description": "Showcase project: ${project}",
+              "private": false,
+              "default_branch": "main"
+            }' 2>&1 | ${pkgs.jq}/bin/jq -r 'if .id then "  ✓ Created" else "  ⚠️  " + (.message // "Already exists") end'
+        '') cfg.projects}
+
+        # Mark as initialized
+        touch /var/lib/gitea/.repos-initialized
+        echo "✅ Repository initialization complete!"
+      '';
+    };
+
+    # Auto-mirror service (declarative)
+    systemd.services.gitea-mirror-showcases = mkIf cfg.autoMirror.enable {
+      description = "Mirror showcase projects to Gitea";
+      after = [ "gitea-init-repos.service" ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        User = "root"; # Needs access to user project directories
+        LoadCredential = mkIf (
+          cfg.gitea.adminTokenFile != null
+        ) "gitea-admin-token:${cfg.gitea.adminTokenFile}";
+      };
+
+      script = ''
+        set -euo pipefail
+
+        GITEA_URL="https://${cfg.domain}:${toString cfg.httpsPort}"
+
+        if [ ! -f "$CREDENTIALS_DIRECTORY/gitea-admin-token" ]; then
+          echo "⚠️  Gitea admin token not found in credentials"
+          exit 1
+        fi
+
+        GITEA_TOKEN=$(cat "$CREDENTIALS_DIRECTORY/gitea-admin-token")
 
         echo "🔄 Starting showcase projects mirror..."
 
@@ -165,11 +354,11 @@ in
           # Check if gitea remote exists
           if git remote get-url gitea >/dev/null 2>&1; then
             echo "  ✓ Gitea remote exists, pushing..."
-            git push gitea --all --tags 2>&1 || echo "  ⚠️  Push failed (repo may not exist in Gitea yet)"
+            git push gitea --all --tags 2>&1 || echo "  ⚠️  Push failed"
           else
-            echo "  → Adding gitea remote: $GITEA_URL/${project}.git"
-            git remote add gitea "https://gitea:$GITEA_TOKEN@${cfg.domain}:${toString cfg.httpsPort}/${project}.git" 2>&1 || echo "  ⚠️  Remote already exists"
-            git push gitea --all --tags 2>&1 || echo "  ⚠️  Push failed (create repo in Gitea first)"
+            echo "  → Adding gitea remote"
+            git remote add gitea "https://gitea:$GITEA_TOKEN@${cfg.domain}:${toString cfg.httpsPort}/${project}.git" 2>&1 || echo "  ⚠️  Remote add failed"
+            git push gitea --all --tags 2>&1 || echo "  ⚠️  Push failed"
           fi
         '') cfg.projects}
 
@@ -183,71 +372,121 @@ in
       wantedBy = [ "timers.target" ];
 
       timerConfig = {
+        OnBootSec = "10min";
         OnCalendar = cfg.autoMirror.interval;
         Persistent = true;
         RandomizedDelaySec = "5m";
       };
     };
 
-    # Helper script for manual mirror
-    environment.systemPackages = [
-      (pkgs.writeScriptBin "gitea-mirror-now" ''
-        #!${pkgs.bash}/bin/bash
-        echo "🚀 Triggering manual Gitea mirror..."
-        sudo systemctl start gitea-mirror-showcases.service
-        sudo journalctl -u gitea-mirror-showcases.service -f
-      '')
+    # Helper command to check Gitea Showcase status
+    environment.systemPackages =
+      with pkgs;
+      [
+        curl
+        jq
 
-      (pkgs.writeScriptBin "gitea-setup-repos" ''
-        #!${pkgs.bash}/bin/bash
-        set -euo pipefail
+        (writeScriptBin "gitea-status" ''
+          #!${pkgs.bash}/bin/bash
 
-        echo "🏗️  Gitea Setup Helper"
-        echo ""
-        echo "This script helps you create repositories in Gitea for all showcase projects."
-        echo ""
-        echo "Prerequisites:"
-        echo " 1. Gitea must be running: systemctl status gitea"
-        echo " 2. You need a Gitea admin account"
-        echo " 3. You need an API token (Settings > Applications > Generate Token)"
-        echo ""
+          echo "🎯 Gitea Showcase - Status"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📍 Access: https://${cfg.domain}:${toString cfg.httpsPort}"
+          echo ""
 
-        read -p "Enter Gitea URL (default: https://${cfg.domain}:${toString cfg.httpsPort}): " GITEA_URL
-        GITEA_URL=''${GITEA_URL:-"https://${cfg.domain}:${toString cfg.httpsPort}"}
+          # Gitea service
+          echo "🔧 Services:"
+          systemctl is-active --quiet gitea.service && echo "  ✓ gitea.service (running)" || echo "  ✗ gitea.service (stopped)"
 
-        read -p "Enter Gitea API token: " GITEA_TOKEN
+          ${optionalString cfg.cloudflare.enable ''
+            systemctl is-active --quiet gitea-cloudflare-dns.timer && echo "  ✓ gitea-cloudflare-dns.timer (active)" || echo "  ✗ gitea-cloudflare-dns.timer (inactive)"
+          ''}
 
-        if [ -z "$GITEA_TOKEN" ]; then
-          echo "❌ Token required!"
-          exit 1
-        fi
+          ${optionalString cfg.gitea.autoInitRepos ''
+            systemctl is-active --quiet gitea-init-repos.service && echo "  ✓ gitea-init-repos.service (done)" || echo "  ⏳ gitea-init-repos.service (pending)"
+          ''}
 
-        # Save token for later use
-        echo "$GITEA_TOKEN" | sudo tee /var/lib/gitea/api-token >/dev/null
-        sudo chown gitea:gitea /var/lib/gitea/api-token
-        sudo chmod 600 /var/lib/gitea/api-token
+          ${optionalString cfg.autoMirror.enable ''
+            systemctl is-active --quiet gitea-mirror-showcases.timer && echo "  ✓ gitea-mirror-showcases.timer (active)" || echo "  ✗ gitea-mirror-showcases.timer (inactive)"
+          ''}
 
-        echo ""
-        echo "Creating repositories..."
+          echo ""
+          echo "📊 Quick actions:"
+          echo "  gitea-logs         - View Gitea logs"
+          ${optionalString cfg.cloudflare.enable ''
+            echo "  gitea-dns-sync     - Trigger DNS sync now"
+          ''}
+          ${optionalString cfg.autoMirror.enable ''
+            echo "  gitea-mirror       - Trigger mirror sync now"
+          ''}
+          echo "  gitea-help         - Full documentation"
+          echo ""
+        '')
 
-        ${concatMapStringsSep "\n" (project: ''
-          echo "→ ${project}"
-          curl -k -X POST "$GITEA_URL/api/v1/user/repos" \
-            -H "Authorization: token $GITEA_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "name": "${project}",
-              "description": "Showcase project: ${project}",
-              "private": false,
-              "default_branch": "main"
-            }' 2>&1 | grep -q '"id"' && echo "  ✓ Created" || echo "  (already exists)"
-        '') cfg.projects}
+        (writeScriptBin "gitea-logs" ''
+          #!${pkgs.bash}/bin/bash
+          journalctl -u gitea.service -f
+        '')
 
-        echo ""
-        echo "✅ Setup complete!"
-        echo "   Run 'gitea-mirror-now' to sync projects"
-      '')
-    ];
+        (writeScriptBin "gitea-help" ''
+                  #!${pkgs.bash}/bin/bash
+                  cat << 'HELP'
+          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          🎯 Gitea Showcase - Full Documentation
+          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+          📍 Access URL:
+             https://${cfg.domain}:${toString cfg.httpsPort}
+
+          🔐 First Time Setup:
+             1. Access the URL above
+             2. Create admin account (first user = admin)
+             3. Settings > Applications > Generate Token
+             4. Add token to: /etc/nixos/secrets/gitea.yaml
+                → sops /etc/nixos/secrets/gitea.yaml
+                → Replace gitea-admin-token: PLACEHOLDER with real token
+             5. Restart services:
+                → sudo systemctl restart gitea-init-repos.service
+                → sudo systemctl restart gitea-mirror-showcases.service
+
+          📊 Monitoring:
+             gitea-status       - Quick status check
+             gitea-logs         - View Gitea logs
+             gitea-dns-sync     - Manual DNS sync (Cloudflare)
+             gitea-mirror       - Manual project mirror sync
+
+          🔧 Systemd Services:
+             systemctl status gitea.service
+             ${optionalString cfg.cloudflare.enable "systemctl status gitea-cloudflare-dns.timer"}
+             ${optionalString cfg.gitea.autoInitRepos "systemctl status gitea-init-repos.service"}
+             ${optionalString cfg.autoMirror.enable "systemctl status gitea-mirror-showcases.timer"}
+
+          📖 Full Guide:
+             /etc/nixos/docs/GITEA-SHOWCASE-DECLARATIVE-SETUP.md
+
+          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          HELP
+        '')
+      ]
+      ++ lib.optionals cfg.cloudflare.enable [
+        (writeScriptBin "gitea-dns-sync" ''
+          #!${pkgs.bash}/bin/bash
+          echo "🔄 Triggering Cloudflare DNS sync..."
+          sudo systemctl start gitea-cloudflare-dns.service
+          echo "📊 Watching logs (Ctrl+C to exit):"
+          sudo journalctl -u gitea-cloudflare-dns.service -f
+        '')
+      ]
+      ++ lib.optionals cfg.autoMirror.enable [
+        (writeScriptBin "gitea-mirror" ''
+          #!${pkgs.bash}/bin/bash
+          echo "🔄 Triggering project mirror sync..."
+          sudo systemctl start gitea-mirror-showcases.service
+          echo "📊 Watching logs (Ctrl+C to exit):"
+          sudo journalctl -u gitea-mirror-showcases.service -f
+        '')
+      ];
 
     # Firewall rules
     networking.firewall.allowedTCPPorts = [
@@ -255,21 +494,14 @@ in
       3000
     ];
 
-    # Instructions on first activation
+    # Local DNS resolution (for local-only access)
+    networking.hosts = {
+      "127.0.0.1" = [ cfg.domain ];
+    };
+
+    # Simple activation message
     system.activationScripts.gitea-showcase-setup = stringAfter [ "users" ] ''
-      cat <<EOF
-
-      ═══════════════════════════════════════════════════════════════
-      🎯 Gitea Showcase Mirror - First Time Setup
-      ═══════════════════════════════════════════════════════════════
-
-      1. Access Gitea: https://${cfg.domain}:${toString cfg.httpsPort}
-      2. Create admin account (first user becomes admin)
-      3. Run: gitea-setup-repos
-      4. Enable auto-mirror: gitea-mirror-now
-
-      ═══════════════════════════════════════════════════════════════
-      EOF
+      echo "✓ Gitea Showcase configured - Run 'gitea-status' for info"
     '';
   };
 }
