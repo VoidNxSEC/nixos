@@ -19,14 +19,13 @@
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
 
     # ═══════════════════════════════════════════════════════════════
-    # PROJECTS - Independent flakes (local development)
+    # PROJECTS - Independent flakes (local development) - Development Tools & Infrastructure
     # ═══════════════════════════════════════════════════════════════
     # ML Offload API - Multi-backend ML orchestration
     ml-offload-api = {
       url = "git+file:///home/kernelcore/dev/projects/ml-offload-api";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     securellm-mcp = {
       url = "git+file:///home/kernelcore/dev/projects/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -63,11 +62,30 @@
       url = "git+file:///home/kernelcore/dev/projects/docker-hub";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Notion → Markdown/JSON exporter for platform migration
+    notion-exporter = {
+      url = "git+file:///home/kernelcore/dev/projects/notion-exporter";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # Declarative mini-datacenter with Docker+Nix synergy
+    nixos-hyperlab = {
+      url = "git+file:///home/kernelcore/dev/projects/nixos-hyperlab";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    # TODO: Add notion-exporter from ~/dev/projects/notion-exporter
+    # TUI debug pipeline with semantic filtering & LLM analysis
+    shadow-debug-pipeline = {
+      url = "git+file:///home/kernelcore/dev/projects/shadow-debug-pipeline";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
+    # Native OS-level monitoring agent in Rust with Hyprland integration
+    ai-agent-os = {
+      url = "git+file:///home/kernelcore/dev/projects/ai-agent-os";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # ═══════════════════════════════════════════════════════════════
-    # PHANTOM - AI Document Intelligence Toolkit
+    # PHANTOM - AI Forensic Intelligence Enterprise Grade Dynamic Pipeline (AI Forensics)
     # ═══════════════════════════════════════════════════════════════
     phantom = {
       url = "git+file:///home/kernelcore/dev/projects/phantom";
