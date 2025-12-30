@@ -252,7 +252,7 @@ in
         __GL_VRR_ALLOWED = "1";
 
         # Direct rendering
-        WLR_DRM_NO_ATOMIC = "1";
+        # WLR_DRM_NO_ATOMIC = "1";
       })
     ];
 
