@@ -451,14 +451,13 @@
     };
 
     displayManager = {
-      gdm = {
+      # GDM disabled - crashes with Hyprland (ordering cycle + no fallback session)
+      gdm.enable = false;
+      # SDDM enabled - better Hyprland compatibility
+      sddm = {
         enable = true;
-        wayland = true;
-        # Auto-suspend disabled (causes issues with NVIDIA)
-        autoSuspend = false;
+        wayland.enable = true;
       };
-      # Disable SDDM
-      sddm.enable = false;
       # Default session is Hyprland (programs.hyprland creates "hyprland" session)
       defaultSession = "hyprland";
     };

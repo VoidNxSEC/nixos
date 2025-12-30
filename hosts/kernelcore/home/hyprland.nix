@@ -99,7 +99,6 @@
           enabled = true;
           size = 10;
           passes = 3;
-          new_optimizations = true;
           xray = true;
           ignore_opacity = false;
           noise = 0.02;
@@ -107,8 +106,6 @@
           brightness = 0.8;
           vibrancy = 0.2;
           vibrancy_darkness = 0.5;
-          special = true;
-          popups = true;
         };
 
         # Window opacity for glass effect
@@ -205,39 +202,33 @@
       # LAYER RULES - Blur for glassmorphism
       # ============================================
       layerrule = [
-        # Waybar - full blur + privacy
+        # Waybar - blur effect
         "blur, waybar"
-        "blurpopups, waybar"
-        "ignorezero, waybar"
-        "ignorealpha 0.3, waybar"
-        "noscreenshare, waybar" # 0.52: exclude from screenshare
+        "ignorealpha 0.8, waybar"
 
-        # Mako notifications - blur + privacy
+        # Mako notifications - blur effect
         "blur, notifications"
-        "ignorezero, notifications"
-        "ignorealpha 0.3, notifications"
-        "noscreenshare, notifications" # 0.52: exclude from screenshare
+        "ignorealpha 0.8, notifications"
 
         # Wofi launcher - blur
         "blur, wofi"
-        "ignorezero, wofi"
-        "ignorealpha 0.3, wofi"
+        "ignorealpha 0.8, wofi"
 
         # Swappy screenshot editor - blur
         "blur, swappy"
-        "ignorezero, swappy"
+        "ignorealpha 0.8, swappy"
 
         # Wlogout - blur
         "blur, logout_dialog"
-        "ignorezero, logout_dialog"
+        "ignorealpha 0.8, logout_dialog"
 
         # Hyprlock - blur
         "blur, hyprlock"
-        "ignorezero, hyprlock"
+        "ignorealpha 0.8, hyprlock"
 
         # GTK layer shell
         "blur, gtk-layer-shell"
-        "ignorezero, gtk-layer-shell"
+        "ignorealpha 0.8, gtk-layer-shell"
       ];
 
       # ============================================
@@ -520,7 +511,7 @@
         animate_mouse_windowdragging = true;
 
         # New window behavior
-        new_window_takes_over_fullscreen = 2;
+        # new_window_takes_over_fullscreen = 2; # Removed in Hyprland 0.52+
 
         # Window swallowing (terminal opens GUI app, terminal hides)
         enable_swallow = true;
