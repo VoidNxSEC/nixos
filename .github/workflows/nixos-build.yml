@@ -40,15 +40,11 @@ jobs:
     steps:
       - name: Ensure Nix daemon is running
         run: systemctl is-active --quiet nix-daemon || sudo systemctl restart nix-daemon
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Ensure Git tracking for Nix
@@ -81,15 +77,11 @@ jobs:
       matrix:
         target: [toplevel, iso, vm-image]
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Ensure Git tracking for Nix
@@ -142,15 +134,11 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: [setup-secrets, check]
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Ensure Git tracking for Nix
@@ -185,15 +173,11 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: build
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Check for known vulnerabilities
@@ -223,15 +207,11 @@ jobs:
     name: Check formatting
     runs-on: [self-hosted, nixos]
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Check Nix formatting
@@ -248,15 +228,11 @@ jobs:
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true')
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
 
       - name: Ensure Git tracking for Nix
