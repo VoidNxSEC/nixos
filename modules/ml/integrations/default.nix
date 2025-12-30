@@ -11,6 +11,5 @@
 {
   imports = [
     ./mcp
-    ./neovim
   ];
 }
