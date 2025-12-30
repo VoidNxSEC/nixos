@@ -114,6 +114,22 @@ in
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
+
+      # Cloudflare API Token (for DNS automation)
+      "cloudflare-api-token" = {
+        sopsFile = ../../secrets/gitea.yaml;
+        mode = "0400";
+        owner = "root";
+        group = "root";
+      };
+
+      # Gitea Admin Token (for repository automation)
+      "gitea-admin-token" = {
+        sopsFile = ../../secrets/gitea.yaml;
+        mode = "0400";
+        owner = "root";
+        group = "root";
+      };
     };
 
     # Helper script to load API keys into environment
