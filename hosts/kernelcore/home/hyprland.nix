@@ -202,33 +202,13 @@
       # LAYER RULES - Blur for glassmorphism
       # ============================================
       layerrule = [
-        # Waybar - blur effect
         "blur, waybar"
-        "ignorealpha 0.8, waybar"
-
-        # Mako notifications - blur effect
         "blur, notifications"
-        "ignorealpha 0.8, notifications"
-
-        # Wofi launcher - blur
         "blur, wofi"
-        "ignorealpha 0.8, wofi"
-
-        # Swappy screenshot editor - blur
         "blur, swappy"
-        "ignorealpha 0.8, swappy"
-
-        # Wlogout - blur
         "blur, logout_dialog"
-        "ignorealpha 0.8, logout_dialog"
-
-        # Hyprlock - blur
         "blur, hyprlock"
-        "ignorealpha 0.8, hyprlock"
-
-        # GTK layer shell
         "blur, gtk-layer-shell"
-        "ignorealpha 0.8, gtk-layer-shell"
       ];
 
       # ============================================
