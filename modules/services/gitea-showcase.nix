@@ -160,9 +160,10 @@ in
         chown gitea:gitea /var/lib/gitea/custom/https
         chmod 0750 /var/lib/gitea/custom/https
 
-        # Copy certificates with proper permissions
-        cp /home/kernelcore/localhost.crt /var/lib/gitea/custom/https/localhost.crt
-        cp /home/kernelcore/localhost.key /var/lib/gitea/custom/https/localhost.key
+        # Copy certificates with proper permissions (force overwrite if needed)
+        rm -f /var/lib/gitea/custom/https/localhost.crt /var/lib/gitea/custom/https/localhost.key
+        cp -L /home/kernelcore/localhost.crt /var/lib/gitea/custom/https/localhost.crt
+        cp -L /home/kernelcore/localhost.key /var/lib/gitea/custom/https/localhost.key
 
         chown gitea:gitea /var/lib/gitea/custom/https/localhost.crt
         chown gitea:gitea /var/lib/gitea/custom/https/localhost.key
