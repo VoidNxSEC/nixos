@@ -21,6 +21,12 @@
     # ═══════════════════════════════════════════════════════════════
     # PROJECTS - Independent flakes on GitHub
     # ═══════════════════════════════════════════════════════════════
+    # ML Offload API - Multi-backend ML orchestration (private)
+    ml-offload-api = {
+      url = "github:VoidNxSEC/ml-offload-api";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     securellm-mcp = {
       url = "git+file:///home/kernelcore/dev/projects/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
