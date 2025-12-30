@@ -1810,11 +1810,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767117007,
-        "narHash": "sha256-7IpL4d+LxAV0A1wgBf6lOvV4DlQsEJwVdUBMwUFJgNQ=",
+        "lastModified": 1767119965,
+        "narHash": "sha256-UkAnwK3tQiI14/Ml/2ke9fEqqjE+pMZDJwOfSAG9xRg=",
         "ref": "refs/heads/main",
-        "rev": "399d77c56addc4a8e6a718dd2a231224e45fae68",
-        "revCount": 11,
+        "rev": "9d32596a24cf7b3f2d451d342f15104146a127ec",
+        "revCount": 13,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/securellm-mcp"
       },
