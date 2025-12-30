@@ -10,7 +10,7 @@
   # VoidNxLabs/nixos           - Main NixOS config
   # VoidNxLabs/securellm-bridge - Rust LLM proxy
   # VoidNxLabs/cognitive-vault  - Go/Rust knowledge vault
-  
+
   # Each repo needs a flake.nix with:
   # - checks.${system}.* - for CI tests
   # - packages.${system}.* - for builds
