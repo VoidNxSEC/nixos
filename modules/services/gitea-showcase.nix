@@ -145,11 +145,33 @@ in
     };
 
     # SSL certificates setup - Copy certs with proper permissions
-    systemd.tmpfiles.rules = [
-      "d /var/lib/gitea/custom/https 0750 gitea gitea -"
-      "C /var/lib/gitea/custom/https/localhost.crt 0640 gitea gitea - /home/kernelcore/localhost.crt"
-      "C /var/lib/gitea/custom/https/localhost.key 0640 gitea gitea - /home/kernelcore/localhost.key"
-    ];
+    systemd.services.gitea-setup-certs = {
+      description = "Setup Gitea SSL certificates";
+      before = [ "gitea.service" ];
+      wantedBy = [ "gitea.service" ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+
+      script = ''
+        mkdir -p /var/lib/gitea/custom/https
+        chown gitea:gitea /var/lib/gitea/custom/https
+        chmod 0750 /var/lib/gitea/custom/https
+
+        # Copy certificates with proper permissions
+        cp /home/kernelcore/localhost.crt /var/lib/gitea/custom/https/localhost.crt
+        cp /home/kernelcore/localhost.key /var/lib/gitea/custom/https/localhost.key
+
+        chown gitea:gitea /var/lib/gitea/custom/https/localhost.crt
+        chown gitea:gitea /var/lib/gitea/custom/https/localhost.key
+        chmod 0640 /var/lib/gitea/custom/https/localhost.crt
+        chmod 0640 /var/lib/gitea/custom/https/localhost.key
+
+        echo "✓ Gitea SSL certificates configured"
+      '';
+    };
 
     # Cloudflare DNS sync service (declarative)
     systemd.services.gitea-cloudflare-dns = mkIf cfg.cloudflare.enable {
