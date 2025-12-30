@@ -28,7 +28,7 @@ let
   phantomDir = "/home/kernelcore/dev/Projects/phantom";
 
   # Python environment with required deps
-  pythonEnv = pkgs.python3.withPackages (
+  pythonEnv = pkgs.python313.withPackages (
     ps: with ps; [
       pydantic
       rich

@@ -11,7 +11,7 @@ let
   cfg = config.kernelcore.soc.anduril;
 
   # Python environment for the auditor
-  pythonEnv = pkgs.python3.withPackages (
+  pythonEnv = pkgs.python313.withPackages (
     ps: with ps; [
       # Core dependencies (minimal)
     ]
