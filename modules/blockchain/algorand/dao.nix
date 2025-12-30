@@ -1,3 +1,4 @@
+# TODO: CRITICAL: We need to implement a proper DAO smart contract for Algorand
 # ============================================
 # Algorand DAO Smart Contracts - PyTeal Templates
 # ============================================
