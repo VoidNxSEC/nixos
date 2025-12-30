@@ -156,7 +156,7 @@
     packages.zellij.enable = true;
     packages.lynis.enable = true;
     packages.hyprland.enable = true; # Hyprland v0.53.0
-    packages.claude.enable = true;
+    #packages.claude.enable = true;
     packages.gemini-cli.enable = true;
 
     hardware.wifi-optimization.enable = true;
