@@ -546,14 +546,28 @@
     };
 
     # Gitea Showcase - Self-hosted Git replacing GitHub (solves rate limits)
-    # Managed by modules/services/gitea-showcase.nix
+    # Managed by modules/services/gitea-showcase.nix (100% declarative)
     gitea-showcase = {
       enable = true;
-      domain = "git.voidnxlabs";
+      domain = "git.voidnx.com";
       httpsPort = 3443;
       showcaseProjectsPath = "/home/kernelcore/dev/projects";
 
-      # Auto-mirror every hour
+      # Cloudflare DNS automation (declarative)
+      cloudflare = {
+        enable = true;
+        zoneId = "2e7f7edeb989e58dc7eed3dc4e4b5622"; # voidnx.com
+        apiTokenFile = "/run/secrets/cloudflare-api-token";
+        updateInterval = "hourly";
+      };
+
+      # Gitea repository automation (declarative)
+      gitea = {
+        adminTokenFile = "/run/secrets/gitea-admin-token";
+        autoInitRepos = true; # Automatically create repos on first boot
+      };
+
+      # Auto-mirror every hour (declarative)
       autoMirror = {
         enable = true;
         interval = "hourly";
