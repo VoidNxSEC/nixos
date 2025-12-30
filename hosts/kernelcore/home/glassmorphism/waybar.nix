@@ -655,7 +655,6 @@ in
       #tray > .active:hover {
         background: ${colors.hexToRgba colors.accent.cyan "0.15"};
         box-shadow: 0 0 10px ${colors.hexToRgba colors.accent.cyan "0.5"};
-        transform: translateY(-1px);
       }
 
       /* Attention-needed icons - magenta pulse effect */
@@ -695,7 +694,6 @@ in
       #tray menu menuitem:hover {
         background: ${colors.hexToRgba colors.accent.cyan "0.2"};
         box-shadow: 0 0 12px ${colors.hexToRgba colors.accent.cyan "0.2"};
-        transform: translateX(2px);
       }
 
       #tray menu separator {
