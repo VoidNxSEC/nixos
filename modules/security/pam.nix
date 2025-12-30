@@ -28,12 +28,12 @@ with lib;
           type = "hard";
           value = "0";
         }
-        # Limit simultaneous logins
+        # Limit simultaneous logins (increased for multiple TTYs + graphical session)
         {
           domain = "*";
           item = "maxlogins";
           type = "hard";
-          value = "3";
+          value = "10";
         }
         # File descriptor limits
         {
