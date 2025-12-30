@@ -536,27 +536,18 @@
       metricsEndpoint = false; # Prometheus metrics at /metrics
     };
 
-    gitea = {
-      enable = false; # Disabled - causing systemd loops during rebuild
-      settings = {
-        server = {
-          DOMAIN = "git.voidnxlabs";
-          ROOT_URL = "https://git.voidnxlabs:3443/";
-          HTTP_PORT = 3000; # HTTP redirect port
-          PROTOCOL = "https";
-          HTTPS_PORT = 3443;
-          CERT_FILE = "/var/lib/gitea/custom/https/localhost.crt";
-          KEY_FILE = "/var/lib/gitea/custom/https/localhost.key";
-        };
-        service = {
-          DISABLE_REGISTRATION = false;
-        };
-        database = {
-          DB_TYPE = "sqlite3";
-          HOST = "localhost";
-          NAME = "gitea";
-          USER = "kernelcore";
-        };
+    # Gitea Showcase - Self-hosted Git replacing GitHub (solves rate limits)
+    # Managed by modules/services/gitea-showcase.nix
+    gitea-showcase = {
+      enable = true;
+      domain = "git.voidnxlabs";
+      httpsPort = 3443;
+      showcaseProjectsPath = "/home/kernelcore/dev/projects";
+
+      # Auto-mirror every hour
+      autoMirror = {
+        enable = true;
+        interval = "hourly";
       };
     };
 
