@@ -65,9 +65,9 @@ in
         # pulseaudio # REMOVIDO: Conflito com pipewire-pulse
 
         # Python para scripts
-        python3
-        python3Packages.mutagen
-        python3Packages.pydub
+        python313
+        python313Packages.mutagen
+        python313Packages.pydub
       ]
       #++ optionals cfg.jackAudio [
       #jack2

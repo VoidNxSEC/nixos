@@ -256,12 +256,12 @@ in
         User = "kernelcore";
         ExecStart = pkgs.writeShellScript "docker-hub-start" ''
           ${concatMapStringsSep "\n" (
-            stack: "${pkgs.python3}/bin/python3 ${orchestrator} up ${stack}"
+            stack: "${pkgs.python313}/bin/python3 ${orchestrator} up ${stack}"
           ) cfg.autoStart}
         '';
         ExecStop = pkgs.writeShellScript "docker-hub-stop" ''
           ${concatMapStringsSep "\n" (
-            stack: "${pkgs.python3}/bin/python3 ${orchestrator} down ${stack}"
+            stack: "${pkgs.python313}/bin/python3 ${orchestrator} down ${stack}"
           ) cfg.autoStart}
         '';
       };

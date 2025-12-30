@@ -26,7 +26,7 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.python311Packages.vllm or pkgs.vllm;
+      default = pkgs.python313Packages.vllm or pkgs.vllm;
       defaultText = lib.literalExpression "pkgs.vllm";
       description = "The vLLM package to use.";
     };
