@@ -384,19 +384,22 @@ rec {
 
   # ==========================================
   # LAYER RULES - Blur for glassmorphism
+  # DISABLED: Syntax incompatible with Hyprland 0.53.0
+  # Error: "invalid field blur: missing a value"
+  # TODO: Research correct layerrule syntax for Hyprland 0.53+
   # ==========================================
   layerRules = [
-    "blur, waybar"
-    "blur, notifications"
-    "blur, wofi"
-    "blur, rofi"
-    "blur, fuzzel"
-    "blur, swappy"
-    "blur, logout_dialog"
-    "blur, hyprlock"
-    "blur, gtk-layer-shell"
-    "blur, wlogout"
-    "blur, mako"
+    # "blur, waybar"
+    # "blur, notifications"
+    # "blur, wofi"
+    # "blur, rofi"
+    # "blur, fuzzel"
+    # "blur, swappy"
+    # "blur, logout_dialog"
+    # "blur, hyprlock"
+    # "blur, gtk-layer-shell"
+    # "blur, wlogout"
+    # "blur, mako"
   ];
 
   # ==========================================
