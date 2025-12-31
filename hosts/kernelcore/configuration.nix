@@ -485,7 +485,7 @@
 
   # Hyprland Performance Optimizations - Reduce stuttering/lag
   kernelcore.hyprland.performance = {
-    enable = true;
+    enable = config.services.hyprland-desktop.enable;
     mode = "performance"; # balanced | performance | minimal-latency
   };
 
