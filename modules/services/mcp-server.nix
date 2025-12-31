@@ -271,6 +271,7 @@ in
       environment = {
         KNOWLEDGE_DB_PATH = "${cfg.dataDir}/knowledge.db";
         ENABLE_KNOWLEDGE = "true";
+        NIXOS_HOST_NAME = config.networking.hostName;
         LOG_LEVEL = cfg.daemon.logLevel;
         NODE_ENV = "production";
         # Ensure proper locale for UTF-8 output
@@ -281,6 +282,7 @@ in
           lib.makeBinPath [
             pkgs.bash
             pkgs.coreutils
+            pkgs.inetutils
             pkgs.nodejs
             cfg.package
           ]
