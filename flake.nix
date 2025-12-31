@@ -18,8 +18,11 @@
     # ═══════════════════════════════════════════════════════════════
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
 
-    # Niri - Scrollable Tiling Window Manager
-    niri.url = "github:YaLTeR/niri";
+    # Niri - Scrollable Tiling Window Manager (niri-flake with NixOS module)
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Hyprland Modular Configuration Framework
     nix-hypr.url = "git+ssh://git@github.com/marcosfpina/nix-hypr";
@@ -198,6 +201,7 @@
             {
               nixpkgs.overlays = overlays ++ [
                 inputs.hyprland.overlays.default # Official Hyprland overlay
+                # Niri overlay not needed - module provides package
                 (final: prev: {
                   securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
                   securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
@@ -213,6 +217,12 @@
             # HYPRLAND - Official Module (provides programs.hyprland)
             # ═══════════════════════════════════════════════════════════
             inputs.hyprland.nixosModules.default
+
+            # ═══════════════════════════════════════════════════════════
+            # NIRI - Official Module (provides programs.niri)
+            # nixosModule disabled - testing if homeModule alone is sufficient
+            # ═══════════════════════════════════════════════════════════
+            # inputs.niri.nixosModules.niri
 
             # TODO: Isolate imports with default.nix file calling just ./hosts/kernelcore, and add the hosts/kernelcore/configuration.nix and hardware-configuration.nix files in default.nix imports, and remove the ./hosts/kernelcore/hardware-configuration.nix and ./hosts/kernelcore files from here
             # ═══════════════════════════════════════════════════════════
