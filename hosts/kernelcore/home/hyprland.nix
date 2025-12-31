@@ -26,11 +26,10 @@
 }:
 
 {
-  # Import nix-hypr module from flake input (github:marcosfpina/nix-hypr)
-  # Since nix-hypr.flake = false, inputs.nix-hypr is a path to the repo
-  # We need to import the default.nix file inside it
+  # Import hyprland-modular framework (vendorized from nix-hypr)
+  # Located at: /etc/nixos/modules/desktop/hyprland-modular/
   imports = [
-    "${inputs.nix-hypr}/default.nix"
+    ../../../modules/desktop/hyprland-modular
   ];
 
   # ============================================================================
