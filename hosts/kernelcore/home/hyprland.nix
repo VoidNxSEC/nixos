@@ -123,15 +123,11 @@
     # ==========================================================================
     # AUTOSTART APPLICATIONS
     # ==========================================================================
-    # Core glassmorphism components + system services
+    # NOTE: Core components (waybar, mako, polkit, nm-applet, clipboard) are
+    # already started by hyprland-modular framework - no need to duplicate here.
+    # Only add custom applications that aren't handled by the framework.
     autostart = [
-      "waybar" # Status bar
-      "mako" # Notifications
-      "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1" # Polkit
-      "nm-applet --indicator" # Network manager applet
-      # Clipboard manager (auto-enabled via features.clipboard)
-      "wl-paste --type text --watch cliphist store"
-      "wl-paste --type image --watch cliphist store"
+      # Add custom autostart applications here if needed
     ];
 
     # ==========================================================================
@@ -157,11 +153,13 @@
         # ========================================
         # TERMINAL VARIANTS
         # ========================================
-        # Plain terminals without multiplexer
-        "$mainMod CTRL, Return, exec, kitty"
-        "$mainMod CTRL SHIFT, Return, exec, alacritty"
-        # Minimal emergency terminal (Foot with plain bash)
-        "$mainMod ALT, Return, exec, foot"
+        # NOTE: Terminal keybindings already provided by 'core' module:
+        #   SUPER+Return          → kitty with zellij (main session)
+        #   SUPER+SHIFT+Return    → alacritty with zellij (alt session)
+        #   SUPER+CTRL+Return     → kitty (no multiplexer)
+        #   SUPER+CTRL+SHIFT+Return → alacritty (no multiplexer)
+        #   SUPER+ALT+Return      → foot (emergency)
+        # No need to duplicate here!
 
         # ========================================
         # NOTIFICATIONS
@@ -172,8 +170,8 @@
         # ========================================
         # STATUS BAR
         # ========================================
-        # Reload waybar
-        "$mainMod SHIFT, W, exec, killall waybar; waybar &"
+        # NOTE: Waybar reload (SUPER+SHIFT+W) already provided by 'core' module
+        # Removed to avoid duplication
 
         # ========================================
         # AGENT HUB (AI Integration)
