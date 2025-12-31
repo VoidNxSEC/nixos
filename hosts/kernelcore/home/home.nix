@@ -3,6 +3,7 @@
   pkgs,
   lib,
   osConfig,
+  inputs,
   ...
 }:
 
@@ -22,9 +23,11 @@
     ./electron-config.nix # Electron app performance optimization
     ./firefox.nix # Self-hosted Firefox (extensions in Nix store)
   ]
-  ++ lib.optional (osConfig.programs.niri.enable) ./niri/niri.nix
-  ++ lib.optional (osConfig.programs.niri.enable) ./niri/waybar-niri.nix
   ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland;
+  # Niri config temporarily disabled - focus on Hyprland first
+  # ++ lib.optional (osConfig.programs.niri.enable) inputs.niri.homeModules.niri
+  # ++ lib.optional (osConfig.programs.niri.enable) ./niri/niri.nix
+  # ++ lib.optional (osConfig.programs.niri.enable) ./niri/waybar-niri.nix;
 
   # ============================================================
   # SHELL CONFIGURATION
