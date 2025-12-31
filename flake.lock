@@ -905,11 +905,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1767182920,
-        "narHash": "sha256-+fwp6P1jpFuTwNtiwL7/5LAOi04mcBXjrjhXgAeM0zg=",
+        "lastModified": 1767186011,
+        "narHash": "sha256-SuCQfwNtxN3mEIRHm//Q27M8dFwZmsXacL0cmUpGXfA=",
         "ref": "refs/heads/main",
-        "rev": "d622c09d09094eba49f6e219c81059ee0be548c2",
-        "revCount": 6760,
+        "rev": "214fdb099ca84435196a0f06c816835514c3e8e3",
+        "revCount": 6761,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1384,11 +1384,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1767070591,
-        "narHash": "sha256-b0aM3221Pw6vbACFqZrVzZjMNqXVPi1dvgLr8QTbajc=",
+        "lastModified": 1767185284,
+        "narHash": "sha256-ljDBUDpD1Cg5n3mJI81Hz5qeZAwCGxon4kQW3Ho3+6Q=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "9b3c38bf6c260d0e88154ef07fa833fa845bfd14",
+        "rev": "40b1a28dce561bea34858287fbb23052c3ee63fe",
         "type": "github"
       },
       "original": {
@@ -1842,11 +1842,11 @@
         "nixpkgs": "nixpkgs_7"
       },
       "locked": {
-        "lastModified": 1767062690,
-        "narHash": "sha256-hfKAOJQYbR0mlwabV56tOlEMUgESRroHqlDpX0hwOpU=",
+        "lastModified": 1767149068,
+        "narHash": "sha256-TjfAb58Ybz/93e2jP0qD846dj+VqiY7wk+EqsxcZ708=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "943d2d0bf1b86267287aff826ebd1138d83113b7",
+        "rev": "6d14586a5917a1ec7f045ac97e6d00c68ea5d9f3",
         "type": "github"
       },
       "original": {
@@ -1864,11 +1864,11 @@
         "rust-overlay": "rust-overlay_5"
       },
       "locked": {
-        "lastModified": 1767117036,
-        "narHash": "sha256-wRtZlP6RRR8aFOIQabKuyd1ubls29y3fS8EEN4C6LuE=",
+        "lastModified": 1767186971,
+        "narHash": "sha256-BO0RFrsSXzTyMX8tVd3YGNnjJGuwaV7GdKAqJOk+HZY=",
         "ref": "refs/heads/main",
-        "rev": "0a23afed8bdd9c2ab713143ff13e1b6dd93b2172",
-        "revCount": 10,
+        "rev": "1c50b551df3ac1aa5155a70e4a4750e1ed2e7d79",
+        "revCount": 13,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/securellm-bridge"
       },
@@ -1885,11 +1885,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767184211,
-        "narHash": "sha256-lpTHcNFLS/IE6YuMTdSVEwJYY+9XYdNBZsDTuTMzysw=",
+        "lastModified": 1767186996,
+        "narHash": "sha256-UZ0+eXB+sdc+GbuzM4U7TVVcWXMu+uXqL6EJijs0dJQ=",
         "ref": "refs/heads/main",
-        "rev": "c35581a9bf73af11dd2bf7840ff4574fe207b8be",
-        "revCount": 16,
+        "rev": "eae959982ba86a3641203ea4b1ea3556bf14ad66",
+        "revCount": 27,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/securellm-mcp"
       },
