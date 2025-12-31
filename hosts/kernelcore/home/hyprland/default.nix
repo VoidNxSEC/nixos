@@ -44,7 +44,7 @@
     # ==========================================================================
     # Using built-in glassmorphism theme
     # (Can be customized later via customTheme or extraSettings if needed)
-    theme = "default";
+    theme = "glassmorphism";
 
     # Development profile: balanced for dev work
     # - Animations: fast (2-3 speed)
@@ -57,9 +57,9 @@
     # FEATURE FLAGS
     # ==========================================================================
     features = {
-      blur = false; # Window blur effects (Manual in extraSettings)
+      blur = true; # Window blur effects (glassmorphism theme requires blur)
       animations = true; # Window animations
-      shadows = false; # Drop shadows (Manual in extraSettings)
+      shadows = true; # Drop shadows (Manual in extraSettings)
       rounding = true; # Rounded corners
       vrr = true; # Variable Refresh Rate (144Hz)
       dimInactive = true; # Dim unfocused windows
@@ -334,8 +334,8 @@
     extraSettings = {
       # General settings
       general = {
-        gaps_in = 8;
-        gaps_out = 16;
+        gaps_in = 6;
+        gaps_out = 12;
         border_size = 1;
         "col.active_border" = "rgba(00d4ffff) rgba(7c3aedff) 45deg";
         "col.inactive_border" = "rgba(22222e88)";
@@ -345,11 +345,24 @@
       };
 
       # Decoration (Blur/Shadows handled by features/theme)
+      # Use mkForce to override glassmorphism theme opacity
       decoration = {
-        active_opacity = 1.0;
-        inactive_opacity = 1.0;
-        fullscreen_opacity = 1.0;
+        active_opacity = lib.mkForce 1.0;
+        inactive_opacity = lib.mkForce 1.0;
+        fullscreen_opacity = lib.mkForce 1.0;
         # rounding handled by features.rounding
+        blur = {
+          enabled = false;
+          size = 8;
+          passes = 2;
+          xray = true;
+          ignore_opacity = false;
+          noise = 0.02;
+          contrast = 0.9;
+          brightness = 0.8;
+          vibrancy = 0.2;
+          vibrancy_darkness = 0.5;
+        };
       };
 
       # Misc settings
@@ -358,7 +371,7 @@
         disable_splash_rendering = true;
         mouse_move_enables_dpms = true;
         key_press_enables_dpms = true;
-        vrr = 2; # Always on VRR (0=off, 1=fullscreen only, 2=always)
+        vrr = 1; # Always on VRR (0=off, 1=fullscreen only, 2=always)
         vfr = true; # Variable Frame Rate for power saving
         force_default_wallpaper = 0;
         focus_on_activate = true;
