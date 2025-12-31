@@ -343,26 +343,8 @@
         resize_on_border = true;
       };
 
-      # Decoration (Blur/Shadows handled by features/theme)
-      # Use mkForce to override glassmorphism theme opacity
-      decoration = {
-        active_opacity = lib.mkForce 1.0;
-        inactive_opacity = lib.mkForce 1.0;
-        fullscreen_opacity = lib.mkForce 1.0;
-        # rounding handled by features.rounding
-        blur = {
-          enabled = false;
-          size = 8;
-          passes = 2;
-          xray = true;
-          ignore_opacity = false;
-          noise = 0.02;
-          contrast = 0.9;
-          brightness = 0.8;
-          vibrancy = 0.2;
-          vibrancy_darkness = 0.5;
-        };
-      };
+      # Decoration - blur moved to extraConfig (raw syntax) to avoid serialization issues
+      # See extraConfig section below
 
       # Misc settings
       misc = {
@@ -419,9 +401,19 @@
     };
 
     # ==========================================================================
-    # RAW HYPRLAND CONFIG (Minimal)
+    # RAW HYPRLAND CONFIG - Blur definition (fixes serialization issues)
     # ==========================================================================
-    extraConfig = '''';
+    extraConfig = ''
+      decoration {
+        blur {
+          enabled = true
+          size = 8
+          passes = 2
+          new_optimizations = true
+          ignore_opacity = false
+        }
+      }
+    '';
   };
 
   # ============================================================================
