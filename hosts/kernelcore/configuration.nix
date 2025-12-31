@@ -450,33 +450,45 @@
 
     };
 
-    displayManager = {
-      # GDM disabled - crashes with Hyprland (ordering cycle + no fallback session)
-      gdm.enable = false;
-      # SDDM enabled - better Hyprland compatibility
-      sddm = {
-        enable = true;
-        wayland.enable = true;
+    greetd = {
+      enable = true;
+      settings = {
+        default_session = {
+          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd Hyprland";
+          user = "greeter";
+        };
       };
-      # Default session is Niri
-      defaultSession = "niri";
     };
 
-    # ============================================
-    # NIRI DESKTOP - PRIMARY COMPOSITOR (Migration)
-    # ============================================
-    programs.niri.enable = true;
-    programs.niri.package = inputs.niri.packages.${pkgs.system}.niri;
+    displayManager = {
+      # GDM - works with both Hyprland and Niri
+      gdm.enable = false;
+      # SDDM disabled
+      sddm = {
+        enable = false;
+        wayland.enable = true;
+      };
+      # Default session is Hyprland
+      defaultSession = "hyprland";
+    };
 
     # ============================================
     # HYPRLAND DESKTOP - PRIMARY COMPOSITOR
     # ============================================
     # Pure Wayland Hyprland environment with glassmorphism
     hyprland-desktop = {
-      enable = false;
+      enable = true;
       nvidia = true; # Enable NVIDIA optimizations
     };
   };
+
+  # ============================================
+  # NIRI DESKTOP - Available via Specialisation ONLY
+  # ============================================
+  # Disabled in main config - only enabled in specialisation/niri.nix
+  programs.niri.enable = false;
+  # Package comes from flake overlay in flake.nix
+  # programs.niri.package = inputs.niri.packages.${pkgs.system}.niri;
 
   # Import Specialisations (Hyprland, etc.)
   imports = [
@@ -486,7 +498,7 @@
   # Hyprland Performance Optimizations - Reduce stuttering/lag
   kernelcore.hyprland.performance = {
     enable = config.services.hyprland-desktop.enable;
-    mode = "performance"; # balanced | performance | minimal-latency
+    mode = "minimal-latency"; # balanced | performance | minimal-latency
   };
 
   services = {
@@ -916,6 +928,16 @@
         cpus = 2;
       };
     };
+  };
+
+  systemd.services.greetd.serviceConfig = {
+    Type = "idle";
+    StandartInput = "tty";
+    StandartOutput = "tty";
+    StandartError = "journal";
+    TTYReset = true;
+    TTYVHangup = true;
+    TTYVTDisallocate = true;
   };
 
   system.stateVersion = "26.05";
