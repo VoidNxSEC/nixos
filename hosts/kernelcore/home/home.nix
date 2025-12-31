@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  osConfig,
   ...
 }:
 
@@ -13,7 +14,6 @@
     ./shell # Modern shell configuration with zsh + powerlevel10k
     ./yazi.nix # Yazi file manager configuration
     ./alacritty.nix # Alacritty terminal emulator (Zellij integration)
-    ./hyprland.nix # Hyprland config (bindings + defaults)
     ./git.nix # Git configuration
     ./tmux.nix # Tmux configuration
     ./flameshot.nix # Screenshot tool (legacy - swappy preferred)
@@ -21,7 +21,10 @@
     ./brave.nix # Brave browser configuration
     ./electron-config.nix # Electron app performance optimization
     ./firefox.nix # Self-hosted Firefox (extensions in Nix store)
-  ];
+  ]
+  ++ lib.optional (osConfig.programs.niri.enable) ./niri/niri.nix
+  ++ lib.optional (osConfig.programs.niri.enable) ./niri/waybar-niri.nix
+  ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland;
 
   # ============================================================
   # SHELL CONFIGURATION

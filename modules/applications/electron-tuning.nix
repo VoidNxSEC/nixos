@@ -30,22 +30,22 @@
       # === Cache & IO Optimizations ===
       "--disk-cache-size=104857600" # 100MB disk cache limit
       "--media-cache-size=52428800" # 50MB media cache limit
-      "--disable-software-rasterizer" # Force GPU rasterization
+      # "--disable-software-rasterizer" # Force GPU rasterization
 
       # === GPU Acceleration (reduce CPU/IO) ===
-      "--enable-gpu-rasterization" # Use GPU for rendering
-      "--enable-zero-copy" # Zero-copy video decode
-      "--enable-hardware-overlays" # Hardware video overlays
-      "--ignore-gpu-blocklist" # Force GPU even if blocklisted
+      # "--enable-gpu-rasterization" # Use GPU for rendering
+      # "--enable-zero-copy" # Zero-copy video decode
+      # "--enable-hardware-overlays" # Hardware video overlays
+      # "--ignore-gpu-blocklist" # Force GPU even if blocklisted
 
       # === Network & Preloading ===
       "--disable-backgrounding-occluded-windows" # Don't throttle background tabs
       "--disable-background-timer-throttling" # Keep timers running
 
       # === Stability & Performance ===
-      "--no-sandbox" # Disable sandbox (already sandboxed by Firejail)
-      "--disable-gpu-sandbox" # Disable GPU sandbox
-      "--disable-seccomp-filter-sandbox" # Disable seccomp
+      # "--no-sandbox" # Disable sandbox (already sandboxed by Firejail)
+      # "--disable-gpu-sandbox" # Disable GPU sandbox
+      # "--disable-seccomp-filter-sandbox" # Disable seccomp
     ];
   };
 

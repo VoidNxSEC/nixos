@@ -20,7 +20,6 @@
     ./gemini
     #./claude
     ./lynis
-    ./hyprland
     ./appflowy
   ];
 }
