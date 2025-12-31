@@ -18,6 +18,13 @@
     # ═══════════════════════════════════════════════════════════════
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
 
+    # Niri - Scrollable Tiling Window Manager
+    niri.url = "github:YaLTeR/niri";
+
+    # Hyprland Modular Configuration Framework
+    nix-hypr.url = "git+ssh://git@github.com/marcosfpina/nix-hypr";
+    nix-hypr.flake = false;
+
     # ═══════════════════════════════════════════════════════════════
     # PROJECTS - Independent flakes (local development) - Development Tools & Infrastructure
     # ═══════════════════════════════════════════════════════════════
@@ -206,6 +213,7 @@
             # HYPRLAND - Official Module (provides programs.hyprland)
             # ═══════════════════════════════════════════════════════════
             inputs.hyprland.nixosModules.default
+            inputs.niri.nixosModules.niri
 
             # TODO: Isolate imports with default.nix file calling just ./hosts/kernelcore, and add the hosts/kernelcore/configuration.nix and hardware-configuration.nix files in default.nix imports, and remove the ./hosts/kernelcore/hardware-configuration.nix and ./hosts/kernelcore files from here
             # ═══════════════════════════════════════════════════════════
