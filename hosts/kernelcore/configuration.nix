@@ -458,19 +458,30 @@
         enable = true;
         wayland.enable = true;
       };
-      # Default session is Hyprland (programs.hyprland creates "hyprland" session)
-      defaultSession = "hyprland";
+      # Default session is Niri
+      defaultSession = "niri";
     };
+
+    # ============================================
+    # NIRI DESKTOP - PRIMARY COMPOSITOR (Migration)
+    # ============================================
+    programs.niri.enable = true;
+    programs.niri.package = inputs.niri.packages.${pkgs.system}.niri-unstable;
 
     # ============================================
     # HYPRLAND DESKTOP - PRIMARY COMPOSITOR
     # ============================================
     # Pure Wayland Hyprland environment with glassmorphism
     hyprland-desktop = {
-      enable = true;
+      enable = false;
       nvidia = true; # Enable NVIDIA optimizations
     };
   };
+
+  # Import Specialisations (Hyprland, etc.)
+  imports = [
+    ./specialisations
+  ];
 
   # Hyprland Performance Optimizations - Reduce stuttering/lag
   kernelcore.hyprland.performance = {
