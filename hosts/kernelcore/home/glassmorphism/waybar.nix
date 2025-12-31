@@ -98,7 +98,7 @@ in
                   active = "󰮯";
                   default = "󰊠";
                 };
-                on-click = "activate";
+                # on-click is not needed - workspaces are clicked automatically
                 on-scroll-up = "hyprctl dispatch workspace e+1";
                 on-scroll-down = "hyprctl dispatch workspace e-1";
                 all-outputs = false;
