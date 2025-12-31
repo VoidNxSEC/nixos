@@ -24,10 +24,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Hyprland Modular Configuration Framework
-    nix-hypr.url = "git+ssh://git@github.com/marcosfpina/nix-hypr";
-    nix-hypr.flake = false;
-
     # ═══════════════════════════════════════════════════════════════
     # PROJECTS - Independent flakes (local development) - Development Tools & Infrastructure
     # ═══════════════════════════════════════════════════════════════
