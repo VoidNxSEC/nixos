@@ -213,7 +213,6 @@
             # HYPRLAND - Official Module (provides programs.hyprland)
             # ═══════════════════════════════════════════════════════════
             inputs.hyprland.nixosModules.default
-            inputs.niri.nixosModules.niri
 
             # TODO: Isolate imports with default.nix file calling just ./hosts/kernelcore, and add the hosts/kernelcore/configuration.nix and hardware-configuration.nix files in default.nix imports, and remove the ./hosts/kernelcore/hardware-configuration.nix and ./hosts/kernelcore files from here
             # ═══════════════════════════════════════════════════════════
