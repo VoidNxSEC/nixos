@@ -905,11 +905,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1767114154,
-        "narHash": "sha256-7XrgU4xgewDZ5Aq4tTqcIGgkx2TiHwtJRQeHdfgmIVA=",
+        "lastModified": 1767182920,
+        "narHash": "sha256-+fwp6P1jpFuTwNtiwL7/5LAOi04mcBXjrjhXgAeM0zg=",
         "ref": "refs/heads/main",
-        "rev": "529559712bbfa9c8d79fe01770a77e925a7a0496",
-        "revCount": 6759,
+        "rev": "d622c09d09094eba49f6e219c81059ee0be548c2",
+        "revCount": 6760,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1885,11 +1885,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767119965,
-        "narHash": "sha256-UkAnwK3tQiI14/Ml/2ke9fEqqjE+pMZDJwOfSAG9xRg=",
+        "lastModified": 1767184211,
+        "narHash": "sha256-lpTHcNFLS/IE6YuMTdSVEwJYY+9XYdNBZsDTuTMzysw=",
         "ref": "refs/heads/main",
-        "rev": "9d32596a24cf7b3f2d451d342f15104146a127ec",
-        "revCount": 13,
+        "rev": "c35581a9bf73af11dd2bf7840ff4574fe207b8be",
+        "revCount": 16,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/securellm-mcp"
       },
