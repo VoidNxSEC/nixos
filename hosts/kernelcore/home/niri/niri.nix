@@ -23,15 +23,55 @@ let
   # Import glassmorphism design tokens
   colors = config.glassmorphism.colors;
 
+  # Helper to convert hex digit to decimal
+  hexDigitToInt =
+    c:
+    let
+      hexMap = {
+        "0" = 0;
+        "1" = 1;
+        "2" = 2;
+        "3" = 3;
+        "4" = 4;
+        "5" = 5;
+        "6" = 6;
+        "7" = 7;
+        "8" = 8;
+        "9" = 9;
+        "a" = 10;
+        "A" = 10;
+        "b" = 11;
+        "B" = 11;
+        "c" = 12;
+        "C" = 12;
+        "d" = 13;
+        "D" = 13;
+        "e" = 14;
+        "E" = 14;
+        "f" = 15;
+        "F" = 15;
+      };
+    in
+    hexMap.${c};
+
+  # Convert 2-character hex string to decimal
+  hexByteToInt =
+    hex:
+    let
+      high = hexDigitToInt (builtins.substring 0 1 hex);
+      low = hexDigitToInt (builtins.substring 1 1 hex);
+    in
+    high * 16 + low;
+
   # Helper to convert hex to niri rgba format
   hexToNiriRgba =
     hex: alpha:
     let
       # Remove # prefix
       clean = lib.removePrefix "#" hex;
-      r = lib.toInt "0x${builtins.substring 0 2 clean}";
-      g = lib.toInt "0x${builtins.substring 2 2 clean}";
-      b = lib.toInt "0x${builtins.substring 4 2 clean}";
+      r = hexByteToInt (builtins.substring 0 2 clean);
+      g = hexByteToInt (builtins.substring 2 2 clean);
+      b = hexByteToInt (builtins.substring 4 2 clean);
     in
     {
       r = r;
