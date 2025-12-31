@@ -466,7 +466,7 @@
     # NIRI DESKTOP - PRIMARY COMPOSITOR (Migration)
     # ============================================
     programs.niri.enable = true;
-    programs.niri.package = inputs.niri.packages.${pkgs.system}.niri-unstable;
+    programs.niri.package = inputs.niri.packages.${pkgs.system}.niri;
 
     # ============================================
     # HYPRLAND DESKTOP - PRIMARY COMPOSITOR
