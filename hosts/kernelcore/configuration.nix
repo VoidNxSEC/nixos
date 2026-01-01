@@ -749,6 +749,7 @@
       onlyoffice-desktopeditors
 
       invidious
+      antigravity
 
       google-cloud-sdk
       minikube
