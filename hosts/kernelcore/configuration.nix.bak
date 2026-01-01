@@ -154,7 +154,6 @@
     # Packages - isolated per-package architecture
     packages.zellij.enable = true;
     packages.lynis.enable = true;
-
     packages.gemini-cli.enable = true;
 
     # services.users."codex-agent" removed for security hardening
@@ -286,7 +285,7 @@
     services.github-runner = {
       # Self-hosted GitHub Actions runner
       # Requires secrets/github.yaml to be configured with registration token
-      enable = false;
+      enable = true;
       useSops = true; # SOPS for secure token management
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos"; # Repository URL
@@ -318,7 +317,7 @@
     };
 
     services.gpu-orchestration = {
-      enable = true;
+      enable = false;
       defaultMode = "docker"; # Docker containers get GPU priority by default
     };
 
@@ -371,7 +370,7 @@
 
         # Codex Agent - Isolated workspace with bwrap (already stable)
         codex = {
-          enable = true;
+          enable = false;
           projectRoot = "/var/lib/codex/dev";
           configPath = "/var/lib/codex/.codex/mcp.json";
           user = "kernelcore";
@@ -388,7 +387,7 @@
         # Antigravity - User's local editor (needs access to shared knowledge)
         # API keys loaded from SOPS at runtime via /run/secrets/
         antigravity = {
-          enable = true;
+          enable = false;
           projectRoot = "/etc/nixos";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
@@ -495,8 +494,8 @@
       n_threads_batch = 12;
 
       # GPU configuration (~4GB VRAM for 8B Q4)
-      n_gpu_layers = 36;
-      mainGpu = 0;
+      n_gpu_layers = 38;
+      mainGpu = 1;
 
       # Context & batching
       n_parallel = 4; # 4 concurrent requests
