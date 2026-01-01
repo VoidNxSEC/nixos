@@ -652,7 +652,7 @@
 
   # Video Production with OBS, NVIDIA, and mic jack fix
   modules.audio.videoProduction = {
-    enable = true;
+    enable = false;
     enableNVENC = true;
     fixHeadphoneMute = true; # Fix para mic P2 mutando speaker
     lowLatency = true;
@@ -805,7 +805,7 @@
     gdb # GNU Debugger
     lldb # LLVM Debugger
     strace # System call tracer
-    ltrace # Library call tracer
+    #ltrace # Library call tracer
     valgrind # Memory debugger and profiler
     perf # Performance analysis (kernel perf)
     heaptrack # Heap memory profiler
