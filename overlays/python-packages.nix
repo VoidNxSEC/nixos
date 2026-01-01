@@ -30,6 +30,11 @@ final: prev: {
       pytest-xdist = pyprev.pytest-xdist.overridePythonAttrs (old: {
         doCheck = false;
       });
+
+      # blis: Fix build failure with AVX512/KNL instructions
+      blis = pyprev.blis.overridePythonAttrs (old: {
+        BLIS_ARCH = "generic";
+      });
     };
   };
 
@@ -51,6 +56,19 @@ final: prev: {
       pytest-xdist = pyprev.pytest-xdist.overridePythonAttrs (old: {
         doCheck = false;
       });
+      blis = pyprev.blis.overridePythonAttrs (old: {
+        BLIS_ARCH = "generic";
+      });
     };
   };
+
+  # Global fix for blis on all python versions (via pythonPackagesExtensions)
+  # This avoids rebuilding python interpreter but applies to all python packages
+  pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+    (python-final: python-prev: {
+      blis = python-prev.blis.overridePythonAttrs (old: {
+        BLIS_ARCH = "generic";
+      });
+    })
+  ];
 }
