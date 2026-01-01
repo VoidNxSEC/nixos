@@ -85,7 +85,7 @@
       # git (configured in git.nix)
       git-lfs
 
-      qwen-code
+      # qwen-code # npm cache issues
 
       caddy
       python313Packages.meson
