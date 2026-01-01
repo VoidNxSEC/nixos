@@ -154,7 +154,7 @@
     # Packages - isolated per-package architecture
     packages.zellij.enable = true;
     packages.lynis.enable = true;
-    packages.gemini-cli.enable = true;
+    packages.gemini-cli.enable = false;
 
     # services.users."codex-agent" removed for security hardening
 
@@ -378,7 +378,7 @@
 
         # Gemini Agent - Isolated workspace (needs bwrap isolation)
         gemini = {
-          enable = true;
+          enable = false;
           projectRoot = "/var/lib/gemini-agent/dev";
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
           user = "kernelcore";
