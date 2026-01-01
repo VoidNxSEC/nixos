@@ -157,7 +157,7 @@
     packages.lynis.enable = true;
     # packages.hyprland.enable = true; # DEPRECATED: Now using official flake input (see flake.nix)
     #packages.claude.enable = true;
-    packages.gemini-cli.enable = true;
+    packages.gemini-cli.enable = false; # npm cache issues
 
     hardware.wifi-optimization.enable = true;
 
@@ -207,7 +207,7 @@
     };
 
     virtualization = {
-      enable = true;
+      enable = false;
       virt-manager = true;
       libvirtdGroup = [ "kernelcore" ];
       virtiofs.enable = true;
@@ -318,7 +318,7 @@
     };
 
     services.gpu-orchestration = {
-      enable = true;
+      enable = false;
       defaultMode = "local";
     };
 
@@ -498,7 +498,7 @@
   # Hyprland Performance Optimizations - Reduce stuttering/lag
   kernelcore.hyprland.performance = {
     enable = config.services.hyprland-desktop.enable;
-    mode = "minimal-latency"; # balanced | performance | minimal-latency
+    mode = "balanced"; # balanced | performance | minimal-latency
   };
 
   services = {
@@ -691,10 +691,10 @@
 
   # Video Production with OBS, NVIDIA, and mic jack fix
   modules.audio.videoProduction = {
-    enable = true;
-    enableNVENC = true;
-    fixHeadphoneMute = true; # Fix para mic P2 mutando speaker
-    lowLatency = true;
+    enable = false;
+    enableNVENC = false;
+    fixHeadphoneMute = false; # Fix para mic P2 mutando speaker
+    lowLatency = false;
   };
 
   services.xserver.screenSection = ''
@@ -731,7 +731,7 @@
       sssd
       vscodium
       gphoto2
-      mtpfs
+      # mtpfs # compilation issues
       libimobiledevice # Provides afc support
       devenv # Added for development environments
       tailscale # Added for VPN connectivity
@@ -748,8 +748,8 @@
       awscli
       onlyoffice-desktopeditors
 
-      invidious
-      antigravity
+      #invidious
+      #antigravity
 
       google-cloud-sdk
       minikube
@@ -757,7 +757,7 @@
       kubernetes-polaris
       kubernetes-helm
       git-lfs
-      promptfoo
+      # promptfoo # npm cache issues
 
       certbot
 
@@ -775,10 +775,10 @@
 
       gnome-console
 
-      yt-dlg
-      tts
+      #yt-dlg
+      #tts
 
-      antigravity
+      #antigravity
       zed-editor
       rust-analyzer
       rustup
@@ -812,6 +812,15 @@
   nixpkgs.config.allowUnfree = true;
 
   nixpkgs.config.nvidia.acceptLicense = true;
+
+  # Package overrides
+  nixpkgs.config.packageOverrides = pkgs: {
+    # ltrace tests fail on modern kernels (clone test issue)
+    # Disable tests to allow build to succeed
+    ltrace = pkgs.ltrace.overrideAttrs (oldAttrs: {
+      doCheck = false;
+    });
+  };
 
   environment.systemPackages = with pkgs; [
     wget
