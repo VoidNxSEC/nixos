@@ -68,7 +68,7 @@ with lib;
     let
       defaultSubstituters = [
         "https://cache.nixos.org/"
-        "https://cuda-maintainers.cachix.org"
+        "https://cache.nixos-cuda.org"
         "https://nix-community.cachix.org"
         "https://devenv.cachix.org"
         "https://pre-commit-hooks.cachix.org"
@@ -76,7 +76,7 @@ with lib;
 
       defaultTrustedKeys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        "cuda-maintainers.cachix.org-1:0dq3bujKpuEPiCgBv/esm1uaNOQx3cUeBiPApBCNGLQ="
+        "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
         "pre-commit-hooks.cachix.org-1:Pkk3Panw5AW24TOv6kz3PvLhlH8puAsJTBbOPmBo7Rc="
@@ -127,7 +127,7 @@ with lib;
           "https://nixos.org/"
           "https://cache.nixos.org/"
           "https://developer.downloads.nvidia.com/"
-          "https://cuda-maintainers.cachix.org"
+          "https://cache.nixos-cuda.org"
           "https://nix-community.cachix.org"
         ]
         ++ sanitizeUris (primaryCacheList ++ config.kernelcore.security.nix.extraSubstituters);
