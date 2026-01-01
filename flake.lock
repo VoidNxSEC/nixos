@@ -905,11 +905,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1767186011,
-        "narHash": "sha256-SuCQfwNtxN3mEIRHm//Q27M8dFwZmsXacL0cmUpGXfA=",
+        "lastModified": 1767275312,
+        "narHash": "sha256-cBdSkyV9S+W/z3zGOo9VUM0M/NrXmTlk+NSLgmk5uCM=",
         "ref": "refs/heads/main",
-        "rev": "214fdb099ca84435196a0f06c816835514c3e8e3",
-        "revCount": 6761,
+        "rev": "bd7f9aad053866d5ca07195a79c1c7a1b060a8c1",
+        "revCount": 6764,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1228,11 +1228,11 @@
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
       },
       "locked": {
-        "lastModified": 1767166320,
-        "narHash": "sha256-JhE7GgwcKCtkBmP4Gk7r27QmrlCV4As4Dq+fHESW+Ds=",
+        "lastModified": 1767257541,
+        "narHash": "sha256-eAZD0o5eC85jES3k8S0e1NlJJv+rTgofhl0QajhFjyM=",
         "owner": "sodiboo",
         "repo": "niri-flake",
-        "rev": "947c5bc805ec346a305e00faa8cfe476b8a9c679",
+        "rev": "0eb70f38f02923ff59743a0978fed88f04c98c7d",
         "type": "github"
       },
       "original": {
@@ -1573,11 +1573,11 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1766902085,
-        "narHash": "sha256-coBu0ONtFzlwwVBzmjacUQwj3G+lybcZ1oeNSQkgC0M=",
+        "lastModified": 1767116409,
+        "narHash": "sha256-5vKw92l1GyTnjoLzEagJy5V5mDFck72LiQWZSOnSicw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c0b0e0fddf73fd517c3471e546c0df87a42d53f4",
+        "rev": "cad22e7d996aea55ecab064e84834289143e44a0",
         "type": "github"
       },
       "original": {
@@ -1669,11 +1669,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767144955,
-        "narHash": "sha256-PfGk0I+4Aiv2lXjCaKKfu2mlZr8WJTQ4um/3un4UFkc=",
+        "lastModified": 1767187904,
+        "narHash": "sha256-5df6dpqbfR/OWd8oCDxoKpa/FhEY5NhfmpYoW2f/Fro=",
         "ref": "refs/heads/main",
-        "rev": "496075fc92acce71309c49874e9130f634b293a7",
-        "revCount": 17,
+        "rev": "c1dc6bf8c4919ed2dad534ff0383154294066db2",
+        "revCount": 18,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/phantom"
       },
@@ -1885,11 +1885,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767186996,
-        "narHash": "sha256-UZ0+eXB+sdc+GbuzM4U7TVVcWXMu+uXqL6EJijs0dJQ=",
+        "lastModified": 1767277255,
+        "narHash": "sha256-Q4X3rdTgBLH0aY514bmCrmtfzT/SMk0/+G70PYQM22E=",
         "ref": "refs/heads/main",
-        "rev": "eae959982ba86a3641203ea4b1ea3556bf14ad66",
-        "revCount": 27,
+        "rev": "4ab78347c530319014514e5255712a6cecf6770f",
+        "revCount": 29,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/securellm-mcp"
       },
