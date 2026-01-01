@@ -21,5 +21,6 @@
     #./claude
     ./lynis
     ./appflowy
+    ./antigravity
   ];
 }
