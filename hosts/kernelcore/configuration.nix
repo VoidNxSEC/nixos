@@ -157,7 +157,7 @@
     packages.lynis.enable = true;
     #packages.hyprland.enable = true; # DEPRECATED: Now using official flake input (see flake.nix)
     #packages.claude.enable = true;
-    #packages.gemini-cli.enable = true; # npm cache issues
+    packages.gemini-cli.enable = true; # npm cache issues
 
     hardware.wifi-optimization.enable = true;
 
@@ -377,7 +377,7 @@
 
         # Gemini Agent - Isolated workspace (needs bwrap isolation)
         gemini = {
-          enable = false;
+          enable = true;
           projectRoot = "/var/lib/gemini-agent/dev";
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
           user = "kernelcore";
