@@ -18,7 +18,7 @@ let
         nativeBuildInputs = [ pkgs.jq ];
         jsonContent = builtins.toJSON {
           mcpServers = {
-            securellm-bridge = {
+            securellm-mcp = {
               # Use the securellm-mcp binary directly (installed via Nix)
               command = "${cfg.mcpPackage}/bin/securellm-mcp";
               args = [ ];
