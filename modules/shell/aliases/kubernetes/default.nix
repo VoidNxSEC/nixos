@@ -1,4 +1,7 @@
 { ... }:
 {
-  imports = [ ./kubectl.nix ];
+  imports = [
+    ./kubectl.nix
+    ./k8s-cluster.nix
+  ];
 }
