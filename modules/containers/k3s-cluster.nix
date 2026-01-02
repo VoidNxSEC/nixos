@@ -132,6 +132,11 @@ in
 
     # Sysctl parameters for K8s
     boot.kernel.sysctl = {
+      # Overwritted by the sec/hardening.
+      # Required for --protect-kernel-defaults
+      #"vm.overcommit_memory" = 1; # Allow memory overcommit
+      # "kernel.panic" = 10; # Reboot after 10 seconds on kernel panic | Commented because sec/hardening.nix have the declaration.
+
       "net.bridge.bridge-nf-call-iptables" = 1;
       "net.bridge.bridge-nf-call-ip6tables" = 1;
       "net.ipv4.ip_forward" = mkForce 1;
