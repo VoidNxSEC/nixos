@@ -155,9 +155,9 @@
     # Packages - isolated per-package architecture
     packages.zellij.enable = true;
     packages.lynis.enable = true;
-    # packages.hyprland.enable = true; # DEPRECATED: Now using official flake input (see flake.nix)
+    #packages.hyprland.enable = true; # DEPRECATED: Now using official flake input (see flake.nix)
     #packages.claude.enable = true;
-    packages.gemini-cli.enable = false; # npm cache issues
+    packages.gemini-cli.enable = true; # npm cache issues
 
     hardware.wifi-optimization.enable = true;
 
@@ -369,7 +369,7 @@
 
         # Codex Agent - Isolated workspace with bwrap (already stable)
         codex = {
-          enable = true;
+          enable = false;
           projectRoot = "/var/lib/codex/dev";
           configPath = "/var/lib/codex/.codex/mcp.json";
           user = "kernelcore";
@@ -539,7 +539,7 @@
       n_threads_batch = 12;
 
       # GPU configuration (~4GB VRAM for 8B Q4)
-      n_gpu_layers = 35;
+      n_gpu_layers = 40;
       mainGpu = 1;
 
       # Context & batching
@@ -748,9 +748,6 @@
       awscli
       onlyoffice-desktopeditors
 
-      #invidious
-      #antigravity
-
       google-cloud-sdk
       minikube
       kubernetes
@@ -778,7 +775,7 @@
       #yt-dlg
       #tts
 
-      #antigravity
+      antigravity
       zed-editor
       rust-analyzer
       rustup
