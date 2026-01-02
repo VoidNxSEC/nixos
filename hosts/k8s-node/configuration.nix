@@ -8,8 +8,8 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./k8s-original/k8s/k3s-cluster.nix
   ];
+  };
 
   # ============================================================================
   # SYSTEM BASICS

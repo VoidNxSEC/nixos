@@ -134,10 +134,10 @@ in
     boot.kernel.sysctl = {
       "net.bridge.bridge-nf-call-iptables" = 1;
       "net.bridge.bridge-nf-call-ip6tables" = 1;
-      "net.ipv4.ip_forward" = 1;
-      "net.ipv6.conf.all.forwarding" = 1;
-      "net.ipv4.conf.all.rp_filter" = 0;
-      "net.ipv4.conf.default.rp_filter" = 0;
+      "net.ipv4.ip_forward" = mkForce 1;
+      "net.ipv6.conf.all.forwarding" = mkForce 1;
+      "net.ipv4.conf.all.rp_filter" = mkForce 0;
+      "net.ipv4.conf.default.rp_filter" = mkForce 0;
 
       # Network performance tuning
       "net.core.somaxconn" = 32768;
@@ -181,7 +181,7 @@ in
     ];
 
     # Kubectl config symlink for root
-    environment.etc."rancher/k3s/k3s.yaml".enable = true;
+    # environment.etc."rancher/k3s/k3s.yaml".enable = true;
 
     # User configuration helpers
     environment.variables = {
@@ -196,10 +196,10 @@ in
       serviceConfig = {
         # Security
         LimitNOFILE = 1048576;
-        LimitNPROC = infinity;
-        LimitCORE = infinity;
-        TasksMax = infinity;
-        Delegate = true;
+        LimitNPROC = "infinity";
+        LimitCORE = "infinity";
+        TasksMax = "infinity";
+        Delegate = "yes";
         KillMode = "process";
         OOMScoreAdjust = -999;
 
