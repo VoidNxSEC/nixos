@@ -50,6 +50,14 @@ let
       GEMINI_INSTALL_MARKER="$GEMINI_HOME/.installed-$GEMINI_VERSION"
 
       # ══════════════════════════════════════════════════════════
+      # FIX: Start from HOME to avoid bwrap chdir issues
+      # ══════════════════════════════════════════════════════════
+      # Gemini's internal bubblewrap tries to chdir to $PWD
+      # FHS env doesn't expose /etc/nixos or arbitrary paths
+      # Solution: Always start from $HOME which is available
+      cd "$HOME"
+
+      # ══════════════════════════════════════════════════════════
       # INSTALAÇÃO AUTOMÁTICA (primeira execução)
       # ══════════════════════════════════════════════════════════
       if [ ! -f "$GEMINI_INSTALL_MARKER" ]; then
