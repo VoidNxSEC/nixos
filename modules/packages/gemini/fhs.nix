@@ -43,19 +43,19 @@ let
 
     # Script principal que roda quando você executa 'gemini'
     runScript = pkgs.writeShellScript "gemini-fhs-wrapper" ''
+      # ══════════════════════════════════════════════════════════
+      # CRITICAL: cd to HOME as FIRST operation (before set -e)
+      # ══════════════════════════════════════════════════════════
+      # Gemini's internal bubblewrap captures $PWD at execution time
+      # FHS env doesn't expose /etc/nixos or arbitrary filesystem paths
+      # MUST change directory BEFORE any other operations or error handling
+      cd "$HOME" || exit 1
+
       set -e
 
       GEMINI_VERSION="0.24.0-nightly.20251231"
       GEMINI_HOME="$HOME/.local/share/gemini-cli"
       GEMINI_INSTALL_MARKER="$GEMINI_HOME/.installed-$GEMINI_VERSION"
-
-      # ══════════════════════════════════════════════════════════
-      # FIX: Start from HOME to avoid bwrap chdir issues
-      # ══════════════════════════════════════════════════════════
-      # Gemini's internal bubblewrap tries to chdir to $PWD
-      # FHS env doesn't expose /etc/nixos or arbitrary paths
-      # Solution: Always start from $HOME which is available
-      cd "$HOME"
 
       # ══════════════════════════════════════════════════════════
       # INSTALAÇÃO AUTOMÁTICA (primeira execução)
