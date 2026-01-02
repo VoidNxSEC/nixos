@@ -180,7 +180,7 @@ with lib;
     "vm.mmap_rnd_bits" = 32;
     "vm.mmap_rnd_compat_bits" = 16;
     "kernel.panic_on_oops" = 1;
-    "kernel.panic" = 60;
+    "kernel.panic" = 10;
     "vm.mmap_min_addr" = 65536;
     "vm.max_map_count" = 262144;
   };
