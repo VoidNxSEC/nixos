@@ -157,7 +157,7 @@
     packages.lynis.enable = true;
     #packages.hyprland.enable = true; # DEPRECATED: Now using official flake input (see flake.nix)
     #packages.claude.enable = true;
-    packages.gemini-cli.enable = true; # npm cache issues
+    #packages.gemini-cli.enable = true; # npm cache issues
 
     hardware.wifi-optimization.enable = true;
 
@@ -377,7 +377,7 @@
 
         # Gemini Agent - Isolated workspace (needs bwrap isolation)
         gemini = {
-          enable = true;
+          enable = false;
           projectRoot = "/var/lib/gemini-agent/dev";
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
           user = "kernelcore";
@@ -386,7 +386,7 @@
         # Antigravity - User's local editor (needs access to shared knowledge)
         # API keys loaded from SOPS at runtime via /run/secrets/
         antigravity = {
-          enable = true;
+          enable = false;
           projectRoot = "/etc/nixos";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
@@ -454,7 +454,7 @@
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd start-hyprland";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd start-hyprland";
           user = "greeter";
         };
       };
@@ -539,7 +539,7 @@
       n_threads_batch = 12;
 
       # GPU configuration (~4GB VRAM for 8B Q4)
-      n_gpu_layers = 40;
+      n_gpu_layers = 35;
       mainGpu = 1;
 
       # Context & batching
@@ -772,10 +772,10 @@
 
       gnome-console
 
-      yt-dlg
-      tts
+      #yt-dlg
+      #tts
 
-      antigravity
+      #antigravity
       zed-editor
       rust-analyzer
       rustup
@@ -845,7 +845,7 @@
     gdb # GNU Debugger
     lldb # LLVM Debugger
     strace # System call tracer
-    ltrace # Library call tracer
+    #ltrace # Library call tracer
     valgrind # Memory debugger and profiler
     perf # Performance analysis (kernel perf)
     heaptrack # Heap memory profiler
