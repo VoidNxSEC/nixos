@@ -93,11 +93,11 @@
         "rev": "8edadbf775a1d654df5856175b558e28234dca94",
         "revCount": 6,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/arch-analyzer"
+        "url": "file:///home/kernelcore/dev/low-level/arch-analyzer"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/arch-analyzer"
+        "url": "file:///home/kernelcore/dev/low-level/arch-analyzer"
       }
     },
     "arion": {
@@ -191,11 +191,11 @@
         "rev": "4babc7a3be3235065174973da37fb54557f4ce43",
         "revCount": 4,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/cognitive-vault"
+        "url": "file:///home/kernelcore/dev/low-level/cognitive-vault"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/cognitive-vault"
+        "url": "file:///home/kernelcore/dev/low-level/cognitive-vault"
       }
     },
     "crane": {
@@ -1224,11 +1224,11 @@
         "rev": "7da346aa48db38fbfa4f371a8ea68ed93ad2c1bd",
         "revCount": 3,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/ml-offload-api"
+        "url": "file:///home/kernelcore/dev/low-level/ml-offload-api"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/ml-offload-api"
+        "url": "file:///home/kernelcore/dev/low-level/ml-offload-api"
       }
     },
     "niri": {
@@ -1434,11 +1434,11 @@
         "rev": "676390f483c728a1eeef02d865ca99b425a8e418",
         "revCount": 10,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/nixos-hyperlab"
+        "url": "file:///home/kernelcore/dev/low-level/nixos-hyperlab"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/nixos-hyperlab"
+        "url": "file:///home/kernelcore/dev/low-level/nixos-hyperlab"
       }
     },
     "nixpkgs": {
@@ -1669,11 +1669,11 @@
         "rev": "2174a221fa2bc07f6ca7534691b123233580e0f2",
         "revCount": 12,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/O.W.A.S.A.K.A."
+        "url": "file:///home/kernelcore/dev/low-level/O.W.A.S.A.K.A."
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/O.W.A.S.A.K.A."
+        "url": "file:///home/kernelcore/dev/low-level/O.W.A.S.A.K.A."
       }
     },
     "phantom": {
@@ -1951,11 +1951,11 @@
         "rev": "399299858785417570ed05fa48820e39db7f2782",
         "revCount": 3,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/shadow-debug-pipeline"
+        "url": "file:///home/kernelcore/dev/low-level/shadow-debug-pipeline"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/shadow-debug-pipeline"
+        "url": "file:///home/kernelcore/dev/low-level/shadow-debug-pipeline"
       }
     },
     "sops-nix": {
@@ -2006,11 +2006,11 @@
         "rev": "c3e0af9057af019d84bcb276036853036499fde0",
         "revCount": 2,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/spider-nix"
+        "url": "file:///home/kernelcore/dev/low-level/spider-nix"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/spider-nix"
+        "url": "file:///home/kernelcore/dev/low-level/spider-nix"
       }
     },
     "swissknife": {
@@ -2027,11 +2027,11 @@
         "rev": "0baed804d3e563aeebf87088d7e2201686a1ce50",
         "revCount": 12,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/swissknife"
+        "url": "file:///home/kernelcore/dev/low-level/swissknife"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/swissknife"
+        "url": "file:///home/kernelcore/dev/low-level/swissknife"
       }
     },
     "systems": {
