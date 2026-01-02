@@ -1,15 +1,15 @@
-# ═══════════════════════════════════════════════════════════════
-# GEMINI CLI - FHS ENVIRONMENT (npm ENOTCACHED workaround)
-# ═══════════════════════════════════════════════════════════════
-# Switched from buildNpmPackage to buildFHSEnv to resolve npm
-# cache issues. Gemini CLI has built-in bubblewrap sandboxing.
-# ═══════════════════════════════════════════════════════════════
+{ lib, ... }:
 
-{ ... }:
+# ═══════════════════════════════════════════════════════════════
+# GEMINI CLI - MODULAR JS PACKAGE (Engineering Gold)
+# ═══════════════════════════════════════════════════════════════
+# Uses js-packages architecture: packaging + security + performance
+# Pragmatic build: stdenv.mkDerivation with network (resolves ENOTCACHED)
+# ═══════════════════════════════════════════════════════════════
 
 {
   imports = [
-    #./fhs.nix # FHS environment implementation --.Deprecated
-    ./gemini-cli.nix
+    ./js-packages.nix # Modular architecture (sandbox + wrapper)
+    ./gemini-cli.nix # Gemini-specific configuration
   ];
 }
