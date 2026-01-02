@@ -21,7 +21,7 @@ let
     # 🛑 PASSO CRÍTICO DE SEGURANÇA:
     # Usamos um hash falso propositalmente.
     # Isso forçará o Nix a falhar e nos dizer o hash REAL das dependências.
-    npmDepsHash = lib.fakeSha256;
+    npmDepsHash = "sha256-XMUqYNZGwnCYF80dz0fH0rZ0j44GVqpXfrGRJf9WCRI=";
 
     # Dependências de compilação
     nativeBuildInputs = with pkgs; [
