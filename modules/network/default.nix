@@ -4,7 +4,7 @@
 # Network Module Aggregator
 # ============================================================
 # Purpose: Import all network configurations
-# Categories: DNS, VPN, Proxy, Security, Monitoring
+# Categories: DNS, VPN, Proxy, Security, Monitoring, CNI
 # ============================================================
 
 {
@@ -30,5 +30,8 @@
 
     # Network Infrastructure
     ./bridge.nix
+
+    # Kubernetes CNI
+    ./cilium-cni.nix
   ];
 }
