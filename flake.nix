@@ -29,7 +29,7 @@
     # ═══════════════════════════════════════════════════════════════
     # ML Offload API - Multi-backend ML orchestration
     ml-offload-api = {
-      url = "git+file:///home/kernelcore/dev/projects/ml-offload-api";
+      url = "git+file:///home/kernelcore/dev/low-level/ml-offload-api";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-mcp = {
@@ -41,7 +41,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cognitive-vault = {
-      url = "git+file:///home/kernelcore/dev/projects/cognitive-vault";
+      url = "git+file:///home/kernelcore/dev/low-level/cognitive-vault";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vmctl = {
@@ -49,7 +49,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     spider-nix = {
-      url = "git+file:///home/kernelcore/dev/projects/spider-nix";
+      url = "git+file:///home/kernelcore/dev/low-level/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
@@ -57,11 +57,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     swissknife = {
-      url = "git+file:///home/kernelcore/dev/projects/swissknife";
+      url = "git+file:///home/kernelcore/dev/low-level/swissknife";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     arch-analyzer = {
-      url = "git+file:///home/kernelcore/dev/projects/arch-analyzer";
+      url = "git+file:///home/kernelcore/dev/low-level/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     docker-hub = {
@@ -75,13 +75,13 @@
     };
     # Declarative mini-datacenter with Docker+Nix synergy
     nixos-hyperlab = {
-      url = "git+file:///home/kernelcore/dev/projects/nixos-hyperlab";
+      url = "git+file:///home/kernelcore/dev/low-level/nixos-hyperlab";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # TUI debug pipeline with semantic filtering & LLM analysis
     shadow-debug-pipeline = {
-      url = "git+file:///home/kernelcore/dev/projects/shadow-debug-pipeline";
+      url = "git+file:///home/kernelcore/dev/low-level/shadow-debug-pipeline";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -102,7 +102,7 @@
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
     owasaka = {
-      url = "git+file:///home/kernelcore/dev/projects/O.W.A.S.A.K.A.";
+      url = "git+file:///home/kernelcore/dev/low-level/O.W.A.S.A.K.A.";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows

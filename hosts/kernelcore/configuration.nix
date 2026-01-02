@@ -31,7 +31,7 @@
 
     security = {
       hardening.enable = true;
-      sandbox-fallback = false;
+      sandbox-fallback = true;
       audit.enable = true;
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
