@@ -31,7 +31,7 @@ in
 
         # O hash que estava no arquivo 'State of the Art'.
         # Se falhar, o Nix vai cuspir o hash novo e você atualiza aqui.
-        npmDepsHash = "";
+        npmDepsHash = "sha256-XMUqYNZGwnCYF80dz0fH0rZ0j44GVqpXfrGRJf9WCRI=";
 
         # Performance & Compatibilidade
         nodeLinker = "pnpm"; # Mais rápido e eficiente em disco
