@@ -730,6 +730,7 @@
       obsidian
       sssd
       vscodium
+      gemini
       gphoto2
       # mtpfs # compilation issues
       libimobiledevice # Provides afc support
