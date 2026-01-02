@@ -122,11 +122,52 @@ in
       sops
       age
       ssh-to-age
+      (writeShellScriptBin "sops-edit" ''
+        #!/usr/bin/env bash
+        SECRETS_DIR="${cfg.secretsPath}"
+
+        if [ ! -d "$SECRETS_DIR" ]; then
+            echo "Error: Secrets directory $SECRETS_DIR not found."
+            exit 1
+        fi
+
+        cd "$SECRETS_DIR" || exit 1
+
+        if [ "$#" -gt 0 ]; then
+            # User provided a file name, checking if it exists or is a path
+            if [ -f "$1" ]; then
+               exec ${pkgs.sops}/bin/sops "$1"
+            elif [ -f "$SECRETS_DIR/$1" ]; then
+               exec ${pkgs.sops}/bin/sops "$SECRETS_DIR/$1"
+            else
+               # Pass through to sops (might be creating a new file)
+               exec ${pkgs.sops}/bin/sops "$@"
+            fi
+        fi
+
+        # No argument, finding yaml/json files
+        echo "Searching for secrets in $SECRETS_DIR..."
+        FILES=$(find . -maxdepth 2 -name "*.yaml" -o -name "*.json" | sed 's|^\./||' | sort)
+
+        if [ -z "$FILES" ]; then
+            echo "No secret files found in $SECRETS_DIR"
+            exit 1
+        fi
+
+        echo "Select a secret file to edit:"
+        PS3="> "
+        select file in $FILES; do
+            if [ -n "$file" ]; then
+                exec ${pkgs.sops}/bin/sops "$file"
+            else
+                echo "Invalid selection."
+            fi
+        done
+      '')
     ];
 
     # Convenience aliases
     environment.shellAliases = {
-      sops-edit = "${pkgs.sops}/bin/sops ${cfg.secretsPath}/secrets.yaml";
       sops-encrypt = "${pkgs.sops}/bin/sops -e";
       sops-decrypt = "${pkgs.sops}/bin/sops -d";
       age-keygen = "${pkgs.age}/bin/age-keygen";
