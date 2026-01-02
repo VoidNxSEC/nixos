@@ -284,6 +284,20 @@
             ./hosts/kernelcore
           ];
         };
+
+        k8s-node = nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit inputs;
+          };
+          modules = [
+            ./hosts/k8s-node/configuration.nix
+            sops-nix.nixosModules.sops
+            {
+              sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+            }
+          ];
+        };
       };
 
     };
