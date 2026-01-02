@@ -345,7 +345,7 @@
 
     secrets.api-keys.enable = true; # Load decrypted API keys
     secrets.aws-bedrock.enable = true; # Load AWS Bedrock credentials for Claude Code
-
+    secrets.k8s.enable = true; # Load Kubernetes secrets
     # MEDIUM PRIORITY: Standardized ML model storage
     ml.models-storage = {
       enable = true;
@@ -386,19 +386,88 @@
         # Antigravity - User's local editor (needs access to shared knowledge)
         # API keys loaded from SOPS at runtime via /run/secrets/
         antigravity = {
-          enable = false;
+          enable = true;
           projectRoot = "/etc/nixos";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
           # extraEnv removed - API keys now read from /run/secrets/ (SOPS)
           # Use: source /etc/load-api-keys.sh to load into shell
         };
+
+        zed-editor = {
+          enable = true;
+          projectRoot = "/etc/nixos";
+          configPath = "/home/kernelcore/.config/zed/mcp_config.json"; # TODO: Validate the real $PATH
+          user = "kernelcore";
+        }
       };
     };
 
     # Centralized ML/GPU user and group management
     system.ml-gpu-users.enable = true;
   };
+
+
+  # ============================================================================
+  # QUICK START HELPERS
+  # ============================================================================
+
+  # Create a helper script for common K8s operations # GEMINI: Helpers for integrate
+  environment.etc."k8s-quickstart.sh" = {
+    text = ''
+      #!/usr/bin/env bash
+      # Quick K8s cluster operations
+
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+      case "$1" in
+        status)
+          echo "=== Cluster Status ==="
+          kubectl get nodes -o wide
+          echo -e "\n=== System Pods ==="
+          kubectl get pods -A
+          ;;
+
+        ui)
+          echo "Opening Hubble UI: http://localhost:12000"
+          echo "Opening Longhorn UI: http://localhost:8000"
+          ;;
+
+        logs)
+          stern -n kube-system "$2"
+          ;;
+
+        top)
+          kubectl top nodes
+          kubectl top pods -A
+          ;;
+
+        test)
+          echo "Deploying test application..."
+          kubectl apply -f /etc/longhorn/test-pvc.yaml
+          ;;
+
+        *)
+          echo "Usage: k8s-quickstart.sh {status|ui|logs|top|test}"
+          ;;
+      esac
+    '';
+    mode = "0755";
+  };
+
+  # Alias for convenience # GEMINI: Aliases for integrate
+  environment.shellAliases = {
+    k = "kubectl";
+    kns = "kubens";
+    kctx = "kubectx";
+    kgp = "kubectl get pods";
+    kgs = "kubectl get svc";
+    kdp = "kubectl describe pod";
+    klf = "kubectl logs -f";
+  };
+
+
+
 
   # ═══════════════════════════════════════════════════════════
   # FEATURE FLAGS - Service Configuration (migrated from flake.nix)
@@ -499,6 +568,149 @@
   kernelcore.hyprland.performance = {
     enable = config.services.hyprland-desktop.enable;
     mode = "balanced"; # balanced | performance | minimal-latency
+  };
+
+  # ============================================================================
+  # KUBERNETES CLUSTER CONFIGURATION
+  # ============================================================================
+
+  services.k3s-cluster = {
+    enable = true;
+    role = "server"; # Change to "agent" for worker nodes
+
+    # Use SOPS-managed token
+    tokenFile = config.sops.secrets.k3s-token.path; # GEMINI: Where this argument is declared ?
+
+    # Cluster networking
+    clusterCIDR = "10.42.0.0/16";
+    serviceCIDR = "10.43.0.0/16";
+
+    # Disable default components (we'll use our own)
+    disableComponents = [
+      "traefik" # Using custom Traefik setup
+      "servicelb" # Using MetalLB or cloud LB
+      "local-storage" # Using Longhorn
+    ];
+
+    extraFlags = [
+      # Enable metrics server
+      "--kube-apiserver-arg=enable-aggregator-routing=true"
+
+      # Audit logging for security
+      "--kube-apiserver-arg=audit-log-path=/var/log/kubernetes/audit.log"
+      "--kube-apiserver-arg=audit-log-maxage=30"
+
+      # For multi-node setup (uncomment if needed)
+      # "--tls-san=k8s.your-domain.com"
+    ];
+  };
+
+  # ============================================================================
+  # NETWORKING: CILIUM CNI
+  # ============================================================================
+
+  services.cilium-cni = {
+    enable = false;
+
+    # API server configuration
+    apiServerHost = "127.0.0.1"; # localhost for server, IP for agents
+    apiServerPort = 6443;
+
+    clusterCIDR = "10.42.0.0/16"; # Match k3s clusterCIDR
+
+    # Transparent encryption between pods
+    encryption = {
+      enable = true;
+      type = "wireguard"; # WireGuard > IPsec for performance
+    };
+
+    # Network observability with Hubble
+    hubble = {
+      enable = true;
+      relay = true;
+      ui = true; # Access at http://node-ip:12000
+    };
+
+    # Enforce NetworkPolicies from the start
+    policyEnforcementMode = "default";
+
+    # Optional: Runtime security (Tetragon)
+    securityFeatures.runtimeSecurity = false; # Enable after basic setup works
+
+    # Prometheus metrics
+    prometheus.serviceMonitor = true;
+  };
+
+  # ============================================================================
+  # STORAGE: LONGHORN
+  # ============================================================================
+
+  services.longhorn-storage = {
+    enable = false;
+
+    # Make it the default storage class
+    defaultStorageClass = true;
+
+    # High availability with 3 replicas
+    defaultReplicas = 3;
+
+    # Reclaim policy
+    reclaimPolicy = "Delete"; # or "Retain" for production
+
+    # Storage provisioning
+    overProvisioningPercentage = 200;
+    minimalAvailablePercentage = 25;
+
+    # Auto-salvage failed volumes
+    autoSalvage = true;
+
+    # Backup configuration (example with S3)
+    backup = {
+      target = ""; # "s3://my-bucket@us-east-1/" when configured
+      credential = null; # Secret name with AWS credentials
+    };
+
+    # Snapshot features
+    snapshot = {
+      enable = true;
+      dataIntegrity = "fast-check";
+      immediateCheck = false;
+    };
+
+    # Optional: Ingress for Longhorn UI
+    ingress = {
+      enable = false; # Using port-forward initially
+      host = "longhorn.k8s.local";
+      tls = false;
+      ingressClassName = "traefik";
+    };
+
+    # Resource limits
+    resources = {
+      manager = {
+        limits = {
+          cpu = "1000m";
+          memory = "1Gi";
+        };
+        requests = {
+          cpu = "250m";
+          memory = "512Mi";
+        };
+      };
+      driver = {
+        limits = {
+          cpu = "500m";
+          memory = "512Mi";
+        };
+        requests = {
+          cpu = "100m";
+          memory = "256Mi";
+        };
+      };
+    };
+
+    # Data path on nodes
+    dataPath = "/var/lib/longhorn";
   };
 
   services = {
