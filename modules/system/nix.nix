@@ -74,6 +74,8 @@ with lib;
           extra-allowed-uris = [
             "git+file:///home/kernelcore/dev/projects"
             "path:///home/kernelcore/dev/projects"
+            "git+file:///home/kernelcore/dev/low-level"
+            "path:///home/kernelcore/dev/low-level"
           ];
         }
       ];
