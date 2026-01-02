@@ -13,31 +13,13 @@
 
 {
   # ═══════════════════════════════════════════════════════════════
-  # ANTIGRAVITY - Performance Profile
+  # ANTIGRAVITY - MIGRATED to modules/packages/antigravity/tuning.nix
   # ═══════════════════════════════════════════════════════════════
-
-  xdg.configFile."Antigravity/argv.json".text = builtins.toJSON {
-    # Performance profile: balanced
-    renderer-process-limit = 4;
-    process-per-site = true;
-    disk-cache-size = 104857600; # 100MB
-
-    # GPU acceleration
-    disable-gpu = false;
-    disable-software-rasterizer = true;
-    enable-gpu-rasterization = true;
-
-    # Wayland features (ONLY what Electron actually supports)
-    enable-features = lib.concatStringsSep "," [
-      "VaapiVideoDecodeLinuxGL" # Hardware video decode
-      "VaapiVideoEncoder" # Hardware video encode
-      "WaylandWindowDecorations" # Native Wayland decorations
-    ];
-
-    disable-features = lib.concatStringsSep "," [
-      "UseChromeOSDirectVideoDecoder" # ChromeOS-specific, not needed
-    ];
-  };
+  # See: modules/packages/antigravity/
+  #   - tuning.nix:   Performance optimization (argv.json)
+  #   - security.nix: Sandboxing and session persistence
+  #   - default.nix:  Package orchestration
+  # ═══════════════════════════════════════════════════════════════
 
   # ═══════════════════════════════════════════════════════════════
   # VSCODE/VSCODIUM - Low Resource Profile
