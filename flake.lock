@@ -198,6 +198,21 @@
         "url": "file:///home/kernelcore/dev/projects/cognitive-vault"
       }
     },
+    "crane": {
+      "locked": {
+        "lastModified": 1767319442,
+        "narHash": "sha256-TXsJUc+nZflFGWLopUxHwdlxYY+ucxbF5IAPLEX5tc4=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "607c91ce75d63ea52731933c5396649b9d08284c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -905,11 +920,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1767282503,
-        "narHash": "sha256-AkfIH9C46l2NA5SR5zT8UJ545mh+yszzzsWWBvi6aRQ=",
+        "lastModified": 1767300597,
+        "narHash": "sha256-lGE1j1bEuNp7XoDP+oyyF/c+MzYAs6S+sz0NK71nXZE=",
         "ref": "refs/heads/main",
-        "rev": "9b93d621b1019e8378b8a902edb7ba8dd8baf204",
-        "revCount": 6765,
+        "rev": "31d3181e1ee91e338fb4fb8207d64b8d689310fc",
+        "revCount": 6766,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1663,17 +1678,19 @@
     },
     "phantom": {
       "inputs": {
+        "crane": "crane",
         "flake-utils": "flake-utils_11",
         "nixpkgs": [
           "nixpkgs"
-        ]
+        ],
+        "rust-overlay": "rust-overlay_5"
       },
       "locked": {
-        "lastModified": 1767187904,
-        "narHash": "sha256-5df6dpqbfR/OWd8oCDxoKpa/FhEY5NhfmpYoW2f/Fro=",
+        "lastModified": 1767331079,
+        "narHash": "sha256-CGbG2fJ39GcT3cKONY1abE/dfk2OKdA5lLNp6WpsPLk=",
         "ref": "refs/heads/main",
-        "rev": "c1dc6bf8c4919ed2dad534ff0383154294066db2",
-        "revCount": 18,
+        "rev": "036d4509b0d363a2b83c5eb69471d279a66ea3d2",
+        "revCount": 24,
         "type": "git",
         "url": "file:///home/kernelcore/dev/projects/phantom"
       },
@@ -1839,6 +1856,27 @@
     },
     "rust-overlay_5": {
       "inputs": {
+        "nixpkgs": [
+          "phantom",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1767322002,
+        "narHash": "sha256-yHKXXw2OWfIFsyTjduB4EyFwR0SYYF0hK8xI9z4NIn0=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "03c6e38661c02a27ca006a284813afdc461e9f7e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_6": {
+      "inputs": {
         "nixpkgs": "nixpkgs_7"
       },
       "locked": {
@@ -1861,7 +1899,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay_5"
+        "rust-overlay": "rust-overlay_6"
       },
       "locked": {
         "lastModified": 1767186971,
