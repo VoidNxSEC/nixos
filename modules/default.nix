@@ -45,6 +45,13 @@
     ./containers # Docker, Podman, NixOS containers
     ./virtualization # VMs, vmctl, macOS KVM
 
+    # Kubernetes Orquestration
+    # TODO: CRITICAL: Work to do
+    ./modules/system/base.nix
+    ./modules/containers/k3s-cluster.nix
+    ./modules/network/cilium-cni.nix
+    ./modules/containers/longhorn-storage.nix
+
     # ═══════════════════════════════════════════════════════════
     # DESKTOP & APPLICATIONS
     # ═══════════════════════════════════════════════════════════
