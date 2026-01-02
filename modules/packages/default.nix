@@ -17,10 +17,13 @@
 
     # Active packages - each is completely self-contained
     ./zellij
-    ./gemini
+    #./gemini
     #./claude
     ./lynis
     ./appflowy
     ./antigravity
+
+    # Extension based | Bwrap rules applied | Hardened
+    ./gemini
   ];
 }
