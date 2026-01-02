@@ -9,6 +9,7 @@
 
 {
   imports = [
-    ./fhs.nix # FHS environment implementation
+    #./fhs.nix # FHS environment implementation --.Deprecated
+    ./gemini-cli.nix
   ];
 }
