@@ -318,7 +318,7 @@
     };
 
     services.gpu-orchestration = {
-      enable = false;
+      enable = true;
       defaultMode = "local";
     };
 
@@ -731,7 +731,7 @@
       sssd
       vscodium
       gphoto2
-      # mtpfs # compilation issues
+      mtpfs # compilation issues
       libimobiledevice # Provides afc support
       devenv # Added for development environments
       tailscale # Added for VPN connectivity
@@ -754,7 +754,7 @@
       kubernetes-polaris
       kubernetes-helm
       git-lfs
-      # promptfoo # npm cache issues
+      promptfoo # npm cache issues
 
       certbot
 
@@ -772,8 +772,8 @@
 
       gnome-console
 
-      #yt-dlg
-      #tts
+      yt-dlg
+      tts
 
       antigravity
       zed-editor
