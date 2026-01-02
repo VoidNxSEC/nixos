@@ -35,7 +35,7 @@ with lib;
       "vm.dirty_background_ratio" = 20; # Background writes at 3GB
 
       # Overcommit: 0=heuristic (safer than strict=2, allows flexibility)
-      "vm.overcommit_memory" = 0;
+      "vm.overcommit_memory" = 1;
 
       # Additional build optimizations
       "vm.min_free_kbytes" = 131072; # Keep 128MB free for emergencies
