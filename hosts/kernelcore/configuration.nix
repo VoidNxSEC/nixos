@@ -399,14 +399,13 @@
           projectRoot = "/etc/nixos";
           configPath = "/home/kernelcore/.config/zed/mcp_config.json"; # TODO: Validate the real $PATH
           user = "kernelcore";
-        }
+        };
       };
     };
 
     # Centralized ML/GPU user and group management
     system.ml-gpu-users.enable = true;
   };
-
 
   # ============================================================================
   # QUICK START HELPERS
@@ -465,9 +464,6 @@
     kdp = "kubectl describe pod";
     klf = "kubectl logs -f";
   };
-
-
-
 
   # ═══════════════════════════════════════════════════════════
   # FEATURE FLAGS - Service Configuration (migrated from flake.nix)
