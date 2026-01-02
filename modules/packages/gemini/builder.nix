@@ -58,7 +58,9 @@ let
 
             # Env vars
             envVars = concatStringsSep "\n" (
-              mapAttrsToList (name: value: "export ${name}='${value}'") pkg.wrapper.environmentVariables
+              mapAttrsToList (
+                name: value: "export ${name}=${lib.escapeShellArg value}"
+              ) pkg.wrapper.environmentVariables
             );
           in
           pkgs.writeShellScriptBin (pkg.wrapper.name or name) ''
@@ -74,16 +76,18 @@ let
               --share-net \
               --die-with-parent \
               ${envVars} \
-              ${npmPackage}/${relExecutable} ${concatStringsSep " " pkg.wrapper.extraArgs} "$@"
+              ${pkgs.nodejs}/bin/node ${npmPackage}/${relExecutable} ${concatStringsSep " " (map lib.escapeShellArg pkg.wrapper.extraArgs)} "$@"
           ''
         else
         # Just symlink if no sandbox, or simple wrapper if env vars needed
         if pkg.wrapper.environmentVariables != { } || pkg.wrapper.extraArgs != [ ] then
           pkgs.writeShellScriptBin (pkg.wrapper.name or name) ''
             ${concatStringsSep "\n" (
-              mapAttrsToList (name: value: "export ${name}='${value}'") pkg.wrapper.environmentVariables
+              mapAttrsToList (
+                name: value: "export ${name}=${lib.escapeShellArg value}"
+              ) pkg.wrapper.environmentVariables
             )}
-            exec ${npmPackage}/${relExecutable} ${concatStringsSep " " pkg.wrapper.extraArgs} "$@"
+            exec ${pkgs.nodejs}/bin/node ${npmPackage}/${relExecutable} ${concatStringsSep " " (map lib.escapeShellArg pkg.wrapper.extraArgs)} "$@"
           ''
         else
           # Simple symlink

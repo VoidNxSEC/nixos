@@ -267,11 +267,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767108643,
-        "narHash": "sha256-HexSyPQbmDLKw5QzfFmq4NNQez3yNC2YeQ6YANZD0Nk=",
+        "lastModified": 1767395607,
+        "narHash": "sha256-brogwK01zCGe8ZlADfveHZTj5GA5UBtx/o1h6bb6qX0=",
         "ref": "refs/heads/main",
-        "rev": "1a194b64ea7a62e4b8ef014c51a1507df5b1b596",
-        "revCount": 3,
+        "rev": "b23cc7fb3cf8191098b30ee2e905d7ba580c2c0e",
+        "revCount": 4,
         "type": "git",
         "url": "file:///home/kernelcore/dev/low-level/docker-hub"
       },
@@ -1663,11 +1663,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767108892,
-        "narHash": "sha256-7wfIQvo00X9AJreGQkFaU2pfl1V0d2QiPoO6FmZ1ITo=",
+        "lastModified": 1767395583,
+        "narHash": "sha256-Do2+xK7QZjG21zLTazop9llOn4owFCOKdLc8ZbRY9YY=",
         "ref": "refs/heads/main",
-        "rev": "2174a221fa2bc07f6ca7534691b123233580e0f2",
-        "revCount": 12,
+        "rev": "d763a565505e3010f02eb87039ae483c93ff02be",
+        "revCount": 13,
         "type": "git",
         "url": "file:///home/kernelcore/dev/low-level/O.W.A.S.A.K.A."
       },
@@ -1880,11 +1880,11 @@
         "nixpkgs": "nixpkgs_7"
       },
       "locked": {
-        "lastModified": 1767149068,
-        "narHash": "sha256-TjfAb58Ybz/93e2jP0qD846dj+VqiY7wk+EqsxcZ708=",
+        "lastModified": 1767322002,
+        "narHash": "sha256-yHKXXw2OWfIFsyTjduB4EyFwR0SYYF0hK8xI9z4NIn0=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "6d14586a5917a1ec7f045ac97e6d00c68ea5d9f3",
+        "rev": "03c6e38661c02a27ca006a284813afdc461e9f7e",
         "type": "github"
       },
       "original": {
@@ -1902,11 +1902,11 @@
         "rust-overlay": "rust-overlay_6"
       },
       "locked": {
-        "lastModified": 1767186971,
-        "narHash": "sha256-BO0RFrsSXzTyMX8tVd3YGNnjJGuwaV7GdKAqJOk+HZY=",
+        "lastModified": 1767395547,
+        "narHash": "sha256-OWAw+UY+L88I58/mnR4ZhaM31Hr+fQ5kVcI3bKJengU=",
         "ref": "refs/heads/main",
-        "rev": "1c50b551df3ac1aa5155a70e4a4750e1ed2e7d79",
-        "revCount": 13,
+        "rev": "f49f86bf8ee749ad1add87f9ae72334d068e6f90",
+        "revCount": 14,
         "type": "git",
         "url": "file:///home/kernelcore/dev/low-level/securellm-bridge"
       },
@@ -2000,11 +2000,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767119504,
-        "narHash": "sha256-aHHPGzYjMUPWC8i6yF2zzOpJPJ2OyQTyz715vzpVaNo=",
+        "lastModified": 1767395520,
+        "narHash": "sha256-kCp0LR/w0c2UqGrzZL8GojGkCk2REraRUhcViFl6Qro=",
         "ref": "refs/heads/main",
-        "rev": "c3e0af9057af019d84bcb276036853036499fde0",
-        "revCount": 2,
+        "rev": "0b4e7361e5b4c2031c427bbfbf08c9842d88b644",
+        "revCount": 3,
         "type": "git",
         "url": "file:///home/kernelcore/dev/low-level/spider-nix"
       },
@@ -2021,11 +2021,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767108846,
-        "narHash": "sha256-/NH1T93nU6+1LAyKtlUHtOrUKkge6OTwUh+KNAbt+rA=",
+        "lastModified": 1767396429,
+        "narHash": "sha256-5GRhSen+z3SphhI+uuzln5n+zyQyLEVX9q/qeRcEkI8=",
         "ref": "refs/heads/main",
-        "rev": "0baed804d3e563aeebf87088d7e2201686a1ce50",
-        "revCount": 12,
+        "rev": "d275e8631580ebf1de00b161cfdda9ae71dbaad7",
+        "revCount": 14,
         "type": "git",
         "url": "file:///home/kernelcore/dev/low-level/swissknife"
       },
