@@ -145,7 +145,7 @@ with lib;
     "kernel.core_uses_pid" = 1;
 
     # Network hardening
-    "net.ipv4.conf.all.rp_filter" = 1;
+    "net.ipv4.conf.all.rp_filter" = lib.mk 1;
     "net.ipv4.conf.default.rp_filter" = 1;
     "net.ipv4.conf.all.accept_redirects" = 0;
     "net.ipv4.conf.default.accept_redirects" = 0;

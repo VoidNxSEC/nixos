@@ -39,7 +39,6 @@
     ./development # Dev environments, Claude profiles, Jupyter, CI/CD
     ./machine-learning # Machine Learning infrastructure (llama.cpp-turbo, vLLM)
 
-    # ═══════════════════════════════════════════════════════════
     # CONTAINERS & VIRTUALIZATION
     # ═══════════════════════════════════════════════════════════
     ./containers # Docker, Podman, NixOS containers
@@ -47,10 +46,10 @@
 
     # Kubernetes Orquestration
     # TODO: CRITICAL: Work to do
-    ./modules/system/base.nix
-    ./modules/containers/k3s-cluster.nix
-    ./modules/network/cilium-cni.nix
-    ./modules/containers/longhorn-storage.nix
+    # ./modules/system/base.nix
+    ./containers/k3s-cluster.nix
+    ./network/cilium-cni.nix
+    ./containers/longhorn-storage.nix
 
     # ═══════════════════════════════════════════════════════════
     # DESKTOP & APPLICATIONS
