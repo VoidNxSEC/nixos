@@ -157,7 +157,9 @@
     packages.lynis.enable = true;
     #packages.hyprland.enable = true; # DEPRECATED: Now using official flake input (see flake.nix)
     #packages.claude.enable = true;
-    packages.gemini-cli.enable = true; # npm cache issues
+    # Gemini CLI now uses js-packages modular architecture
+    # Configuration in: modules/packages/gemini/gemini-cli.nix
+    # (already enabled via kernelcore.packages.js.packages.gemini-cli)
 
     hardware.wifi-optimization.enable = true;
 

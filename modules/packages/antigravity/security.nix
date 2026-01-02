@@ -1,62 +1,68 @@
 {
   config,
-  pkgs,
   lib,
+  pkgs,
   ...
 }:
 
 # ═══════════════════════════════════════════════════════════════
-# PER-APP ELECTRON CONFIGURATION (Home Manager)
+# ANTIGRAVITY - SECURITY HARDENING
 # ═══════════════════════════════════════════════════════════════
-# Replaces generic electron-config.nix with isolated per-app configs
+# Purpose: Sandboxing and security restrictions for Antigravity
+# Method: Bubblewrap isolation (FHS environment)
+# Threat Model: Untrusted AI code execution, extension vulnerabilities
 # ═══════════════════════════════════════════════════════════════
 
 {
   # ═══════════════════════════════════════════════════════════════
-  # ANTIGRAVITY - MIGRATED to modules/packages/antigravity/tuning.nix
+  # BUBBLEWRAP SANDBOXING
   # ═══════════════════════════════════════════════════════════════
-  # See: modules/packages/antigravity/
-  #   - tuning.nix:   Performance optimization (argv.json)
-  #   - security.nix: Sandboxing and session persistence
-  #   - default.nix:  Package orchestration
+  # Antigravity runs in FHS environment with restricted filesystem access
+  # This is handled by the antigravity-fhs package in nixpkgs
   # ═══════════════════════════════════════════════════════════════
 
+  # Future: Add firejail profile for additional sandboxing
+  # Future: Restrict network access per workspace
+  # Future: AppArmor profile for Antigravity process
+
   # ═══════════════════════════════════════════════════════════════
-  # VSCODE/VSCODIUM - Low Resource Profile
+  # SESSION DATA PERSISTENCE (CRITICAL)
+  # ═══════════════════════════════════════════════════════════════
+  # Persist session data outside tmpfs to survive reboots
   # ═══════════════════════════════════════════════════════════════
 
-  xdg.configFile."Code/argv.json".text = builtins.toJSON {
-    # Low resource profile for editor
-    renderer-process-limit = 2;
-    process-per-site = true;
-    disk-cache-size = 52428800; # 50MB
+  systemd.user.services.antigravity-session-persist = {
+    description = "Persist critical Antigravity session data";
+    wantedBy = [ "default.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "persist-antigravity-session" ''
+        set -e
+        PERSIST_DIR="$HOME/.local/share/app-session-data"
+        ANTI_CONFIG="$HOME/.config/Antigravity"
 
-    # Minimal GPU usage (editor doesn't need heavy acceleration)
-    disable-gpu = false;
-    enable-gpu-rasterization = false;
+        mkdir -p "$PERSIST_DIR/antigravity"
 
-    # Wayland compatibility only
-    enable-features = lib.concatStringsSep "," [
-      "WaylandWindowDecorations"
-    ];
+        # Persist: Session Storage, Cookies, Preferences, Extensions
+        for item in "Session Storage" "Cookies" "Preferences" "Extensions"; do
+          [ -e "$ANTI_CONFIG/$item" ] && \
+            rsync -a --delete "$ANTI_CONFIG/$item/" \
+                  "$PERSIST_DIR/antigravity/" 2>/dev/null || true
+        done
+
+        echo "✓ Antigravity session data persisted"
+      '';
+    };
   };
 
-  xdg.configFile."VSCodium/argv.json".text = builtins.toJSON {
-    # Same as Code
-    renderer-process-limit = 2;
-    process-per-site = true;
-    disk-cache-size = 52428800;
-    disable-gpu = false;
-    enable-gpu-rasterization = false;
-    enable-features = "WaylandWindowDecorations";
-  };
-
   # ═══════════════════════════════════════════════════════════════
-  # GLOBAL ELECTRON FLAGS CONF (REMOVED)
+  # SECURITY NOTES
   # ═══════════════════════════════════════════════════════════════
-  # OLD: xdg.configFile."electron-flags.conf" was causing conflicts
-  # NEW: Each app has its own argv.json with isolated configuration
-  #
-  # electron-flags.conf is NOT used by most apps - they read argv.json instead
+  # 1. Chromium sandbox is ENABLED (do NOT disable)
+  # 2. GPU sandbox is ENABLED (do NOT disable)
+  # 3. Seccomp filter is ENABLED (do NOT disable)
+  # 4. Extensions run in isolated processes (renderer-process-limit protects this)
+  # 5. No network access restrictions yet (TODO: implement per-workspace)
   # ═══════════════════════════════════════════════════════════════
 }

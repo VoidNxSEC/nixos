@@ -49,25 +49,32 @@
     ];
   };
 
-  # Overlay to wrap Antigravity with optimized flags
+  # ═══════════════════════════════════════════════════════════════
+  # ANTIGRAVITY OVERLAY - MIGRATED to modules/packages/antigravity/
+  # ═══════════════════════════════════════════════════════════════
+  # This overlay has been replaced by modular architecture:
+  #   - modules/packages/antigravity/tuning.nix (argv.json method)
+  #   - modules/packages/antigravity/security.nix (sandboxing)
+  # Kept here for reference only (not active)
+  # ═══════════════════════════════════════════════════════════════
+
   nixpkgs.overlays = [
     (final: prev: {
-      # Only override if antigravity package exists
-      antigravity =
-        if prev ? antigravity then
-          prev.antigravity.overrideAttrs (old: {
-            # Wrap the binary with performance flags
-            postFixup = (old.postFixup or "") + ''
-              wrapProgram $out/bin/antigravity \
-                --add-flags "--ozone-platform-hint=auto" \
-                --add-flags "--enable-features=WaylandWindowDecorations,VaapiVideoDecodeLinuxGL" \
-                --add-flags "--disable-features=UseChromeOSDirectVideoDecoder" \
-                --add-flags "$CHROMIUM_FLAGS" \
-                --set ELECTRON_OZONE_PLATFORM_HINT "auto"
-            '';
-          })
-        else
-          prev.antigravity;
+      # ANTIGRAVITY: Migrated to modules/packages/antigravity/
+      # antigravity =
+      #   if prev ? antigravity then
+      #     prev.antigravity.overrideAttrs (old: {
+      #       postFixup = (old.postFixup or "") + ''
+      #         wrapProgram $out/bin/antigravity \
+      #           --add-flags "--ozone-platform-hint=auto" \
+      #           --add-flags "--enable-features=WaylandWindowDecorations,VaapiVideoDecodeLinuxGL" \
+      #           --add-flags "--disable-features=UseChromeOSDirectVideoDecoder" \
+      #           --add-flags "$CHROMIUM_FLAGS" \
+      #           --set ELECTRON_OZONE_PLATFORM_HINT "auto"
+      #       '';
+      #     })
+      #   else
+      #     prev.antigravity;
 
       # Also optimize Brave if present
       brave =
