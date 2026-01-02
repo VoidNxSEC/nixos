@@ -1,45 +1,94 @@
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+{
+  imports = [
+    ./hardware-configuration.nix
+    ./k8s-original/k8s/k3s-cluster.nix
+  ];
+
+  # ============================================================================
+  # SYSTEM BASICS
+  # ============================================================================
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  networking = {
+    hostName = "k8s-node-01";
+    domain = "cluster.local";
+
+    # Use systemd-resolved
+    useNetworkd = true;
+    useDHCP = false;
+
+    interfaces.enp0s3 = {
+      # Adjust to your interface
+      useDHCP = true;
+    };
+
+    # GEMINI: Networking configuration for the kubernetes
+    # Firewall is handled by modules (k3s-cluster.nix handles ports)
+    firewall.enable = true;
+  };
+
+  # Set your time zone.
+  time.timeZone = "UTC";
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  # ============================================================================
+  # KUBERNETES STACK (K3S)
+  # ============================================================================
+
+  services.k3s-cluster = {
+    enable = true;
+    role = "server";
+    # tokenFile = config.sops.secrets.k3s-token.path; # Enable when sops is configured
+    disableComponents = [
+      "traefik"
+      "servicelb"
+      "local-storage"
+    ];
+  };
 
   # ============================================================================
   # SOPS SECRETS MANAGEMENT
   # ============================================================================
 
-  sops.secrets = { # GEMINI: Secrets management for the kubernetes node, critical
-    # K3s cluster token
-    k3s-token = {
-      sopsFile = ./secrets.yaml;
-      restartUnits = [ "k3s.service" ];
-    };
-
-    # Grafana admin password (for observability stack)
-  #grafana-password = {
-  #sopsFile = ./secrets.yaml;
-  #owner = "root";
-  #};
-
-    # Example: AWS credentials for Longhorn backups
-    # aws-credentials = {
-    #   sopsFile = ./secrets.yaml;
-    # };
-  #};
+  # GEMINI: Secrets management for the kubernetes node, critical
+  # sops.secrets = {
+  #   # K3s cluster token
+  #   k3s-token = {
+  #     sopsFile = ./secrets.yaml;
+  #     restartUnits = [ "k3s.service" ];
+  #   };
+  # };
 
   # ============================================================================
   # GPU SUPPORT (for PHANTOM ML workloads)
   # ============================================================================
 
+  # GEMINI: Install Systemd Daemon NVIDIA device plugin for K8s
+  systemd.services.nvidia-device-plugin = {
+    description = "NVIDIA Device Plugin for Kubernetes";
+    after = [ "k3s.service" ];
+    wantedBy = [ "multi-user.target" ];
 
+    # Only run if k3s is enabled
+    enable = config.services.k3s.enable;
 
-  # Install NVIDIA device plugin for K8s
-  systemd.services.nvidia-device-plugin = { # GEMINI: Install Systemd Daemon NVIDIA device plugin for K8s
-  description = "NVIDIA Device Plugin for Kubernetes";
-  after = [ "k3s.service" ];
-  wantedBy = [ "multi-user.target" ];
-
-     script = ''
-       export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-       ${pkgs.kubectl}/bin/kubectl apply -f \
-         https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/main/nvidia-device-plugin.yml
-     '';
-   };
+    script = ''
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+      ${pkgs.kubectl}/bin/kubectl apply -f \
+        https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/main/nvidia-device-plugin.yml || true
+    '';
+  };
 
   # ============================================================================
   # ADDITIONAL TOOLS & PACKAGES
@@ -72,60 +121,31 @@
     python313
     nodejs
 
-    # Your existing tools
+    # Basics
     vim
     git
     tmux
     htop
+    curl
+    wget
   ];
 
   # ============================================================================
   # SYSTEM OPTIMIZATIONS
   # ============================================================================
 
-  # Increase inotify limits for K8s
-  boot.kernel.sysctl = { # GEMINI: We need to see if is already aplied
+  # GEMINI: We need to see if is already aplied
+  # k3s-cluster.nix handles some, but we add inotify specifically
+  boot.kernel.sysctl = {
     "fs.inotify.max_user_watches" = 524288;
     "fs.inotify.max_user_instances" = 512;
-  };
-
-  # ============================================================================
-  # NETWORKING CONFIGURATION
-  # ============================================================================
-
-  networking = { # GEMINI: Networking configuration for the kubernetes, the problem is how to setup the pod network isolated
-    hostName = "k8s-node-01";
-    domain = "cluster.local";
-
-    # Use systemd-resolved
-    useNetworkd = true;
-    useDHCP = false;
-
-    interfaces.enp0s3 = {
-      # Adjust to your interface
-      useDHCP = true;
-      # Or static IP:
-      # ipv4.addresses = [{
-      #   address = "192.168.1.100";
-      #   prefixLength = 24;
-      # }];
-    };
-
-    # DNS
-    nameservers = [
-      "1.1.1.1"
-      "8.8.8.8"
-    ];
-
-    # Firewall is handled by modules
-    firewall.enable = true;
   };
 
   # ============================================================================
   # QUICK START HELPERS
   # ============================================================================
 
-  # Create a helper script for common K8s operations # GEMINI: Helpers for integrate
+  # GEMINI: Helpers for integrate
   environment.etc."k8s-quickstart.sh" = {
     text = ''
       #!/usr/bin/env bash
@@ -139,36 +159,37 @@
           kubectl get nodes -o wide
           echo -e "\n=== System Pods ==="
           kubectl get pods -A
-          ;;
+          ;;;;
 
         ui)
           echo "Opening Hubble UI: http://localhost:12000"
           echo "Opening Longhorn UI: http://localhost:8000"
-          ;;
+          ;;;;
 
         logs)
           stern -n kube-system "$2"
-          ;;
+          ;;;;
 
         top)
           kubectl top nodes
           kubectl top pods -A
-          ;;
+          ;;;;
 
         test)
           echo "Deploying test application..."
-          kubectl apply -f /etc/longhorn/test-pvc.yaml
-          ;;
+          # kubectl apply -f /etc/longhorn/test-pvc.yaml
+          echo "TODO: Create test PVC yaml"
+          ;;;;
 
         *)
           echo "Usage: k8s-quickstart.sh {status|ui|logs|top|test}"
-          ;;
+          ;;;;
       esac
     '';
     mode = "0755";
   };
 
-  # Alias for convenience # GEMINI: Aliases for integrate
+  # GEMINI: Aliases for integrate
   environment.shellAliases = {
     k = "kubectl";
     kns = "kubens";
@@ -178,3 +199,9 @@
     kdp = "kubectl describe pod";
     klf = "kubectl logs -f";
   };
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
+  system.stateVersion = "24.05";
+}
