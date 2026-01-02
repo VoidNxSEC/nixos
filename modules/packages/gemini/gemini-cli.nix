@@ -11,11 +11,11 @@ let
   cfg = config.kernelcore.packages.gemini-cli;
 
   # Definição manual já que o _sources/generated.nix foi "arquivado"
-  geminiVersion = "0.21.0-nightly.20251210";
+  geminiVersion = "0.24.0-nightly.20251231";
 
   # O "Nix Way" de lidar com arquivos locais grandes sem sujar o store desnecessariamente
   # Certifique-se que o arquivo existe neste caminho relativo!
-  geminiSrc = ./storage/gemini-cli-0.21.0-nightly.20251210.d90356e8a.tar.gz;
+  geminiSrc = ./storage/gemini-cli-0.24.0-nightly.20251231.05049b5ab.tar.gz;
 in
 {
   options.kernelcore.packages.gemini-cli = {
@@ -31,7 +31,7 @@ in
 
         # O hash que estava no arquivo 'State of the Art'.
         # Se falhar, o Nix vai cuspir o hash novo e você atualiza aqui.
-        npmDepsHash = "sha256-OCSYOxMyBkb4ygeys4GhNwVKOWRGhgmao4QBrpFpt74=";
+        npmDepsHash = "";
 
         # Performance & Compatibilidade
         nodeLinker = "pnpm"; # Mais rápido e eficiente em disco
