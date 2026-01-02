@@ -1,43 +1,43 @@
 {
   "metadata": {
     "version": "3.0.0",
-    "generated": "2025-12-29T19:59:51Z",
+    "generated": "2026-01-02T14:07:45Z",
     "location": "/etc/nixos",
     "hostname": "nx"
   },
   "git": {
-    "branch": "refactor/cleanup",
-    "commit": "d9a54dcd",
-    "commit_long": "d9a54dcdeec5e7e37cc896a72764c0ccdc4ff4f7",
-    "commit_date": "2025-12-29 14:23:35",
-    "total_commits": 311,
+    "branch": "main",
+    "commit": "d0892aff",
+    "commit_long": "d0892affdb53f7b84e696a6acc604f58c4efd093",
+    "commit_date": "2026-01-02 08:37:09",
+    "total_commits": 384,
     "contributors": 3,
-    "last_tag": "ml-restructure-complete",
+    "last_tag": "hyprland-refactor-pre",
     "repo_age_days": 0
   },
   "statistics": {
     "files": {
-      "total": 637,
-      "nix": 268,
-      "sh": 100,
-      "md": 188,
-      "yaml": 12
+      "total": 693,
+      "nix": 276,
+      "sh": 107,
+      "md": 226,
+      "yaml": 14
     },
     "lines": {
-      "nix": 52985,
-      "sh": 16903,
-      "md": 84426
+      "nix": 57767,
+      "sh": 18598,
+      "md": 87097
     },
-    "directories": 130,
+    "directories": 158,
     "sizes": {
-      "modules": "543M",
-      "docs": "2,1M",
-      "scripts": "1,4M",
-      "total": "1,9G"
+      "modules": "2,3M",
+      "docs": "2,4M",
+      "scripts": "1,5M",
+      "total": "1,4G"
     }
   },
   "modules": {
-    "total": 148,
+    "total": 129,
     "categories": 12,
     "by_category": {
       "shell": {
@@ -54,7 +54,7 @@
       },
       "system": {
         "count": 10,
-        "lines": 1264
+        "lines": 1265
       },
       "hardware": {
         "count": 12,
@@ -66,39 +66,39 @@
       },
       "development": {
         "count": 5,
-        "lines": 973
+        "lines": 938
       },
       "ml": {
-        "count": 20,
-        "lines": 2365
+        "count": 1,
+        "lines": 232
       },
       "containers": {
         "count": 5,
         "lines": 631
       },
       "security": {
-        "count": 17,
-        "lines": 2317
+        "count": 16,
+        "lines": 2074
       },
       "packages": {
         "count": 7,
-        "lines": 441
+        "lines": 428
       },
       "services": {
-        "count": 10,
-        "lines": 2275
+        "count": 11,
+        "lines": 2809
       }
     },
-    "orphaned": 145
+    "orphaned": 143
   },
   "health": {
     "overall": 65,
-    "documentation": 52,
+    "documentation": 51,
     "security": 100
   },
   "security": {
-    "modules": 17,
-    "sops_secrets": 11,
+    "modules": 16,
+    "sops_secrets": 13,
     "has_hardening": true
   }
 }
