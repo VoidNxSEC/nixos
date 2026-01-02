@@ -33,11 +33,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-mcp = {
-      url = "git+file:///home/kernelcore/dev/projects/securellm-mcp";
+      url = "git+file:///home/kernelcore/dev/low-level/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-bridge = {
-      url = "git+file:///home/kernelcore/dev/projects/securellm-bridge";
+      url = "git+file:///home/kernelcore/dev/low-level/securellm-bridge";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cognitive-vault = {
@@ -65,7 +65,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     docker-hub = {
-      url = "git+file:///home/kernelcore/dev/projects/docker-hub";
+      url = "git+file:///home/kernelcore/dev/low-level/docker-hub";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Notion → Markdown/JSON exporter for platform migration
@@ -94,7 +94,7 @@
     # PHANTOM - AI Forensic Intelligence Enterprise Grade Dynamic Pipeline (AI Forensics)
     # ═══════════════════════════════════════════════════════════════
     phantom = {
-      url = "git+file:///home/kernelcore/dev/projects/phantom";
+      url = "git+file:///home/kernelcore/dev/low-level/phantom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
