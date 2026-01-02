@@ -50,7 +50,8 @@ let
     # dev-test [cmd] -> roda o cmd, padrão "echo ok"
     dev-test = mkScript "dev-test" ''
       set -euo pipefail
-      ${pkgs.bash}/bin/bash -lc "''${1:-echo ok}"
+      # Use non-login shell to avoid sourcing user profiles (hermetic)
+      ${pkgs.bash}/bin/bash -c "''${1:-echo ok}"
     '';
 
     # nginx-dev start|stop [backend_port]
