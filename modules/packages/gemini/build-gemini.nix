@@ -4,15 +4,15 @@
 
 pkgs.buildNpmPackage rec {
   pname = "gemini-cli";
-  version = "0.21.0-nightly.20251210.d90356e8a";
+  version = "0.24.0-nightly.20251231.05049b5ab";
 
   src = pkgs.fetchurl {
-    url = "file://${./storage/gemini-cli-0.21.0-nightly.20251210.d90356e8a.tar.gz}";
-    sha256 = "a31636666208cbf4d06220dc782c216efcbd7c7c83548f5c603d1682d6712f5e";
+    url = "file://${./storage/gemini-cli-0.24.0-nightly.20251231.05049b5ab.tar.gz}";
+    sha256 = "CZQRDxV8omFWZ+RY7MEFXGohsoN8z1iiW//PxXgOr9E=";
   };
 
   # Expected to fail - will be updated after first build
-  npmDepsHash = "sha256-M4Q5/vTzLaxJYP1qdc8EP6VlqcUpeZwyZRGENxfU8mw=";
+  npmDepsHash = "sha256-XMUqYNZGwnCYF80dz0fH0rZ0j44GVqpXfrGRJf9WCRI=";
 
   nodeLinker = "pnpm";
 
