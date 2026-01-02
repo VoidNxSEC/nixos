@@ -31,7 +31,7 @@ with lib;
       };
 
       # No npmDepsHash needed (using pragmatic stdenv.mkDerivation)
-      npmDepsHash = ""; # Not used with stdenv approach
+      npmDepsHash = "sha256-XMUqYNZGwnCYF80dz0fH0rZ0j44GVqpXfrGRJf9WCRI="; # Placeholder for buildNpmPackage
 
       # npm flags for build
       npmFlags = [
@@ -59,6 +59,8 @@ with lib;
         allowedPaths = [
           "$HOME/.config/gemini" # Allow Gemini config directory
           "$HOME/.cache/gemini" # Allow cache directory
+          "$HOME/.local/share/gemini" # Allow data directory
+          "/run/user" # Allow access to user runtime dir (DBus/Keyring)
         ];
 
         blockHardware = [
