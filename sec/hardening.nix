@@ -11,7 +11,7 @@ with lib;
 {
   nix.settings = {
     # Security: Enable sandbox for build isolation (overrides all other configs)
-    sandbox = true;
+    sandbox = false;
     sandbox-fallback = false;
 
     allowed-uris = [
