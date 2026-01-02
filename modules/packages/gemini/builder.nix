@@ -23,58 +23,25 @@ let
         else
           throw "Package ${name}: Source must be provided (url or path)";
 
-      # Build the package using stdenv.mkDerivation (pragmatic approach)
-      # Uses offline npm install with pre-cached dependencies
-      npmPackage = pkgs.stdenv.mkDerivation {
+      # Build the package using buildNpmPackage (standard offline approach)
+      npmPackage = pkgs.buildNpmPackage {
         pname = name;
         version = pkg.version;
         src = src;
 
+        npmDepsHash = pkg.npmDepsHash;
+        npmFlags = pkg.npmFlags;
+
         nativeBuildInputs =
           with pkgs;
           [
-            nodejs_22
             python3
             pkg-config
           ]
           ++ pkg.nativeBuildInputs;
         buildInputs = with pkgs; pkg.buildInputs;
 
-        # Configure npm for offline mode
-        configurePhase = ''
-          runHook preConfigure
-
-          export HOME=$TMPDIR
-          export npm_config_cache=$TMPDIR/npm-cache
-          mkdir -p $npm_config_cache
-
-          runHook postConfigure
-        '';
-
-        buildPhase = ''
-          runHook preBuild
-
-          # Install dependencies
-          # Note: May download from network during build (sandbox allows this)
-          npm install ${concatStringsSep " " pkg.npmFlags} || true
-
-          # Build the package if build script exists
-          npm run build --if-present || echo "No build script, skipping"
-
-          runHook postBuild
-        '';
-
-        installPhase = ''
-          runHook preInstall
-
-          mkdir -p $out
-          cp -r . $out/
-
-          runHook postInstall
-        '';
-
         dontCheckNoBrokenSymlinks = true;
-        dontNpmInstall = true;
       };
 
       # Determine executable name (default to package name)
