@@ -8,59 +8,57 @@
 let
   cfg = config.kernelcore.packages.gemini-cli;
 
-  # DEFINIÇÃO SEGURA: Build isolado em Sandbox
-  package = pkgs.buildNpmPackage {
+  package = pkgs.buildNpmPackage rec {
     pname = "gemini-cli";
-    version = "0.24.0-nightly.20251231";
+    version = "unstable-2026-01-02"; # ou usa uma data/git rev
 
-    src = pkgs.fetchzip {
-      url = "https://github.com/google-gemini/gemini-cli/archive/refs/tags/v0.24.0-nightly.20251231.05049b5ab.tar.gz";
-      hash = "sha256-WxR6kr0U8uRA0F3vhhJayoH6yZI0HIPsD5i0y4ox7Fo=";
+    src = pkgs.fetchFromGitHub {
+      owner = "google-gemini";
+      repo = "gemini-cli";
+      rev = "main"; # ou um commit específico pra fixar: git rev-parse HEAD do main
+      hash = "sha256-ApzyT+TLnd8WjVB4dYcYAUulJ1uimlNGBjH5ztgcWcE="; # fake pra pegar o hash real
     };
 
-    # 🛑 PASSO CRÍTICO DE SEGURANÇA:
-    # Usamos um hash falso propositalmente.
-    # Isso forçará o Nix a falhar e nos dizer o hash REAL das dependências.
-    npmDepsHash = lib.fakeSha256;
+    npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # fake também
 
-    # Dependências de compilação
+    npmFlags = [ "--legacy-peer-deps" ];
+    makeCacheWritable = true;
+
     nativeBuildInputs = with pkgs; [
       pkg-config
-      python313
+      python3
       git
       makeBinaryWrapper
     ];
 
-    # Dependências de runtime (Library Path)
     buildInputs = with pkgs; [
       libsecret
     ];
 
-    npmFlags = [ "--legacy-peer-deps" ];
-    makeCacheWritable = true;
-    dontNpmInstall = true; # Mantemos seu install manual pois é um monorepo complexo
+    # Build só o pacote cli (o que interessa)
+    npmWorkspace = "packages/cli";
+    npmBuildScript = "build"; # assuming tem "build" no package.json do cli
 
-    dontAutoPatchelf = true;
+    # Se precisar de flags extras no build:
+    # npmBuildFlags = [ "--workspace=packages/cli" ];
 
     installPhase = ''
       runHook preInstall
 
       mkdir -p $out/lib/gemini-cli $out/bin
 
-      # Cópia manual para garantir estrutura do monorepo
-      cp -r packages $out/lib/gemini-cli/
+      # Copia o built do cli
+      cp -r packages/cli/dist $out/lib/gemini-cli/
 
-      # Copia node_modules resolvendo symlinks
-      cp -rL node_modules $out/lib/gemini-cli/ || cp -r node_modules $out/lib/gemini-cli/
+      # Copia node_modules se precisar (normalmente o buildNpmPackage já cuida)
+      cp -r node_modules $out/lib/gemini-cli/ || true
 
-      # Limpeza de artefatos de build
+      # Limpa symlinks quebrados
       find $out/lib/gemini-cli -xtype l -delete 2>/dev/null || true
       find $out/lib/gemini-cli -type l -lname '/build/*' -delete 2>/dev/null || true
 
-      # WRAPPER DE SEGURANÇA
-      # Injeta apenas os binários permitidos no PATH do processo
       makeWrapper ${pkgs.nodejs}/bin/node $out/bin/gemini \
-        --add-flags "$out/lib/gemini-cli/packages/cli/dist/index.js" \
+        --add-flags "$out/lib/gemini-cli/dist/index.js" \
         --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ pkgs.libsecret ]} \
         --prefix PATH : ${
           lib.makeBinPath [
@@ -74,13 +72,12 @@ let
       runHook postInstall
     '';
 
-    dontCheckNoBrokenSymlinks = true;
-
     meta = {
       description = "CLI tool for Google's Gemini Generative AI API";
       homepage = "https://github.com/google-gemini/gemini-cli";
       license = lib.licenses.asl20;
       platforms = lib.platforms.linux;
+      mainProgram = "gemini";
     };
   };
 
