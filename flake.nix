@@ -29,19 +29,19 @@
     # ═══════════════════════════════════════════════════════════════
     # ML Offload API - Multi-backend ML orchestration
     ml-offload-api = {
-      url = "git+file:///home/kernelcore/dev/low-level/ml-offload-api";
+      url = "git+file:///home/kernelcore/dev/projects/ml-offload-api";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-mcp = {
-      url = "git+file:///home/kernelcore/dev/low-level/securellm-mcp";
+      url = "git+file:///home/kernelcore/dev/projects/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-bridge = {
-      url = "git+file:///home/kernelcore/dev/low-level/securellm-bridge";
+      url = "git+file:///home/kernelcore/dev/projects/securellm-bridge";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cognitive-vault = {
-      url = "git+file:///home/kernelcore/dev/low-level/cognitive-vault";
+      url = "git+file:///home/kernelcore/dev/projects/cognitive-vault";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vmctl = {
@@ -49,7 +49,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     spider-nix = {
-      url = "git+file:///home/kernelcore/dev/low-level/spider-nix";
+      url = "git+file:///home/kernelcore/dev/projects/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
@@ -57,15 +57,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     swissknife = {
-      url = "git+file:///home/kernelcore/dev/low-level/swissknife";
+      url = "git+file:///home/kernelcore/dev/projects/swissknife";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     arch-analyzer = {
-      url = "git+file:///home/kernelcore/dev/low-level/arch-analyzer";
+      url = "git+file:///home/kernelcore/dev/projects/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     docker-hub = {
-      url = "git+file:///home/kernelcore/dev/low-level/docker-hub";
+      url = "git+file:///home/kernelcore/dev/projects/docker-hub";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Notion → Markdown/JSON exporter for platform migration
@@ -75,13 +75,13 @@
     };
     # Declarative mini-datacenter with Docker+Nix synergy
     nixos-hyperlab = {
-      url = "git+file:///home/kernelcore/dev/low-level/nixos-hyperlab";
+      url = "git+file:///home/kernelcore/dev/projects/nixos-hyperlab";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # TUI debug pipeline with semantic filtering & LLM analysis
     shadow-debug-pipeline = {
-      url = "git+file:///home/kernelcore/dev/low-level/shadow-debug-pipeline";
+      url = "git+file:///home/kernelcore/dev/projects/shadow-debug-pipeline";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -94,7 +94,7 @@
     # PHANTOM - AI Forensic Intelligence Enterprise Grade Dynamic Pipeline (AI Forensics)
     # ═══════════════════════════════════════════════════════════════
     phantom = {
-      url = "git+file:///home/kernelcore/dev/low-level/phantom";
+      url = "git+file:///home/kernelcore/dev/projects/phantom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -102,7 +102,7 @@
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
     owasaka = {
-      url = "git+file:///home/kernelcore/dev/low-level/O.W.A.S.A.K.A.";
+      url = "git+file:///home/kernelcore/dev/projects/O.W.A.S.A.K.A.";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows
@@ -228,6 +228,12 @@
             ./hosts/kernelcore
             ./hosts/kernelcore/configuration.nix
 
+            # Kubernetes Orquestration # GEMINI: Here is the complete stack,
+            #./modules/system/base.nix
+            ./modules/containers/k3s-cluster.nix
+            ./modules/network/cilium-cni.nix
+            ./modules/containers/longhorn-storage.nix
+
             # ═══════════════════════════════════════════════════════════
             # ALL SYSTEM MODULES (auto-imported via modules/default.nix)
             # ═══════════════════════════════════════════════════════════
@@ -289,11 +295,50 @@
           inherit system;
           specialArgs = {
             inherit inputs;
+            colors = inputs.nix-colors;
           };
           modules = [
+            # ═══════════════════════════════════════════════════════════
+            # NIXPKGS CONFIGURATION
+            # ═══════════════════════════════════════════════════════════
+            {
+              nixpkgs.overlays = overlays ++ [
+                (final: prev: {
+                  securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
+                  securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
+                  swissknife-tools = inputs.swissknife.packages.${system};
+                  phantom = inputs.phantom.packages.${system}.default;
+                  arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
+                })
+              ];
+              nixpkgs.config.allowUnfree = true;
+            }
+
+            # ═══════════════════════════════════════════════════════════
+            # HOST CONFIGURATION
+            # ═══════════════════════════════════════════════════════════
+            ./hosts/k8s-node/configuration.nix
+
+            # ═══════════════════════════════════════════════════════════
+            # SOPS-NIX SECRETS MANAGEMENT
+            # ═══════════════════════════════════════════════════════════
             sops-nix.nixosModules.sops
             {
               sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+            }
+
+            # ═══════════════════════════════════════════════════════════
+            # HOME-MANAGER
+            # ═══════════════════════════════════════════════════════════
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = {
+                inherit inputs;
+                nix-colors = inputs.nix-colors;
+              };
+              # home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix; # TODO: Add home manager for k8s node
             }
           ];
         };

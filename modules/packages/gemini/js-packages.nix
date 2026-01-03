@@ -47,6 +47,12 @@ let
           description = "Source configuration";
         };
 
+        lockfile = mkOption {
+          type = types.nullOr types.path;
+          default = null;
+          description = "Path to custom package-lock.json (overrides source lockfile)";
+        };
+
         npmDepsHash = mkOption {
           type = types.str;
           description = "Hash of npm dependencies (run 'prefetch-npm-deps package-lock.json')";
