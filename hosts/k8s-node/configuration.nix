@@ -8,8 +8,8 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../modules # Import all shared modules
   ];
-  };
 
   # ============================================================================
   # SYSTEM BASICS
@@ -49,7 +49,10 @@
   services.k3s-cluster = {
     enable = true;
     role = "server";
-    # tokenFile = config.sops.secrets.k3s-token.path; # Enable when sops is configured
+
+    # Use centralized SOPS secret
+    tokenFile = config.sops.secrets.k3s-token.path;
+
     disableComponents = [
       "traefik"
       "servicelb"
@@ -61,14 +64,8 @@
   # SOPS SECRETS MANAGEMENT
   # ============================================================================
 
-  # GEMINI: Secrets management for the kubernetes node, critical
-  # sops.secrets = {
-  #   # K3s cluster token
-  #   k3s-token = {
-  #     sopsFile = ./secrets.yaml;
-  #     restartUnits = [ "k3s.service" ];
-  #   };
-  # };
+  # Enable centralized Kubernetes secrets
+  kernelcore.secrets.k8s.enable = true;
 
   # ============================================================================
   # GPU SUPPORT (for PHANTOM ML workloads)
@@ -81,7 +78,7 @@
     wantedBy = [ "multi-user.target" ];
 
     # Only run if k3s is enabled
-    enable = config.services.k3s.enable;
+    enable = config.services.k3s-cluster.enable; # Fixed reference to module option
 
     script = ''
       export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
@@ -159,31 +156,31 @@
           kubectl get nodes -o wide
           echo -e "\n=== System Pods ==="
           kubectl get pods -A
-          ;;;;
+          ;;;
 
         ui)
           echo "Opening Hubble UI: http://localhost:12000"
           echo "Opening Longhorn UI: http://localhost:8000"
-          ;;;;
+          ;;;
 
         logs)
           stern -n kube-system "$2"
-          ;;;;
+          ;;;
 
         top)
           kubectl top nodes
           kubectl top pods -A
-          ;;;;
+          ;;;
 
         test)
           echo "Deploying test application..."
           # kubectl apply -f /etc/longhorn/test-pvc.yaml
           echo "TODO: Create test PVC yaml"
-          ;;;;
+          ;;;
 
         *)
           echo "Usage: k8s-quickstart.sh {status|ui|logs|top|test}"
-          ;;;;
+          ;;;
       esac
     '';
     mode = "0755";
