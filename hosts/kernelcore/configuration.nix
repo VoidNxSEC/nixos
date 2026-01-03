@@ -644,13 +644,13 @@
   # ============================================================================
 
   services.longhorn-storage = {
-    enable = false;
+    enable = true;
 
     # Make it the default storage class
     defaultStorageClass = true;
 
     # High availability with 3 replicas
-    defaultReplicas = 3;
+    defaultReplicas = 1;
 
     # Reclaim policy
     reclaimPolicy = "Delete"; # or "Retain" for production
@@ -677,7 +677,7 @@
 
     # Optional: Ingress for Longhorn UI
     ingress = {
-      enable = false; # Using port-forward initially
+      enable = true; # Using port-forward initially
       host = "longhorn.k8s.local";
       tls = false;
       ingressClassName = "traefik";
