@@ -41,6 +41,9 @@ let
           ++ pkg.nativeBuildInputs;
         buildInputs = with pkgs; pkg.buildInputs;
 
+        postPatch =
+          if (pkg ? lockfile && pkg.lockfile != null) then "cp ${pkg.lockfile} package-lock.json" else "";
+
         dontCheckNoBrokenSymlinks = true;
       };
 
