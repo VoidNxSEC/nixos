@@ -39,11 +39,11 @@
         "rev": "713c59d2b5a157e3619dc122305ea6f9b4dd10d0",
         "revCount": 2,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/ai-agent-os"
+        "url": "file:///home/kernelcore/dev/low-level/ai-agent-os"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/ai-agent-os"
+        "url": "file:///home/kernelcore/dev/low-level/ai-agent-os"
       }
     },
     "aquamarine": {
@@ -1180,11 +1180,11 @@
         "rev": "0c6004c5153ca4b068c3f02861b7f22ed13449aa",
         "revCount": 2,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/i915-governor"
+        "url": "file:///home/kernelcore/dev/low-level/i915-governor"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/i915-governor"
+        "url": "file:///home/kernelcore/dev/low-level/i915-governor"
       }
     },
     "microvm": {
@@ -1648,11 +1648,11 @@
         "rev": "d021a1caa04837b210384b1bf2db1c93b9c6d127",
         "revCount": 3,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/notion-exporter"
+        "url": "file:///home/kernelcore/dev/low-level/notion-exporter"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/notion-exporter"
+        "url": "file:///home/kernelcore/dev/low-level/notion-exporter"
       }
     },
     "owasaka": {
@@ -2385,11 +2385,11 @@
         "rev": "0abeed7565420548ea70799fdc1ae5bf231aee47",
         "revCount": 2,
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/vmctl"
+        "url": "file:///home/kernelcore/dev/low-level/vmctl"
       },
       "original": {
         "type": "git",
-        "url": "file:///home/kernelcore/dev/projects/vmctl"
+        "url": "file:///home/kernelcore/dev/low-level/vmctl"
       }
     },
     "xdph": {
