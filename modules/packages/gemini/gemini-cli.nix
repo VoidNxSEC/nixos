@@ -30,8 +30,11 @@ with lib;
         sha256 = "CZQRDxV8omFWZ+RY7MEFXGohsoN8z1iiW//PxXgOr9E=";
       };
 
-      # No npmDepsHash needed (using pragmatic stdenv.mkDerivation)
-      npmDepsHash = "sha256-XMUqYNZGwnCYF80dz0fH0rZ0j44GVqpXfrGRJf9WCRI="; # Placeholder for buildNpmPackage
+      # Use local valid lockfile to avoid upstream issues
+      lockfile = ./package-lock.json;
+
+      # Verified npmDepsHash for offline build
+      npmDepsHash = "sha256-zlYWlhIs7R47UngrEBXRckpdKi61DAFOwmCCIEXWV1w=";
 
       # npm flags for build
       npmFlags = [
