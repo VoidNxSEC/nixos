@@ -7,19 +7,22 @@
 
 {
 
-  #kernelcore.electron.enable = false;
-  #kernelcore.electron.apps.antigravity = {
-  #profile = "performance";
-  #configDir = "Antigravity";
-  #features.enable = [ "VaapiVideoDecodeLinuxGL" "WaylandWindowDecorations" ];
-  #};
+  kernelcore.electron.enable = true;
+  kernelcore.electron.apps.antigravity = {
+    profile = "performance";
+    configDir = "Antigravity";
+    features.enable = [
+      "VaapiVideoDecodeLinuxGL"
+      "WaylandWindowDecorations"
+    ];
+  };
 
   # Shell configuration - Training session logger
-  #shell.trainingLogger = {
-  #enable = false;
-  #userLogDirectory = "\${HOME}/.training-logs";
-  #maxLogSize = "1G";
-  #};
+  shell.trainingLogger = {
+    enable = false;
+    userLogDirectory = "\${HOME}/.training-logs";
+    maxLogSize = "1G";
+  };
 
   kernelcore = {
     system = {
@@ -464,7 +467,7 @@
     llm.enable = true;
     mcp.enable = true;
     arch-analyzer.enable = true;
-    swissknife.enable = true;
+    #swissknife.enable = true;
   };
 
   # ═══════════════════════════════════════════════════════════
@@ -495,7 +498,7 @@
       gdm.enable = false;
       sddm = {
         enable = false;
-        wayland.enable = true;
+        wayland.enable = false;
       };
       defaultSession = "hyprland";
     };
