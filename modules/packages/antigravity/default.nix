@@ -20,8 +20,8 @@
   # MODULE IMPORTS - SEPARATION OF CONCERNS
   # ═══════════════════════════════════════════════════════════════
   imports = [
-    ./tuning.nix # Performance: argv.json, cache optimization, GPU tuning
-    ./security.nix # Security: sandboxing, session persistence
+    #./tuning-fixed.nix # Performance: argv.json, cache optimization, GPU tuning
+    #./security.nix # Security: sandboxing, session persistence
   ];
 
   # ═══════════════════════════════════════════════════════════════
@@ -32,7 +32,7 @@
   # ═══════════════════════════════════════════════════════════════
 
   environment.systemPackages = with pkgs; [
-    antigravity-fhs # Antigravity with FHS environment (official nixpkgs)
+    #antigravity-fhs # Antigravity with FHS environment (official nixpkgs)
   ];
 
   # ═══════════════════════════════════════════════════════════════

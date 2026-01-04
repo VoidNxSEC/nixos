@@ -20,8 +20,8 @@
     ./flameshot.nix # Screenshot tool (legacy - swappy preferred)
     ./glassmorphism # Glassmorphism design system (replaces theme.nix)
     ./brave.nix # Brave browser configuration
-    # ./electron-config.nix # MIGRATED: Now using electron-apps.nix
-    ./electron-apps.nix # Per-app Electron configuration
+    #./electron-config.nix # MIGRATED: Now using electron-apps.nix
+    #./electron-apps.nix # Per-app Electron configuration
     ./firefox.nix # Self-hosted Firefox (extensions in Nix store)
   ]
   ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland.nix;
