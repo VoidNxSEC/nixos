@@ -10,9 +10,9 @@
 {
   imports = [
     # Performance Optimizations
-    ./cache-optimization.nix
-    # ./electron-tuning.nix  # MIGRATED: Now using electron-tuning-v2.nix
-    ./electron-tuning-v2.nix # Per-app Electron tuning
+    #./cache-optimization.nix
+    #./electron-tuning.nix  # MIGRATED: Now using electron-tuning-v2.nix
+    #./electron-tuning-v2.nix # Per-app Electron tuning
 
     # Browsers
     ./firefox-privacy.nix

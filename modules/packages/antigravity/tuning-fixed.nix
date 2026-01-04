@@ -24,48 +24,68 @@
   home-manager.users.kernelcore = {
     xdg.configFile."Antigravity/argv.json".text = builtins.toJSON {
       # ═══════════════════════════════════════════════════════════
+      # WAYLAND NATIVE SUPPORT (CRITICAL - Must be FIRST!)
+      # ═══════════════════════════════════════════════════════════
+      # These flags MUST be in argv.json, NOT command line
+      # Otherwise you get "Warning: not in list of known options"
+
+      # Auto-detect Wayland vs X11 (preferred method)
+      "ozone-platform-hint" = "auto";
+
+      # Alternative: Force Wayland (use if auto-detect fails)
+      # "ozone-platform" = "wayland";
+
+      # Wayland IME support (input method editor)
+      "enable-wayland-ime" = true;
+
+      # Text input protocol version (v3 is latest)
+      "wayland-text-input-version" = 3;
+
+      # ═══════════════════════════════════════════════════════════
       # MEMORY & PROCESS OPTIMIZATIONS
       # ═══════════════════════════════════════════════════════════
-      #renderer-process-limit = 4; # Max 4 renderer processes
-      process-per-site = true; # Share processes per domain
-      #disable-dev-shm-usage = true; # Avoid /dev/shm tmpfs usage
+      "renderer-process-limit" = 4; # Max 4 renderer processes
+      "process-per-site" = true; # Share processes per domain
+      "disable-dev-shm-usage" = true; # Avoid /dev/shm tmpfs usage
 
       # ═══════════════════════════════════════════════════════════
       # CACHE & I/O OPTIMIZATIONS
       # ═══════════════════════════════════════════════════════════
-      disk-cache-size = 104857600; # 100MB disk cache limit
-      media-cache-size = 52428800; # 50MB media cache limit
+      "disk-cache-size" = 104857600; # 100MB disk cache limit
+      "media-cache-size" = 52428800; # 50MB media cache limit
 
       # ═══════════════════════════════════════════════════════════
       # GPU ACCELERATION (Intel iGPU Optimized)
       # ═══════════════════════════════════════════════════════════
-      disable-gpu = false; # Keep GPU enabled
-      #disable-software-rasterizer = true; # Force GPU rasterization
-      #enable-gpu-rasterization = true; # Use GPU for rendering
+      "disable-gpu" = false; # Keep GPU enabled
+      "disable-software-rasterizer" = true; # Force GPU rasterization
+      "enable-gpu-rasterization" = true; # Use GPU for rendering
 
-      # Hardware video acceleration (VA-API)
-      enable-features = lib.concatStringsSep "," [
+      # Hardware video acceleration (VA-API) + Wayland decorations
+      # IMPORTANT: Combine features with comma, no spaces!
+      "enable-features" = lib.concatStringsSep "," [
+        "UseOzonePlatform" # CRITICAL for Wayland native
+        "WaylandWindowDecorations" # Native window decorations
         "VaapiVideoDecodeLinuxGL" # Intel VA-API decode
         "VaapiVideoEncoder" # Intel VA-API encode
-        "WaylandWindowDecorations" # Native Wayland decorations
       ];
 
-      disable-features = lib.concatStringsSep "," [
+      "disable-features" = lib.concatStringsSep "," [
         "UseChromeOSDirectVideoDecoder" # ChromeOS-specific, not needed
       ];
 
       # ═══════════════════════════════════════════════════════════
       # NETWORK & BACKGROUND OPTIMIZATIONS
       # ═══════════════════════════════════════════════════════════
-      disable-backgrounding-occluded-windows = true; # Don't throttle background tabs
-      disable-background-timer-throttling = true; # Keep timers running
+      "disable-backgrounding-occluded-windows" = true; # Don't throttle background tabs
+      "disable-background-timer-throttling" = true; # Keep timers running
 
       # ═══════════════════════════════════════════════════════════
       # STABILITY FLAGS (Commented - Uncomment if needed)
       # ═══════════════════════════════════════════════════════════
-      # enable-zero-copy = true;                  # Zero-copy video decode (experimental)
-      # enable-hardware-overlays = true;          # Hardware overlays (may cause artifacts)
-      # ignore-gpu-blocklist = true;              # Force GPU even if blocklisted
+      # "enable-zero-copy" = true;                  # Zero-copy video decode (experimental)
+      # "enable-hardware-overlays" = true;          # Hardware overlays (may cause artifacts)
+      # "ignore-gpu-blocklist" = true;              # Force GPU even if blocklisted
     };
   };
 
