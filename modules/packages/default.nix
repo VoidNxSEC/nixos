@@ -21,9 +21,9 @@
     #./claude
     ./lynis
     ./appflowy
-    ./antigravity
+    #./antigravity
 
     # Extension based | Bwrap rules applied | Hardened
-    ./gemini
+    #./gemini
   ];
 }
