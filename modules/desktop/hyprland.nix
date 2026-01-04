@@ -160,7 +160,7 @@ in
         GDK_BACKEND = "wayland,x11";
 
         # Electron/Chromium apps
-        #NIXOS_OZONE_WL = "1";
+        NIXOS_OZONE_WL = "1";
         # REMOVED: ELECTRON_OZONE_PLATFORM_HINT = "auto";
         # Reason: Causes warnings when apps convert it to --ozone-platform-hint flag
         # NIXOS_OZONE_WL=1 is sufficient for Wayland platform detection
