@@ -10,6 +10,6 @@
 {
   imports = [
     ./js-packages.nix # Modular architecture (sandbox + wrapper)
-    ./gemini-cli.nix # Gemini-specific configuration
+    #./gemini-cli.nix # Gemini-specific configuration
   ];
 }
