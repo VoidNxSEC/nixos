@@ -3,7 +3,6 @@
 [
   # Python package fixes (test failures, resource issues)
   (import ./python-packages.nix)
-  #(import ./antigravity.nix)
   # (import ./python-tests-fix.nix) # Merged into python-packages.nix to avoid global rebuilds
 
   # Add more overlays here as needed:

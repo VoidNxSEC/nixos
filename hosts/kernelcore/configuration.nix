@@ -123,6 +123,7 @@
 
     packages.zellij.enable = true;
     packages.lynis.enable = true;
+    packages.js.enable = true;
 
     hardware.wifi-optimization.enable = true;
 
@@ -315,21 +316,21 @@
         # AGENTE CODEX (Agora Habilitado)
         # -----------------------------------------------------------
         codex = {
-          enable = false; # HABILITADO
+          enable = false;
           projectRoot = "/var/lib/codex/dev";
           configPath = "/var/lib/codex/.codex/mcp.json";
           user = "kernelcore";
         };
 
         gemini = {
-          enable = false;
+          enable = true;
           projectRoot = "/var/lib/gemini-agent/dev";
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
           user = "kernelcore";
         };
 
         antigravity = {
-          enable = false;
+          enable = true;
           projectRoot = "/etc/nixos";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
@@ -463,10 +464,8 @@
     llm.enable = true;
     mcp.enable = true;
     arch-analyzer.enable = true;
+    swissknife.enable = true;
   };
-
-  kernelcore.swissknife.enable = true;
-  services.config-auditor.enable = true;
 
   # ═══════════════════════════════════════════════════════════
   # MAIN SERVICES BLOCK
@@ -486,7 +485,7 @@
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd start-hyprland";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd Hyprland";
           user = "greeter";
         };
       };
@@ -631,7 +630,7 @@
     };
 
     gitea-showcase = {
-      enable = true;
+      enable = false;
       domain = "git.voidnx.com";
       httpsPort = 3443;
       showcaseProjectsPath = "/home/kernelcore/dev/projects";
@@ -694,7 +693,7 @@
     udisks2.enable = true;
     gvfs.enable = true;
     tailscale.enable = true;
-
+    config-auditor.enable = true;
     i915-governor.enable = false;
   }; # FIM DO BLOCO SERVICES
 
@@ -828,10 +827,10 @@
     ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
     cognitive-vault.enable = true;
     vscodium-secure = {
-      enable = true;
+      enable = false;
       extensions = with pkgs.vscode-extensions; [ rooveterinaryinc.roo-cline ];
     };
-    brave-secure.enable = true;
+    brave-secure.enable = false;
     firefox-privacy.enable = false;
     git.lfs.enable = true;
     nemo.enable = true;
@@ -895,11 +894,11 @@
     tshark
   ];
 
-  #kernelcore.shell.cli-helpers = {
-  #enable = true;
-  #flakePath = "/etc/nixos";
-  #hostName = "kernelcore";
-  #};
+  kernelcore.shell.cli-helpers = {
+    enable = true;
+    flakePath = "/etc/nixos";
+    hostName = "kernelcore";
+  };
 
   boot.initrd.prepend = [
     "${
