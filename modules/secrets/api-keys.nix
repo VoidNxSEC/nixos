@@ -51,14 +51,12 @@ in
       };
 
       # Google Gemini
-      # TEMPORARILY DISABLED: Key not found in SOPS file
-      # To enable: Add gemini_api_key to secrets/api.yaml and uncomment
-      # "gemini_api_key" = {
-      #   sopsFile = ../../secrets/api.yaml;
-      #   mode = "0440";
-      #   owner = config.users.users.kernelcore.name;
-      #   group = "users";
-      # };
+      "gemini_api_key" = {
+        sopsFile = ../../secrets/api.yaml;
+        mode = "0440";
+        owner = config.users.users.kernelcore.name;
+        group = "users";
+      };
 
       # OpenRouter
       "openrouter_api_key" = {

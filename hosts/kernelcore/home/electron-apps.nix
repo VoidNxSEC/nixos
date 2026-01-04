@@ -27,7 +27,7 @@
 
   xdg.configFile."Code/argv.json".text = builtins.toJSON {
     # Low resource profile for editor
-    renderer-process-limit = 2;
+    renderer-process-limit = 4;
     process-per-site = true;
     disk-cache-size = 52428800; # 50MB
 
@@ -43,7 +43,7 @@
 
   xdg.configFile."VSCodium/argv.json".text = builtins.toJSON {
     # Same as Code
-    renderer-process-limit = 2;
+    renderer-process-limit = 4;
     process-per-site = true;
     disk-cache-size = 52428800;
     disable-gpu = false;
