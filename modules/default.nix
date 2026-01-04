@@ -67,7 +67,7 @@
     # ═══════════════════════════════════════════════════════════
     # SHELL & SECRETS
     # ═══════════════════════════════════════════════════════════
-    ./shell # Shell aliases, GPU flags, professional alias structure
+    #./shell # Shell aliases, GPU flags, professional alias structure
     ./secrets # SOPS config, API keys, AWS Bedrock, Tailscale secrets
 
     # ═══════════════════════════════════════════════════════════
