@@ -31,8 +31,9 @@ in
       default = [
         "--enable-features=VaapiVideoDecoder"
         "--disable-features=UseChromeOSDirectVideoDecoder"
-        "--ignore-gpu-blocklist"
-        "--enable-gpu-rasterization"
+        "--ozone-platform-hint=auto"
+        #"--ignore-gpu-blocklist"
+        "--disable-gpu-rasterization"
         "--enable-zero-copy"
       ];
       description = "Custom Chromium flags for Brave";
@@ -202,7 +203,7 @@ in
     environment.sessionVariables = {
       # Force Brave to respect GPU memory limits
       BRAVE_GPU_MEMORY_BUFFER_SIZE = "256";
-      BRAVE_DISABLE_GPU_DRIVER_BUG_WORKAROUNDS = "1";
+      #BRAVE_DISABLE_GPU_DRIVER_BUG_WORKAROUNDS = "1";
     };
   };
 }
