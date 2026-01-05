@@ -295,11 +295,11 @@
       ageKeyFile = "/var/lib/sops-nix/key.txt";
     };
 
-    secrets.api-keys.enable = true;
+    #secrets.api-keys.enable = true;
     secrets.aws-bedrock.enable = true;
     secrets.k8s.enable = true;
     secrets.grok.enable = true;
-    secrets.anthropic.enable = lib.mkForce true;
+    secrets.anthropic.enable = true;
     ml.models-storage = {
       enable = true;
       baseDirectory = "/var/lib/ml-models";
@@ -351,45 +351,6 @@
 
     system.ml-gpu-users.enable = true;
   }; # FIM DO BLOCO KERNELCORE
-
-  # ============================================================================
-  # SYSTEMD SERVICES OVERRIDES & WRAPPERS
-  # ============================================================================
-
-  # INJEÇÃO CIRÚRGICA: Wrapper para rodar o Codex com a alma do Gemini
-  # Usa LoadCredential para não vazar keys no ambiente (Padrão Black Ops)
-  systemd.services.mcp-codex = {
-    after = [ "sops-nix.service" ];
-    serviceConfig = {
-      # Injeta a chave do SOPS direto no diretório seguro do processo
-      LoadCredential = [
-        "GEMINI_API_KEY:${config.sops.secrets.gemini_api_key.path}"
-      ];
-
-      # Wrapper Script
-      ExecStart = lib.mkForce (
-        pkgs.writeShellScript "codex-wrapper" ''
-          # Carrega a chave segura
-          export GEMINI_API_KEY="$(cat $CREDENTIALS_DIRECTORY/gemini_api_key)"
-
-          # Engana o Codex se ele esperar OpenAI (usando a key do Gemini)
-          # Se você estiver usando o securellm-bridge, a URL base deve ser ajustada aqui
-          export OPENAI_API_KEY="$GEMINI_API_KEY"
-
-          # Opcional: Context Adapter Rule
-          # Se houver um arquivo GEMINI.md, ele vira a regra principal
-          cd /var/lib/codex/dev
-          if [ -f "GEMINI.md" ]; then
-             ln -sf GEMINI.md CONTEXT.md
-             echo ">> [Wrapper] Codex loaded with Gemini Context."
-          fi
-
-          # Inicia o binário original (ajuste o caminho se necessário)
-          exec /var/lib/codex/dev/start.sh
-        ''
-      );
-    };
-  };
 
   # ============================================================================
   # QUICK START HELPERS
