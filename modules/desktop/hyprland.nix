@@ -64,7 +64,7 @@ in
       hyprlock # Lock screen (glassmorphism compatible)
       hypridle # Idle daemon (replacement for swayidle)
       hyprpicker # Color picker
-      hyprpaper # Wallpaper (alternative to swaybg)
+      # hyprpaper # Wallpaper (alternative to swaybg) - TEMPORARILY DISABLED: hyprtoolkit version conflict (needs >=0.4.1, has 0.4.0)
 
       # Status bar and launcher
       waybar # Status bar
