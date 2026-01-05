@@ -175,7 +175,7 @@
     };
 
     virtualization = {
-      enable = false;
+      enable = true;
       virt-manager = true;
       libvirtdGroup = [ "kernelcore" ];
       virtiofs.enable = true;
@@ -450,7 +450,7 @@
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd start-hyprland";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'";
           user = "greeter";
         };
       };
@@ -680,7 +680,10 @@
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "terraform" ];
   kernelcore.hardware.intel.enable = true;
-
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true; # <--- Critical: Enables UWSM wrapper and integration
+  };
   time.timeZone = "America/Scoresbysund";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
