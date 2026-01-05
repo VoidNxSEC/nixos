@@ -20,6 +20,7 @@ with lib;
       "https://nixos.org/"
       "https://cache.nixos.org/"
       "https://cache.nixos-cuda.org"
+      "file:/home/kernelcore/dev/low-level/"
     ];
     trusted-users = [ "@wheel" ];
     allowed-users = [ "@users" ];
