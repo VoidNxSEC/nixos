@@ -116,9 +116,9 @@ in
     # These ensure applications can find the Secret Service API
     # ========================================================================
 
-    # environment.sessionVariables = {
+    #environment.sessionVariables = {
     # Secret Service API location
-    # GNOME_KEYRING_CONTROL = "/run/user/$UID/keyring";
+    #GNOME_KEYRING_CONTROL = "/run/user/$UID/keyring";
 
     # SSH agent socket (gnome-keyring provides SSH agent)
     # Note: If you prefer gpg-agent for SSH, comment this out
