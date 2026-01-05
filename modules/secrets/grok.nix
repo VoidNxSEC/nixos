@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.kernelcore.secrets.k8s;
+  cfg = config.kernelcore.secrets.grok;
 in
 {
-  options.kernelcore.secrets.k8s = {
+  options.kernelcore.secrets.grok = {
     enable = mkEnableOption "Enable Grok secret from SOPS";
   };
 
@@ -19,7 +19,7 @@ in
     # Decrypt Grok API Key
     sops.secrets = {
       # Grok API Key
-      "grok-api-key" = {
+      "api-key-grok" = {
         sopsFile = ../../secrets/grok.yaml;
         mode = "0400";
         owner = "root";
