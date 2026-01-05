@@ -312,11 +312,11 @@
         "nixpkgs-lib": "nixpkgs-lib"
       },
       "locked": {
-        "lastModified": 1765835352,
-        "narHash": "sha256-XswHlK/Qtjasvhd1nOa1e8MgZ8GS//jBoTqWtrS1Giw=",
+        "lastModified": 1767609335,
+        "narHash": "sha256-feveD98mQpptwrAEggBQKJTYbvwwglSbOv53uCfH9PY=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "a34fae9c08a15ad73f295041fec82323541400a9",
+        "rev": "250481aafeb741edfe23d29195671c19b36b6dca",
         "type": "github"
       },
       "original": {
@@ -735,11 +735,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767556355,
-        "narHash": "sha256-RDTUBDQBi9D4eD9iJQWtUDN/13MDLX+KmE+TwwNUp2s=",
+        "lastModified": 1767619743,
+        "narHash": "sha256-N0kK1JqxIjFl7hPAfhkW6C9AO7feYJUWLPyqJO2VuQQ=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "f894bc4ffde179d178d8deb374fcf9855d1a82b7",
+        "rev": "a65c04965c841eb01ba401f5162f12bc8d52014f",
         "type": "github"
       },
       "original": {
@@ -845,11 +845,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1767523459,
-        "narHash": "sha256-ZxwcxWr/TBp6ulk7SncpHIPxhl513cVhf16F74alfik=",
+        "lastModified": 1767635609,
+        "narHash": "sha256-6KuhLlcEw1UCophTDrTXzUoICzhOUHu7c3SLJkk3gX4=",
         "ref": "refs/heads/main",
-        "rev": "0b3b012817ca381e40754cb4408e5c0cd3a2c732",
-        "revCount": 6774,
+        "rev": "107275238c0dd5e3de8b9c36575a335ebd393c56",
+        "revCount": 6787,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1168,11 +1168,11 @@
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
       },
       "locked": {
-        "lastModified": 1767544157,
-        "narHash": "sha256-DVTMOUd4uHkDcZXWAqOS+Pa0M9a27G1Ya3B7SFG6BQs=",
+        "lastModified": 1767624540,
+        "narHash": "sha256-A53/9fnu/40wo6T2MF3lm07zD7N+cC0E5QEYFfFLGwA=",
         "owner": "sodiboo",
         "repo": "niri-flake",
-        "rev": "d0e2c4bebf9d0b879410736f7abce628976bfb92",
+        "rev": "62e47d55c0f8bc9cd5413b94134867d970e5e296",
         "type": "github"
       },
       "original": {
@@ -1201,11 +1201,11 @@
     "niri-unstable": {
       "flake": false,
       "locked": {
-        "lastModified": 1767530622,
-        "narHash": "sha256-ywnL1cc0A6fni7m859ImiBYA8DlXXJ+5OXIlcBqJ2B0=",
+        "lastModified": 1767598098,
+        "narHash": "sha256-IyH3zaCT2JZ6fdY4vKlUz2RbDdxaryvSZWUVixKYrKM=",
         "owner": "YaLTeR",
         "repo": "niri",
-        "rev": "54c2e2ab476629d17fdba861895f58e7cdac32ab",
+        "rev": "b7eb8a635b7f75705808eaed85c016f02ae4fd2d",
         "type": "github"
       },
       "original": {
@@ -1589,11 +1589,11 @@
         "rust-overlay": "rust-overlay_5"
       },
       "locked": {
-        "lastModified": 1767567737,
-        "narHash": "sha256-5gNoG3i3GL00ueK111RZ6TOOmJ8Aqo0+fp7ayJixs0M=",
+        "lastModified": 1767642463,
+        "narHash": "sha256-hW1E0DS9XQv/0Kk6gl/lgOwq+5wvh/9ouo/+WhxhoIs=",
         "ref": "refs/heads/main",
-        "rev": "109a8e350b3a7137321857a9cecc84a01c84a1f3",
-        "revCount": 28,
+        "rev": "be5c1f369a848ebbd016818e024b5353a2b3771d",
+        "revCount": 29,
         "type": "git",
         "url": "file:/home/kernelcore/dev/low-level/phantom"
       },
@@ -1738,11 +1738,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767495280,
-        "narHash": "sha256-hEEgtE/RSRigw8xscchGymf/t1nluZwTfru4QF6O1CQ=",
+        "lastModified": 1767581716,
+        "narHash": "sha256-FUbiUzdrGkLou37OGfb4vCLPnqdSIvtmJBxjh2iljiE=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "cb24c5cc207ba8e9a4ce245eedd2d37c3a988bc1",
+        "rev": "1d3f83babdd21e16bf5cfe0f1efcb4f49ee1bc2c",
         "type": "github"
       },
       "original": {
@@ -1799,11 +1799,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767277255,
-        "narHash": "sha256-Q4X3rdTgBLH0aY514bmCrmtfzT/SMk0/+G70PYQM22E=",
+        "lastModified": 1767642520,
+        "narHash": "sha256-23lD2av0bsu1P4B7H2sG69Xm8vHCMesjiJjGXy9dQCU=",
         "ref": "refs/heads/main",
-        "rev": "4ab78347c530319014514e5255712a6cecf6770f",
-        "revCount": 29,
+        "rev": "a6bf3f050cc847352a0dec9459e7ed05c7d7caf5",
+        "revCount": 31,
         "type": "git",
         "url": "file:/home/kernelcore/dev/low-level/securellm-mcp"
       },
