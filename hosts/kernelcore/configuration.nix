@@ -488,7 +488,7 @@
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd Hyprland";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd start-hyprland";
           user = "greeter";
         };
       };
@@ -498,7 +498,7 @@
       gdm.enable = false;
       sddm = {
         enable = false;
-        wayland.enable = false;
+        wayland.enable = true;
       };
       defaultSession = "hyprland";
     };
@@ -679,7 +679,7 @@
     printing.enable = true;
 
     chromiumOrg = {
-      enable = false;
+      enable = true;
       extraArgs = [
         "--force-dark-mode"
         "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,ParallelDownloading"
@@ -895,6 +895,7 @@
     tcpdump
     wireshark
     tshark
+    gemini-cli
   ];
 
   kernelcore.shell.cli-helpers = {
