@@ -2,7 +2,7 @@
 { ... }:
 {
   imports = [
-    ./api-keys.nix
+    #./api-keys.nix
     ./aws-bedrock.nix
     ./k8s.nix
     ./sops-config.nix
