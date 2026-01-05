@@ -19,7 +19,7 @@ in
     # Decrypt Grok API Key
     sops.secrets = {
       # Grok API Key
-      "api-key-grok" = {
+      "api_key_grok" = {
         sopsFile = ../../secrets/grok.yaml;
         mode = "0400";
         owner = "root";
