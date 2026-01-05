@@ -20,7 +20,7 @@ in
     sops.secrets = {
       # Anthropic API Key
       "anthropic_api_key" = {
-        sopsFile = ../../secrets/anthropic.yaml.yaml;
+        sopsFile = ../../secrets/anthropic.yaml;
         mode = "0400";
         owner = "root";
         group = "root";
