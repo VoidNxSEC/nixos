@@ -8,6 +8,5 @@
     ./sops-config.nix
     ./tailscale.nix
     ./grok.nix
-    ./anthropic.nix
   ];
 }
