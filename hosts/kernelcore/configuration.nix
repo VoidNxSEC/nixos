@@ -299,7 +299,7 @@
     secrets.aws-bedrock.enable = true;
     secrets.k8s.enable = true;
     secrets.grok.enable = true;
-    secrets.anthropic.enable = true;
+
     ml.models-storage = {
       enable = true;
       baseDirectory = "/var/lib/ml-models";
