@@ -36,10 +36,10 @@ with lib;
 
         {
           # ULTRA-OPTIMIZED: Prevent CPU/RAM throttling and OOM
-          # Reduced from max-jobs=4 cores=3 to prevent memory exhaustion
+          # Reduced to prevent memory exhaustion on 16GB RAM
           # Using mkForce to override hardening.nix settings
-          max-jobs = mkForce 4; # Only 2 parallel builds to prevent RAM overload
-          cores = mkForce 4; # 2 cores per job (total 4 cores active)
+          max-jobs = mkForce 2; # Only 2 parallel builds to prevent RAM overload
+          cores = mkForce 2; # 2 cores per job
           # Total concurrent threads: 2 jobs × 2 cores = 4 threads (was 12)
 
           # Kill builds that take too long (prevents zombie builds)
