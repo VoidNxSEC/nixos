@@ -112,7 +112,7 @@ with lib;
       '';
     };
 
-    # NVIDIA GPU monitoring service
+    # NVIDIA GPU monitoring service (Refactored)
     systemd.services.nvidia-gpu-monitor = mkIf config.kernelcore.nvidia.cudaSupport {
       description = "NVIDIA GPU monitoring and optimization";
       wantedBy = [ "multi-user.target" ];
@@ -121,21 +121,26 @@ with lib;
         Type = "simple";
         Restart = "always";
         RestartSec = "30s";
-      };
-      script = ''
-        LOG_FILE="/var/log/nvidia-monitor.log"
+        SyslogIdentifier = "nvidia-gpu-monitor";
+        ExecStart =
+          let
+            monitorScript = pkgs.writeShellScript "nvidia-gpu-monitor" ''
+              LOG_FILE="/var/log/nvidia-monitor.log"
 
-        while true; do
-          # Log GPU stats
-          if command -v nvidia-smi >/dev/null 2>&1; then
-            echo "$(date +%Y-%m-%d\ %H:%M:%S)" >> "$LOG_FILE"
-            nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,utilization.memory,power.draw,clocks.gr,clocks.mem \
-              --format=csv,noheader >> "$LOG_FILE" 2>/dev/null || true
-          fi
-          
-          sleep 60
-        done
-      '';
+              while true; do
+                # Log GPU stats
+                if command -v nvidia-smi >/dev/null 2>&1; then
+                  echo "$(date +%Y-%m-%d\ %H:%M:%S)" >> "$LOG_FILE"
+                  nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,utilization.memory,power.draw,clocks.gr,clocks.mem \
+                    --format=csv,noheader >> "$LOG_FILE" 2>/dev/null || true
+                fi
+                
+                sleep 60
+              done
+            '';
+          in
+          "${monitorScript}";
+      };
     };
 
     # VRAM optimization for 6GB configuration

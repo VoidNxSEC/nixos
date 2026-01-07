@@ -81,20 +81,36 @@ with lib;
       };
     };
 
-    # Early OOM killer - TUNED for heavy workloads
-    services.earlyoom = {
+    # ============================================
+    # SYSTEMD-OOMD - Modern Userspace OOM Killer
+    # ============================================
+    systemd.oomd = {
       enable = true;
-      freeMemThreshold = 3; # Kill processes when <3% RAM free
-      freeSwapThreshold = 5; # Kill when <5% swap free
-      enableNotifications = true;
-      extraArgs = [
-        "-g" # Kill entire process group
-        "--prefer"
-        "(cc1|rustc|ld|cargo|nix-build)" # Prefer killing build processes
-        "--avoid"
-        "(X|plasma|gnome|firefox|chrome|hyprland|waybar)" # Avoid killing desktop
-      ];
+      enableRootSlice = true;
+      enableUserSlices = true;
+      extraConfig = {
+        "DefaultMemoryPressureLimit" = "60%";
+        "DefaultMemoryPressureDurationSec" = "20";
+      };
     };
+
+    # Disable EarlyOOM (superseded by systemd-oomd)
+    services.earlyoom.enable = false;
+
+    # Configure OOMD policies for top-level slices
+    systemd.slices."system".sliceConfig = {
+      ManagedOOMMemoryPressure = "kill";
+      ManagedOOMMemoryPressureLimit = "80%";
+    };
+
+    systemd.slices."user".sliceConfig = {
+      ManagedOOMMemoryPressure = "kill";
+      ManagedOOMMemoryPressureLimit = "80%";
+    };
+
+    # Protect critical services from OOM kill
+    systemd.services.nix-daemon.serviceConfig.ManagedOOMPreference = "avoid";
+    systemd.services.dbus.serviceConfig.ManagedOOMPreference = "avoid";
 
     # ZRAM swap - Enhanced for heavy compilation
     zramSwap = mkIf config.kernelcore.system.memory.zram.enable {

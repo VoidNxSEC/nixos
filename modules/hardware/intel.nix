@@ -210,7 +210,7 @@ in
       '';
     };
 
-    # Thermal Monitor (Mantido, mas ajustado para não brigar com thermald se instalado)
+    # Thermal Monitor (Refactored)
     systemd.services.intel-thermal-monitor = mkIf cfg.turboBoost.enable {
       description = "Intel thermal monitoring logic";
       wantedBy = [ "multi-user.target" ];
@@ -218,24 +218,29 @@ in
         Type = "simple";
         Restart = "always";
         RestartSec = "10s";
-      };
-      script = ''
-        while true; do
-          current_temp=$(cat /sys/class/hwmon/hwmon*/temp*_input /sys/class/thermal/thermal_zone*/temp 2>/dev/null | sort -nr | head -1)
-          temp=''${current_temp:-0}
-          temp_c=$((temp / 1000))
+        SyslogIdentifier = "intel-thermal-monitor";
+        ExecStart =
+          let
+            monitorScript = pkgs.writeShellScript "intel-thermal-monitor" ''
+              while true; do
+                current_temp=$(cat /sys/class/hwmon/hwmon*/temp*_input /sys/class/thermal/thermal_zone*/temp 2>/dev/null | sort -nr | head -1)
+                temp=''${current_temp:-0}
+                temp_c=$((temp / 1000))
 
-          if [ -f /sys/devices/system/cpu/intel_pstate/no_turbo ]; then
-            if [ "$temp_c" -gt "${toString cfg.turboBoost.maxTemp}" ]; then
-              echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
-            elif [ "$temp_c" -lt $((${toString cfg.turboBoost.maxTemp} - 15)) ]; then
-              # Histerese aumentada para 15C para evitar oscilação rápida (flapping)
-              echo 0 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
-            fi
-          fi
-          sleep 5
-        done
-      '';
+                if [ -f /sys/devices/system/cpu/intel_pstate/no_turbo ]; then
+                  if [ "$temp_c" -gt "${toString cfg.turboBoost.maxTemp}" ]; then
+                    echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
+                  elif [ "$temp_c" -lt $((${toString cfg.turboBoost.maxTemp} - 15)) ]; then
+                    # Histerese aumentada para 15C para evitar oscilação rápida (flapping)
+                    echo 0 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
+                  fi
+                fi
+                sleep 5
+              done
+            '';
+          in
+          "${monitorScript}";
+      };
     };
 
     # Sysctl tuning
