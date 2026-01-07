@@ -29,17 +29,9 @@
       # These flags MUST be in argv.json, NOT command line
       # Otherwise you get "Warning: not in list of known options"
 
-      # Auto-detect Wayland vs X11 (preferred method)
-      "ozone-platform-hint" = "auto";
-
-      # Alternative: Force Wayland (use if auto-detect fails)
-      # "ozone-platform" = "wayland";
-
-      # Wayland IME support (input method editor)
-      "enable-wayland-ime" = true;
-
-      # Text input protocol version (v3 is latest)
-      "wayland-text-input-version" = 3;
+      # Wayland support handled by NIXOS_OZONE_WL=1 (set in hyprland.nix)
+      # Removed: ozone-platform-hint, enable-wayland-ime, wayland-text-input-version
+      # Reason: These flags cause "not in list of known options" warnings
 
       # ═══════════════════════════════════════════════════════════
       # MEMORY & PROCESS OPTIMIZATIONS
@@ -63,8 +55,8 @@
 
       # Hardware video acceleration (VA-API) + Wayland decorations
       # IMPORTANT: Combine features with comma, no spaces!
+      # Note: UseOzonePlatform removed (handled by NIXOS_OZONE_WL=1)
       "enable-features" = lib.concatStringsSep "," [
-        "UseOzonePlatform" # CRITICAL for Wayland native
         "WaylandWindowDecorations" # Native window decorations
         "VaapiVideoDecodeLinuxGL" # Intel VA-API decode
         "VaapiVideoEncoder" # Intel VA-API encode
