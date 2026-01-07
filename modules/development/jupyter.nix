@@ -81,7 +81,7 @@ in
 
       ]
       ++ lib.optionals config.kernelcore.development.jupyter.kernels.nodejs.enable [
-        nodePackages.elasticdump
+        nodePackages_latest.node2nix
       ]
       # Jupyter extensions and server components (from lib/python.nix)
       ++ lib.optionals config.kernelcore.development.jupyter.extensions.enable pythonLib.jupyter;
