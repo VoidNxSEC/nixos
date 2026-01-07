@@ -64,6 +64,10 @@ with lib;
           "$HOME/.cache/gemini" # Allow cache directory
           "$HOME/.local/share/gemini" # Allow data directory
           "/run/user" # Allow access to user runtime dir (DBus/Keyring)
+          "/var/lib/mcp-knowledge" # Allow access to MCP Knowledge DB
+          "/run/current-system/sw/bin" # Allow access to MCP server binary
+          "/etc/nixos" # Allow access to project root
+          "$HOME/.gemini" # Allow access to Gemini workspace/config
         ];
 
         blockHardware = [
