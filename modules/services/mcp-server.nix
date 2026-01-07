@@ -124,9 +124,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Generate profiles.json for CLI usage
-    environment.etc."securellm/profiles.json".text = builtins.toJSON cfg.profiles;
-
     # Install the MCP server package system-wide
     environment.systemPackages = [
       cfg.package
@@ -393,13 +390,16 @@ in
       "d ${cfg.dataDir} 0755 ${cfg.user} users -"
     ];
 
-    # Configure Claude Desktop automatically
-    environment.etc = mkIf cfg.autoConfigureClaudeDesktop {
+    # Configure system-wide and user-specific etc files
+    environment.etc = {
+      "securellm/profiles.json".text = builtins.toJSON cfg.profiles;
+    }
+    // (lib.optionalAttrs cfg.autoConfigureClaudeDesktop {
       "skel/.config/Claude/.mcp.json" = {
         text = builtins.toJSON mcpConfig;
         mode = "0644";
       };
-    };
+    });
 
     # Add shell aliases for convenience
     environment.shellAliases = {
