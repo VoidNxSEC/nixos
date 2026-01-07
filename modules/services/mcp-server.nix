@@ -75,12 +75,169 @@ in
       default = true;
       description = "Automatically configure Claude Desktop with .mcp.json";
     };
+
+    environment = mkOption {
+      type = types.enum [
+        "development"
+        "production"
+        "staging"
+      ];
+      default = "production";
+      description = "Runtime environment for the MCP server";
+    };
+
+    workdir = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description = "Working directory for the MCP server (sets MCP_WORKDIR)";
+    };
+
+    profiles = mkOption {
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            workdir = mkOption {
+              type = types.nullOr types.path;
+              default = null;
+              description = "Working directory for this profile";
+            };
+            environment = mkOption {
+              type = types.enum [
+                "development"
+                "production"
+                "staging"
+              ];
+              default = "development";
+              description = "Environment for this profile";
+            };
+            env = mkOption {
+              type = types.attrsOf types.str;
+              default = { };
+              description = "Extra environment variables";
+            };
+          };
+        }
+      );
+      default = { };
+      description = "Defined MCP profiles";
+    };
   };
 
   config = mkIf cfg.enable {
+    # Generate profiles.json for CLI usage
+    environment.etc."securellm/profiles.json".text = builtins.toJSON cfg.profiles;
+
     # Install the MCP server package system-wide
     environment.systemPackages = [
       cfg.package
+
+      # MCP Context Switcher CLI
+      (pkgs.writers.writePython3Bin "mcp-context"
+        {
+          libraries = [ ];
+          flakeIgnore = [ "E501" ];
+        }
+        ''
+          import os
+          import sys
+          import json
+          import argparse
+          import subprocess
+          from pathlib import Path
+
+          CONFIG_PATH = Path.home() / ".config/Claude/.mcp.json"
+          PROFILES_PATH = Path("/etc/securellm/profiles.json")
+
+          def load_config():
+              if not CONFIG_PATH.exists():
+                  print(f"Config not found at {CONFIG_PATH}")
+                  sys.exit(1)
+              with open(CONFIG_PATH) as f:
+                  return json.load(f)
+
+          def save_config(config):
+              with open(CONFIG_PATH, "w") as f:
+                  json.dump(config, f, indent=2)
+              print(f"Updated {CONFIG_PATH}")
+              print("Please restart Claude Desktop or reload window for changes to take effect.")
+
+          def update_workdir(path_str):
+              config = load_config()
+              abs_path = str(Path(path_str).resolve())
+              
+              # Update securellm-bridge env
+              servers = config.get("mcpServers", {})
+              if "securellm-bridge" in servers:
+                  env = servers["securellm-bridge"].get("env", {})
+                  env["MCP_WORKDIR"] = abs_path
+                  env["PROJECT_ROOT"] = abs_path # Legacy support
+                  servers["securellm-bridge"]["env"] = env
+                  save_config(config)
+              else:
+                  print("Server securellm-bridge not found in config")
+
+          def apply_profile(profile_name):
+              if not PROFILES_PATH.exists():
+                  print("No profiles defined")
+                  sys.exit(1)
+              
+              with open(PROFILES_PATH) as f:
+                  profiles = json.load(f)
+              
+              if profile_name not in profiles:
+                  print(f"Profile {profile_name} not found")
+                  print(f"Available: {', '.join(profiles.keys())}")
+                  sys.exit(1)
+                  
+              profile = profiles[profile_name]
+              config = load_config()
+              
+              if "securellm-bridge" in config.get("mcpServers", {}):
+                  env = config["mcpServers"]["securellm-bridge"].get("env", {})
+                  
+                  # Apply profile settings
+                  if profile.get("workdir"):
+                      env["MCP_WORKDIR"] = profile["workdir"]
+                      env["PROJECT_ROOT"] = profile["workdir"]
+                  
+                  if profile.get("environment"):
+                      env["MCP_ENV"] = profile["environment"]
+                      env["NODE_ENV"] = profile["environment"]
+                  
+                  # Apply extra envs
+                  for k, v in profile.get("env", {}).items():
+                      env[k] = v
+                      
+                  config["mcpServers"]["securellm-bridge"]["env"] = env
+                  save_config(config)
+
+          def main():
+              parser = argparse.ArgumentParser(description="MCP Context Switcher")
+              subparsers = parser.add_subparsers(dest="command")
+              
+              switch_parser = subparsers.add_parser("switch", help="Switch workspace to path")
+              switch_parser.add_argument("path", help="Path to project root")
+              
+              profile_parser = subparsers.add_parser("profile", help="Apply a profile")
+              profile_parser.add_argument("name", help="Profile name")
+              
+              auto_parser = subparsers.add_parser("auto", help="Auto-detect from current dir")
+              
+              args = parser.parse_args()
+              
+              if args.command == "switch":
+                  update_workdir(args.path)
+              elif args.command == "profile":
+                  apply_profile(args.name)
+              elif args.command == "auto":
+                  update_workdir(os.getcwd())
+              else:
+                  parser.print_help()
+
+          if __name__ == "__main__":
+              main()
+        ''
+      )
 
       # Helper script to manage MCP
       (pkgs.writeShellScriptBin "mcp-server" ''
@@ -273,7 +430,9 @@ in
         ENABLE_KNOWLEDGE = "true";
         NIXOS_HOST_NAME = config.networking.hostName;
         LOG_LEVEL = cfg.daemon.logLevel;
-        NODE_ENV = "production";
+        NODE_ENV = if cfg.environment == "development" then "development" else "production";
+        MCP_ENV = cfg.environment;
+        MCP_WORKDIR = if cfg.workdir != null then toString cfg.workdir else "";
         # Ensure proper locale for UTF-8 output
         LANG = "en_US.UTF-8";
         LC_ALL = "en_US.UTF-8";
@@ -292,6 +451,7 @@ in
       serviceConfig = {
         Type = "simple";
         ExecStart = "${cfg.package}/bin/securellm-mcp";
+        WorkingDirectory = if cfg.workdir != null then toString cfg.workdir else cfg.dataDir;
 
         # Restart configuration
         Restart = if cfg.daemon.restartOnFailure then "on-failure" else "no";
