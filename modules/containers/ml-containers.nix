@@ -93,6 +93,16 @@ in
         default = "/var/lib/ollama/models";
         description = "Host path for Ollama models";
       };
+      bindLlamaCpp = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Bind mount llama.cpp from host for local inference";
+      };
+      llamaCppPath = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Path to llama.cpp binary on host (auto-detected if null)";
+      };
     };
 
     jupyter = {
@@ -168,12 +178,32 @@ in
       hostAddress = hostBaseIP;
       localAddress = mkContainerIP 1;
 
-      bindMounts = gpuBindMounts // {
-        "${cfg.ollama.modelsPath}" = {
-          hostPath = cfg.ollama.modelsPath;
-          isReadOnly = false;
+      bindMounts =
+        gpuBindMounts
+        // {
+          "${cfg.ollama.modelsPath}" = {
+            hostPath = cfg.ollama.modelsPath;
+            isReadOnly = false;
+          };
+        }
+        // optionalAttrs cfg.ollama.bindLlamaCpp {
+          "/usr/local/bin/llama-cli" = {
+            hostPath =
+              if cfg.ollama.llamaCppPath != null then
+                cfg.ollama.llamaCppPath
+              else
+                "${pkgs.llama-cpp}/bin/llama-cli";
+            isReadOnly = true;
+          };
+          "/usr/local/bin/llama-server" = {
+            hostPath =
+              if cfg.ollama.llamaCppPath != null then
+                dirOf cfg.ollama.llamaCppPath + "/llama-server"
+              else
+                "${pkgs.llama-cpp}/bin/llama-server";
+            isReadOnly = true;
+          };
         };
-      };
 
       allowedDevices = gpuAllowedDevices;
 
@@ -202,7 +232,7 @@ in
 
           services.ollama = {
             enable = true;
-            acceleration = "cuda";
+            package = pkgs.ollama-cuda; # Use CUDA-enabled package
             host = "0.0.0.0";
             port = cfg.ollama.port;
           };
