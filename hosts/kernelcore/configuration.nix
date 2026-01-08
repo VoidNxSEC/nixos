@@ -131,7 +131,7 @@
     # Custom individual packaging for Gemini/Antigravity
     packages.custom = {
       gemini = {
-        enable = true; # Set to true to enable custom Gemini build
+        enable = false; # Set to true to enable custom Gemini build
         sandbox = true;
         allowedPaths = [
           "$HOME/.gemini"
@@ -145,7 +145,7 @@
       };
 
       antigravity = {
-        enable = true; # Set to true to enable custom Antigravity build
+        enable = false; # Set to true to enable custom Antigravity build
         profile = "performance"; # Options: performance, balanced, minimal
         enableCache = true;
       };
@@ -925,9 +925,9 @@
     tcpdump
     wireshark
     tshark
-    gemini-cli
+    # gemini-cli
     sqlite
-    antigravity
+    # antigravity
   ];
 
   kernelcore.shell.cli-helpers = {
