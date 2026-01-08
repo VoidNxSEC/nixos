@@ -18,6 +18,26 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  users.users.kernelcore = {
+    isNormalUser = true; # <--- ISSO RESOLVE O ERRO DA ASSERTION 1
+    description = "K8s Node Admin";
+    extraGroups = [
+      "wheel"
+      "docker"
+    ]; # wheel para sudo, docker para containers
+    group = "users"; # <--- ISSO RESOLVE O ERRO DA ASSERTION 2 (Opcional, 'users' é padrão se isNormalUser)
+  };
+  # Como é um servidor, idealmente use apenas chaves SSH
+  #openssh.authorizedKeys.keys = [
+  #"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA..." # Sua chave pública da workstation
+  #];
+
+  services.openssh = {
+    enable = true;
+    settings.PasswordAuthentication = false;
+    settings.PermitRootLogin = "no";
+  };
+
   networking = {
     hostName = "k8s-node-01";
     domain = "cluster.local";
@@ -200,5 +220,5 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  system.stateVersion = "24.05";
+  system.stateVersion = "26.05";
 }
