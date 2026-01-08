@@ -64,6 +64,12 @@ let
           description = "Extra flags for npm install";
         };
 
+        npmWorkspace = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          description = "Specific workspace to build in a monorepo";
+        };
+
         makeCacheWritable = mkOption {
           type = types.bool;
           default = false;
