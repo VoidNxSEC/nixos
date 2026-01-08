@@ -27,7 +27,7 @@ let
   # Uses slightly lower opacity for inactive windows
   opacityRule =
     class: active: inactive:
-    "opacity ${toString active}:1, class:\"^(${class})$\"";
+    "opacity ${toString active} ${toString inactive}, class:^(${class})$";
 
 in
 rec {
@@ -132,11 +132,11 @@ rec {
     # FILE MANAGERS
     # ----------------------------------------
     fileManagers = lib.flatten [
-      (floatingApp "nemo" 1200 700 ++ [ "opacity 0.92:1, class:\"^(nemo)$\"" ])
-      (floatingApp "thunar" 1200 700 ++ [ "opacity 0.92:1, class:\"^(thunar)$\"" ])
-      (floatingApp "nautilus" 1200 700 ++ [ "opacity 0.92:1, class:\"^(nautilus)$\"" ])
-      (floatingApp "dolphin" 1200 700 ++ [ "opacity 0.92:1, class:\"^(dolphin)$\"" ])
-      (floatingApp "pcmanfm" 1200 700 ++ [ "opacity 0.92:1, class:\"^(pcmanfm)$\"" ])
+      (floatingApp "nemo" 1200 700 ++ [ "opacity 0.92 0.88, class:^(nemo)$" ])
+      (floatingApp "thunar" 1200 700 ++ [ "opacity 0.92 0.88, class:^(thunar)$" ])
+      (floatingApp "nautilus" 1200 700 ++ [ "opacity 0.92 0.88, class:^(nautilus)$" ])
+      (floatingApp "dolphin" 1200 700 ++ [ "opacity 0.92 0.88, class:^(dolphin)$" ])
+      (floatingApp "pcmanfm" 1200 700 ++ [ "opacity 0.92 0.88, class:^(pcmanfm)$" ])
     ];
 
     # ----------------------------------------
@@ -185,10 +185,10 @@ rec {
 
       # Picture-in-Picture (stay on top)
       [
-        "float:1, title:\"^(Picture-in-Picture)$\""
-        "pin:1, title:\"^(Picture-in-Picture)$\""
-        "size 400 225:1, title:\"^(Picture-in-Picture)$\""
-        "move 100%-420 100%-245:1, title:\"^(Picture-in-Picture)$\""
+        "float, title:^(Picture-in-Picture)$"
+        "pin, title:^(Picture-in-Picture)$"
+        "size 400 225, title:^(Picture-in-Picture)$"
+        "move 100%-420 100%-245, title:^(Picture-in-Picture)$"
       ]
 
       # Music players
@@ -302,22 +302,22 @@ rec {
     dialogs = lib.flatten [
       # File dialogs
       [
-        "float:1, title:\"^(Open File)$\""
-        "float:1, title:\"^(Save File)$\""
-        "float:1, title:\"^(Save As)$\""
-        "float:1, title:\"^(Choose Files)$\""
-        "float:1, title:\"^(Select Folder)$\""
-        "float:1, title:\"^(Open Folder)$\""
+        "float, title:^(Open File)$"
+        "float, title:^(Save File)$"
+        "float, title:^(Save As)$"
+        "float, title:^(Choose Files)$"
+        "float, title:^(Select Folder)$"
+        "float, title:^(Open Folder)$"
       ]
 
       # Polkit authentication
       [
-        "float:1, class:\"^(polkit-gnome-authentication-agent-1)$\""
-        "pin:1, class:\"^(polkit-gnome-authentication-agent-1)$\""
-        "stayfocused:1, class:\"^(polkit-gnome-authentication-agent-1)$\""
-        "size 450 200:1, class:\"^(polkit-gnome-authentication-agent-1)$\""
-        "center:1, class:\"^(polkit-gnome-authentication-agent-1)$\""
-        "dimaround:1, class:\"^(polkit-gnome-authentication-agent-1)$\""
+        "float, class:^(polkit-gnome-authentication-agent-1)$"
+        "pin, class:^(polkit-gnome-authentication-agent-1)$"
+        "stayfocused, class:^(polkit-gnome-authentication-agent-1)$"
+        "size 450 200, class:^(polkit-gnome-authentication-agent-1)$"
+        "center, class:^(polkit-gnome-authentication-agent-1)$"
+        "dimaround, class:^(polkit-gnome-authentication-agent-1)$"
       ]
 
       # Confirmation dialogs
@@ -329,13 +329,13 @@ rec {
 
       # File operations
       [
-        "float:1, title:\"^(File Operation Progress)$\""
-        "pin:1, title:\"^(File Operation Progress)$\""
-        "center:1, title:\"^(File Operation Progress)$\""
+        "float, title:^(File Operation Progress)$"
+        "pin, title:^(File Operation Progress)$"
+        "center, title:^(File Operation Progress)$"
       ]
 
       # Screenshot tools
-      (floatingApp "swappy" 1000 700 ++ [ "opacity 0.95:1, class:\"^(swappy)$\"" ])
+      (floatingApp "swappy" 1000 700 ++ [ "opacity 0.95 0.90, class:^(swappy)$" ])
     ];
 
     # ----------------------------------------
@@ -343,16 +343,16 @@ rec {
     # ----------------------------------------
     performance = [
       # Disable animations for launchers (snappier feel)
-      "noanim:1, class:\"^(wofi)$\""
-      "noanim:1, class:\"^(rofi)$\""
-      "noanim:1, class:\"^(fuzzel)$\""
-      "noanim:1, title:\"^(wlogout)$\""
+      "noanim, class:^(wofi)$"
+      "noanim, class:^(rofi)$"
+      "noanim, class:^(fuzzel)$"
+      "noanim, title:^(wlogout)$"
 
       # Immediate rendering for terminals (reduce input latency)
-      "immediate:1, class:\"^(kitty)$\""
-      "immediate:1, class:\"^(Alacritty)$\""
-      "immediate:1, class:\"^(foot)$\""
-      "immediate:1, class:\"^(wezterm)$\""
+      "immediate, class:^(kitty)$"
+      "immediate, class:^(Alacritty)$"
+      "immediate, class:^(foot)$"
+      "immediate, class:^(wezterm)$"
     ];
 
     # ----------------------------------------
@@ -360,22 +360,22 @@ rec {
     # ----------------------------------------
     gaming = [
       # Steam games (allow tearing, immediate render)
-      "immediate:1, class:\"^(steam_app_).*$\""
-      "fullscreen:1, class:\"^(steam_app_).*$\""
+      "immediate, class:^(steam_app_).*$"
+      "fullscreen, class:^(steam_app_).*$"
 
       # Gamescope
-      "immediate:1, class:\"^(gamescope)$\""
-      "fullscreen:1, class:\"^(gamescope)$\""
+      "immediate, class:^(gamescope)$"
+      "fullscreen, class:^(gamescope)$"
 
       # Lutris
-      "immediate:1, class:\"^(lutris)$\""
+      "immediate, class:^(lutris)$"
 
       # Wine/Proton games
-      "immediate:1, class:\"^(.*\\.exe)$\""
+      "immediate, class:^(.*\\.exe)$"
 
       # Steam client
-      "float:1, class:\"^(steam)$\", title:\"^(Steam - News)$\""
-      "float:1, class:\"^(steam)$\", title:\"^(Friends List)$\""
+      "float, class:^(steam)$, title:^(Steam - News)$"
+      "float, class:^(steam)$, title:^(Friends List)$"
 
       # Heroic Games Launcher
       (floatingApp "heroic" 1200 800)
