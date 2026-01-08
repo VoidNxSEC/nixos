@@ -314,10 +314,10 @@ rec {
       [
         "float 1, match:class ^(polkit-gnome-authentication-agent-1)$"
         "pin 1, match:class ^(polkit-gnome-authentication-agent-1)$"
-        "stayfocused 1, match:class ^(polkit-gnome-authentication-agent-1)$"
+        #"stayfocused 1, match:class ^(polkit-gnome-authentication-agent-1)$"
         "size 450 200, match:class ^(polkit-gnome-authentication-agent-1)$"
         "center 1, match:class ^(polkit-gnome-authentication-agent-1)$"
-        "dimaround 1, match:class ^(polkit-gnome-authentication-agent-1)$"
+        #"dimaround 1, match:class ^(polkit-gnome-authentication-agent-1)$"
       ]
 
       # Confirmation dialogs
@@ -343,10 +343,10 @@ rec {
     # ----------------------------------------
     performance = [
       # Disable animations for launchers (snappier feel)
-      "noanim 1, match:class ^(wofi)$"
-      "noanim 1, match:class ^(rofi)$"
-      "noanim 1, match:class ^(fuzzel)$"
-      "noanim 1, match:title ^(wlogout)$"
+      "animation none, match:class ^(wofi)$"
+      "animation none, match:class ^(rofi)$"
+      "animation none, match:class ^(fuzzel)$"
+      "animation none, match:title ^(wlogout)$"
 
       # Immediate rendering for terminals (reduce input latency)
       "immediate 1, match:class ^(kitty)$"
