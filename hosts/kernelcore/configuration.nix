@@ -131,7 +131,7 @@
     # Custom individual packaging for Gemini/Antigravity
     packages.custom = {
       gemini = {
-        enable = false; # Set to true to enable custom Gemini build
+        enable = true; # Set to true to enable custom Gemini build
         sandbox = true;
         allowedPaths = [
           "$HOME/.gemini"
@@ -145,7 +145,7 @@
       };
 
       antigravity = {
-        enable = false; # Set to true to enable custom Antigravity build
+        enable = true; # Set to true to enable custom Antigravity build
         profile = "performance"; # Options: performance, balanced, minimal
         enableCache = true;
       };
@@ -520,11 +520,11 @@
 
     displayManager = {
       gdm = {
-        enable = true;
+        enable = false;
         wayland = true;
       };
       sddm = {
-        enable = false;
+        enable = true;
         wayland.enable = true;
       };
       defaultSession = "hyprland-uwsm";
