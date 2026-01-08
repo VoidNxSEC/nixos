@@ -718,6 +718,7 @@
     isNormalUser = true;
     description = "kernel";
     shell = pkgs.zsh;
+    group = "kernelcore";
     extraGroups = [
       "networkmanager"
       "wheel"
