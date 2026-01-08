@@ -74,7 +74,7 @@ with lib;
 
         # Code quality
         pre-commit
-        nixfmt-rfc-style
+        nixfmt
         statix # Nix linter
         deadnix # Find dead Nix code
 

@@ -62,7 +62,7 @@ with lib;
 
     (mkIf config.kernelcore.development.nix.enable {
       environment.systemPackages = with pkgs; [
-        nixfmt-rfc-style
+        nixfmt
         nil
         nixd
         nix-tree
