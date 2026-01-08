@@ -70,12 +70,12 @@
     #};
     # Notion → Markdown/JSON exporter for platform migration
     notion-exporter = {
-      url = "git+ssh://git@github.com/VoidNxSEC/notion-exporter";
+      url = "git+ssh://git@github.com/marcosfpina/notion-exporter";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Declarative mini-datacenter with Docker+Nix synergy
     nixos-hyperlab = {
-      url = "git+ssh://git@github.com/VoidNxSEC/nixos-hyperlab";
+      url = "git+ssh://git@github.com/marcosfpina/nixos-hyperlab";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -94,7 +94,7 @@
     # PHANTOM - AI Forensic Intelligence Enterprise Grade Dynamic Pipeline (AI Forensics)
     # ═══════════════════════════════════════════════════════════════
     phantom = {
-      url = "git+ssh://git@github.com/VoidNxSEC/phantom";
+      url = "git+ssh://git@github.com/marcosfpina/phantom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -102,7 +102,7 @@
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
     owasaka = {
-      url = "git+ssh://git@github.com/VoidNxSEC/O.W.A.S.A.K.A.";
+      url = "git+ssh://git@github.com/marcosfpina/O.W.A.S.A.K.A.";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows
