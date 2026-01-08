@@ -416,6 +416,45 @@
     enable = true;
     daemon.enable = true;
     daemon.logLevel = "INFO";
+
+    # Dynamic project profiles - switch with: mcp-context profile <name>
+    profiles = {
+      nixos = {
+        workdir = "/etc/nixos";
+        environment = "production";
+        env = {
+          PROJECT_NAME = "NixOS Configuration";
+          PROJECT_TYPE = "infrastructure";
+        };
+      };
+
+      dev = {
+        workdir = "/home/kernelcore/dev";
+        environment = "development";
+        env = {
+          PROJECT_NAME = "Development";
+          PROJECT_TYPE = "general";
+        };
+      };
+
+      gemini = {
+        workdir = "/var/lib/gemini-agent/dev";
+        environment = "development";
+        env = {
+          PROJECT_NAME = "Gemini Agent";
+          PROJECT_TYPE = "ai-agent";
+        };
+      };
+
+      codex = {
+        workdir = "/var/lib/codex/dev";
+        environment = "development";
+        env = {
+          PROJECT_NAME = "Codex";
+          PROJECT_TYPE = "ai-agent";
+        };
+      };
+    };
   };
 
   kernelcore.tools = {

@@ -47,9 +47,9 @@
     "safe-rebuild-fast" = "safe-nixos-rebuild switch --fast";
     "srf" = "safe-nixos-rebuild switch --fast";
 
-    # Pre-rebuild check
-    "rebuild-check" = "mcp-rebuild-check";
-    "rc" = "mcp-rebuild-check";
+    # Pre-rebuild check (disabled - script not found)
+    # "rebuild-check" = "mcp-rebuild-check";
+    # "rc" = "mcp-rebuild-check";
 
     # ========================================
     # THERMAL MONITORING
@@ -62,8 +62,8 @@
     # Continuous temperature monitoring
     "temp-watch" = "watch -n 2 'sensors | grep -E \"Core|Package|temp\"'";
 
-    # Temperature with threshold alert
-    "temp-alert" = "mcp-thermal-check 75";
+    # Temperature with threshold alert (disabled - script not found)
+    # "temp-alert" = "mcp-thermal-check 75";
 
     # ========================================
     # EVIDENCE MANAGEMENT
