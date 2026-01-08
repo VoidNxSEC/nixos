@@ -870,6 +870,7 @@
       brev-cli
       gnome-console
       zed-editor
+      jetbrains.idea
       rust-analyzer
       rustup
       terraform-providers.carlpett_sops
