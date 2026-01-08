@@ -772,7 +772,6 @@
       brev-cli
       gnome-console
       zed-editor
-      antigravity
       rust-analyzer
       rustup
       terraform-providers.carlpett_sops
@@ -861,6 +860,8 @@
     wireshark
     tshark
     gemini-cli
+    sqlite
+    antigravity
   ];
 
   kernelcore.shell.cli-helpers = {
