@@ -81,6 +81,11 @@ in
         default = "/home/kernelcore/dev";
         description = "Host path for code workspace";
       };
+      hashedPassword = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Hashed password for code-server (use 'code-server --hash' to generate). If null, password auth is disabled.";
+      };
     };
 
     # Proxy container (Caddy/nginx)
@@ -110,6 +115,21 @@ in
         type = types.str;
         default = "/var/lib/postgres-dev";
         description = "Host path for PostgreSQL data";
+      };
+      database = mkOption {
+        type = types.str;
+        default = "devdb";
+        description = "Default database name";
+      };
+      user = mkOption {
+        type = types.str;
+        default = "devuser";
+        description = "Default database user";
+      };
+      passwordFile = mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        description = "Path to file containing database password (optional, for development only)";
       };
     };
   };
@@ -291,8 +311,8 @@ in
             enable = true;
             host = "0.0.0.0";
             port = cfg.code-server.port;
-            auth = "password";
-            hashedPassword = "$argon2i$v=19$m=4096,t=3,p=1$wst5qhbgk0tbviziesbzj5e1$q5fjdwvdjqn+awlrg9iyxopvldxvejnzmxnmhwp1boh5h0s";
+            auth = if cfg.code-server.hashedPassword != null then "password" else "none";
+            hashedPassword = mkIf (cfg.code-server.hashedPassword != null) cfg.code-server.hashedPassword;
           };
 
           environment.systemPackages =
@@ -405,11 +425,19 @@ in
               host  all       all     192.168.210.0/24 trust
               host  all       all     ::1/128          trust
             '';
-            initialScript = pkgs.writeText "init.sql" ''
-              CREATE DATABASE devdb;
-              CREATE USER devuser WITH PASSWORD 'devpass';
-              GRANT ALL PRIVILEGES ON DATABASE devdb TO devuser;
-            '';
+            initialScript =
+              let
+                password =
+                  if cfg.postgres.passwordFile != null then
+                    builtins.readFile cfg.postgres.passwordFile
+                  else
+                    "devpass"; # Default for development only
+              in
+              pkgs.writeText "init.sql" ''
+                CREATE DATABASE ${cfg.postgres.database};
+                CREATE USER ${cfg.postgres.user} WITH PASSWORD '${password}';
+                GRANT ALL PRIVILEGES ON DATABASE ${cfg.postgres.database} TO ${cfg.postgres.user};
+              '';
           };
 
           environment.systemPackages = devCommonPackages ++ [ pkgs.postgresql_16 ];
