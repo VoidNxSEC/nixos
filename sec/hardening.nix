@@ -60,7 +60,7 @@ with lib;
         domain = "*";
         item = "maxlogins";
         type = "hard";
-        value = "3";
+        value = "10";
       }
       {
         domain = "*";
