@@ -641,7 +641,7 @@
     printing.enable = true;
 
     chromiumOrg = {
-      enable = true;
+      enable = false;
       extraArgs = [
         "--force-dark-mode"
         "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,ParallelDownloading"
