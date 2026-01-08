@@ -318,7 +318,7 @@
       ageKeyFile = "/var/lib/sops-nix/key.txt";
     };
 
-    #secrets.api-keys.enable = true;
+    secrets.api-keys.enable = true;
     secrets.aws-bedrock.enable = true;
     secrets.k8s.enable = true;
     secrets.grok.enable = true;
