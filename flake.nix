@@ -145,7 +145,7 @@
       shells = import ./lib/shells.nix { inherit pkgs; };
     in
     {
-      formatter.${system} = pkgs.nixfmt-rfc-style;
+      formatter.${system} = pkgs.nixfmt;
 
       # nix develop .#python, .#cuda, .#infra, etc.
       devShells.${system} = shells;
@@ -170,7 +170,7 @@
       # For full builds use: nix build .#iso or .#vm-image
       checks.${system} = {
         # Format check (fast)
-        fmt = pkgs.runCommand "fmt-check" { buildInputs = [ pkgs.nixfmt-rfc-style ]; } ''
+        fmt = pkgs.runCommand "fmt-check" { buildInputs = [ pkgs.nixfmt ]; } ''
           nixfmt --check ${self}
           touch $out
         '';
