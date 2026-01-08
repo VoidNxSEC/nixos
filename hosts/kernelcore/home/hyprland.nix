@@ -281,20 +281,20 @@
         # AGENT HUB WINDOWS (AI Integration)
         # ========================================
         # Chat window
-        "float:1, class:\"^(agent-hub-chat)$\""
-        "size 1000 700:1, class:\"^(agent-hub-chat)$\""
-        "center:1, class:\"^(agent-hub-chat)$\""
-        "opacity 0.95:1, class:\"^(agent-hub-chat)$\""
+        "float, class:^(agent-hub-chat)$"
+        "size 1000 700, class:^(agent-hub-chat)$"
+        "center, class:^(agent-hub-chat)$"
+        "opacity 0.95 0.90, class:^(agent-hub-chat)$"
 
         # Codex window
-        "float:1, class:\"^(agent-hub-codex)$\""
-        "size 1200 800:1, class:\"^(agent-hub-codex)$\""
-        "center:1, class:\"^(agent-hub-codex)$\""
+        "float, class:^(agent-hub-codex)$"
+        "size 1200 800, class:^(agent-hub-codex)$"
+        "center, class:^(agent-hub-codex)$"
 
         # Gemini window
-        "float:1, class:\"^(agent-hub-gemini)$\""
-        "size 1200 800:1, class:\"^(agent-hub-gemini)$\""
-        "center:1, class:\"^(agent-hub-gemini)$\""
+        "float, class:^(agent-hub-gemini)$"
+        "size 1200 800, class:^(agent-hub-gemini)$"
+        "center, class:^(agent-hub-gemini)$"
       ];
     };
 
