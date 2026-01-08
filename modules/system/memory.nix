@@ -88,9 +88,9 @@ with lib;
       enable = true;
       enableRootSlice = true;
       enableUserSlices = true;
-      extraConfig = {
-        "DefaultMemoryPressureLimit" = "60%";
-        "DefaultMemoryPressureDurationSec" = "20";
+      settings.OOM = {
+        DefaultMemoryPressureLimit = "60%";
+        DefaultMemoryPressureDurationSec = "20";
       };
     };
 
