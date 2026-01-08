@@ -713,7 +713,7 @@
   services.xserver.screenSection = ''
     Option "metamodes" "nvidia-auto-select +0+0 (ForceFullCompositionPipeLIne=On)"
   '';
-
+  users.groups.kernelcore = { };
   users.users.kernelcore = {
     isNormalUser = true;
     description = "kernel";
