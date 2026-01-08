@@ -15,71 +15,15 @@
 
 {
   # ═══════════════════════════════════════════════════════════════
-  # ARGV.JSON - NATIVE ELECTRON CONFIGURATION
+  # ARGV.JSON REMOVED - USE ENVIRONMENT VARIABLES ONLY
   # ═══════════════════════════════════════════════════════════════
-  # Chromium/Electron reads argv.json directly (no command-line parsing)
-  # Syntax: "flag-name": value (NO -- prefix)
+  # All configuration moved to environment variables:
+  #   - Wayland detection: NIXOS_OZONE_WL=1 (set in hyprland.nix)
+  #   - Performance tuning: System-level configuration
+  #
+  # Reason: argv.json flags cause "unknown option" warnings
+  # Solution: Let Chromium/Electron use native Wayland detection
   # ═══════════════════════════════════════════════════════════════
-
-  home-manager.users.kernelcore = {
-    xdg.configFile."Antigravity/argv.json".text = builtins.toJSON {
-      # ═══════════════════════════════════════════════════════════
-      # WAYLAND NATIVE SUPPORT (CRITICAL - Must be FIRST!)
-      # ═══════════════════════════════════════════════════════════
-      # These flags MUST be in argv.json, NOT command line
-      # Otherwise you get "Warning: not in list of known options"
-
-      # Wayland support handled by NIXOS_OZONE_WL=1 (set in hyprland.nix)
-      # Removed: ozone-platform-hint, enable-wayland-ime, wayland-text-input-version
-      # Reason: These flags cause "not in list of known options" warnings
-
-      # ═══════════════════════════════════════════════════════════
-      # MEMORY & PROCESS OPTIMIZATIONS
-      # ═══════════════════════════════════════════════════════════
-      "renderer-process-limit" = 4; # Max 4 renderer processes
-      "process-per-site" = true; # Share processes per domain
-      "disable-dev-shm-usage" = true; # Avoid /dev/shm tmpfs usage
-
-      # ═══════════════════════════════════════════════════════════
-      # CACHE & I/O OPTIMIZATIONS
-      # ═══════════════════════════════════════════════════════════
-      "disk-cache-size" = 104857600; # 100MB disk cache limit
-      "media-cache-size" = 52428800; # 50MB media cache limit
-
-      # ═══════════════════════════════════════════════════════════
-      # GPU ACCELERATION (Intel iGPU Optimized)
-      # ═══════════════════════════════════════════════════════════
-      "disable-gpu" = false; # Keep GPU enabled
-      "disable-software-rasterizer" = true; # Force GPU rasterization
-      "enable-gpu-rasterization" = true; # Use GPU for rendering
-
-      # Hardware video acceleration (VA-API) + Wayland decorations
-      # IMPORTANT: Combine features with comma, no spaces!
-      # Note: UseOzonePlatform removed (handled by NIXOS_OZONE_WL=1)
-      "enable-features" = lib.concatStringsSep "," [
-        "WaylandWindowDecorations" # Native window decorations
-        "VaapiVideoDecodeLinuxGL" # Intel VA-API decode
-        "VaapiVideoEncoder" # Intel VA-API encode
-      ];
-
-      "disable-features" = lib.concatStringsSep "," [
-        "UseChromeOSDirectVideoDecoder" # ChromeOS-specific, not needed
-      ];
-
-      # ═══════════════════════════════════════════════════════════
-      # NETWORK & BACKGROUND OPTIMIZATIONS
-      # ═══════════════════════════════════════════════════════════
-      "disable-backgrounding-occluded-windows" = true; # Don't throttle background tabs
-      "disable-background-timer-throttling" = true; # Keep timers running
-
-      # ═══════════════════════════════════════════════════════════
-      # STABILITY FLAGS (Commented - Uncomment if needed)
-      # ═══════════════════════════════════════════════════════════
-      # "enable-zero-copy" = true;                  # Zero-copy video decode (experimental)
-      # "enable-hardware-overlays" = true;          # Hardware overlays (may cause artifacts)
-      # "ignore-gpu-blocklist" = true;              # Force GPU even if blocklisted
-    };
-  };
 
   # ═══════════════════════════════════════════════════════════════
   # CACHE OPTIMIZATION - TMPFS (from cache-optimization.nix)
