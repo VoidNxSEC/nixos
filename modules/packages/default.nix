@@ -24,5 +24,8 @@
 
     # Extension based | Bwrap rules applied | Hardened
     ./gemini
+
+    # Custom user-defined packages (Gemini/Antigravity custom builds)
+    ./custom
   ];
 }
