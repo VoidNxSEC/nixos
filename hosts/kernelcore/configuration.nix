@@ -8,14 +8,14 @@
 {
 
   kernelcore.electron.enable = false;
-  kernelcore.electron.apps.antigravity = {
-    profile = "performance";
-    configDir = "Antigravity";
-    features.enable = [
-      "VaapiVideoDecodeLinuxGL"
-      "WaylandWindowDecorations"
-    ];
-  };
+  #kernelcore.electron.apps.antigravity = {
+  #profile = "performance";
+  #configDir = "Antigravity";
+  #features.enable = [
+  #"VaapiVideoDecodeLinuxGL"
+  #"WaylandWindowDecorations"
+  #];
+  #};
 
   # Shell configuration - Training session logger
   shell.trainingLogger = {
@@ -126,13 +126,13 @@
 
     packages.zellij.enable = true;
     packages.lynis.enable = true;
-    packages.js.enable = true;
+    packages.js.enable = false;
 
     # Custom individual packaging for Gemini/Antigravity
     packages.custom = {
       gemini = {
         enable = false; # Set to true to enable custom Gemini build
-        sandbox = true;
+        sandbox = false;
         allowedPaths = [
           "$HOME/.gemini"
           "/etc/nixos"
@@ -731,10 +731,10 @@
 
   imports = [ ./specialisations ];
 
-  kernelcore.hyprland.performance = {
-    enable = config.services.hyprland-desktop.enable;
-    mode = "balanced";
-  };
+  #kernelcore.hyprland.performance = {
+    #enable = config.services.hyprland-desktop.enable;
+    #mode = "balanced";
+    #};
 
   systemd.tmpfiles.rules = [
     "d /var/lib/gitea/custom/https 0750 gitea gitea -"
@@ -769,10 +769,10 @@
   hardware.graphics.enable32Bit = true;
 
   modules.audio.videoProduction = {
-    enable = false;
-    enableNVENC = false;
-    fixHeadphoneMute = false;
-    lowLatency = false;
+    enable = true;
+    enableNVENC = true;
+    fixHeadphoneMute = true;
+    lowLatency = true;
   };
 
   services.xserver.screenSection = ''
@@ -925,9 +925,9 @@
     tcpdump
     wireshark
     tshark
-    # gemini-cli
+    gemini-cli
     sqlite
-    # antigravity
+    antigravity
   ];
 
   kernelcore.shell.cli-helpers = {
