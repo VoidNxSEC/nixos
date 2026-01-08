@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.kernelcore.secrets.api-keys;
+  cfg = config.kernelcore.secrets.gcp-ml;
 in
 {
-  options.kernelcore.secrets.api-keys = {
+  options.kernelcore.secrets.gcp-ml = {
     enable = mkEnableOption "Enable decrypted API keys from SOPS";
   };
 
