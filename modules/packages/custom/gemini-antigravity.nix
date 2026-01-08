@@ -90,14 +90,15 @@ in
 
           source = {
             url = "https://github.com/google-gemini/gemini-cli/archive/refs/tags/v0.24.0-preview.0.tar.gz";
-            sha256 = "15a2vcxan1mxxjzad2w5hv12ri04gs1sb1c0lz3jclibzlr5c2s4";
+            sha256 = "sha256-7U8pAMmZ2ypddRBAlMolbLghdihEatLAJ46ZqZoESXg=";
           };
 
           # TODO: Calculate with: prefetch-npm-deps package-lock.json
           # Run in background, will update when ready
-          npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # PLACEHOLDER
+          npmDepsHash = "sha256-GDVoH+Tt70UjqqEh6PjVen3hDOXECfbtX+woeCLR2OQ=";
 
           npmFlags = [ "--legacy-peer-deps" ];
+          makeCacheWritable = true;
 
           nativeBuildInputs = with pkgs; [
             python3

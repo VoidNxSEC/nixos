@@ -31,6 +31,7 @@ let
 
         npmDepsHash = pkg.npmDepsHash;
         npmFlags = pkg.npmFlags;
+        makeCacheWritable = pkg.makeCacheWritable;
 
         nativeBuildInputs =
           with pkgs;
