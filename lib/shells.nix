@@ -66,74 +66,74 @@ let
         pkgs.procps
       ];
       text = ''
-        set -euo pipefail
-        action="''${1:-start}"
-        backend_port="''${2:-8000}"
-        base=".dev/nginx"
-        mkdir -p "$base"
-        pidfile="$base/nginx.pid"
-        ssl_crt="$base/localhost.crt"
-        ssl_key="$base/localhost.key"
-        conf="$base/nginx.conf"
+                set -euo pipefail
+                action="''${1:-start}"
+                backend_port="''${2:-8000}"
+                base=".dev/nginx"
+                mkdir -p "$base"
+                pidfile="$base/nginx.pid"
+                ssl_crt="$base/localhost.crt"
+                ssl_key="$base/localhost.key"
+                conf="$base/nginx.conf"
 
-        if [ "$action" = "start" ]; then
-          # Cert local
-          if [ ! -f "$ssl_crt" ] || [ ! -f "$ssl_key" ]; then
-            echo "[nginx-dev] generating TLS cert via mkcert..."
-            (cd "$base" && ${pkgs.mkcert}/bin/mkcert -key-file localhost.key -cert-file localhost.crt localhost 127.0.0.1 ::1)
-          fi
-          # Config
-          cat > "$conf" <<EOF
-          worker_processes  1;
-          events { worker_connections  1024; }
-          http {
-            sendfile on;
-            # Rate limit básica: 10 req/s com burst 20
-            limit_req_zone \$binary_remote_addr zone=req_limit:10m rate=10r/s;
-            # TLS moderno
-            ssl_protocols TLSv1.2 TLSv1.3;
-            ssl_prefer_server_ciphers on;
+                if [ "$action" = "start" ]; then
+                  # Cert local
+                  if [ ! -f "$ssl_crt" ] || [ ! -f "$ssl_key" ]; then
+                    echo "[nginx-dev] generating TLS cert via mkcert..."
+                    (cd "$base" && ${pkgs.mkcert}/bin/mkcert -key-file localhost.key -cert-file localhost.crt localhost 127.0.0.1 ::1)
+                  fi
+                  # Config
+                  cat > "$conf" <<EOF
+                  worker_processes  1;
+                  events { worker_connections  1024; }
+                  http {
+                    sendfile on;
+                    # Rate limit básica: 10 req/s com burst 20
+                    limit_req_zone \$binary_remote_addr zone=req_limit:10m rate=10r/s;
+                    # TLS moderno
+                    ssl_protocols TLSv1.2 TLSv1.3;
+                    ssl_prefer_server_ciphers on;
 
-            server {
-              listen 8443 ssl;
-              server_name localhost;
+                    server {
+                      listen 8443 ssl;
+                      server_name localhost;
 
-              ssl_certificate     $ssl_crt;
-              ssl_certificate_key $ssl_key;
+                      ssl_certificate     $ssl_crt;
+                      ssl_certificate_key $ssl_key;
 
-              # Cabeçalhos de segurança básicos
-              add_header X-Content-Type-Options nosniff always;
-              add_header X-Frame-Options DENY always;
-              add_header Referrer-Policy no-referrer-when-downgrade always;
-              add_header Content-Security-Policy "default-src 'self' https: http: data: blob: 'unsafe-inline' 'unsafe-eval'" always;
+                      # Cabeçalhos de segurança básicos
+                      add_header X-Content-Type-Options nosniff always;
+                      add_header X-Frame-Options DENY always;
+                      add_header Referrer-Policy no-referrer-when-downgrade always;
+                      add_header Content-Security-Policy "default-src 'self' https: http: data: blob: 'unsafe-inline' 'unsafe-eval'" always;
 
-              location / {
-                limit_req zone=req_limit burst=20 nodelay;
-                proxy_set_header Host \$host;
-                proxy_set_header X-Real-IP \$remote_addr;
-                proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto https;
-                proxy_pass http://127.0.0.1:${"$"}{backend_port};
-              }
-            }
-          }
-          EOF
+                      location / {
+                        limit_req zone=req_limit burst=20 nodelay;
+                        proxy_set_header Host \$host;
+                        proxy_set_header X-Real-IP \$remote_addr;
+                        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                        proxy_set_header X-Forwarded-Proto https;
+                        proxy_pass http://127.0.0.1:${"$"}{backend_port};
+                      }
+                    }
+                  }
+        EOF
 
-          echo "[nginx-dev] starting https://localhost:8443 -> 127.0.0.1:$backend_port"
-          ${pkgs.nginx}/bin/nginx -p "$(pwd)" -c "$conf" -g "pid $pidfile;"
-          echo "[nginx-dev] PID: $(cat "$pidfile")"
-        elif [ "$action" = "stop" ]; then
-          if [ -f "$pidfile" ]; then
-            kill "$(cat "$pidfile")" || true
-            rm -f "$pidfile"
-            echo "[nginx-dev] stopped"
-          else
-            echo "[nginx-dev] not running"
-          fi
-        else
-          echo "usage: nginx-dev start|stop [backend_port]"
-          exit 1
-        fi
+                  echo "[nginx-dev] starting https://localhost:8443 -> 127.0.0.1:$backend_port"
+                  ${pkgs.nginx}/bin/nginx -p "$(pwd)" -c "$conf" -g "pid $pidfile;"
+                  echo "[nginx-dev] PID: $(cat "$pidfile")"
+                elif [ "$action" = "stop" ]; then
+                  if [ -f "$pidfile" ]; then
+                    kill "$(cat "$pidfile")" || true
+                    rm -f "$pidfile"
+                    echo "[nginx-dev] stopped"
+                  else
+                    echo "[nginx-dev] not running"
+                  fi
+                else
+                  echo "usage: nginx-dev start|stop [backend_port]"
+                  exit 1
+                fi
       '';
     };
   };
