@@ -118,7 +118,7 @@ in
         findutils
         sops # for secrets decryption
         yq-go # for YAML parsing
-        nixfmt-rfc-style # for nix fmt
+        nixfmt # for nix fmt
         age # for SOPS AGE encryption
       ];
 
