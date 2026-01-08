@@ -33,17 +33,17 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1767094093,
-        "narHash": "sha256-hj7t04sVgRUPveajeG6Kmj33CBVdotQITRF+LxR8oQ0=",
+        "lastModified": 1767845868,
+        "narHash": "sha256-Pl5ClpXs8kH5DjIFcQhgsAEjZ00Vj1Jw5IWE2iHlG+U=",
         "ref": "refs/heads/main",
-        "rev": "713c59d2b5a157e3619dc122305ea6f9b4dd10d0",
-        "revCount": 2,
+        "rev": "74f1308fa7c52407184447670606c98b242f5650",
+        "revCount": 4,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/ai-agent-os"
+        "url": "ssh://git@github.com/marcosfpina/ai-agent-os"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/ai-agent-os"
+        "url": "ssh://git@github.com/marcosfpina/ai-agent-os"
       }
     },
     "aquamarine": {
@@ -93,11 +93,11 @@
         "rev": "6140c1918f00dcd2ffe0bcffff552f0f4908a722",
         "revCount": 7,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/arch-analyzer"
+        "url": "ssh://git@github.com/VoidNxSEC/arch-analyzer"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/arch-analyzer"
+        "url": "ssh://git@github.com/VoidNxSEC/arch-analyzer"
       }
     },
     "arion": {
@@ -110,11 +110,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1765839957,
-        "narHash": "sha256-c2k30kehMWLEQpO41OhyDruj1S7RsyBlgx4yHlXKVa4=",
+        "lastModified": 1767581175,
+        "narHash": "sha256-d9ztdDD4EIbsGbERzXhg6Vlo7zMChjpZci4IrS0hSAY=",
         "owner": "hercules-ci",
         "repo": "arion",
-        "rev": "9ff7acc2c00a40ecf24894592ea5019439bb9e13",
+        "rev": "3534dd9d0f32c7dbee4f87378d4c95ffcd8838c5",
         "type": "github"
       },
       "original": {
@@ -191,11 +191,11 @@
         "rev": "4babc7a3be3235065174973da37fb54557f4ce43",
         "revCount": 4,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/cognitive-vault"
+        "url": "ssh://git@github.com/VoidNxSEC/cognitive-vault"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/cognitive-vault"
+        "url": "ssh://git@github.com/VoidNxSEC/cognitive-vault"
       }
     },
     "crane": {
@@ -243,14 +243,15 @@
         "flake-parts": "flake-parts_3",
         "git-hooks": "git-hooks",
         "nix": "nix",
+        "nixd": "nixd",
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1767107238,
-        "narHash": "sha256-ho9wWvA2WnS5Kv2weGDNhwi13n2d9QrtiywRFWb0q+c=",
+        "lastModified": 1767816354,
+        "narHash": "sha256-amiVbJDC+H8DJqZmguGQg8KEEtG6HFjsargXmvmrmQk=",
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "a949ae71fdbcdbdc76c0b191e1db9d3e0d8c86eb",
+        "rev": "e63ad676a7dc73a3ff2f2428f7c01cdd8aa014e7",
         "type": "github"
       },
       "original": {
@@ -334,11 +335,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1763759067,
-        "narHash": "sha256-LlLt2Jo/gMNYAwOgdRQBrsRoOz7BPRkzvNaI/fzXi2Q=",
+        "lastModified": 1765835352,
+        "narHash": "sha256-XswHlK/Qtjasvhd1nOa1e8MgZ8GS//jBoTqWtrS1Giw=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "2cccadc7357c0ba201788ae99c4dfa90728ef5e0",
+        "rev": "a34fae9c08a15ad73f295041fec82323541400a9",
         "type": "github"
       },
       "original": {
@@ -366,6 +367,21 @@
       "original": {
         "owner": "hercules-ci",
         "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-root": {
+      "locked": {
+        "lastModified": 1723604017,
+        "narHash": "sha256-rBtQ8gg+Dn4Sx/s+pvjdq3CB2wQNzx9XGFq/JVGCB6k=",
+        "owner": "srid",
+        "repo": "flake-root",
+        "rev": "b759a56851e10cb13f6b8e5698af7b59c44be26e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "flake-root",
         "type": "github"
       }
     },
@@ -1105,11 +1121,11 @@
         "rev": "0c6004c5153ca4b068c3f02861b7f22ed13449aa",
         "revCount": 2,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/i915-governor"
+        "url": "ssh://git@github.com/VoidNxSEC/i915-governor"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/i915-governor"
+        "url": "ssh://git@github.com/VoidNxSEC/i915-governor"
       }
     },
     "microvm": {
@@ -1121,11 +1137,11 @@
         "spectrum": "spectrum"
       },
       "locked": {
-        "lastModified": 1766664413,
-        "narHash": "sha256-zP/5t+ZDVSjflXalMu8aN5vCb2HuoNMRGeP3FzLKJOM=",
+        "lastModified": 1767412754,
+        "narHash": "sha256-Rl54gtnxxjYzfZFCanu5CzgG3EQQc4AgAoatFL94jqg=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "a4c90d904703096b51abcb5d09417d98604c5f30",
+        "rev": "f4ae3dc4ee4c9b585b03c36bd73ef68d2a8eb3a9",
         "type": "github"
       },
       "original": {
@@ -1149,11 +1165,11 @@
         "rev": "7da346aa48db38fbfa4f371a8ea68ed93ad2c1bd",
         "revCount": 3,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/ml-offload-api"
+        "url": "ssh://git@github.com/VoidNxSEC/ml-offload-api"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/ml-offload-api"
+        "url": "ssh://git@github.com/VoidNxSEC/ml-offload-api"
       }
     },
     "niri": {
@@ -1246,16 +1262,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1761648602,
-        "narHash": "sha256-H97KSB/luq/aGobKRuHahOvT1r7C03BgB6D5HBZsbN8=",
+        "lastModified": 1766922625,
+        "narHash": "sha256-O0wExzdYqSNqbPYCQhUWeoKlDa7q6wxhuWiHolxqdl8=",
         "owner": "cachix",
         "repo": "nix",
-        "rev": "3e5644da6830ef65f0a2f7ec22830c46285bfff6",
+        "rev": "c62c4bdb6673871ae5cdc51c498df6292d5169aa",
         "type": "github"
       },
       "original": {
         "owner": "cachix",
-        "ref": "devenv-2.30.6",
+        "ref": "devenv-2.32",
         "repo": "nix",
         "type": "github"
       }
@@ -1287,16 +1303,45 @@
         ]
       },
       "locked": {
-        "lastModified": 1766388657,
-        "narHash": "sha256-vdOuy2pid2/DasUgb08lDOswdPJkN5qjXfBYItVy/R4=",
+        "lastModified": 1767430085,
+        "narHash": "sha256-SiXJ6xv4pS2MDUqfj0/mmG746cGeJrMQGmoFgHLS25Y=",
         "owner": "nlewo",
         "repo": "nix2container",
-        "rev": "93aa7880805df3c8d3b9008923c4c3b47e2bd70b",
+        "rev": "66f4b8a47e92aa744ec43acbb5e9185078983909",
         "type": "github"
       },
       "original": {
         "owner": "nlewo",
         "repo": "nix2container",
+        "type": "github"
+      }
+    },
+    "nixd": {
+      "inputs": {
+        "flake-parts": [
+          "nixos-hyperlab",
+          "devenv",
+          "flake-parts"
+        ],
+        "flake-root": "flake-root",
+        "nixpkgs": [
+          "nixos-hyperlab",
+          "devenv",
+          "nixpkgs"
+        ],
+        "treefmt-nix": "treefmt-nix"
+      },
+      "locked": {
+        "lastModified": 1763964548,
+        "narHash": "sha256-JTRoaEWvPsVIMFJWeS4G2isPo15wqXY/otsiHPN0zww=",
+        "owner": "nix-community",
+        "repo": "nixd",
+        "rev": "d4bf15e56540422e2acc7bc26b20b0a0934e3f5e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixd",
         "type": "github"
       }
     },
@@ -1331,17 +1376,17 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1767108732,
-        "narHash": "sha256-IU8Yd7vGeTwg4aht3gq3H38n6HMSHyxNaNPkP+ADMec=",
+        "lastModified": 1767846245,
+        "narHash": "sha256-qG798M1kIwTdwnnQrRTHk33axROK1h4yp/OYGO7Q680=",
         "ref": "refs/heads/main",
-        "rev": "676390f483c728a1eeef02d865ca99b425a8e418",
-        "revCount": 10,
+        "rev": "59048e1a319db45880b7ce7424ce64d076df93b0",
+        "revCount": 11,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/nixos-hyperlab"
+        "url": "ssh://git@github.com/marcosfpina/nixos-hyperlab"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/nixos-hyperlab"
+        "url": "ssh://git@github.com/marcosfpina/nixos-hyperlab"
       }
     },
     "nixpkgs": {
@@ -1551,11 +1596,11 @@
         "rev": "d021a1caa04837b210384b1bf2db1c93b9c6d127",
         "revCount": 3,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/notion-exporter"
+        "url": "ssh://git@github.com/marcosfpina/notion-exporter"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/notion-exporter"
+        "url": "ssh://git@github.com/marcosfpina/notion-exporter"
       }
     },
     "owasaka": {
@@ -1572,11 +1617,11 @@
         "rev": "d763a565505e3010f02eb87039ae483c93ff02be",
         "revCount": 13,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/O.W.A.S.A.K.A."
+        "url": "ssh://git@github.com/marcosfpina/O.W.A.S.A.K.A."
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/O.W.A.S.A.K.A."
+        "url": "ssh://git@github.com/marcosfpina/O.W.A.S.A.K.A."
       }
     },
     "phantom": {
@@ -1595,11 +1640,11 @@
         "rev": "4d1dd2bcc1585e55467284fab6cd05e230274328",
         "revCount": 31,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/phantom"
+        "url": "ssh://git@github.com/marcosfpina/phantom"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/phantom"
+        "url": "ssh://git@github.com/marcosfpina/phantom"
       }
     },
     "pre-commit-hooks": {
@@ -1660,11 +1705,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767062690,
-        "narHash": "sha256-hfKAOJQYbR0mlwabV56tOlEMUgESRroHqlDpX0hwOpU=",
+        "lastModified": 1767840362,
+        "narHash": "sha256-ZtsFqUhilubohNZ1TgpQIFsi4biZTwRH9rjZsDRDik8=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "943d2d0bf1b86267287aff826ebd1138d83113b7",
+        "rev": "d159ea1fc321c60f88a616ac28bab660092a227d",
         "type": "github"
       },
       "original": {
@@ -1717,11 +1762,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767062690,
-        "narHash": "sha256-hfKAOJQYbR0mlwabV56tOlEMUgESRroHqlDpX0hwOpU=",
+        "lastModified": 1767840362,
+        "narHash": "sha256-ZtsFqUhilubohNZ1TgpQIFsi4biZTwRH9rjZsDRDik8=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "943d2d0bf1b86267287aff826ebd1138d83113b7",
+        "rev": "d159ea1fc321c60f88a616ac28bab660092a227d",
         "type": "github"
       },
       "original": {
@@ -1784,11 +1829,11 @@
         "rev": "f49f86bf8ee749ad1add87f9ae72334d068e6f90",
         "revCount": 14,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/securellm-bridge"
+        "url": "ssh://git@github.com/VoidNxSEC/securellm-bridge"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/securellm-bridge"
+        "url": "ssh://git@github.com/VoidNxSEC/securellm-bridge"
       }
     },
     "securellm-mcp": {
@@ -1861,11 +1906,11 @@
         "rev": "0b4e7361e5b4c2031c427bbfbf08c9842d88b644",
         "revCount": 3,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/spider-nix"
+        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/spider-nix"
+        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
       }
     },
     "swissknife": {
@@ -1882,11 +1927,11 @@
         "rev": "ef79b29a6e060439f5ad69bd1915cb824b216900",
         "revCount": 16,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/swissknife"
+        "url": "ssh://git@github.com/VoidNxSEC/swissknife"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/swissknife"
+        "url": "ssh://git@github.com/VoidNxSEC/swissknife"
       }
     },
     "systems": {
@@ -2144,6 +2189,29 @@
         "type": "github"
       }
     },
+    "treefmt-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixos-hyperlab",
+          "devenv",
+          "nixd",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1734704479,
+        "narHash": "sha256-MMi74+WckoyEWBRcg/oaGRvXC9BVVxDZNRMpL+72wBI=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "65712f5af67234dad91a5a4baee986a8b62dbf8f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
     "vmctl": {
       "inputs": {
         "flake-utils": "flake-utils_15",
@@ -2152,17 +2220,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1767108761,
-        "narHash": "sha256-No4nbXdWNsQag1hcLM+coKq5vNX3Rgr3o1AP5zm973M=",
+        "lastModified": 1765536726,
+        "narHash": "sha256-6t+T8lb8HwEJfs3x70AXlqdAXhswqTX2LJjxToMf0t8=",
         "ref": "refs/heads/main",
-        "rev": "0abeed7565420548ea70799fdc1ae5bf231aee47",
-        "revCount": 2,
+        "rev": "bd871ace04f4f91768833276e13a42fd86909fa5",
+        "revCount": 1,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/vmctl"
+        "url": "ssh://git@github.com/VoidNxSEC/vmctl"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/vmctl"
+        "url": "ssh://git@github.com/VoidNxSEC/vmctl"
       }
     },
     "xdph": {
