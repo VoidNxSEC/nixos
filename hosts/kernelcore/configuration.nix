@@ -128,6 +128,29 @@
     packages.lynis.enable = true;
     packages.js.enable = true;
 
+    # Custom individual packaging for Gemini/Antigravity
+    packages.custom = {
+      gemini = {
+        enable = false; # Set to true to enable custom Gemini build
+        sandbox = true;
+        allowedPaths = [
+          "$HOME/.gemini"
+          "/etc/nixos"
+          "$HOME/dev"
+        ];
+        blockHardware = [
+          "camera"
+          "bluetooth"
+        ];
+      };
+
+      antigravity = {
+        enable = false; # Set to true to enable custom Antigravity build
+        profile = "performance"; # Options: performance, balanced, minimal
+        enableCache = true;
+      };
+    };
+
     hardware.wifi-optimization.enable = true;
 
     development = {
