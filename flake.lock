@@ -1801,13 +1801,14 @@
       "locked": {
         "lastModified": 1767842759,
         "narHash": "sha256-429ckwCjUk6/mX8eyBhCVO71IJBkv1eIvn2p+BIiZVs=",
-        "ref": "refs/heads/main",
+        "ref": "main",
         "rev": "bafbe08177b9d626babaa4c08c462e53b2dd5ab9",
         "revCount": 34,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
       },
       "original": {
+        "ref": "main",
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
       }
