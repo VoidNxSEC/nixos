@@ -29,7 +29,7 @@
     # ═══════════════════════════════════════════════════════════════
     # ML Offload API - Multi-backend ML orchestration
     ml-offload-api = {
-      url = "git+file:/home/kernelcore/dev/low-level/ml-offload-api";
+      url = "git+ssh://git@github.com/VoidNxSEC/ml-offload-api";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-mcp = {
@@ -37,31 +37,31 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-bridge = {
-      url = "git+file:/home/kernelcore/dev/low-level/securellm-bridge";
+      url = "git+ssh://git@github.com/VoidNxSEC/securellm-bridge";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cognitive-vault = {
-      url = "git+file:/home/kernelcore/dev/low-level/cognitive-vault";
+      url = "git+ssh://git@github.com/VoidNxSEC/cognitive-vault";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vmctl = {
-      url = "git+file:/home/kernelcore/dev/low-level/vmctl";
+      url = "git+ssh://git@github.com/VoidNxSEC/vmctl";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     spider-nix = {
-      url = "git+file:/home/kernelcore/dev/low-level/spider-nix";
+      url = "git+ssh://git@github.com/VoidNxSEC/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
-      url = "git+file:/home/kernelcore/dev/low-level/i915-governor";
+      url = "git+ssh://git@github.com/VoidNxSEC/i915-governor";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     swissknife = {
-      url = "git+file:/home/kernelcore/dev/low-level/swissknife";
+      url = "git+ssh://git@github.com/VoidNxSEC/swissknife";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     arch-analyzer = {
-      url = "git+file:/home/kernelcore/dev/low-level/arch-analyzer";
+      url = "git+ssh://git@github.com/VoidNxSEC/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     #docker-hub = {
@@ -70,12 +70,12 @@
     #};
     # Notion → Markdown/JSON exporter for platform migration
     notion-exporter = {
-      url = "git+file:/home/kernelcore/dev/low-level/notion-exporter";
+      url = "git+ssh://git@github.com/VoidNxSEC/notion-exporter";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Declarative mini-datacenter with Docker+Nix synergy
     nixos-hyperlab = {
-      url = "git+file:/home/kernelcore/dev/low-level/nixos-hyperlab";
+      url = "git+ssh://git@github.com/VoidNxSEC/nixos-hyperlab";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -87,14 +87,14 @@
 
     # Native OS-level monitoring agent in Rust with Hyprland integration
     ai-agent-os = {
-      url = "git+file:/home/kernelcore/dev/low-level/ai-agent-os";
+      url = "git+ssh://git@github.com/marcosfpina/ai-agent-os";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # ═══════════════════════════════════════════════════════════════
     # PHANTOM - AI Forensic Intelligence Enterprise Grade Dynamic Pipeline (AI Forensics)
     # ═══════════════════════════════════════════════════════════════
     phantom = {
-      url = "git+file:/home/kernelcore/dev/low-level/phantom";
+      url = "git+ssh://git@github.com/VoidNxSEC/phantom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -102,7 +102,7 @@
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
     owasaka = {
-      url = "git+file:/home/kernelcore/dev/low-level/O.W.A.S.A.K.A.";
+      url = "git+ssh://git@github.com/VoidNxSEC/O.W.A.S.A.K.A.";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows
