@@ -196,7 +196,8 @@
             # ═══════════════════════════════════════════════════════════
             {
               nixpkgs.overlays = overlays ++ [
-                inputs.hyprland.overlays.default # Official Hyprland overlay
+                # TEMPORARILY DISABLED: Testing if Hyprland overlay breaks Electron/Chromium apps
+                # inputs.hyprland.overlays.default # Official Hyprland overlay
                 # Niri overlay not needed - module provides package
                 (final: prev: {
                   securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
