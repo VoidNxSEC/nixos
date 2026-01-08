@@ -64,6 +64,12 @@ let
           description = "Extra flags for npm install";
         };
 
+        makeCacheWritable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Whether to make the npm cache writable (fixes some ENOTCACHED errors)";
+        };
+
         nativeBuildInputs = mkOption {
           type = types.listOf types.package;
           default = [ ];
