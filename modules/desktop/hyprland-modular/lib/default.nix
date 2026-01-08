@@ -124,7 +124,7 @@ rec {
   # ==========================================
 
   # Build a complete window rule set for an application
-  # appRule { class = "firefox"; opacity = 0.98; } => [ "opacity 0.98 0.95, class:^(firefox)$" ]
+  # New syntax: "rule:1, selector" or "rule value:1, selector"
   appRule =
     {
       class ? null,
@@ -145,27 +145,25 @@ rec {
     let
       selector =
         if class != null then
-          "class:^(${class})$"
+          "class:\"^(${class})$\""
         else if title != null then
-          "title:^(${title})$"
+          "title:\"^(${title})$\""
         else
           throw "appRule requires either class or title";
 
       rules = lib.flatten [
-        (lib.optional (
-          opacity != null
-        ) "opacity ${toString opacity} ${toString (opacity - 0.03)}, ${selector}")
-        (lib.optional float "float, ${selector}")
-        (lib.optional (size != null) "size ${size}, ${selector}")
-        (lib.optional center "center, ${selector}")
-        (lib.optional pin "pin, ${selector}")
-        (lib.optional (workspace != null) "workspace ${toString workspace} silent, ${selector}")
-        (lib.optional (animation != null) "animation ${animation}, ${selector}")
-        (lib.optional immediate "immediate, ${selector}")
-        (lib.optional noanim "noanim, ${selector}")
-        (lib.optional stayfocused "stayfocused, ${selector}")
-        (lib.optional dimaround "dimaround, ${selector}")
-        (map (e: "${e}, ${selector}") extra)
+        (lib.optional (opacity != null) "opacity ${toString opacity}:1, ${selector}")
+        (lib.optional float "float:1, ${selector}")
+        (lib.optional (size != null) "size ${size}:1, ${selector}")
+        (lib.optional center "center:1, ${selector}")
+        (lib.optional pin "pin:1, ${selector}")
+        (lib.optional (workspace != null) "workspace ${toString workspace} silent:1, ${selector}")
+        (lib.optional (animation != null) "animation ${animation}:1, ${selector}")
+        (lib.optional immediate "immediate:1, ${selector}")
+        (lib.optional noanim "noanim:1, ${selector}")
+        (lib.optional stayfocused "stayfocused:1, ${selector}")
+        (lib.optional dimaround "dimaround:1, ${selector}")
+        (map (e: "${e}:1, ${selector}") extra)
       ];
     in
     rules;
