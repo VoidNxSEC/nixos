@@ -723,7 +723,7 @@ in
 
         # Window rules
         (lib.mkIf cfg.windowRules.enable {
-          windowrulev2 = lib.flatten [
+          windowrule = lib.flatten [
             (rules.resolveCategories cfg.windowRules.categories)
             cfg.windowRules.extra
           ];
