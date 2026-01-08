@@ -85,27 +85,29 @@ in
         enable = true;
 
         packages.gemini-cli-custom = {
+
           enable = true;
+
           version = "0.24.0-preview.0";
 
           source = {
-            url = "https://registry.npmjs.org/@google/gemini-cli/-/gemini-cli-0.24.0-preview.0.tgz";
-            sha256 = "1jhznsrh7209ylmfm83dbs8w1askxayk140yga63bna4bzn2n0xc";
-          };
 
-          lockfile = pkgs.fetchurl {
-            url = "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/package-lock.json";
-            sha256 = "1j2nv2x69vga6nq5wrfzv3xpdf8rgndyb4hczzk1ying9jvxjm4k";
+            url = "https://github.com/google-gemini/gemini-cli/archive/refs/tags/v0.24.0-preview.0.tar.gz";
+
+            sha256 = "sha256-7U8pAMmZ2ypddRBAlMolbLghdihEatLAJ46ZqZoESXg=";
+
           };
 
           # TODO: Calculate with: prefetch-npm-deps package-lock.json
+
           # Run in background, will update when ready
+
           npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # PLACEHOLDER
 
-          npmFlags = [
-            "--legacy-peer-deps"
-            "--omit=optional"
-          ];
+          npmWorkspace = "packages/cli";
+
+          npmFlags = [ "--legacy-peer-deps" ];
+
           makeCacheWritable = true;
 
           nativeBuildInputs = with pkgs; [
