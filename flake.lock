@@ -1799,17 +1799,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1767807944,
-        "narHash": "sha256-zXBdOU5kfbDGDlU/BNJa7ArO63VYSt6ZqsHTR5wC0lU=",
+        "lastModified": 1767842759,
+        "narHash": "sha256-429ckwCjUk6/mX8eyBhCVO71IJBkv1eIvn2p+BIiZVs=",
         "ref": "refs/heads/main",
-        "rev": "b8ae9cd9c797cf4074720414e8080e8ae207309f",
-        "revCount": 33,
+        "rev": "bafbe08177b9d626babaa4c08c462e53b2dd5ab9",
+        "revCount": 34,
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/securellm-mcp"
+        "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
       },
       "original": {
         "type": "git",
-        "url": "file:/home/kernelcore/dev/low-level/securellm-mcp"
+        "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
       }
     },
     "sops-nix": {
