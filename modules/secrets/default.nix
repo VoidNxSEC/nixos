@@ -2,7 +2,7 @@
 { ... }:
 {
   imports = [
-    ./api-keys.nix
+    ./gcp-ml.nix
     ./aws-bedrock.nix
     ./k8s.nix
     ./sops-config.nix
