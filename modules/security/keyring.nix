@@ -55,10 +55,10 @@ in
 
     security.pam.services = mkIf cfg.autoUnlock {
       login.enableGnomeKeyring = true;
+      gdm.enableGnomeKeyring = true;
+      gdm-password.enableGnomeKeyring = true;
       sddm.enableGnomeKeyring = true;
       lightdm.enableGnomeKeyring = true;
-      # For any display manager
-      greetd.enableGnomeKeyring = true;
     };
 
     # ========================================================================

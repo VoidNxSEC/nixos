@@ -447,7 +447,7 @@
     };
 
     greetd = {
-      enable = true;
+      enable = false;
       settings = {
         default_session = {
           command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'";
@@ -457,12 +457,15 @@
     };
 
     displayManager = {
-      gdm.enable = false;
+      gdm = {
+        enable = true;
+        wayland = true;
+      };
       sddm = {
         enable = false;
         wayland.enable = true;
       };
-      defaultSession = "hyprland";
+      defaultSession = "hyprland-uwsm";
     };
 
     hyprland-desktop = {
@@ -887,17 +890,6 @@
         ''
     }/acpi_override.cpio"
   ];
-
-  # CORRIGIDO: StandardInput (estava com typo 'Standart')
-  systemd.services.greetd.serviceConfig = {
-    Type = "idle";
-    StandardInput = "tty";
-    StandardOutput = "tty";
-    StandardError = "journal";
-    TTYReset = true;
-    TTYVHangup = true;
-    TTYVTDisallocate = true;
-  };
 
   programs.zsh.enable = true;
 
