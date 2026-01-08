@@ -290,6 +290,44 @@
         fi
       '';
     };
+
+    # Open file script
+    ".config/swappy/scripts/open-file.sh" = {
+      executable = true;
+      text = ''
+        #!/usr/bin/env bash
+        # ============================================
+        # Open File in Swappy
+        # Uses: zenity for file picking
+        # ============================================
+
+        FILE=$(${pkgs.zenity}/bin/zenity --file-selection --title="Open Image in Swappy" --file-filter="Images | *.png *.jpg *.jpeg *.webp *.svg")
+
+        if [ -n "$FILE" ]; then
+          ${pkgs.swappy}/bin/swappy -f "$FILE"
+        fi
+      '';
+    };
+  };
+
+  # Desktop entry for opening files in Swappy
+  xdg.desktopEntries."swappy-open" = {
+    name = "Swappy Editor";
+    genericName = "Image Editor";
+    comment = "Open image file in Swappy";
+    icon = "swappy";
+    exec = "${config.home.homeDirectory}/.config/swappy/scripts/open-file.sh";
+    terminal = false;
+    categories = [
+      "Graphics"
+      "Utility"
+    ];
+    mimeType = [
+      "image/png"
+      "image/jpeg"
+      "image/webp"
+      "image/svg+xml"
+    ];
   };
 
   # Ensure screenshots directory exists
