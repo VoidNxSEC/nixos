@@ -11,7 +11,9 @@
       "Bash(ps:*)",
       "Bash(top:*)",
       "Bash(chmod:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(ls:*)",
+      "Bash(xargs:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
