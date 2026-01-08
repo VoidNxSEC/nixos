@@ -128,6 +128,21 @@ in
         owner = "root";
         group = "root";
       };
+
+      "GCP_PROJECT_ID" = {
+        sopsFile = ../../secrets/gcp-ml.yaml;
+        mode = "0400";
+        owner = "root";
+        group = "root";
+      };
+
+      "GCP_LOCATION" = {
+        sopsFile = ../../secrets/gcp-ml.yaml;
+        mode = "0400";
+        owner = "root";
+        group = "root";
+      };
+
     };
 
     # Helper script to load API keys into environment
@@ -149,7 +164,8 @@ in
         export GROQ_PROJECT_ID="$(cat /run/secrets/groq_project_id 2>/dev/null || echo "")"
         export NVIDIA_API_KEY="$(cat /run/secrets/nvidia_api_key 2>/dev/null || echo "")"
         export GITHUB_TOKEN="$(cat /run/secrets/github_token 2>/dev/null || echo "")"
-
+        export GCP_PROJECT_ID="$(cat /run/secrets/GCP_PROJECT_ID 2>/dev/null || echo "")"
+        export GCP_LOCATION="$(cat /run/secrets/GCP_LOCATION 2>/dev/null || echo "")"
         echo "✓ API keys loaded into environment"
         echo "  - ANTHROPIC_API_KEY: ''${ANTHROPIC_API_KEY:0:15}..."
         echo "  - OPENAI_API_KEY: ''${OPENAI_API_KEY:0:15}..."
@@ -163,7 +179,7 @@ in
     programs.bash.interactiveShellInit = mkDefault ''
       # Auto-load API keys for interactive sessions (optional)
       # Uncomment to automatically load on shell start:
-      # source /etc/load-api-keys.sh 2>/dev/null
+      source /etc/load-api-keys.sh 2>/dev/null
     '';
   };
 }
