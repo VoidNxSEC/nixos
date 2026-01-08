@@ -6,7 +6,7 @@
 }:
 
 {
-  networking.hostName = "nx";
+  networking.hostName = lib.mkForce "nx";
   networking.networkmanager.enable = true;
   networking.firewall = {
     enable = true;
