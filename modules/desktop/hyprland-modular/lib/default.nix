@@ -201,11 +201,15 @@ rec {
 
         (lib.optional immediate "immediate 1, ${selectors}")
 
-        (lib.optional noanim "noanim 1, ${selectors}")
+        # noanim replaced by animation none
 
-        (lib.optional stayfocused "stayfocused 1, ${selectors}")
+        (lib.optional noanim "animation none, ${selectors}")
 
-        (lib.optional dimaround "dimaround 1, ${selectors}")
+        # stayfocused and dimaround removed (invalid field types in Hyprland 0.53)
+
+        #(lib.optional stayfocused "stayfocused 1, ${selectors}")
+
+        #(lib.optional dimaround "dimaround 1, ${selectors}")
 
         (map (e: "${e}, ${selectors}") extra)
 
@@ -232,9 +236,9 @@ rec {
       title = selector;
       float = true;
       pin = true;
-      stayfocused = true;
       center = true;
-      dimaround = true;
+      # stayfocused = true; # Invalid in Hyprland 0.53
+      # dimaround = true;   # Invalid in Hyprland 0.53
     };
 
   # ==========================================
