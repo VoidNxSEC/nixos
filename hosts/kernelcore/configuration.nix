@@ -195,6 +195,38 @@
         enableNvidia = true;
       };
       nixos.enable = false;
+
+      # ML/AI Containers
+      ml = {
+        enable = true;
+
+        # Ollama with llama.cpp from host
+        ollama = {
+          enable = true;
+          port = 11434;
+          modelsPath = "/var/lib/ollama/models";
+          bindLlamaCpp = true; # Bind llama.cpp from host
+        };
+
+        # Jupyter Lab for ML development
+        jupyter = {
+          enable = true;
+          port = 8888;
+          notebooksPath = "/home/kernelcore/dev/notebooks";
+        };
+      };
+
+      # Development Containers
+      dev = {
+        enable = true;
+
+        # Reverse proxy (Caddy)
+        proxy = {
+          enable = true;
+          httpPort = 80;
+          httpsPort = 443;
+        };
+      };
     };
 
     virtualization = {
@@ -732,9 +764,9 @@
   imports = [ ./specialisations ];
 
   #kernelcore.hyprland.performance = {
-    #enable = config.services.hyprland-desktop.enable;
-    #mode = "balanced";
-    #};
+  #enable = config.services.hyprland-desktop.enable;
+  #mode = "balanced";
+  #};
 
   systemd.tmpfiles.rules = [
     "d /var/lib/gitea/custom/https 0750 gitea gitea -"
