@@ -7,7 +7,7 @@
 
 {
 
-  kernelcore.electron.enable = true;
+  kernelcore.electron.enable = false;
   kernelcore.electron.apps.antigravity = {
     profile = "performance";
     configDir = "Antigravity";
@@ -200,7 +200,7 @@
     virtualization = {
       enable = true;
       virt-manager = true;
-      libvirtdGroup = [ "kernelcore" ];
+      libvirtdGroup = [ "libvirtd" ];
       virtiofs.enable = true;
       vmBaseDir = "/srv/vms/images";
       sourceImageDir = "/var/lib/vm-images";
