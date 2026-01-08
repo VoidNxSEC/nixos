@@ -71,7 +71,12 @@ with lib;
       "kernel.unprivileged_bpf_disabled" = mkDefault 1;
       "kernel.yama.ptrace_scope" = mkDefault 2;
       "kernel.kexec_load_disabled" = mkDefault 1;
-      "kernel.unprivileged_userns_clone" = mkDefault 0;
+
+      # User namespaces: Required for Chromium/Electron sandbox
+      # Security note: Disabling this breaks all Electron apps (VSCode, Chromium, etc)
+      # Mitigation: Apps are sandboxed via other mechanisms (AppArmor, seccomp)
+      "kernel.unprivileged_userns_clone" = mkDefault 1; # Was 0, changed for Electron
+
       "kernel.perf_event_paranoid" = mkDefault 3;
       "kernel.core_uses_pid" = mkDefault 1;
       "kernel.randomize_va_space" = mkDefault 2;
