@@ -75,7 +75,7 @@ with lib;
       # User namespaces: Required for Chromium/Electron sandbox
       # Security note: Disabling this breaks all Electron apps (VSCode, Chromium, etc)
       # Mitigation: Apps are sandboxed via other mechanisms (AppArmor, seccomp)
-      "kernel.unprivileged_userns_clone" = mkDefault 1; # Was 0, changed for Electron
+      "kernel.unprivileged_userns_clone" = mkDefault 0; # Was 0, changed for Electron
 
       "kernel.perf_event_paranoid" = mkDefault 3;
       "kernel.core_uses_pid" = mkDefault 1;
