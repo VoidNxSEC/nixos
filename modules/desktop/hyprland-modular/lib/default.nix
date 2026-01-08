@@ -125,7 +125,7 @@ rec {
 
   # Build a complete window rule set for an application
 
-  # appRule { class = "firefox"; opacity = 0.98; } => [ "opacity 0.98 0.95, class:^(firefox)$" ]
+  # New syntax: "rule value, match:selector regex"
 
   appRule =
 
@@ -163,15 +163,17 @@ rec {
 
     let
 
-      selector =
+      # Selectors now use match: prefix
+
+      selectors =
 
         if class != null then
 
-          "class:^(${class})$"
+          "match:class ^(${class})$"
 
         else if title != null then
 
-          "title:^(${title})$"
+          "match:title ^(${title})$"
 
         else
 
@@ -183,29 +185,29 @@ rec {
 
           opacity != null
 
-        ) "opacity ${toString opacity} ${toString (opacity - 0.03)}, ${selector}")
+        ) "opacity ${toString opacity} ${toString (opacity - 0.03)}, ${selectors}")
 
-        (lib.optional float "float, ${selector}")
+        (lib.optional float "float 1, ${selectors}")
 
-        (lib.optional (size != null) "size ${size}, ${selector}")
+        (lib.optional (size != null) "size ${size}, ${selectors}")
 
-        (lib.optional center "center, ${selector}")
+        (lib.optional center "center 1, ${selectors}")
 
-        (lib.optional pin "pin, ${selector}")
+        (lib.optional pin "pin 1, ${selectors}")
 
-        (lib.optional (workspace != null) "workspace ${toString workspace} silent, ${selector}")
+        (lib.optional (workspace != null) "workspace ${toString workspace} silent, ${selectors}")
 
-        (lib.optional (animation != null) "animation ${animation}, ${selector}")
+        (lib.optional (animation != null) "animation ${animation}, ${selectors}")
 
-        (lib.optional immediate "immediate, ${selector}")
+        (lib.optional immediate "immediate 1, ${selectors}")
 
-        (lib.optional noanim "noanim, ${selector}")
+        (lib.optional noanim "noanim 1, ${selectors}")
 
-        (lib.optional stayfocused "stayfocused, ${selector}")
+        (lib.optional stayfocused "stayfocused 1, ${selectors}")
 
-        (lib.optional dimaround "dimaround, ${selector}")
+        (lib.optional dimaround "dimaround 1, ${selectors}")
 
-        (map (e: "${e}, ${selector}") extra)
+        (map (e: "${e}, ${selectors}") extra)
 
       ];
 
