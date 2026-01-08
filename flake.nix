@@ -33,7 +33,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-mcp = {
-      url = "git+file:/home/kernelcore/dev/low-level/securellm-mcp";
+      url = "github:VoidNxSEC/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-bridge = {
