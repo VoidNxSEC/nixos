@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "securellm-bridge": {
+    "securellm-mcp": {
       "command": "/run/current-system/sw/bin/securellm-mcp",
       "args": [],
       "env": {
