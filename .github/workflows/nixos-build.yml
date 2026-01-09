@@ -117,13 +117,8 @@ jobs:
               ;;
           esac
 
-      - name: Store build artifacts
-        if: matrix.target != 'toplevel'
-        uses: actions/upload-artifact@v4
-        with:
-          name: nixos-${{ matrix.target }}
-          path: result/
-          retention-days: 7
+      # NOTE: Artifacts não são armazenados para evitar GBs de ISO/VM images desnecessários
+      # O Cachix já fornece cache distribuído e os builds ficam disponíveis localmente no runner
 
       - name: Check derivation closure size
         run: |
