@@ -869,7 +869,7 @@
       codeberg-cli
       brev-cli
       gnome-console
-      zed-editor
+      #zed-editor
       jetbrains.idea
       rust-analyzer
       rustup
