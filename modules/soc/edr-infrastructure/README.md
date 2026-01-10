@@ -1,8 +1,11 @@
-# EDR-NixOS
+# EDR Infrastructure
 
 **Status:** 🚧 In-Progress (Pending Development)
+**Location:** `/etc/nixos/modules/soc/edr-infrastructure/`
 
-This repository contains the architecture for a custom Endpoint Detection and Response (EDR) system for NixOS.
+This module contains the infrastructure architecture for a custom Endpoint Detection and Response (EDR) system for NixOS.
+
+> **Note:** This is a separate infrastructure project from the functional EDR modules in `/etc/nixos/modules/soc/edr/`.
 
 > **Note:** The original documentation/reference for this project is available as a PDF in the **Downloads** directory.
 
