@@ -129,6 +129,26 @@
       model-remove = "python3 /etc/nixos-shell/scripts/model_manager.py remove";
       model-cache-info = "python3 /etc/nixos-shell/scripts/model_manager.py cache-info";
       model-cache-clean = "python3 /etc/nixos-shell/scripts/model_manager.py cache-clean";
+
+      # ============================================================
+      # EMERGENCY CLEANUP - Aliases de sobrevivência
+      # ============================================================
+
+      # Menu interativo
+      sos = "sudo /etc/nixos/scripts/emergency-cleanup.sh";
+      "911" = "sudo /etc/nixos/scripts/emergency-cleanup.sh";
+
+      # Ações diretas (para ninjas de verdade)
+      killnix = "sudo /etc/nixos/scripts/emergency-cleanup.sh --kill-nix";
+      cooldown = "sudo /etc/nixos/scripts/emergency-cleanup.sh --cooldown";
+      stopall = "sudo /etc/nixos/scripts/emergency-cleanup.sh --stop-all";
+      cleanup = "sudo /etc/nixos/scripts/emergency-cleanup.sh --aggressive";
+      cleanlogs = "sudo /etc/nixos/scripts/emergency-cleanup.sh --clean-logs";
+      nixgc = "sudo /etc/nixos/scripts/emergency-cleanup.sh --nix-gc";
+
+      # Scripts legados (mantidos para compatibilidade)
+      limpa-processos = "/etc/nixos/scripts/limpa-processos.sh";
+      limpeza-agressiva = "/etc/nixos/scripts/limpeza-agressiva.sh";
     };
 
     # ============================================================
@@ -170,6 +190,15 @@
         ╔════════════════════════════════════════════════════════╗
         ║           NixOS Shell Commands                         ║
         ╚════════════════════════════════════════════════════════╝
+
+        🚨 EMERGENCY CLEANUP (quando tudo der errado):
+          sos / 911           - Menu interativo de emergência
+          killnix             - Mata todos os builds Nix
+          cooldown            - CPU em modo powersave
+          stopall             - Para TUDO (serviços + builds)
+          cleanup             - Limpeza agressiva (50-200GB)
+          cleanlogs           - Limpa apenas logs
+          nixgc               - Nix GC rápido
 
         🐳 DOCKER BUILD & RUN:
           dbuild              - Docker build with cache
