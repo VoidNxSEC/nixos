@@ -230,12 +230,9 @@ jobs:
     name: Deploy to NixOS
     runs-on: [self-hosted, nixos]
     needs: [setup-secrets, build, test-modules, security, format]
-    # Deploy on:
-    # 1. Push to main (automatic)
-    # 2. Manual workflow_dispatch with deploy=true
-    if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true')
+    # Deploy ONLY on manual workflow_dispatch with deploy=true
+    # Automatic deploy on push is disabled for safety
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true'
     steps:
 
       - name: Checkout repository
@@ -261,17 +258,15 @@ jobs:
           nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
             --print-build-logs
 
-      - name: Switch to new configuration
+      - name: Deploy instructions
         run: |
-          echo "Switching to new NixOS configuration..."
-          sudo nixos-rebuild switch --flake .#kernelcore
-
-      - name: Verify system health
-        run: |
-          echo "Checking system services..."
-          systemctl --failed
-          echo "Checking journalctl for errors..."
-          journalctl -p err -n 50 --no-pager
+          echo "✅ Build completed successfully!"
+          echo ""
+          echo "To deploy manually, run:"
+          echo "  sudo nixos-rebuild switch --flake /etc/nixos#kernelcore --max-jobs 8 --cores 8"
+          echo ""
+          echo "Or use the result link:"
+          echo "  sudo ./result/bin/switch-to-configuration switch"
 
   report:
     name: Build report
