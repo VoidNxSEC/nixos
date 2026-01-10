@@ -74,6 +74,8 @@ jobs:
     runs-on: [self-hosted, nixos]
     needs: [setup-secrets, check]
     strategy:
+      fail-fast: false  # Continue outros jobs se um falhar
+      max-parallel: 3   # Limita jobs simultâneos
       matrix:
         target: [toplevel, iso, vm-image]
     steps:
@@ -99,6 +101,8 @@ jobs:
       - name: Build ${{ matrix.target }}
         id: build
         run: |
+          BUILD_START=$(date +%s)
+
           case "${{ matrix.target }}" in
             toplevel)
               echo "Building main system configuration..."
@@ -117,12 +121,30 @@ jobs:
               ;;
           esac
 
+          BUILD_END=$(date +%s)
+          BUILD_TIME=$((BUILD_END - BUILD_START))
+          echo "build_time=${BUILD_TIME}" >> $GITHUB_OUTPUT
+
       # NOTE: Artifacts não são armazenados para evitar GBs de ISO/VM images desnecessários
       # O Cachix já fornece cache distribuído e os builds ficam disponíveis localmente no runner
 
-      - name: Check derivation closure size
+      - name: Build performance metrics
+        if: matrix.target == 'toplevel'
         run: |
-          nix path-info -Sh .#nixosConfigurations.kernelcore.config.system.build.toplevel
+          echo "## 📊 Build Metrics - ${{ matrix.target }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Build time
+          echo "- ⏱️ Build Time: ${{ steps.build.outputs.build_time }}s" >> $GITHUB_STEP_SUMMARY
+
+          # Closure size
+          SIZE=$(nix path-info -Sh .#nixosConfigurations.kernelcore.config.system.build.toplevel | awk '{print $2}')
+          echo "- 📦 Closure Size: $SIZE" >> $GITHUB_STEP_SUMMARY
+
+          # Dependencies count
+          DEPS=$(nix-store -q --requisites ./result | wc -l)
+          echo "- 🔗 Dependencies: $DEPS packages" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
   test-modules:
     name: Test NixOS modules
@@ -176,12 +198,47 @@ jobs:
           fetch-depth: 0
 
       - name: Check for known vulnerabilities
+        id: vulnix
         run: |
           echo "Running vulnerability scan..."
-          nix run nixpkgs#vulnix -- -w \
-            $(nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel --no-link --print-out-paths) \
-            || echo "⚠️ Vulnerabilities found, review required"
+          RESULT_PATH=$(nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel --no-link --print-out-paths)
+
+          # Run vulnix and capture output
+          VULNS=$(nix run nixpkgs#vulnix -- -w "$RESULT_PATH" 2>&1 | tee /tmp/vulnix.log | grep -c "CVE-" || echo "0")
+          echo "vulnerabilities=${VULNS}" >> $GITHUB_OUTPUT
+
+          if [ "$VULNS" -gt 0 ]; then
+            echo "⚠️ Found $VULNS vulnerabilities, review required"
+          else
+            echo "✅ No vulnerabilities found"
+          fi
         continue-on-error: true
+
+      - name: Security score report
+        run: |
+          echo "## 🔒 Security Score" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Get vulnerability count from previous step
+          VULNS="${{ steps.vulnix.outputs.vulnerabilities }}"
+
+          # Calculate score (100 - vulnerabilities, minimum 0)
+          SCORE=$((100 - VULNS))
+          if [ $SCORE -lt 0 ]; then
+            SCORE=0
+          fi
+
+          echo "- **Security Score**: ${SCORE}/100" >> $GITHUB_STEP_SUMMARY
+          echo "- **Vulnerabilities Found**: $VULNS" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Warning if score too low
+          if [ $SCORE -lt 80 ]; then
+            echo "::warning::Security score below threshold (80): ${SCORE}/100"
+            echo "- ⚠️ **Status**: Below threshold (< 80)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ✅ **Status**: Passed threshold (≥ 80)" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Audit Nix store paths
         run: |
