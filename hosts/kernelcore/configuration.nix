@@ -484,7 +484,7 @@
       };
 
       dev = {
-        workdir = "/home/kernelcore/dev";
+        workdir = "/home/kernelcore/dev/Projects/";
         environment = "development";
         env = {
           PROJECT_NAME = "Development";
@@ -692,7 +692,7 @@
     };
 
     gitea-showcase = {
-      enable = false;
+      enable = true;
       domain = "git.voidnx.com";
       httpsPort = 3443;
       showcaseProjectsPath = "/home/kernelcore/dev/projects";
@@ -738,7 +738,7 @@
     printing.enable = true;
 
     chromiumOrg = {
-      enable = false;
+      enable = true;
       extraArgs = [
         "--force-dark-mode"
         "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,ParallelDownloading"
@@ -870,7 +870,7 @@
       brev-cli
       gnome-console
       zed-editor
-      jetbrains.idea
+      #jetbrains.idea
       rust-analyzer
       rustup
       terraform-providers.carlpett_sops
