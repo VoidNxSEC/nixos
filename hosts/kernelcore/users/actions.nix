@@ -110,6 +110,7 @@ in
         bash
         coreutils
         git-lfs
+        openssh # Required for git+ssh:// URLs in flake inputs
         inetutils # hostname
         procps # free, ps, top
         gnugrep
@@ -137,6 +138,12 @@ in
           "/etc/nix"
           "/nix/var/nix/db"
           "/nix/var/nix/profiles"
+          # Allow access to user SSH keys for private git+ssh:// flake inputs
+          "/home/kernelcore/.ssh"
+        ];
+        # Configure git to use SSH keys for private repositories
+        Environment = [
+          "GIT_SSH_COMMAND=ssh -i /home/kernelcore/.ssh/google_compute_engine -o StrictHostKeyChecking=accept-new"
         ];
       };
     };
