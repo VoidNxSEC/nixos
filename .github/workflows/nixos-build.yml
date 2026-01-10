@@ -188,15 +188,29 @@ jobs:
           echo "Auditing derivations..."
           nix-store --query --requisites $(nix-instantiate '<nixpkgs>' -A hello) | wc -l
 
-      - name: Check for secrets in repo
+      - name: Check for hardcoded secrets
         run: |
-          echo "Scanning for exposed secrets..."
-          if grep -r "RUNNER_TOKEN.*=" --include="*.nix" .; then
-            echo "❌ Found potential exposed secrets!"
+          echo "Scanning for hardcoded secrets..."
+
+          # Pattern 1: Direct token assignments (e.g., token = "ghp_xxxxx")
+          if grep -rE '(token|password|apiKey|secret)\s*=\s*"[a-zA-Z0-9_-]{20,}"' --include="*.nix" . | grep -v "config.sops"; then
+            echo "❌ Found hardcoded secrets in plaintext!"
             exit 1
-          else
-            echo "✅ No exposed secrets found"
           fi
+
+          # Pattern 2: GitHub tokens (ghp_, gho_, etc.)
+          if grep -rE '(ghp_|gho_|ghs_|ghr_)[a-zA-Z0-9]{36,}' --include="*.nix" .; then
+            echo "❌ Found exposed GitHub token!"
+            exit 1
+          fi
+
+          # Pattern 3: Private keys in plaintext
+          if grep -r "BEGIN.*PRIVATE KEY" --include="*.nix" .; then
+            echo "❌ Found private key in plaintext!"
+            exit 1
+          fi
+
+          echo "✅ No hardcoded secrets found"
 
   format:
     name: Check formatting
