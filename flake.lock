@@ -49,11 +49,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1767866785,
-        "narHash": "sha256-w60Ou0VqyCCgbPmqo0LnahO2IKsbaLYXGkM8A4gEJ5o=",
+        "lastModified": 1768407455,
+        "narHash": "sha256-jDvWBcoq2zeFQhvFEOpm5PhpJF8CTTiM4fVFgwZG7A0=",
         "ref": "refs/heads/main",
-        "rev": "6d807f099f121a3e8a1ee5c98d866940edddc7f6",
-        "revCount": 6,
+        "rev": "2313a00c246ee630254217068053728526540378",
+        "revCount": 7,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/ai-agent-os"
       },
@@ -103,11 +103,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767569180,
-        "narHash": "sha256-+fmxV1TzKMwZAnH92bbAn3sTk9fFUMa6i6u3ACQEyfg=",
+        "lastModified": 1768407452,
+        "narHash": "sha256-r03ny5O5vMUfNGI2pl01SmMFZlQ3L+bsg46wSc76OGU=",
         "ref": "refs/heads/main",
-        "rev": "6140c1918f00dcd2ffe0bcffff552f0f4908a722",
-        "revCount": 7,
+        "rev": "17897f33ae16b41965694fc09efcfcbd01bd5921",
+        "revCount": 8,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/arch-analyzer"
       },
@@ -201,11 +201,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1767108692,
-        "narHash": "sha256-m8rqifOhi23UOaYEMSIvGsH4kT0YKzOPOyPeD3VNhSI=",
+        "lastModified": 1768407440,
+        "narHash": "sha256-HY2kgYGn0xW6D2chClv8fW7PXjbX09GZqNtePXLQ/14=",
         "ref": "refs/heads/main",
-        "rev": "4babc7a3be3235065174973da37fb54557f4ce43",
-        "revCount": 4,
+        "rev": "63baf442c6f9da47f3c3a5dc84bcb08cfed08d8a",
+        "revCount": 5,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/cognitive-vault"
       },
@@ -216,11 +216,11 @@
     },
     "crane": {
       "locked": {
-        "lastModified": 1767744144,
-        "narHash": "sha256-9/9ntI0D+HbN4G0TrK3KmHbTvwgswz7p8IEJsWyef8Q=",
+        "lastModified": 1768319649,
+        "narHash": "sha256-VFkNyxHxkqGp8gf8kfFMW1j6XeBy609kv6TE9uF/0Js=",
         "owner": "ipetkov",
         "repo": "crane",
-        "rev": "2fb033290bf6b23f226d4c8b32f7f7a16b043d7e",
+        "rev": "4b6527687cfd20da3c2ef8287e01b74c2d6c705b",
         "type": "github"
       },
       "original": {
@@ -1131,11 +1131,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767108804,
-        "narHash": "sha256-nMtSjN+SLGLcTgz8TkTAcM8Yp2Bl8CHbvCgEH7MSZKI=",
+        "lastModified": 1768407447,
+        "narHash": "sha256-3Jihz/EwgWXtrRXH2qppcALD3SBYOn0DRGQyFpY+SgM=",
         "ref": "refs/heads/main",
-        "rev": "0c6004c5153ca4b068c3f02861b7f22ed13449aa",
-        "revCount": 2,
+        "rev": "4d9fcecd7f97a5d4a9b859b4d054d94b35040469",
+        "revCount": 3,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/i915-governor"
       },
@@ -1175,11 +1175,11 @@
         "rust-overlay": "rust-overlay_3"
       },
       "locked": {
-        "lastModified": 1767093806,
-        "narHash": "sha256-6EeEJLtS4NplZgFUKaXTNl5ix+7NqmXBXgaF1VZuCrE=",
+        "lastModified": 1768407432,
+        "narHash": "sha256-iNWyk9ljkZGQWss1H7WMMBjof5O26lKNQeCMq0fYRt8=",
         "ref": "refs/heads/main",
-        "rev": "7da346aa48db38fbfa4f371a8ea68ed93ad2c1bd",
-        "revCount": 3,
+        "rev": "4c386d42bed7653439446b8bf242cf842717717a",
+        "revCount": 4,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/ml-offload-api"
       },
@@ -1651,11 +1651,11 @@
         "rust-overlay": "rust-overlay_5"
       },
       "locked": {
-        "lastModified": 1768102901,
-        "narHash": "sha256-oNS+xAELJynfI/uGtHf4Xk1nLPPZIMP42/12MNn26pU=",
+        "lastModified": 1768406828,
+        "narHash": "sha256-BV3jo7dLbx6Vn7PqIrRueZ064EypZ0gwrV2H1GYfDfY=",
         "ref": "refs/heads/main",
-        "rev": "08db152115f638e590a3d7937dec466ad5e1f319",
-        "revCount": 39,
+        "rev": "a54c4b366c9e572140e69e515a0ee61000bf32e4",
+        "revCount": 42,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/phantom"
       },
@@ -1722,11 +1722,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767840362,
-        "narHash": "sha256-ZtsFqUhilubohNZ1TgpQIFsi4biZTwRH9rjZsDRDik8=",
+        "lastModified": 1768359079,
+        "narHash": "sha256-a016mOfKconYrYo3fZLN6c2cnmqYYd44g2bUrBZAsQc=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "d159ea1fc321c60f88a616ac28bab660092a227d",
+        "rev": "0357d1826057686637e41147545402cbbda420ce",
         "type": "github"
       },
       "original": {
@@ -1740,11 +1740,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1767062690,
-        "narHash": "sha256-hfKAOJQYbR0mlwabV56tOlEMUgESRroHqlDpX0hwOpU=",
+        "lastModified": 1768359079,
+        "narHash": "sha256-a016mOfKconYrYo3fZLN6c2cnmqYYd44g2bUrBZAsQc=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "943d2d0bf1b86267287aff826ebd1138d83113b7",
+        "rev": "0357d1826057686637e41147545402cbbda420ce",
         "type": "github"
       },
       "original": {
@@ -1758,11 +1758,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1767062690,
-        "narHash": "sha256-hfKAOJQYbR0mlwabV56tOlEMUgESRroHqlDpX0hwOpU=",
+        "lastModified": 1768359079,
+        "narHash": "sha256-a016mOfKconYrYo3fZLN6c2cnmqYYd44g2bUrBZAsQc=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "943d2d0bf1b86267287aff826ebd1138d83113b7",
+        "rev": "0357d1826057686637e41147545402cbbda420ce",
         "type": "github"
       },
       "original": {
@@ -1800,11 +1800,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767840362,
-        "narHash": "sha256-ZtsFqUhilubohNZ1TgpQIFsi4biZTwRH9rjZsDRDik8=",
+        "lastModified": 1768359079,
+        "narHash": "sha256-a016mOfKconYrYo3fZLN6c2cnmqYYd44g2bUrBZAsQc=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "d159ea1fc321c60f88a616ac28bab660092a227d",
+        "rev": "0357d1826057686637e41147545402cbbda420ce",
         "type": "github"
       },
       "original": {
@@ -1818,11 +1818,11 @@
         "nixpkgs": "nixpkgs_7"
       },
       "locked": {
-        "lastModified": 1767840362,
-        "narHash": "sha256-ZtsFqUhilubohNZ1TgpQIFsi4biZTwRH9rjZsDRDik8=",
+        "lastModified": 1768359079,
+        "narHash": "sha256-a016mOfKconYrYo3fZLN6c2cnmqYYd44g2bUrBZAsQc=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "d159ea1fc321c60f88a616ac28bab660092a227d",
+        "rev": "0357d1826057686637e41147545402cbbda420ce",
         "type": "github"
       },
       "original": {
@@ -1840,11 +1840,11 @@
         "rust-overlay": "rust-overlay_6"
       },
       "locked": {
-        "lastModified": 1767860691,
-        "narHash": "sha256-135/K/i36s+eHASrboa5Ny+n5ktIs9xy5KYxGqK/lfI=",
+        "lastModified": 1768407438,
+        "narHash": "sha256-nG5Xvt02lJ6A9n/KAiis+awOGRMlEgDPKBC3c37kfnE=",
         "ref": "refs/heads/main",
-        "rev": "c09107e97b72b3b82a8965512de8dc2580f1264c",
-        "revCount": 16,
+        "rev": "f464c0739fc5e477b8d906984dc736531af907ea",
+        "revCount": 17,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/securellm-bridge"
       },
@@ -1861,11 +1861,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768026805,
-        "narHash": "sha256-V6BzeD6T7FQMsy0Y4Na8g/2uZcRZYEjdcE838+cySk8=",
+        "lastModified": 1768407434,
+        "narHash": "sha256-ztWXVVNQdw0F/9NGJIBK+UjpzJr4mFT9NO2Nvglb8yM=",
         "ref": "main",
-        "rev": "fc1f92c6d1bc4b7f9a2175f376cafd0ee2958211",
-        "revCount": 35,
+        "rev": "535d9284b2f7e86d737d214f678e8746a477d542",
+        "revCount": 36,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
       },
@@ -1917,11 +1917,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768042580,
-        "narHash": "sha256-0tOanPq9mMF/l8uF55HXA9WgPtbYq9wRhmp8Yqan5+o=",
+        "lastModified": 1768407444,
+        "narHash": "sha256-YsNcsoalPWEm7JN74ULaTKf4gtILtbGwTKy5s9XCZKA=",
         "ref": "refs/heads/main",
-        "rev": "c3faad4361f258d66a13c5f37776f2823b8ae93a",
-        "revCount": 5,
+        "rev": "9ca0c9a0cbff84f824a56c435d53df9c4785588c",
+        "revCount": 6,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
       },
@@ -1938,11 +1938,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767397399,
-        "narHash": "sha256-nwaxyoUJRaSQNc2TGbUz5wyvz+YBGfRqgYxwZtI4mHc=",
+        "lastModified": 1768407449,
+        "narHash": "sha256-wPtXZsqRAMLnMhl4RJrxALsdwdTcRz7ptwNwCHBgMcg=",
         "ref": "refs/heads/main",
-        "rev": "ef79b29a6e060439f5ad69bd1915cb824b216900",
-        "revCount": 16,
+        "rev": "aa02bea6dfa80ab1806811730f27125d16e5a26e",
+        "revCount": 17,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/swissknife"
       },
