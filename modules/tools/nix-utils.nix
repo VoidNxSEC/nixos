@@ -46,6 +46,7 @@ let
       echo "  validate    Post-rebuild validation"
       echo "  gc          Garbage collect"
       echo "  optimize    Optimize store"
+      echo "  fix-perms   Fix repository file permissions"
     }
 
     CMD="''${1:-}"
@@ -107,6 +108,14 @@ let
         echo -e "''${CYAN}Optimizing store...''${NC}"
         sudo nix-store --optimise
         echo -e "''${GREEN}✓ Optimization complete''${NC}"
+        ;;
+      fix-perms)
+        if [[ -f "$SCRIPTS_DIR/fix-repo-permissions.sh" ]]; then
+          exec bash "$SCRIPTS_DIR/fix-repo-permissions.sh" "$@"
+        else
+          echo "Fix permissions script not found"
+          exit 1
+        fi
         ;;
       -h|--help|"")
         show_help ;;
