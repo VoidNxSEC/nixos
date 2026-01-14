@@ -45,7 +45,7 @@
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
       aide.enable = true;
-      clamav.enable = true;
+      clamav.enable = false;
       ssh.enable = true;
       kernel.enable = true;
       pam.enable = true;
@@ -744,8 +744,12 @@
         "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,ParallelDownloading"
         "--ignore-gpu-blocklist"
         "--enable-gpu-rasterization"
-        "--enable-zero-copy"
+        # REMOVED: --enable-zero-copy (incompatível com NVIDIA+Wayland+GBM)
+        # Causa EGL_BAD_MATCH errors (0x3009) ao tentar criar EGLImages
         "--ozone-platform-hint=auto"
+        # NVIDIA+Wayland specific fixes para EGL errors
+        "--use-gl=egl"
+        "--disable-gpu-driver-bug-workarounds"
         "--disable-reading-from-canvas"
         "--no-first-run"
         "--disable-sync"
