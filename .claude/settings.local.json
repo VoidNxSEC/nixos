@@ -14,7 +14,8 @@
       "WebSearch",
       "Bash(ls:*)",
       "Bash(xargs:*)",
-      "Bash(/home/kernelcore/dev/low-level/sync-all-projects.sh:*)"
+      "Bash(/home/kernelcore/dev/low-level/sync-all-projects.sh:*)",
+      "Bash(find:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
