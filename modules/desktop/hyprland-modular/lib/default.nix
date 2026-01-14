@@ -488,10 +488,10 @@ rec {
 
   screenshotCommands = {
     regionToSwappy = ''grim -g "$(slurp)" - | swappy -f -'';
-    fullToSwappy = ''grim - | swappy -f -'';
+    fullToSwappy = "grim - | swappy -f -";
     regionToFile = dir: ''grim -g "$(slurp)" ${dir}/screenshot-$(date +%Y%m%d-%H%M%S).png'';
-    fullToFile = dir: ''grim ${dir}/screenshot-$(date +%Y%m%d-%H%M%S).png'';
+    fullToFile = dir: "grim ${dir}/screenshot-$(date +%Y%m%d-%H%M%S).png";
     regionToClipboard = ''grim -g "$(slurp)" - | wl-copy'';
-    fullToClipboard = ''grim - | wl-copy'';
+    fullToClipboard = "grim - | wl-copy";
   };
 }
