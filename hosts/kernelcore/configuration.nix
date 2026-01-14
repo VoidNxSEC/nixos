@@ -849,7 +849,7 @@
       starship
       terraform
       nushell
-      ghidra
+      #ghidra
       waybackurls
       hakrawler
       python313Packages.pyyaml
