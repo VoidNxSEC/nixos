@@ -33,7 +33,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-mcp = {
-      url = "git+ssh://git@github.com/marcosfpina/securellm-mcp?ref=main";
+      url = "git+ssh://git@github.com/marcosfpina/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-bridge = {
