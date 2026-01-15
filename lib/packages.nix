@@ -21,8 +21,18 @@ in
       or inputs.securellm-mcp.packages.${system}.securellm-mcp or null;
 
   securellm-bridge =
-    inputs.securellm-bridge.packages.${system}.default
-      or inputs.securellm-bridge.packages.${system}.securellm-bridge or null;
+    let
+      upstream =
+        inputs.securellm-bridge.packages.${system}.default
+          or inputs.securellm-bridge.packages.${system}.securellm-bridge or null;
+    in
+    if upstream == null then
+      null
+    else
+      # Override to fix npmDepsHash mismatch
+      upstream.overrideAttrs (old: {
+        npmDepsHash = "sha256-P0ji8ozpswRuK60DYlpTwkmea3E8USOSxeNIjOqAe+s=";
+      });
 
   # Docker images - exposed as individual packages
   image-app = pkgs.dockerTools.buildImage {
