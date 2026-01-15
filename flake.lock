@@ -109,11 +109,11 @@
         "rev": "17897f33ae16b41965694fc09efcfcbd01bd5921",
         "revCount": 8,
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/arch-analyzer"
+        "url": "ssh://git@github.com/marcosfpina/arch-analyzer"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/arch-analyzer"
+        "url": "ssh://git@github.com/marcosfpina/arch-analyzer"
       }
     },
     "arion": {
@@ -201,17 +201,17 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1768407440,
-        "narHash": "sha256-HY2kgYGn0xW6D2chClv8fW7PXjbX09GZqNtePXLQ/14=",
+        "lastModified": 1768481938,
+        "narHash": "sha256-FQgsGPMmNTeq4yIwsWwkJymbfORVSHHxS2IDEnzvp68=",
         "ref": "refs/heads/main",
-        "rev": "63baf442c6f9da47f3c3a5dc84bcb08cfed08d8a",
-        "revCount": 5,
+        "rev": "062ae89715b14623acd7edcea7db843eb0705f13",
+        "revCount": 6,
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/cognitive-vault"
+        "url": "ssh://git@github.com/marcosfpina/cognitive-vault"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/cognitive-vault"
+        "url": "ssh://git@github.com/marcosfpina/cognitive-vault"
       }
     },
     "crane": {
@@ -1181,11 +1181,11 @@
         "rev": "4c386d42bed7653439446b8bf242cf842717717a",
         "revCount": 4,
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/ml-offload-api"
+        "url": "ssh://git@github.com/marcosfpina/ml-offload-api"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/ml-offload-api"
+        "url": "ssh://git@github.com/marcosfpina/ml-offload-api"
       }
     },
     "niri": {
@@ -1840,17 +1840,17 @@
         "rust-overlay": "rust-overlay_6"
       },
       "locked": {
-        "lastModified": 1768407438,
-        "narHash": "sha256-nG5Xvt02lJ6A9n/KAiis+awOGRMlEgDPKBC3c37kfnE=",
+        "lastModified": 1768475747,
+        "narHash": "sha256-QLCXfltaGoZygq4amCLXMZvaWX2tpRP5nJxR1Q5mTmI=",
         "ref": "refs/heads/main",
-        "rev": "f464c0739fc5e477b8d906984dc736531af907ea",
-        "revCount": 17,
+        "rev": "b95ce4351211454415bf8aa24bf38d9cbaee80cd",
+        "revCount": 18,
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/securellm-bridge"
+        "url": "ssh://git@github.com/marcosfpina/securellm-bridge"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/securellm-bridge"
+        "url": "ssh://git@github.com/marcosfpina/securellm-bridge"
       }
     },
     "securellm-mcp": {
@@ -1861,18 +1861,18 @@
         ]
       },
       "locked": {
-        "lastModified": 1768462435,
-        "narHash": "sha256-jlIWkBuyikrU8I4ojJMYPim7yo9olnC+EoLGLwhPcBs=",
+        "lastModified": 1768477808,
+        "narHash": "sha256-tFyVkFzke2cLEZqEY3HQvviOlaXsDXLLWYZzhrsGVAE=",
         "ref": "main",
-        "rev": "a7adbb5257a68864895cdb71c019beae3f11401b",
-        "revCount": 48,
+        "rev": "5d9f148719026cd9d3f057aa50e12d03d25f335d",
+        "revCount": 50,
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
+        "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
       "original": {
         "ref": "main",
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
+        "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       }
     },
     "sops-nix": {
@@ -1917,17 +1917,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1768407444,
-        "narHash": "sha256-YsNcsoalPWEm7JN74ULaTKf4gtILtbGwTKy5s9XCZKA=",
+        "lastModified": 1768480506,
+        "narHash": "sha256-i62QLtrVb0Bub7nFE+j2E5/7JU3gQiVWY4XT61eUyks=",
         "ref": "refs/heads/main",
-        "rev": "9ca0c9a0cbff84f824a56c435d53df9c4785588c",
-        "revCount": 6,
+        "rev": "a93619ab54166acff0a61c49118014782af4f0c4",
+        "revCount": 7,
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
+        "url": "ssh://git@github.com/marcosfpina/spider-nix"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
+        "url": "ssh://git@github.com/marcosfpina/spider-nix"
       }
     },
     "swissknife": {
@@ -1944,11 +1944,11 @@
         "rev": "aa02bea6dfa80ab1806811730f27125d16e5a26e",
         "revCount": 17,
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/swissknife"
+        "url": "ssh://git@github.com/marcosfpina/swissknife"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/swissknife"
+        "url": "ssh://git@github.com/marcosfpina/swissknife"
       }
     },
     "systems": {
@@ -2243,11 +2243,11 @@
         "rev": "2c60be7da61ceaacbd63deb2ea6a61519dccd86f",
         "revCount": 3,
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/vmctl"
+        "url": "ssh://git@github.com/marcosfpina/vmctl"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/vmctl"
+        "url": "ssh://git@github.com/marcosfpina/vmctl"
       }
     },
     "xdph": {
