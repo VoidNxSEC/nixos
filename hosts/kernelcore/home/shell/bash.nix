@@ -47,6 +47,8 @@ in
         gd = "git diff";
         gco = "git checkout";
 
+        clean-py = "find . -type d -name "__pycache__" -exec rm -r {} +";
+
         # Docker
         dps = "docker ps --format 'table {{.Names}}\\t{{.Status}}\\t{{.Ports}}'";
         dimg = "docker images";
