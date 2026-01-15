@@ -50,12 +50,13 @@
     ];
   };
 
-  # SWAP em disco desabilitado - usando apenas zram (7.7GB)
+  # SWAP em disco desabilitado - usando apenas zram (7.7GB) + swapfile (4GB emergency)
   # Benefícios: Menor latência, menos I/O, maior durabilidade do SSD
-  #swapDevices = [ ];
-  swapDevices = [
-    { device = "/dev/disk/by-uuid/10b6cfb6-c7db-435f-8f63-7baa85e26004"; }
-  ];
+  # Partição swap de 8.8GB desabilitada - swapfile gerenciado em modules/system/memory.nix
+  swapDevices = [ ];
+  # swapDevices = [
+  #   { device = "/dev/disk/by-uuid/10b6cfb6-c7db-435f-8f63-7baa85e26004"; }
+  # ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
