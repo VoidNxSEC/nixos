@@ -1,20 +1,15 @@
 {
   "mcpServers": {
     "securellm-mcp": {
-      "command": "/run/current-system/sw/bin/securellm-mcp",
-      "args": [],
+      "command": "node",
+      "args": [
+        "/home/kernelcore/dev/low-level/securellm-mcp/build/src/index.js"
+      ],
       "env": {
-        "PROJECT_ROOT": "/etc/nixos",
-        "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
+        "PROJECT_ROOT": "/home/kernelcore/dev/low-level/phantom",
+        "KNOWLEDGE_DB_PATH": "/home/kernelcore/.local/share/securellm/knowledge.db",
         "ENABLE_KNOWLEDGE": "true"
-      },
-      "alwaysAllow": [
-        "emergency_status",
-        "system_health_check",
-        "thermal_check",
-        "safe_rebuild_check",
-        "rebuild_safety_check"
-      ]
+      }
     }
   }
 }
