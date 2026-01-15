@@ -17,7 +17,7 @@ in
     enable = mkEnableOption "CognitiveVault - Hybrid Secure Password Manager";
     package = mkOption {
       type = types.package;
-      default = pkgs.hello; # Placeholder until flake input available
+      default = pkgs.cognitive-vault; # Placeholder until flake input available
       description = "The cognitive-vault package to install.";
     };
   };
