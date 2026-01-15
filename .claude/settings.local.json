@@ -15,7 +15,9 @@
       "Bash(ls:*)",
       "Bash(xargs:*)",
       "Bash(/home/kernelcore/dev/low-level/sync-all-projects.sh:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(timeout 20 nix flake check:*)",
+      "Bash(nix-instantiate:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
