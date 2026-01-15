@@ -120,11 +120,11 @@ with lib;
       priority = 10; # Higher priority than disk swap
     };
 
-    # Traditional swap file
+    # Traditional swap file - Emergency fallback only
     swapDevices = [
       {
         device = "/swapfile";
-        size = 32768;
+        size = 4096; # 4GB - reduced from 32GB (was excessive for 16GB RAM)
         priority = 5;
       }
     ];
