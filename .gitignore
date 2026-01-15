@@ -113,3 +113,7 @@ projects/cognitive-vault/core/target/debug/**
 modules/packages/js-packages/storage/
 modules/packages/deb-packages/storage
 modules/packages/storage/*.tar.gz
+
+# SSH session databases
+ssh_sessions.db
+*.db-journal
