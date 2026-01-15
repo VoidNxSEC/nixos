@@ -1863,14 +1863,13 @@
       "locked": {
         "lastModified": 1768477808,
         "narHash": "sha256-tFyVkFzke2cLEZqEY3HQvviOlaXsDXLLWYZzhrsGVAE=",
-        "ref": "main",
+        "ref": "refs/heads/main",
         "rev": "5d9f148719026cd9d3f057aa50e12d03d25f335d",
         "revCount": 50,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
       "original": {
-        "ref": "main",
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       }
