@@ -198,7 +198,7 @@
 
       # ML/AI Containers
       ml = {
-        enable = true;
+        enable = false;
 
         # Ollama with llama.cpp from host
         ollama = {
@@ -218,7 +218,7 @@
 
       # Development Containers
       dev = {
-        enable = true;
+        enable = false;
 
         # Reverse proxy (Caddy)
         proxy = {
