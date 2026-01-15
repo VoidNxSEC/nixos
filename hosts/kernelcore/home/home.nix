@@ -400,7 +400,6 @@
     # Security
     GNUPGHOME = "${config.home.homeDirectory}/.gnupg";
 
-
     # XDG compliance
     XDG_CONFIG_HOME = "${config.home.homeDirectory}/.config";
     XDG_DATA_HOME = "${config.home.homeDirectory}/.local/share";
