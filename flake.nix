@@ -29,27 +29,27 @@
     # ═══════════════════════════════════════════════════════════════
     # ML Offload API - Multi-backend ML orchestration
     ml-offload-api = {
-      url = "git+ssh://git@github.com/VoidNxSEC/ml-offload-api";
+      url = "git+ssh://git@github.com/marcosfpina/ml-offload-api";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-mcp = {
-      url = "git+ssh://git@github.com/VoidNxSEC/securellm-mcp?ref=main";
+      url = "git+ssh://git@github.com/marcosfpina/securellm-mcp?ref=main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-bridge = {
-      url = "git+ssh://git@github.com/VoidNxSEC/securellm-bridge";
+      url = "git+ssh://git@github.com/marcosfpina/securellm-bridge";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cognitive-vault = {
-      url = "git+ssh://git@github.com/VoidNxSEC/cognitive-vault";
+      url = "git+ssh://git@github.com/marcosfpina/cognitive-vault";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vmctl = {
-      url = "git+ssh://git@github.com/VoidNxSEC/vmctl";
+      url = "git+ssh://git@github.com/marcosfpina/vmctl";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     spider-nix = {
-      url = "git+ssh://git@github.com/VoidNxSEC/spider-nix";
+      url = "git+ssh://git@github.com/marcosfpina/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
@@ -57,11 +57,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     swissknife = {
-      url = "git+ssh://git@github.com/VoidNxSEC/swissknife";
+      url = "git+ssh://git@github.com/marcosfpina/swissknife";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     arch-analyzer = {
-      url = "git+ssh://git@github.com/VoidNxSEC/arch-analyzer";
+      url = "git+ssh://git@github.com/marcosfpina/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     #docker-hub = {
