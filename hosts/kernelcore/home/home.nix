@@ -394,19 +394,12 @@
     BROWSER = "firefox";
     TERMINAL = "alacritty";
 
-    # Python/Pipx
-    #PIPX_HOME = "${config.home.homeDirectory}/.local/share/pipx";
-    #PIPX_BIN_DIR = "${config.home.homeDirectory}/.local/bin";
-    #PIPX_MAN_DIR = "${config.home.homeDirectory}/.local/share/man";
-
     # Development
     GOPATH = "${config.home.homeDirectory}/go";
 
     # Security
     GNUPGHOME = "${config.home.homeDirectory}/.gnupg";
 
-    # Anthropic
-    ANTHROPIC_MODEL = "claude-sonnet-4-5-20250929";
 
     # XDG compliance
     XDG_CONFIG_HOME = "${config.home.homeDirectory}/.config";
