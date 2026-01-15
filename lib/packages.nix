@@ -17,8 +17,18 @@ in
 
   # SecureLLM MCP - from external flake input
   securellm-mcp =
-    inputs.securellm-mcp.packages.${system}.default
-      or inputs.securellm-mcp.packages.${system}.securellm-mcp or null;
+    let
+      upstream =
+        inputs.securellm-mcp.packages.${system}.default
+          or inputs.securellm-mcp.packages.${system}.securellm-mcp or null;
+    in
+    if upstream == null then
+      null
+    else
+      # Override to fix npmDepsHash mismatch
+      upstream.overrideAttrs (old: {
+        npmDepsHash = "sha256-3Pxwb+XTanQKzR31LB+ZmFz37EPJDpJQlrqTCzfeSN8=";
+      });
 
   securellm-bridge =
     let
