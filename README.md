@@ -5,7 +5,7 @@
 A comprehensive, hardened NixOS configuration showcasing advanced system architecture, ML infrastructure, and enterprise security practices. Perfect for portfolios demonstrating expertise in infrastructure-as-code, security engineering, and DevOps.
 
 [![NixOS](https://img.shields.io/badge/NixOS-Unstable-blue?logo=nixos\u0026logoColor=white)](https://nixos.org)
-[![GitHub Actions Build](https://github.com/VoidNxSEC/nixos/actions/workflows/nixos-build.yml/badge.svg)](https://github.com/VoidNxSEC/nixos/actions/workflows/nixos-build.yml)
+[![GitHub Actions Build](https://github.com/VoidNxSEC/nixos/actions/workflows/nixos-public.yml/badge.svg)](https://github.com/VoidNxSEC/nixos/actions/workflows/nixos-public.yml)
 [![GitLab CI Pipeline](https://img.shields.io/badge/GitLab%20CI-passing-success?logo=gitlab)](https://gitlab.com/VoidNxSEC/nixos)
 [![Security](https://img.shields.io/badge/Security_Score-100%2F100-brightgreen?logo=security\u0026logoColor=white)](#security-suite)
 [![Modules](https://img.shields.io/badge/Modules-226-success?logo=nixos)](arch/AI-ARCHITECTURE-REPORT.md)
