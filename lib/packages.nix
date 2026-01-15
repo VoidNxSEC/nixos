@@ -31,7 +31,7 @@ in
     else
       # Override to fix npmDepsHash mismatch
       upstream.overrideAttrs (old: {
-        npmDepsHash = "sha256-P0ji8ozpswRuK60DYlpTwkmea3E8USOSxeNIjOqAe+s=";
+        npmDepsHash = "sha256-3Pxwb+XTanQKzR31LB+ZmFz37EPJDpJQlrqTCzfeSN8=";
       });
 
   # Docker images - exposed as individual packages
