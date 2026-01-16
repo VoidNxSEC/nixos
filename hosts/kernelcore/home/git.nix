@@ -41,6 +41,13 @@
         amend = "commit --amend --no-edit";
         undo = "reset --soft HEAD^";
       };
+
+      # GitLab-specific configurations
+      url."git@gitlab.com:".insteadOf = "https://gitlab.com/";
+
+      # Push configuration
+      push.autoSetupRemote = true;
+      push.default = "current";
     };
 
     lfs.enable = true;
