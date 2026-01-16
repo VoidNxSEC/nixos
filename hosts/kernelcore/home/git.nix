@@ -8,11 +8,11 @@
     # Default Configuration (GitHub)
     # ═══════════════════════════════════════════════════════════
     userName = "marcosfpina";
-    userEmail = "sec@voidnxlabs.com";
+    userEmail = "sec@voidnx.com";
 
     # Default GPG key (GitHub)
     signing = {
-      key = "5606AB430E95F5AD"; # marcos (gh) <sec@voidnxlabs.com>
+      key = "AE2BED94191C531A"; # Marcos (Hey there !) <sec@voidnx.com>
       signByDefault = true;
     };
 
@@ -75,31 +75,13 @@
     # Conditional Includes (por diretório/repositório)
     # ═══════════════════════════════════════════════════════════
     includes = [
-      # GitLab repos - use different GPG key
+      # OLD KEY - Only for legacy GitHub repos that still need it
       {
-        condition = "gitdir:~/gitlab/";
+        condition = "gitdir:~/github-legacy/";
         contents = {
           user = {
-            email = "sec@voidnx.com";
-            signingkey = "AE2BED94191C531A"; # Marcos (Hey there !) <sec@voidnx.com>
-          };
-        };
-      }
-      {
-        condition = "gitdir:~/projects/gitlab/";
-        contents = {
-          user = {
-            email = "sec@voidnx.com";
-            signingkey = "AE2BED94191C531A";
-          };
-        };
-      }
-      {
-        condition = "gitdir:~/work/";
-        contents = {
-          user = {
-            email = "sec@voidnx.com";
-            signingkey = "AE2BED94191C531A";
+            email = "sec@voidnxlabs.com";
+            signingkey = "5606AB430E95F5AD"; # marcos (gh) <sec@voidnxlabs.com>
           };
         };
       }
