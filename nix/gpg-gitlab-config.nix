@@ -24,8 +24,8 @@
       # Use GPG agent
       use-agent = true;
 
-      # Default key for signing (use your existing key)
-      default-key = "5606AB430E95F5AD"; # marcos (gh) <sec@voidnxlabs.com>
+      # Default key for signing (NEW key)
+      default-key = "AE2BED94191C531A"; # Marcos (Hey there !) <sec@voidnx.com>
 
       # Key server configuration
       keyserver = "hkps://keys.openpgp.org";
@@ -67,12 +67,12 @@
     enable = true;
 
     # User identity
-    userName = "kernelcore";
-    userEmail = "sec@voidnxlabs.com";
+    userName = "marcosfpina";
+    userEmail = "sec@voidnx.com";
 
     # GPG signing configuration
     signing = {
-      key = "5606AB430E95F5AD"; # Your existing GPG key
+      key = "AE2BED94191C531A"; # NEW GPG key
       signByDefault = true; # Sign all commits automatically
     };
 
