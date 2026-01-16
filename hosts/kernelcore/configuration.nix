@@ -174,7 +174,7 @@
         enable = true;
         platforms = {
           github = true;
-          gitlab = false;
+          gitlab = true;
           gitea = false;
         };
         pre-commit = {
@@ -331,7 +331,7 @@
     };
 
     services.gitlab-runner = {
-      enable = false;
+      enable = true;
       useSops = false;
       runnerName = "nixos-gitlab-runner";
       url = "https://gitlab.com";
