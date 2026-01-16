@@ -18,7 +18,11 @@
       "Bash(find:*)",
       "Bash(timeout 20 nix flake check:*)",
       "Bash(nix-instantiate:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(sops:*)",
+      "Bash(gpg --list-secret-keys:*)",
+      "Bash(gpg:*)",
+      "Bash(gpgconf:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

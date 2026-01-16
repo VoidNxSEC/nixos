@@ -13,6 +13,7 @@
     ./gcp-ml.nix # reads gcp-ml.yaml
     ./gitea.nix # reads gitea.yaml
     ./github.nix # reads github.yaml
+    ./gitlab.nix # reads gitlab.yaml
     ./grok.nix # reads grok.yaml
     ./k8s.nix # reads k8s.yaml
     ./tailscale.nix # reads tailscale.yaml
