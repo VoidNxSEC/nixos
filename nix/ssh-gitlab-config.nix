@@ -55,6 +55,6 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB784LcoYl5UoXxJSbFk60gmPo7WGKn/jmK8gePkkUhw sec@voidnxlabs.com"
 
     # GitLab key (for remote access to this machine via GitLab CI/CD or similar)
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICyAHCfElZid7pLtp8lk9H5n8MTEpUfvSAVxxE6fFr5V sec@voidnxlabs.com"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHPvEe487FAri4YaoIJZhhDwm7hNtFqo788K+0i9NI6u entropynix@gitlab"
   ];
 }
