@@ -12,7 +12,7 @@
 
     # Default GPG key (GitHub)
     signing = {
-      key = "AE2BED94191C531A"; # Marcos (Hey there !) <sec@voidnx.com>
+      key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnx.com>
       signByDefault = true;
     };
 
