@@ -47,14 +47,7 @@
   };
 
   # ═══════════════════════════════════════════════════════════════
-  # Authorized SSH Keys (if running SSH server)
+  # Note: Authorized keys for SSH server should be configured at
+  # system level, not in home-manager
   # ═══════════════════════════════════════════════════════════════
-
-  users.users.kernelcore.openssh.authorizedKeys.keys = [
-    # Existing personal key
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB784LcoYl5UoXxJSbFk60gmPo7WGKn/jmK8gePkkUhw sec@voidnxlabs.com"
-
-    # GitLab key (for remote access to this machine via GitLab CI/CD or similar)
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHPvEe487FAri4YaoIJZhhDwm7hNtFqo788K+0i9NI6u entropynix@gitlab"
-  ];
 }
