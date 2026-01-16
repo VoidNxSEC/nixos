@@ -25,7 +25,7 @@
       use-agent = true;
 
       # Default key for signing (NEW key)
-      default-key = "AE2BED94191C531A"; # Marcos (Hey there !) <sec@voidnx.com>
+      default-key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnx.com>
 
       # Key server configuration
       keyserver = "hkps://keys.openpgp.org";
@@ -72,7 +72,7 @@
 
     # GPG signing configuration
     signing = {
-      key = "AE2BED94191C531A"; # NEW GPG key
+      key = "EC57E3FB66D01693"; # NEW GPG key
       signByDefault = true; # Sign all commits automatically
     };
 
