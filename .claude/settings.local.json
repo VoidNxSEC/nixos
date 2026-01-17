@@ -22,7 +22,8 @@
       "Bash(sops:*)",
       "Bash(gpg --list-secret-keys:*)",
       "Bash(gpg:*)",
-      "Bash(gpgconf:*)"
+      "Bash(gpgconf:*)",
+      "Bash(tree:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
