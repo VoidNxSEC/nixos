@@ -77,17 +77,6 @@ in
           [ "127.0.0.2" ] # DNSCrypt rodando em porta alternativa
         else
           cfg.preferredServers;
-
-      extraConfig = ''
-        # Stub listener fica em 127.0.0.53 (padrão)
-        DNSStubListener=yes
-        DNSStubListenerExtra=127.0.0.1:5353
-        Cache=yes
-        CacheFromLocalhost=yes
-        ReadEtcHosts=yes
-        MulticastDNS=yes
-        LLMNR=yes
-      '';
     };
 
     # DNSCrypt-proxy para DNS criptografado (opcional)
