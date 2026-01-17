@@ -322,11 +322,6 @@ in
 
     # DNS integration with systemd-resolved
     services.resolved = mkIf (cfg.enableMagicDNS && config.services.resolved.enable) {
-      extraConfig = ''
-        [Resolve]
-        # Allow Tailscale to manage DNS
-        DNSStubListener=no
-      '';
     };
 
     # Create state directory
@@ -408,7 +403,7 @@ in
         # Check Tailscale status
         if ${pkgs.tailscale}/bin/tailscale status &>/dev/null; then
           echo -e "''${GREEN}✓ Tailscale connection: Active''${NC}"
-          
+
           # Show current status
           echo ""
           echo -e "''${BLUE}Current Status:''${NC}"
@@ -418,12 +413,12 @@ in
             "Online: \(.Self.Online)",
             "Exit Node: \(if .ExitNodeStatus then "Active" else "None" end)"
           '
-          
+
           # Show network check
           echo ""
           echo -e "''${BLUE}Network Quality:''${NC}"
           ${pkgs.tailscale}/bin/tailscale netcheck
-          
+
         else
           echo -e "''${YELLOW}⚠ Tailscale connection: Not authenticated''${NC}"
           echo ""
