@@ -37,6 +37,7 @@
     # DEVELOPMENT & ML
     # ═══════════════════════════════════════════════════════════
     ./development # Dev environments, Claude profiles, Jupyter, CI/CD
+    ./devops # DevOps tools (GitLab CLI, infrastructure automation)
     ./machine-learning # Machine Learning infrastructure (llama.cpp-turbo, vLLM)
 
     # CONTAINERS & VIRTUALIZATION
