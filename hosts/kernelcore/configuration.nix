@@ -145,7 +145,7 @@
       };
 
       antigravity = {
-        enable = false; # Set to true to enable custom Antigravity build
+        enable = true; # Set to true to enable custom Antigravity build
         profile = "performance"; # Options: performance, balanced, minimal
         enableCache = true;
       };
@@ -968,7 +968,7 @@
     tshark
     gemini-cli
     sqlite
-    antigravity
+    # antigravity # Replaced by custom build
   ];
 
   kernelcore.shell.cli-helpers = {
