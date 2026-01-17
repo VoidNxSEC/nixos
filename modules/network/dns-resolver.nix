@@ -67,16 +67,21 @@ in
     # Use systemd-resolved para gerenciamento moderno de DNS
     services.resolved = {
       enable = true;
-      dnssec = if cfg.enableDNSSEC then "true" else "false";
-      dnsovertls = "opportunistic";
 
-      # Se DNSCrypt estiver ativo, usar ele como upstream
-      # Senão, usar os servidores preferidos
-      fallbackDns =
-        if cfg.enableDNSCrypt then
-          [ "127.0.0.2" ] # DNSCrypt rodando em porta alternativa
-        else
-          cfg.preferredServers;
+      settings = {
+        Resolve = {
+          DNSSEC = if cfg.enableDNSSEC then "true" else "false";
+          DNSOverTLS = "opportunistic";
+
+          # Se DNSCrypt estiver ativo, usar ele como upstream
+          # Senão, usar os servidores preferidos
+          FallbackDNS =
+            if cfg.enableDNSCrypt then
+              [ "127.0.0.2" ] # DNSCrypt rodando em porta alternativa
+            else
+              cfg.preferredServers;
+        };
+      };
     };
 
     # DNSCrypt-proxy para DNS criptografado (opcional)
