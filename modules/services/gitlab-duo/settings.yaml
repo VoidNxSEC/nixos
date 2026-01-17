@@ -1,0 +1,95 @@
+# GitLab Duo Configuration
+# This file declares all settings for GitLab Duo operation
+
+duo:
+  enabled: true
+  
+  # API Configuration
+  api:
+    endpoint: "https://gitlab.com/api/v4"
+    timeout: 30
+    retries: 3
+    backoff_factor: 1.5
+  
+  # Feature Flags
+  features:
+    code_completion:
+      enabled: true
+      min_context_lines: 5
+      max_suggestions: 5
+    
+    code_review:
+      enabled: true
+      auto_review: false
+      focus_areas:
+        - security
+        - performance
+        - maintainability
+    
+    security_scanning:
+      enabled: true
+      severity_threshold: "medium"
+      auto_remediation: false
+    
+    documentation_generation:
+      enabled: true
+      style: "google"
+      include_examples: true
+  
+  # Model Configuration
+  models:
+    code_generation:
+      name: "claude-3-5-sonnet"
+      temperature: 0.7
+      max_tokens: 2048
+    
+    code_review:
+      name: "claude-3-5-sonnet"
+      temperature: 0.5
+      max_tokens: 1024
+    
+    security:
+      name: "claude-3-5-sonnet"
+      temperature: 0.3
+      max_tokens: 1024
+  
+  # Rate Limiting
+  rate_limit:
+    requests_per_minute: 60
+    tokens_per_minute: 90000
+    burst_size: 10
+  
+  # Caching
+  cache:
+    enabled: true
+    backend: "memory"  # or "redis"
+    ttl_seconds: 3600
+    max_size_mb: 512
+  
+  # Logging
+  logging:
+    level: "info"  # debug, info, warning, error
+    format: "json"
+    output: "stdout"
+    file_path: "./logs/gitlab-duo.log"
+  
+  # Security
+  security:
+    verify_ssl: true
+    allowed_domains:
+      - "gitlab.com"
+      - "*.gitlab.com"
+    sanitize_output: true
+  
+  # Performance
+  performance:
+    async_processing: true
+    worker_threads: 4
+    queue_size: 100
+  
+  # Project-specific settings
+  project:
+    id: 77739720
+    name: "cerebro"
+    language: "python"
+    framework: "rag"
