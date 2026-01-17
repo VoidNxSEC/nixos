@@ -64,6 +64,18 @@
       url = "git+ssh://git@github.com/marcosfpina/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    neoland = {
+      url = "path:/home/kernelcore/arch/neoland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    adr-ledger = {
+      url = "path:/home/kernelcore/arch/adr-ledger";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    neutron = {
+      url = "path:/home/kernelcore/arch/neutron";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     #docker-hub = {
     #url = "path:/home/kernelcore/dev/low-level/docker-hub";
     #inputs.nixpkgs.follows = "nixpkgs";
@@ -137,6 +149,8 @@
             swissknife-tools = inputs.swissknife.packages.${system};
             phantom = inputs.phantom.packages.${system}.default;
             arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
+            adr-ledger = inputs.adr-ledger.packages.${system}.default;
+            neutron = inputs.neutron.packages.${system}.default;
           })
         ];
       };
@@ -162,6 +176,14 @@
         securellm-bridge = {
           type = "app";
           program = "${self.packages.${system}.securellm-bridge}/bin/securellm-bridge";
+        };
+        adr = {
+          type = "app";
+          program = "${inputs.adr-ledger.packages.${system}.adr-cli}/bin/adr";
+        };
+        adr-sync = {
+          type = "app";
+          program = "${inputs.adr-ledger.packages.${system}.adr-cli}/bin/adr";
         };
       };
 
@@ -205,6 +227,8 @@
                   swissknife-tools = inputs.swissknife.packages.${system};
                   phantom = inputs.phantom.packages.${system}.default;
                   arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
+                  adr-ledger = inputs.adr-ledger.packages.${system}.default;
+                  neutron = inputs.neutron.packages.${system}.default;
                 })
               ];
               nixpkgs.config.allowUnfree = true;
@@ -310,6 +334,8 @@
                   swissknife-tools = inputs.swissknife.packages.${system};
                   phantom = inputs.phantom.packages.${system}.default;
                   arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
+                  adr-ledger = inputs.adr-ledger.packages.${system}.default;
+                  neutron = inputs.neutron.packages.${system}.default;
                 })
               ];
               nixpkgs.config.allowUnfree = true;
