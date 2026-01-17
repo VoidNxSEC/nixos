@@ -81,19 +81,6 @@ with lib;
         "9.9.9.9"
         "149.112.112.112"
       ];
-
-      extraConfig = ''
-        # Cache DNS responses for 5 minutes
-        CacheFromLocalhost=yes
-        DNSStubListener=yes
-
-        # Reduce DNS query timeouts
-        Timeout=2s
-
-        # Try multiple servers in parallel
-        MulticastDNS=no
-        LLMNR=no
-      '';
     };
 
     # Note: avahi (mDNS) is required by GNOME, so we keep it enabled
