@@ -12,10 +12,8 @@
   programs.ssh = {
     enable = true;
 
-    # Global Settings
-    compression = true;
-    serverAliveInterval = 60;
-    serverAliveCountMax = 3;
+    # Disable default configuration (we configure everything explicitly)
+    enableDefaultConfig = false;
 
     # Host Configurations
     matchBlocks = {
@@ -25,6 +23,9 @@
         user = "git";
         identityFile = "~/.ssh/id_ed25519_gitlab";
         identitiesOnly = true;
+        compression = true;
+        serverAliveInterval = 60;
+        serverAliveCountMax = 3;
         extraOptions = {
           PreferredAuthentications = "publickey";
         };
@@ -36,6 +37,9 @@
         user = "git";
         identityFile = "~/.ssh/id_ed25519";
         identitiesOnly = true;
+        compression = true;
+        serverAliveInterval = 60;
+        serverAliveCountMax = 3;
         extraOptions = {
           PreferredAuthentications = "publickey";
         };
@@ -43,6 +47,9 @@
 
       # General Defaults (Wildcard)
       "*" = {
+        compression = true;
+        serverAliveInterval = 60;
+        serverAliveCountMax = 3;
         extraOptions = {
           AddKeysToAgent = "yes";
           TCPKeepAlive = "yes";
