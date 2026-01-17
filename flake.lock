@@ -3,11 +3,11 @@
     "advisory-db": {
       "flake": false,
       "locked": {
-        "lastModified": 1768059433,
-        "narHash": "sha256-HI71gf7YC9+bNHkfX+b8hANMjGefUkAlOCj/0Cmee1A=",
+        "lastModified": 1768679419,
+        "narHash": "sha256-l9rM4lXBeS2mIAJsJjVfl0UABx3S3zg5tul7bv+bn50=",
         "owner": "rustsec",
         "repo": "advisory-db",
-        "rev": "e39023c9d268ebde7a9eb0accb47cdbf3c1d552a",
+        "rev": "c700e1cd023ca87343cbd9217d50d47023e9adc7",
         "type": "github"
       },
       "original": {
@@ -1200,11 +1200,11 @@
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
       },
       "locked": {
-        "lastModified": 1768669983,
-        "narHash": "sha256-OGl180QZ1QIirJ7Cy9Tqrgn/XEglaKGBeb5pys/sS7Y=",
+        "lastModified": 1768682686,
+        "narHash": "sha256-w8dSgFpwk3Mg2gBmwb/Jw6P4sod/Z+AxldwXf3bEdeg=",
         "owner": "sodiboo",
         "repo": "niri-flake",
-        "rev": "b90da048a6ae94b49ff489bacac4a49206670c18",
+        "rev": "02827e973f26825a72665455c18c481f5b40f889",
         "type": "github"
       },
       "original": {
@@ -1233,11 +1233,11 @@
     "niri-unstable": {
       "flake": false,
       "locked": {
-        "lastModified": 1768653140,
-        "narHash": "sha256-8/u6/KHghsTHb3zmw8hYbwRQIp7UgMyQyqn4zVFN1S0=",
+        "lastModified": 1768678265,
+        "narHash": "sha256-Ub8eed4DsfIDWyg30xEe+8bSxL/z5Af/gCjmvJ0V/Hs=",
         "owner": "YaLTeR",
         "repo": "niri",
-        "rev": "3ccb06f5644c4bcdf74ad2e4d388a13ac65207af",
+        "rev": "d7184a04b904e07113f4623610775ae78d32394c",
         "type": "github"
       },
       "original": {
@@ -1651,11 +1651,11 @@
         "rust-overlay": "rust-overlay_5"
       },
       "locked": {
-        "lastModified": 1768476824,
-        "narHash": "sha256-ucWt/Cb14MJLF3N+jujNGhweuX4c0f41pHgMV5ALQgA=",
+        "lastModified": 1768683567,
+        "narHash": "sha256-fXTQ3xZHD2TelluffhZUGHv7tgDe036Woaf62SV8QGI=",
         "ref": "refs/heads/main",
-        "rev": "0efc4e08fab3222aa2026fdb7d36971b61c3caf3",
-        "revCount": 50,
+        "rev": "51f15bd19a33ac8d2724f4e54a9889c3773fc910",
+        "revCount": 51,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/phantom"
       },
@@ -1800,11 +1800,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768445213,
-        "narHash": "sha256-y0BglISgDr61vvdb35m0O4npuqh1pojlBNDILo9j8AI=",
+        "lastModified": 1768617670,
+        "narHash": "sha256-Z3+6dxoWZn+QFwjxAt5ZGXkiuCvCLgQP6pTS5eSWXqk=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "1cd63408e71cc0e6a89ff2cb7c4107214e2523cc",
+        "rev": "56d0fbdd732f3686e8414b857cf885038fc17d57",
         "type": "github"
       },
       "original": {
@@ -1883,11 +1883,11 @@
         "rust-overlay": "rust-overlay_7"
       },
       "locked": {
-        "lastModified": 1768680625,
-        "narHash": "sha256-XdlCY+osQQYWDOPJRC9KNSfZIP9p+LHnN6S1OJDW9/A=",
+        "lastModified": 1768682427,
+        "narHash": "sha256-Qk3hOAD5LDhjVLWRLQrl5HTdBt+acNslC6rSE7My2XA=",
         "ref": "refs/heads/main",
-        "rev": "7bff37093ca41e543b80a31bd8ea295d3bf0df91",
-        "revCount": 63,
+        "rev": "32987adabd678737fb14d35bc758dc330aefb226",
+        "revCount": 65,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
