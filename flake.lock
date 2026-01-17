@@ -1883,11 +1883,11 @@
         "rust-overlay": "rust-overlay_7"
       },
       "locked": {
-        "lastModified": 1768671137,
-        "narHash": "sha256-ezqxB+SEkCoDCvBt9hxglyKu3bvnhJ2zpuwF61CMuwo=",
+        "lastModified": 1768680625,
+        "narHash": "sha256-XdlCY+osQQYWDOPJRC9KNSfZIP9p+LHnN6S1OJDW9/A=",
         "ref": "refs/heads/main",
-        "rev": "8c73656ac59c16c16ecd1c72b606eae2bca9b119",
-        "revCount": 62,
+        "rev": "7bff37093ca41e543b80a31bd8ea295d3bf0df91",
+        "revCount": 63,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
