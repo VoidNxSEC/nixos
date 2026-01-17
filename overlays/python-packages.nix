@@ -1,6 +1,11 @@
 # Python package overlays to fix test failures
 # These packages have flaky or resource-intensive tests that fail in Nix builds
 final: prev: {
+  # Fix poetry dependency conflict with pbs-installer
+  # poetry 2.2.1 requires pbs-installer<2026.0.0 but nixpkgs has 2026.1.13
+  poetry = prev.poetry.overridePythonAttrs (old: {
+    dontCheckRuntimeDeps = true;
+  });
   # Define a CUSTOM python instance for ML/Dev projects
   # This avoids rebuilding the entire system (100GB+ overhead) which happens
   # when overriding the global 'python3' attribute.
@@ -68,12 +73,6 @@ final: prev: {
     (python-final: python-prev: {
       blis = python-prev.blis.overridePythonAttrs (old: {
         BLIS_ARCH = "generic";
-      });
-
-      # Fix poetry dependency conflict with pbs-installer
-      # poetry 2.2.1 requires pbs-installer<2026.0.0 but nixpkgs has 2026.1.13
-      poetry = python-prev.poetry.overridePythonAttrs (old: {
-        pythonRuntimeDepsCheck = false;
       });
     })
   ];
