@@ -25,6 +25,7 @@
 
     # Development & AI
     ./mcp-server.nix
+    ./gitlab-duo/default.nix
     ./gitea-showcase.nix # Self-hosted Git with auto-mirror for showcase projects
     # ./firefox-self-hosted.nix
 
