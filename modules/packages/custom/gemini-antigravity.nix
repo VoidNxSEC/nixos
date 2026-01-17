@@ -247,7 +247,7 @@ in
                     ARGS+=("$arg")
                   fi
                 done
-            
+
                 cd "$INSTALL_DIR/antigravity"
                 exec ./antigravity "''${ARGS[@]}"          '';
 
