@@ -237,10 +237,19 @@ in
               echo "✅ Antigravity installed at $INSTALL_DIR"
             fi
 
-            # Execute Antigravity
-            cd "$INSTALL_DIR/antigravity"
-            exec ./antigravity "$@"
-          '';
+                # Execute Antigravity
+                # Resolve absolute paths for file arguments because we change directory
+                ARGS=()
+                for arg in "$@"; do
+                  if [ -e "$arg" ]; then
+                    ARGS+=("$(readlink -f "$arg")")
+                  else
+                    ARGS+=("$arg")
+                  fi
+                done
+            
+                cd "$INSTALL_DIR/antigravity"
+                exec ./antigravity "''${ARGS[@]}"          '';
 
           meta = {
             description = "Antigravity Custom Build (FHS)";
