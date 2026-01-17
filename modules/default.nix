@@ -37,7 +37,7 @@
     # DEVELOPMENT & ML
     # ═══════════════════════════════════════════════════════════
     ./development # Dev environments, Claude profiles, Jupyter, CI/CD
-    ./devops # DevOps tools (GitLab CLI, infrastructure automation)
+    # ./devops # DevOps tools - imported in home-manager (hosts/kernelcore/home/home.nix)
     ./machine-learning # Machine Learning infrastructure (llama.cpp-turbo, vLLM)
 
     # CONTAINERS & VIRTUALIZATION
