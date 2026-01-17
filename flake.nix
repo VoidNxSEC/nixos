@@ -208,7 +208,14 @@
                 # inputs.hyprland.overlays.default # Official Hyprland overlay
                 # Niri overlay not needed - module provides package
                 (final: prev: {
-                  securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
+                  securellm-mcp = inputs.securellm-mcp.packages.${system}.default.overrideAttrs (old: {
+                    npmDeps = pkgs.fetchNpmDeps {
+                      src = old.src;
+                      hash = "sha256-tguduQ+LInsaOHdjeSTTgahQLqgRCL1tsKY6uCPSPt0=";
+                    };
+                    # Skip puppeteer Chrome download in sandbox
+                    PUPPETEER_SKIP_DOWNLOAD = "true";
+                  });
                   securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
                   swissknife-tools = inputs.swissknife.packages.${system};
                   phantom = inputs.phantom.packages.${system}.default;
