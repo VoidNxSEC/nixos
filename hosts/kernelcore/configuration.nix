@@ -898,8 +898,11 @@
     ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
     cognitive-vault.enable = true;
     vscodium-secure = {
-      enable = false;
-      extensions = with pkgs.vscode-extensions; [ rooveterinaryinc.roo-cline ];
+      enable = true;
+      enableGitLabDuo = true;
+      extensions = with pkgs.vscode-extensions; [
+        rooveterinaryinc.roo-cline
+      ];
     };
     brave-secure.enable = false;
     firefox-privacy.enable = false;
