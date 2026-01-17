@@ -1,25 +1,35 @@
 # /modules/devops/gitlab-cli/default.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
-  cfg = config.programs.glab-custom or {
-    enable = false;
-    tokenFile = "/run/keys/gitlab-token"; # ou ~/.local/secrets/gitlab.token
-    defaultNamespaceId = 1234; # muda pro teu grupo
-  };
+  cfg =
+    config.programs.glab-custom or {
+      enable = false;
+      tokenFile = "/run/keys/gitlab-token"; # ou ~/.local/secrets/gitlab.token
+      defaultNamespaceId = 1234; # muda pro teu grupo
+    };
 
-  glab-pkgs = with pkgs; [ glab jq httpie ];
+  glab-pkgs = with pkgs; [
+    glab
+    jq
+    httpie
+  ];
 
   glab-aliases = ''
-    export GITLAB_TOKEN=$(cat ${cfg.tokenFile} 2>/dev/null || echo "")
+    export GITLAB_TOKEN=''$(cat ${cfg.tokenFile} 2>/dev/null || echo "")
 
     glab-new() {
-      local name="$1"
-      local ns="${2:-${toString cfg.defaultNamespaceId}}"
-      [ -z "$name" ] && echo "❌ Uso: glab-new <nome> [namespace_id]" && return 1
+      local name="''$1"
+      local ns="''${2:-${toString cfg.defaultNamespaceId}}"
+      [ -z "''$name" ] && echo "❌ Uso: glab-new <nome> [namespace_id]" && return 1
       glab api POST projects \
-        --field name="$name" \
-        --field namespace_id="$ns" \
+        --field name="''$name" \
+        --field namespace_id="''$ns" \
         --field visibility="internal" \
         --field initialize_with_readme=false \
         --field container_registry_enabled=false \
@@ -32,7 +42,7 @@ let
     }
 
     alias glab-ls='glab api projects --field membership=true --field per_page=50 | jq -r ".[].path_with_namespace"'
-    alias glab-vars='glab api projects/\$GITLAB_PROJECT_ID/variables | jq ".[].key"'
+    alias glab-vars='glab api projects/''$GITLAB_PROJECT_ID/variables | jq ".[].key"'
     alias glab-pipelines='glab ci list --limit 10'
   '';
 in
