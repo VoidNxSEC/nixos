@@ -69,6 +69,12 @@ final: prev: {
       blis = python-prev.blis.overridePythonAttrs (old: {
         BLIS_ARCH = "generic";
       });
+
+      # Fix poetry dependency conflict with pbs-installer
+      # poetry 2.2.1 requires pbs-installer<2026.0.0 but nixpkgs has 2026.1.13
+      poetry = python-prev.poetry.overridePythonAttrs (old: {
+        pythonRuntimeDepsCheck = false;
+      });
     })
   ];
 }
