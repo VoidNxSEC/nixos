@@ -81,9 +81,18 @@ in
         ]
       '';
     };
+
+    enableGitLabDuo = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Enable GitLab Duo integration for VSCodium";
+    };
   };
 
   config = mkIf cfg.enable {
+    # Enable GitLab Duo service if requested
+    services.gitlabDuo.enable = mkIf cfg.enableGitLabDuo true;
+
     # Install VSCodium and Firejail
     environment.systemPackages = with pkgs; [
       (vscodium.override {
@@ -269,11 +278,11 @@ in
     };
 
     # Install extensions if specified
-    home-manager.users = mkIf (cfg.extensions != [ ]) {
+    home-manager.users = mkIf (cfg.extensions != [ ] || cfg.enableGitLabDuo) {
       kernelcore = {
         programs.vscode = {
           profiles = {
-            extensions = cfg.extensions;
+            extensions = cfg.extensions ++ (if cfg.enableGitLabDuo then [ pkgs.vscode-extensions.gitlab.gitlab-workflow ] else []);
           };
         };
       };
