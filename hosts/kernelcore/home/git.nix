@@ -4,12 +4,6 @@
   programs.git = {
     enable = true;
 
-    # ═══════════════════════════════════════════════════════════
-    # Default Configuration (GitHub)
-    # ═══════════════════════════════════════════════════════════
-    userName = "marcosfpina";
-    userEmail = "sec@voidnx.com";
-
     # Default GPG key (GitHub)
     signing = {
       key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnx.com>
@@ -17,9 +11,40 @@
     };
 
     # ═══════════════════════════════════════════════════════════
-    # General Configuration
+    # All Configuration via settings
     # ═══════════════════════════════════════════════════════════
-    extraConfig = {
+    settings = {
+      # ───────────────────────────────────────────────────────
+      # User Configuration (GitHub default)
+      # ───────────────────────────────────────────────────────
+      user = {
+        name = "marcosfpina";
+        email = "sec@voidnx.com";
+      };
+
+      # ───────────────────────────────────────────────────────
+      # Aliases
+      # ───────────────────────────────────────────────────────
+      alias = {
+        st = "status";
+        co = "checkout";
+        br = "branch";
+        ci = "commit";
+        df = "diff";
+        lg = "log --oneline --graph --decorate --all";
+        lol = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+        unstage = "reset HEAD --";
+        last = "log -1 HEAD";
+        amend = "commit --amend --no-edit";
+        undo = "reset --soft HEAD^";
+
+        # Show which key is being used
+        show-key = "!git config user.signingkey";
+      };
+
+      # ───────────────────────────────────────────────────────
+      # General Configuration
+      # ───────────────────────────────────────────────────────
       init.defaultBranch = "main";
       core.editor = "nvim";
       pull.rebase = false;
@@ -49,26 +74,6 @@
       # Push configuration
       push.autoSetupRemote = true;
       push.default = "current";
-    };
-
-    # ═══════════════════════════════════════════════════════════
-    # Aliases
-    # ═══════════════════════════════════════════════════════════
-    aliases = {
-      st = "status";
-      co = "checkout";
-      br = "branch";
-      ci = "commit";
-      df = "diff";
-      lg = "log --oneline --graph --decorate --all";
-      lol = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-      unstage = "reset HEAD --";
-      last = "log -1 HEAD";
-      amend = "commit --amend --no-edit";
-      undo = "reset --soft HEAD^";
-
-      # Show which key is being used
-      show-key = "!git config user.signingkey";
     };
 
     # ═══════════════════════════════════════════════════════════
