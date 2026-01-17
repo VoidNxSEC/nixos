@@ -67,20 +67,25 @@ with lib;
     # systemd-resolved optimizations
     services.resolved = {
       enable = true;
-      dnssec = "false"; # DNSSEC can add latency
 
-      # DNS-over-TLS for privacy without sacrificing too much performance
-      dnsovertls = "opportunistic";
+      settings = {
+        Resolve = {
+          DNSSEC = "false"; # DNSSEC can add latency
 
-      # Fallback DNS servers
-      fallbackDns = [
-        "1.1.1.1"
-        "1.0.0.1"
-        "8.8.8.8"
-        "8.8.4.4"
-        "9.9.9.9"
-        "149.112.112.112"
-      ];
+          # DNS-over-TLS for privacy without sacrificing too much performance
+          DNSOverTLS = "opportunistic";
+
+          # Fallback DNS servers
+          FallbackDNS = [
+            "1.1.1.1"
+            "1.0.0.1"
+            "8.8.8.8"
+            "8.8.4.4"
+            "9.9.9.9"
+            "149.112.112.112"
+          ];
+        };
+      };
     };
 
     # Note: avahi (mDNS) is required by GNOME, so we keep it enabled
