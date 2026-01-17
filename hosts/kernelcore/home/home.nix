@@ -22,7 +22,7 @@
     ./brave.nix # Brave browser configuration
     ./electron-apps.nix # Per-app Electron configuration
     ./firefox.nix # Self-hosted Firefox (extensions in Nix store)
-    ../../../nix/ssh-gitlab-config.nix # SSH configuration for GitLab
+    ../../../nix/ssh-config.nix # SSH configuration for GitLab & GitHub
     ../../../modules/devops/gitlab-cli # GitLab CLI tools and helpers
   ]
   ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland.nix;
