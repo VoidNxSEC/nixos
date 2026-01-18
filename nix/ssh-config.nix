@@ -45,6 +45,21 @@
         };
       };
 
+      # Nvidia Brev Development Environments
+      "*.brev.dev" = {
+        user = "kernelcore";
+        identityFile = "~/.ssh/id_rsa_brev";
+        identitiesOnly = true;
+        compression = true;
+        serverAliveInterval = 60;
+        serverAliveCountMax = 3;
+        extraOptions = {
+          StrictHostKeyChecking = "accept-new";
+          AddKeysToAgent = "yes";
+          PreferredAuthentications = "publickey";
+        };
+      };
+
       # General Defaults (Wildcard)
       "*" = {
         compression = true;
