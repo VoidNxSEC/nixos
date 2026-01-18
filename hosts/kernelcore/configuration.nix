@@ -672,7 +672,7 @@
 
     llamacpp-turbo = {
       enable = true;
-      model = "/var/lib/llamacpp/models/Qwen2.5_Coder_7B_Instruct";
+      model = "/var/lib/llamacpp/models/Llama3.3-8B-Instruct-Thinking-Claude-4.5-Opus-High-Reasoning.i1-Q4_K_M.gguf";
       host = "127.0.0.1";
       port = 8080;
       n_threads = 12;
@@ -867,6 +867,7 @@
       flameshot
       claude-code
       codex
+      koboldcpp
       alacritty
       xclip
       glab
