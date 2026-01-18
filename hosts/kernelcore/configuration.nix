@@ -527,9 +527,6 @@
     #swissknife.enable = true;
   };
 
-  # SSH Client Configuration
-  kernelcore.ssh.enable = true;
-
   # ═══════════════════════════════════════════════════════════
   # MAIN SERVICES BLOCK
   # ═══════════════════════════════════════════════════════════
