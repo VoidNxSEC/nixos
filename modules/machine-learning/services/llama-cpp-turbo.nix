@@ -350,7 +350,7 @@ in
           # Metrics
           ++ lib.optionals cfg.metricsEndpoint [ "--metrics" ]
           # Disable web UI for server-only mode
-          ++ [ "--no-webui" ]
+          #++ [ "--no-webui" ]
           # Extra flags
           ++ cfg.extraFlags
         );
