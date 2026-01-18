@@ -182,6 +182,7 @@ in
         󰧑 Codex - CLI Agent
         󰊤 Gemini - Google AI
         󰜈 Antigravity (Gemini CLI)
+        󰜈 Neoland - AI Agent
         ━━━━━━━━━━━━━━━━━━━━━━━━
         󰁖 Agent Status
         󰁔 Open Chat Terminal"
@@ -205,6 +206,9 @@ in
                     ;;
                   "󰜈 Antigravity (Gemini CLI)")
                     alacritty --class="agent-hub-antigravity" -e gemini &
+                    ;;
+                  "󰜈 Neoland - AI Agent")
+                    alacritty --class="neoland-client" -e neoland client &
                     ;;
                   "󰁖 Agent Status")
                     "$HOME/.config/agent-hub/agent-status.sh" | wofi --dmenu --prompt="Status" --width=500 --height=400 --cache-file=/dev/null
@@ -280,11 +284,19 @@ in
           echo "󰊤 Gemini CLI: ❌ Not installed"
         fi
 
-        # Antigravity (gemini command)
         if command -v gemini &> /dev/null; then
           echo "󰜈 Antigravity: ✅ Available"
         else
           echo "󰜈 Antigravity: ❌ Not installed"
+        fi
+
+        # Neoland
+        if pgrep -f "neoland server" &> /dev/null; then
+          echo "󰜈 Neoland: ✅ Active"
+        elif command -v neoland &> /dev/null; then
+           echo "󰜈 Neoland: ⚠️  Installed but Stopped"
+        else
+           echo "󰜈 Neoland: ❌ Not installed"
         fi
 
         # VSCode with Roo
@@ -328,7 +340,7 @@ in
         fi
 
         # Check active agents with single pgrep
-        agents=$(pgrep -f "codex|gemini" 2>/dev/null || true)
+        agents=$(pgrep -f "codex|gemini|neoland" 2>/dev/null || true)
 
         if echo "$agents" | grep -q "codex"; then
           ((ACTIVE++))
@@ -338,6 +350,11 @@ in
         if echo "$agents" | grep -q "gemini"; then
           ((ACTIVE++))
           TOOLTIP+="\n󰊤 Gemini: Active"
+        fi
+
+        if echo "$agents" | grep -q "neoland"; then
+          ((ACTIVE++))
+          TOOLTIP+="\n󰜈 Neoland: Active"
         fi
 
         TOOLTIP+="\n\nClick: Open Agent Hub\nRight-click: Quick Prompt"
