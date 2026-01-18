@@ -208,7 +208,7 @@ in
                     alacritty --class="agent-hub-antigravity" -e gemini &
                     ;;
                   "󰜈 Neoland - AI Agent")
-                    alacritty --class="neoland-client" -e neoland client &
+                    alacritty --class="neoland-client" -e neoland client --ml-api-url http://${llamaCppApi.host}:${toString llamaCppApi.port} &
                     ;;
                   "󰁖 Agent Status")
                     "$HOME/.config/agent-hub/agent-status.sh" | wofi --dmenu --prompt="Status" --width=500 --height=400 --cache-file=/dev/null
