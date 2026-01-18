@@ -672,7 +672,7 @@
 
     llamacpp-turbo = {
       enable = true;
-      model = "/var/lib/llamacpp/models/Llama3.3-8B-Instruct-Thinking-Claude-4.5-Opus-High-Reasoning.i1-Q4_K_M.gguf";
+      model = "/var/lib/llamacpp/models/llama3.3-8b-instruct-thinking-heretic-uncensored-claude-4.5-opus-high-reasoning-q8_0.gguf";
       host = "127.0.0.1";
       port = 8080;
       n_threads = 12;
