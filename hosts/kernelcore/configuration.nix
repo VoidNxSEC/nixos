@@ -744,7 +744,7 @@
         "--force-dark-mode"
         "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,ParallelDownloading"
         "--ignore-gpu-blocklist"
-        "--enable-gpu-rasterization"
+        #"--enable-gpu-rasterization"
         # REMOVED: --enable-zero-copy (incompatível com NVIDIA+Wayland+GBM)
         # Causa EGL_BAD_MATCH errors (0x3009) ao tentar criar EGLImages
         "--ozone-platform-hint=auto"
