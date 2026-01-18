@@ -53,6 +53,13 @@ with lib;
       description = "GitLab SSH key filename";
     };
 
+    # Nvidia Brev identity
+    brevKey = mkOption {
+      type = types.str;
+      default = "id_rsa_brev";
+      description = "Nvidia Brev SSH key filename";
+    };
+
     # Internal server details
     serverHost = mkOption {
       type = types.str;
@@ -214,6 +221,19 @@ with lib;
                 UserKnownHostsFile = "/dev/null";
               };
             };
+
+            # ────────────────────────────────────────────────────
+            # Nvidia Brev Development Environments
+            # ────────────────────────────────────────────────────
+            "*.brev.dev" = {
+              user = "kernelcore";
+              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.brevKey}";
+              identitiesOnly = true;
+              extraOptions = {
+                StrictHostKeyChecking = "accept-new";
+                AddKeysToAgent = "yes";
+              };
+            };
           };
         };
       };
@@ -272,6 +292,7 @@ with lib;
         - Org: ~/.ssh/${config.kernelcore.ssh.orgKey}
         - Server: ~/.ssh/${config.kernelcore.ssh.serverKey}
         - GitLab: ~/.ssh/${config.kernelcore.ssh.gitlabKey}
+        - Nvidia Brev: ~/.ssh/${config.kernelcore.ssh.brevKey}
 
         ## Usage Examples
 
