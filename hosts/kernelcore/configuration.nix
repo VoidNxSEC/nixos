@@ -672,15 +672,15 @@
 
     llamacpp-turbo = {
       enable = true;
-      model = "/var/lib/llamacpp/models/llama3.3-8b-instruct-thinking-heretic-uncensored-claude-4.5-opus-high-reasoning-q8_0.gguf";
+      model = "/var/lib/llamacpp/models/Qwen2.5_Coder_7B_Instruct";
       host = "127.0.0.1";
       port = 8080;
       n_threads = 12;
       n_threads_batch = 12;
-      n_gpu_layers = 35;
+      n_gpu_layers = 40;
       mainGpu = 1;
       n_parallel = 1;
-      n_ctx = 8192;
+      n_ctx = 8196;
       n_batch = 2048;
       n_ubatch = 512;
       cudaGraphs = true;
