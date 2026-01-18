@@ -146,7 +146,7 @@
 
       antigravity = {
         enable = true; # Set to true to enable custom Antigravity build
-        profile = "performance"; # Options: performance, balanced, minimal
+        profile = "balanced"; # Options: performance, balanced, minimal
         enableCache = true;
       };
     };
@@ -527,6 +527,9 @@
     #swissknife.enable = true;
   };
 
+  # SSH Client Configuration
+  kernelcore.ssh.enable = true;
+
   # ═══════════════════════════════════════════════════════════
   # MAIN SERVICES BLOCK
   # ═══════════════════════════════════════════════════════════
@@ -874,8 +877,7 @@
       codeberg-cli
       brev-cli
       gnome-console
-      #zed-editor
-      jetbrains.idea
+      zed-editor
       rust-analyzer
       rustup
       terraform-providers.carlpett_sops
