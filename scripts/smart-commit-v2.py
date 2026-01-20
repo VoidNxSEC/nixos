@@ -43,7 +43,7 @@ import urllib.error
 # Configuration
 # ═══════════════════════════════════════════════════════════════════════════
 
-API_URL = os.environ.get("LLAMACPP_URL", "http://127.0.0.1:8080") + "/v1/chat/completions"
+API_URL = os.environ.get("LLAMACPP_URL", "http://127.0.0.1:8081") + "/v1/chat/completions"
 MODEL_NAME = os.getenv("LLM_MODEL", "unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf")
 MAX_DIFF_SIZE = 12000  # Increased char limit
 MAX_RETRIES = 3
