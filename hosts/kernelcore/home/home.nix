@@ -22,8 +22,8 @@
     ./brave.nix # Brave browser configuration
     ./electron-apps.nix # Per-app Electron configuration
     ./firefox.nix # Self-hosted Firefox (extensions in Nix store)
-    ../../../nix/ssh-config.nix # SSH configuration for GitLab & GitHub
-    ../../../modules/devops/gitlab-cli # GitLab CLI tools and helpers
+    ../../modules/development/git-forge-tools.nix # Unified Git Forges CLI Tools
+    ../../../modules/development/ssh-git-forges.nix # Advanced Git Forges SSH Configuration
   ]
   ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland.nix;
   # Niri config temporarily disabled - focus on Hyprland first
@@ -242,6 +242,12 @@
   # PROGRAM CONFIGURATIONS
   # ============================================================
   programs = {
+    # ========================================================
+    # Intelligent SSH Configuration
+    # ========================================================
+    ssh.gitForges.enable = true;
+    git-forge-tools.enable = true;
+
     # ========================================================
     # Home Manager
     # ========================================================
