@@ -53,7 +53,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
-      url = "git+ssh://git@github.com/marcosfpina/i915-governor";
+      url = "git+ssh://git@github.com/VoidNxSEC/i915-governor";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     swissknife = {
