@@ -44,24 +44,20 @@ with lib;
       # Sintomas: freeze total ao fechar OBS, só reboot recupera
       # Ticket: https://gitlab.freedesktop.org/drm/nvidia/-/issues/
       powerManagement.finegrained = false;
+      dynamicBoost.enable = true;
       open = false;
       nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.production;
       forceFullCompositionPipeline = true;
 
       # NVIDIA Prime configuration for hybrid graphics (Intel Xe + RTX 3050)
-      prime = mkIf config.kernelcore.nvidia.prime.enable {
-        sync.enable = config.kernelcore.nvidia.prime.sync;
-        offload = mkIf config.kernelcore.nvidia.prime.offload {
+      prime = {
+        offload = {
           enable = true;
           enableOffloadCmd = true;
         };
-        intelBusId = mkIf (
-          config.kernelcore.nvidia.prime.intelBusId != ""
-        ) config.kernelcore.nvidia.prime.intelBusId;
-        nvidiaBusId = mkIf (
-          config.kernelcore.nvidia.prime.nvidiaBusId != ""
-        ) config.kernelcore.nvidia.prime.nvidiaBusId;
+        intelBusId = "PCI:0:2:0";
+        nvidiaBusId = "PCI:1:0:0";
       };
     };
 
