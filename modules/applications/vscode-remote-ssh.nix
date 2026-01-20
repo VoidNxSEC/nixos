@@ -44,8 +44,8 @@ in
 
   config = mkIf cfg.enable {
     # Install VSCode with Remote SSH extension via home-manager
-    home-manager.users.kernelcore = {
-      programs.vscode = mkIf (builtins.elem "vscode" cfg.installFor) {
+    home-manager.users.kernelcore = mkIf (builtins.elem "vscode" cfg.installFor) {
+      programs.vscode = {
         enable = true;
         extensions = with pkgs.vscode-extensions; [
           ms-vscode-remote.remote-ssh

@@ -821,11 +821,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768893778,
-        "narHash": "sha256-iSHEptqSun9Ryl1NgoKguJAjRHAFO3k9bQ9bB+UpCNA=",
+        "lastModified": 1768927746,
+        "narHash": "sha256-zyMpWHqcpKVmRc1W2NEK7DAuyVJZV62Jdjqudg70b1k=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "895eddbee851630201154725c22e94ecd8232dbf",
+        "rev": "63a87808f5f9b6e4195a1d33f6ea25d23f4aa0df",
         "type": "github"
       },
       "original": {
@@ -931,11 +931,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1768746153,
-        "narHash": "sha256-GZPhFLULV5EYTfQCKmF1UQITv7yDLnwAYTbbgibWcXs=",
+        "lastModified": 1768919552,
+        "narHash": "sha256-Q/Ao7Y+mvroY61ixn15PvDgOt0yk7qjC2u/Rrjqy4E4=",
         "ref": "refs/heads/main",
-        "rev": "eb0480ba0d0870ab5d8a876f01c6ab033a4b35f4",
-        "revCount": 6819,
+        "rev": "c44292c72339b3d7820ca7444d45bab7e34ec74e",
+        "revCount": 6823,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1251,8 +1251,8 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1768872911,
-        "narHash": "sha256-25Pxn+UcDWmYi3dmqzUXdLNXCdaMM7T9zJZwO9N6CQo=",
+        "lastModified": 1768922251,
+        "narHash": "sha256-sjHiGCxNhnBP/WhAcLdEG+brKmH3c+t3mC0Bj8A+gCQ=",
         "path": "/home/kernelcore/arch/neoland",
         "type": "path"
       },
@@ -1867,11 +1867,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1768704795,
-        "narHash": "sha256-Y33TAp2BHEcuspYvcmBXXD0qdvjftv73PwyKTDOjoSY=",
+        "lastModified": 1768877311,
+        "narHash": "sha256-abSDl0cNr0B+YCsIDpO1SjXD9JMxE4s8EFnhLEFVovI=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "4b7472a78857ac789fb26616040f55cfcbd36c6e",
+        "rev": "59e4ab96304585fde3890025fd59bd2717985cc1",
         "type": "github"
       },
       "original": {
@@ -1927,11 +1927,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1768359079,
-        "narHash": "sha256-a016mOfKconYrYo3fZLN6c2cnmqYYd44g2bUrBZAsQc=",
+        "lastModified": 1768877311,
+        "narHash": "sha256-abSDl0cNr0B+YCsIDpO1SjXD9JMxE4s8EFnhLEFVovI=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "0357d1826057686637e41147545402cbbda420ce",
+        "rev": "59e4ab96304585fde3890025fd59bd2717985cc1",
         "type": "github"
       },
       "original": {
@@ -1970,11 +1970,11 @@
         "rust-overlay": "rust-overlay_7"
       },
       "locked": {
-        "lastModified": 1768475747,
-        "narHash": "sha256-QLCXfltaGoZygq4amCLXMZvaWX2tpRP5nJxR1Q5mTmI=",
+        "lastModified": 1768922407,
+        "narHash": "sha256-jhpEld3kRBppKpAfVTVA0iWD5Z+wiI/MTSODrhLIwAQ=",
         "ref": "refs/heads/main",
-        "rev": "b95ce4351211454415bf8aa24bf38d9cbaee80cd",
-        "revCount": 18,
+        "rev": "88e5593ecb6cd43d961e78d6a73c9c1bdf33f0c2",
+        "revCount": 19,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-bridge"
       },
@@ -1992,11 +1992,11 @@
         "rust-overlay": "rust-overlay_8"
       },
       "locked": {
-        "lastModified": 1768687290,
-        "narHash": "sha256-dL7gBWULDwsEpb4ropEI0PREhFWDHQg138ERQA18PrY=",
+        "lastModified": 1768922031,
+        "narHash": "sha256-A8+Ek7ZcQtIaSp/sw6pVKIeLjwmted4o5btZPlmQ0rE=",
         "ref": "refs/heads/main",
-        "rev": "f004360a0c7b08361d9d8f82dbbf6b23338a00dc",
-        "revCount": 66,
+        "rev": "57ad8e66e8e665afd3e283bcb165b7cba2b8d45c",
+        "revCount": 68,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },

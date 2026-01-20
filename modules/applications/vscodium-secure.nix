@@ -281,11 +281,10 @@ in
     home-manager.users = mkIf (cfg.extensions != [ ] || cfg.enableGitLabDuo) {
       kernelcore = {
         programs.vscode = {
-          profiles = {
-            extensions =
-              cfg.extensions
-              ++ (if cfg.enableGitLabDuo then [ pkgs.vscode-extensions.gitlab.gitlab-workflow ] else [ ]);
-          };
+          enable = true;
+          extensions =
+            cfg.extensions
+            ++ (if cfg.enableGitLabDuo then [ pkgs.vscode-extensions.gitlab.gitlab-workflow ] else [ ]);
         };
       };
     };
