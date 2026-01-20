@@ -37,7 +37,8 @@
     ./emergency.nix
     ./laptop-defense.nix
     ./macos-kvm.nix
-    #./service-control.nix # GPU/ML service control & RAM optimization  # TEMP DISABLED
+    ./service-control.nix # GPU/ML service control & RAM optimization
+    ./llama-swap-control.nix # LlamaSwap hot model reloading control
     #./nixos-explorer.nix # NixOS configuration explorer  # TEMP DISABLED
   ];
 }
