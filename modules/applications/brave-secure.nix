@@ -36,7 +36,7 @@ in
         "--disable-gpu-rasterization"
         # "--enable-zero-copy" # DISABLED: NVIDIA+Wayland issues
         "--use-gl=egl"
-        "--disable-gpu-driver-bug-workarounds"
+        # "--disable-gpu-driver-bug-workarounds"
       ];
       description = "Custom Chromium flags for Brave";
     };
