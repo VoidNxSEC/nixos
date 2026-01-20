@@ -406,6 +406,49 @@
     };
 
     system.ml-gpu-users.enable = true;
+
+    # LlamaSwap - Hot Model Reloading Configuration
+    llama-swap = {
+      enable = true;
+
+      profiles = {
+        coder = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/Qwen2.5_Coder_7B_Instruct";
+          displayName = "Qwen 2.5 Coder 7B (Q4)";
+          gpuLayers = 35;
+          contextSize = 8192;
+        };
+
+        reasoning = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
+          displayName = "DeepSeek-R1 8B (Q4)";
+          gpuLayers = 35;
+          contextSize = 8192;
+        };
+
+        thinking = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/Llama3.3-8B-Instruct-Thinking-Claude-4.5-Opus-High-Reasoning.i1-Q4_K_M.gguf";
+          displayName = "Llama 3.3 Thinking 8B (Q4)";
+          gpuLayers = 35;
+          contextSize = 8192;
+        };
+
+        fast = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/qwen3-vl:2b";
+          displayName = "Qwen3 VL 2B (Fast)";
+          gpuLayers = 999; # Full offload for small model
+          contextSize = 4096;
+        };
+      };
+
+      defaultProfile = "coder";
+    };
+
+    # Shell control scripts
+    shell = {
+      serviceControl.enable = true; # GPU/ML service control & RAM optimization
+      llamaSwapControl.enable = true; # LlamaSwap hot model reloading control
+    };
   }; # FIM DO BLOCO KERNELCORE
 
   # ============================================================================
@@ -671,7 +714,7 @@
     };
 
     llamacpp-turbo = {
-      enable = true;
+      enable = false; # Disabled in favor of llamacpp-swap
       model = "/var/lib/llamacpp/models/Qwen2.5_Coder_7B_Instruct";
       host = "127.0.0.1";
       port = 8080;
@@ -690,6 +733,28 @@
       continuousBatching = true;
       speculativeDecoding.enable = false;
       metricsEndpoint = false;
+    };
+
+    # LlamaSwap - Hot Model Reloading
+    llamacpp-swap = {
+      enable = true;
+      host = "127.0.0.1";
+      port = 8081;
+      n_threads = 12;
+      n_threads_batch = 12;
+      n_gpu_layers = 35;
+      mainGpu = 1;
+      n_parallel = 4;
+      n_ctx = 8192;
+      n_batch = 2048;
+      n_ubatch = 512;
+      cudaGraphs = true;
+      flashAttention = true;
+      mmap = true;
+      mlock = true;
+      continuousBatching = true;
+      speculativeDecoding.enable = false;
+      metricsEndpoint = true;
     };
 
     gitea-showcase = {
