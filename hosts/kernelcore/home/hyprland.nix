@@ -283,15 +283,13 @@
         "float 1, match:class ^(agent-hub-.*)$"
         "size 600 800, match:class ^(agent-hub-.*)$"
         "center 1, match:class ^(agent-hub-.*)$"
-        "bordercolor rgb(bd93f9) rgb(ff79c6), match:class ^(agent-hub-.*)$"
-        "bordercolor rgb(ff5555), match:title ^(.*)(Failed|Error)(.*)$"
         "opacity 0.9 0.8, match:class ^(agent-hub-.*)$"
-        "pin 1, match:class ^(agent-hub-chat)$"
         "workspace special:agents, match:class ^(agent-hub-daemon)$"
 
         # Chat window specific override
         "size 1000 700, match:class ^(agent-hub-chat)$"
         "opacity 0.95 0.90, match:class ^(agent-hub-chat)$"
+
 
 
 
