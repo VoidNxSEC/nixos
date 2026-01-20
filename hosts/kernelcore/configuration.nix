@@ -943,6 +943,7 @@
       flameshot
       claude-code
       codex
+      vllm
       koboldcpp
       alacritty
       opencode
