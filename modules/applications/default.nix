@@ -21,6 +21,7 @@
     # Editors
     ./vscodium-secure.nix
     ./vscode-secure.nix
+    ./vscode-remote-ssh.nix # Remote SSH extension for all VSCode-like editors
 
     # Terminal
     ./zellij.nix
