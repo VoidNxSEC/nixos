@@ -34,7 +34,9 @@ in
         "--ozone-platform-hint=auto"
         #"--ignore-gpu-blocklist"
         "--disable-gpu-rasterization"
-        "--enable-zero-copy"
+        # "--enable-zero-copy" # DISABLED: NVIDIA+Wayland issues
+        "--use-gl=egl"
+        "--disable-gpu-driver-bug-workarounds"
       ];
       description = "Custom Chromium flags for Brave";
     };
