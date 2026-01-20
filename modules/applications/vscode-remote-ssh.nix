@@ -47,7 +47,7 @@ in
     home-manager.users.kernelcore = mkIf (builtins.elem "vscode" cfg.installFor) {
       programs.vscode = {
         enable = true;
-        extensions = with pkgs.vscode-extensions; [
+        profiles.default.extensions = with pkgs.vscode-extensions; [
           ms-vscode-remote.remote-ssh
         ];
       };

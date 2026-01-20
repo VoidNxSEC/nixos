@@ -131,6 +131,7 @@ in
 
     programs.ssh = {
       enable = true;
+      enableDefaultConfig = false; # We manually configure defaults in matchBlocks."*"
 
       # ═══════════════════════════════════════════════════════════
       # INTELLIGENT FORGE CONFIGURATIONS
@@ -227,7 +228,7 @@ in
     # ═══════════════════════════════════════════════════════════
     # configure git to use these specific aliases if necessary
     # or ensure URL rewrites exist
-    programs.git.extraConfig = {
+    programs.git.settings = {
       # Ensure we use SSH for these defined forges
       url = {
         "git@codeberg.org:".insteadOf = "https://codeberg.org/";
