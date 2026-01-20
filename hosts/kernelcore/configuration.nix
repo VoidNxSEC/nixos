@@ -757,6 +757,18 @@
       metricsEndpoint = true;
     };
 
+    # TabbyAPI - OpenAI-compatible Inference Server
+    tabbyapi = {
+      enable = true;
+      host = "127.0.0.1";
+      port = 5000;
+      modelsDir = "/var/lib/ml-models";
+      maxSeqLen = 16384;
+      cacheMode = "FP16";
+      gpuSplitAuto = true;
+      openFirewall = false; # Acessível apenas via localhost ou proxy reverso
+    };
+
     gitea-showcase = {
       enable = true;
       domain = "git.voidnx.com";
