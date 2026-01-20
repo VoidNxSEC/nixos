@@ -751,7 +751,6 @@
         # NVIDIA+Wayland specific fixes para EGL errors
         "--use-gl=egl"
         "--disable-gpu-driver-bug-workarounds"
-        "--disable-reading-from-canvas"
         "--no-first-run"
         "--disable-sync"
       ];
