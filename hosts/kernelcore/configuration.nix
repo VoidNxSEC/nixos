@@ -869,6 +869,7 @@
       codex
       koboldcpp
       alacritty
+      opencode
       xclip
       glab
       gh
