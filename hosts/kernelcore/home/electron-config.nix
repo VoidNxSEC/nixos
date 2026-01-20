@@ -14,7 +14,7 @@
     --enable-gpu-rasterization
     # --enable-zero-copy # DISABLED: NVIDIA+Wayland issues
     --use-gl=egl
-    --disable-gpu-driver-bug-workarounds
+    # --disable-gpu-driver-bug-workarounds
     --ignore-gpu-blocklist
   '';
 
