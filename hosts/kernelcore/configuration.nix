@@ -1063,5 +1063,15 @@
 
   programs.zsh.enable = true;
 
+  # Enable Remote SSH extension for VSCode-like editors
+  programs.vscode-remote-ssh = {
+    enable = true;
+    installFor = [
+      "vscode"
+      "cursor"
+      "windsurf"
+    ];
+  };
+
   system.stateVersion = "26.05";
 }
