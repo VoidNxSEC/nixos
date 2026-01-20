@@ -19,7 +19,7 @@ let
   cfg = config.kernelcore.containers.docker-hub;
 
   # Path to docker-hub project
-  dockerHubPath = "/home/kernelcore/dev/projects/docker-hub";
+  dockerHubPath = "/home/kernelcore/arch/docker-hub/";
 
   # Python script wrapper
   orchestrator = "${dockerHubPath}/main.py";

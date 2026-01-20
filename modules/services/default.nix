@@ -35,13 +35,15 @@
   ];
 
   # Monitoring Services (Prometheus + Grafana)
+  # Disabled by default to save resources on laptop.
+  # Enable in host config or use 'monitor-on' alias if needed.
   config = {
     services.prometheus = {
-      enable = true;
+      enable = false;
       port = 9090;
       exporters = {
         node = {
-          enable = true;
+          enable = false;
           port = 9100;
         };
       };
@@ -54,7 +56,7 @@
     };
 
     services.grafana = {
-      enable = true;
+      enable = false;
       settings = {
         server = {
           domain = "localhost";
