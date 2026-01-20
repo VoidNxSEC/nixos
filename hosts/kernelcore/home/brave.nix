@@ -19,7 +19,7 @@
       "--ozone-platform-hint=auto"
       # NVIDIA+Wayland specific fixes para EGL errors
       "--use-gl=egl"
-      "--disable-gpu-driver-bug-workarounds"
+      # "--disable-gpu-driver-bug-workarounds" # REMOVED: Breaks extensions
       "--disable-reading-from-canvas"
       "--no-first-run"
       "--disable-sync"
