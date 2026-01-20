@@ -10,7 +10,7 @@
 {
   imports = [
     # Performance Optimizations
-    ./cache-optimization.nix
+    # ./cache-optimization.nix
     ./electron-tuning-v2.nix # Per-app Electron tuning
 
     # Browsers
