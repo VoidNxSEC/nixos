@@ -78,6 +78,7 @@ in
       grim # Screenshot utility
       slurp # Screen area selection
       swappy # Screenshot editor (glassmorphism)
+      zenity # File picker for screenshots
       wf-recorder # Screen recorder
       wl-clipboard # Clipboard utilities
       cliphist # Clipboard history
