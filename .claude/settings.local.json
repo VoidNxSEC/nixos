@@ -25,7 +25,8 @@
       "Bash(gpgconf:*)",
       "Bash(tree:*)",
       "Bash(brev --version:*)",
-      "Bash(ssh:*)"
+      "Bash(ssh:*)",
+      "Bash(docker info:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
