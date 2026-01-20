@@ -876,6 +876,8 @@
       brev-cli
       gnome-console
       zed-editor
+      windsurf
+      code-cursor
       rust-analyzer
       rustup
       terraform-providers.carlpett_sops
