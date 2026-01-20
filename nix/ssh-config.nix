@@ -15,6 +15,9 @@
     # Disable default configuration (we configure everything explicitly)
     enableDefaultConfig = false;
 
+    # Include Brev configuration (managed by Brev CLI)
+    includes = [ "~/.ssh/brev_config" ];
+
     # Host Configurations
     matchBlocks = {
       # GitLab
