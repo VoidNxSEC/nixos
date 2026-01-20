@@ -43,7 +43,7 @@ let
       process-per-site = false; # Isolate processes
       disk-cache-size = 209715200; # 200MB
       enable-gpu-rasterization = true;
-      enable-zero-copy = true;
+      # enable-zero-copy = true; # DISABLED: NVIDIA+Wayland issues
       ignore-gpu-blocklist = true;
     };
 
