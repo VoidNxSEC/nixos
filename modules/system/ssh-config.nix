@@ -49,8 +49,8 @@ with lib;
     # GitLab identity
     gitlabKey = mkOption {
       type = types.str;
-      default = "id_ed25519_gitlab";
-      description = "GitLab SSH key filename";
+      default = "id_ed25519_voidnx";
+      description = "GitLab SSH key filename (voidnx@gitlab.com)";
     };
 
     # Nvidia Brev identity
