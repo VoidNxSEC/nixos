@@ -491,6 +491,10 @@ rec {
     fullToSwappy = "grim - | swappy -f -";
     regionToFile = dir: ''grim -g "$(slurp)" ${dir}/screenshot-$(date +%Y%m%d-%H%M%S).png'';
     fullToFile = dir: "grim ${dir}/screenshot-$(date +%Y%m%d-%H%M%S).png";
+    regionToSwappyWithPicker = "/etc/nixos/scripts/swappy-picker.sh region";
+    fullToSwappyWithPicker = "/etc/nixos/scripts/swappy-picker.sh screen";
+    regionToFilePicker = ''bash -c 'FILE=$(zenity --file-selection --save --confirm-overwrite --title="Save Screenshot" --filename="$HOME/Pictures/Screenshots/screenshot-$(date +%Y%m%d-%H%M%S).png"); [ -n "$FILE" ] && grim -g "$(slurp)" "$FILE"' '';
+    fullToFilePicker = ''bash -c 'FILE=$(zenity --file-selection --save --confirm-overwrite --title="Save Screenshot" --filename="$HOME/Pictures/Screenshots/screenshot-$(date +%Y%m%d-%H%M%S).png"); [ -n "$FILE" ] && grim "$FILE"' '';
     regionToClipboard = ''grim -g "$(slurp)" - | wl-copy'';
     fullToClipboard = "grim - | wl-copy";
   };
