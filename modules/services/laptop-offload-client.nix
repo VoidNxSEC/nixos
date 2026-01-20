@@ -55,13 +55,16 @@ in
       fsType = "nfs";
       options = [
         "ro"
-        "hard"
+        "soft" # Use soft mount to avoid hanging if desktop is offline
         "intr"
         "rsize=8192"
         "wsize=8192"
         "timeo=14"
         "retry=2"
         "_netdev"
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.idle-timeout=600"
       ];
     };
 
@@ -71,13 +74,16 @@ in
       fsType = "nfs";
       options = [
         "rw"
-        "hard"
+        "soft"
         "intr"
         "rsize=8192"
         "wsize=8192"
         "timeo=14"
         "retry=2"
         "_netdev"
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.idle-timeout=600"
       ];
     };
   };
@@ -268,43 +274,9 @@ in
   };
 
   # ===== SYSTEMD SERVICES =====
-  # Auto-mount NFS on network availability
-  systemd.services.offload-automount = {
-    description = "Auto-mount offload NFS shares";
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
-    wantedBy = [ "multi-user.target" ];
+  # Auto-mount logic is now handled by x-systemd.automount in fileSystems config above
+  # This prevents boot blocking when desktop is offline
 
-    script = ''
-      # Smart network check - max 5 seconds total wait
-      MAX_WAIT=10  # 10 iterations of 0.5s = 5 seconds max
-      WAIT_COUNT=0
-
-      echo "🔍 Checking desktop availability at ${desktopIP}..."
-
-      # Poll every 0.5s until desktop is reachable or timeout
-      while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
-        if ping -c 1 -W 1 ${desktopIP} > /dev/null 2>&1; then
-          echo "✅ Desktop reachable, mounting NFS shares..."
-          mount /nix/store-remote 2>/dev/null || true
-          mount /var/lib/nix-offload-remote 2>/dev/null || true
-          exit 0
-        fi
-        sleep 0.5
-        WAIT_COUNT=$((WAIT_COUNT + 1))
-      done
-
-      # Desktop not reachable - exit cleanly (laptop can work offline)
-      echo "⚠️  Desktop ${desktopIP} not reachable after 5s, skipping NFS mounts (working offline)"
-    '';
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      Restart = "on-failure";
-      RestartSec = "30s";
-    };
-  };
 
   # ===== POWER MANAGEMENT =====
   # Graceful unmount on shutdown/suspend
