@@ -210,7 +210,7 @@ in
               python313Packages.numpy
               python313Packages.pandas
               python313Packages.scikit-learn
-              nodejs_22
+              nodejs_24
               nodePackages.npm
               go
               rustc
@@ -219,7 +219,7 @@ in
               gnumake
             ]);
 
-          system.stateVersion = "25.05";
+          system.stateVersion = "26.05";
         };
     };
 
@@ -257,7 +257,7 @@ in
           environment.systemPackages =
             devCommonPackages
             ++ (with pkgs; [
-              nodejs_22
+              nodejs_24
               nodePackages.npm
               nodePackages.pnpm
               git
@@ -265,7 +265,7 @@ in
 
           systemd.tmpfiles.rules = [ "d /opt/chat-ui 0755 root root -" ];
 
-          system.stateVersion = "25.05";
+          system.stateVersion = "26.05";
         };
     };
 
@@ -319,13 +319,13 @@ in
             devCommonPackages
             ++ (with pkgs; [
               python313
-              nodejs_22
+              nodejs_24
               go
               rustc
               cargo
             ]);
 
-          system.stateVersion = "25.05";
+          system.stateVersion = "26.05";
         };
     };
 
