@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package agenthub;
+
+service AgentControl {
+  // Gerenciamento de Agentes
+  rpc RegisterAgent (AgentManifest) returns (AgentStatus);
+  rpc TerminateAgent (AgentID) returns (Empty);
+  
+  // Execução de Tarefas (Event-driven bridge)
+  rpc DispatchTask (TaskRequest) returns (TaskResponse);
+  
+  // Observabilidade
+  rpc StreamMetrics (AgentID) returns (stream MetricPoint);
+}
+
+message AgentManifest {
+  string name = 1;
+  string version = 2;
+  bytes wasm_binary = 3; // Lógica do agente em WASM
+  map<string, string> capabilities = 4; // Permissões (fs, network, etc)
+}
+
+message TaskRequest {
+  string agent_id = 1;
+  string payload = 2;
+  string priority = 3;
+}
+
+message TaskResponse {
+  string status = 1;
+  string output = 2;
+}
+
+message AgentID { string id = 1; }
+message AgentStatus { string status = 1; string id = 2; }
+message MetricPoint { string timestamp = 1; float cpu_usage = 2; float mem_usage = 3; }
+message Empty {}

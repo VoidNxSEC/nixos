@@ -652,6 +652,26 @@ in
               padding: 4px 12px;
             }
 
+            #custom-agent-hub.active {
+              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.4"}, ${colors.hexToRgba colors.accent.magenta "0.3"});
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.5"};
+              color: ${colors.accent.cyan};
+              box-shadow: 0 0 15px ${colors.hexToRgba colors.accent.cyan "0.4"};
+            }
+
+            #custom-agent-hub.thinking {
+              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.magenta "0.4"}, ${colors.hexToRgba colors.accent.violet "0.3"});
+              border-color: ${colors.accent.magenta};
+              color: ${colors.base.fg0};
+              animation: agent-thinking 1.5s infinite;
+            }
+
+            @keyframes agent-thinking {
+              0% { box-shadow: 0 0 5px ${colors.hexToRgba colors.accent.magenta "0.3"}; }
+              50% { box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.magenta "0.6"}; }
+              100% { box-shadow: 0 0 5px ${colors.hexToRgba colors.accent.magenta "0.3"}; }
+            }
+
             #custom-agent-hub:hover {
               background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.3"}, ${colors.hexToRgba colors.accent.magenta "0.2"});
               border-color: ${colors.hexToRgba colors.accent.violet "0.5"};

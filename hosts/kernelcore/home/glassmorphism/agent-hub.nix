@@ -74,6 +74,11 @@ in
         send_message() {
           local prompt="$1"
           local response
+          local thinking_file="/tmp/agent-hub-thinking"
+
+          touch "$thinking_file"
+          # Ensure file is removed on exit or error
+          trap "rm -f $thinking_file" EXIT
 
           response=$(curl -s "$API_URL" \
             -H "Content-Type: application/json" \
@@ -87,6 +92,9 @@ in
               \"max_tokens\": 2048,
               \"stream\": false
             }" 2>/dev/null)
+
+          rm -f "$thinking_file"
+          trap - EXIT
 
           if [[ -n "$response" ]]; then
             echo "$response" | ${pkgs.jq}/bin/jq -r '.choices[0].message.content // .error.message // "No response"'
@@ -327,14 +335,23 @@ in
 
         CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/agent-hub"
         mkdir -p "$CACHE_DIR"
+        THINKING_FILE="/tmp/agent-hub-thinking"
 
         ACTIVE=0
+        STATUS="inactive"
         TOOLTIP="󰚩 AI Agent Hub\n━━━━━━━━━━━━━━━━━━━━━━"
+
+        # Check if thinking
+        if [[ -f "$THINKING_FILE" ]]; then
+          STATUS="thinking"
+          TOOLTIP+="\n󰋼 AI is thinking..."
+        fi
 
         # Check LLaMA.cpp API (short timeout)
         if timeout 0.5s bash -c "exec 3<>/dev/tcp/${llamaCppApi.host}/${toString llamaCppApi.port}" 2>/dev/null; then
           ((ACTIVE++))
           TOOLTIP+="\n󰊤 LLaMA.cpp: Online"
+          [[ "$STATUS" == "inactive" ]] && STATUS="active"
         else
           TOOLTIP+="\n󰊤 LLaMA.cpp: Offline"
         fi
@@ -345,26 +362,25 @@ in
         if echo "$agents" | grep -q "codex"; then
           ((ACTIVE++))
           TOOLTIP+="\n󰧑 Codex: Active"
+          [[ "$STATUS" == "inactive" ]] && STATUS="active"
         fi
 
         if echo "$agents" | grep -q "gemini"; then
           ((ACTIVE++))
           TOOLTIP+="\n󰊤 Gemini: Active"
+          [[ "$STATUS" == "inactive" ]] && STATUS="active"
         fi
 
         if echo "$agents" | grep -q "neoland"; then
           ((ACTIVE++))
           TOOLTIP+="\n󰜈 Neoland: Active"
+          [[ "$STATUS" == "inactive" ]] && STATUS="active"
         fi
 
         TOOLTIP+="\n\nClick: Open Agent Hub\nRight-click: Quick Prompt"
 
         # Output JSON
-        if ((ACTIVE > 0)); then
-          echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"active\", \"alt\": \"$ACTIVE\"}"
-        else
-          echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"inactive\", \"alt\": \"0\"}"
-        fi
+        echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"$STATUS\", \"alt\": \"$ACTIVE\"}"
       '';
     };
   };
