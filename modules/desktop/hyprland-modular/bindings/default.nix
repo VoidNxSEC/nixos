@@ -181,17 +181,17 @@ rec {
     # SCREENSHOT - Screenshot utilities
     # ----------------------------------------
     screenshot = [
-      # Region to swappy (annotation)
+      # Region to swappy (annotation, auto-save to configured dir)
       ", Print, exec, ${screenshotCommands.regionToSwappy}"
 
-      # Fullscreen to swappy
+      # Fullscreen to swappy (annotation, auto-save to configured dir)
       "SHIFT, Print, exec, ${screenshotCommands.fullToSwappy}"
 
-      # Region to file
-      "CTRL, Print, exec, ${screenshotCommands.regionToFile "~/Pictures"}"
+      # Region to swappy with file picker (edit then choose save location)
+      "CTRL, Print, exec, ${screenshotCommands.regionToSwappyWithPicker}"
 
-      # Fullscreen to file
-      "CTRL SHIFT, Print, exec, ${screenshotCommands.fullToFile "~/Pictures"}"
+      # Fullscreen to swappy with file picker (edit then choose save location)
+      "CTRL SHIFT, Print, exec, ${screenshotCommands.fullToSwappyWithPicker}"
 
       # Region to clipboard
       "${mainMod}, Print, exec, ${screenshotCommands.regionToClipboard}"
