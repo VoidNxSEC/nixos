@@ -22,7 +22,7 @@
     ./brave.nix # Brave browser configuration
     ./electron-apps.nix # Per-app Electron configuration
     ./firefox.nix # Self-hosted Firefox (extensions in Nix store)
-    ../../modules/development/git-forge-tools.nix # Unified Git Forges CLI Tools
+    ../../../modules/development/git-forge-tools.nix # Unified Git Forges CLI Tools
     ../../../modules/development/ssh-git-forges.nix # Advanced Git Forges SSH Configuration
   ]
   ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland.nix;
