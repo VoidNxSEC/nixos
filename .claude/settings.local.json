@@ -24,7 +24,8 @@
       "Bash(gpg:*)",
       "Bash(gpgconf:*)",
       "Bash(tree:*)",
-      "Bash(brev --version:*)"
+      "Bash(brev --version:*)",
+      "Bash(ssh:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
