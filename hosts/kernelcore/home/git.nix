@@ -80,6 +80,17 @@
     # Conditional Includes (por diretório/repositório)
     # ═══════════════════════════════════════════════════════════
     includes = [
+      # NixOS Configuration Repository (GitLab)
+      {
+        condition = "gitdir:/etc/nixos/";
+        contents = {
+          user = {
+            name = "VoidNX";
+            email = "pina@voidnx.com";
+            signingkey = "B08FA8030FF989EE"; # VoidNX <pina@voidnx.com>
+          };
+        };
+      }
       # OLD KEY - Only for legacy GitHub repos that still need it
       {
         condition = "gitdir:~/github-legacy/";
