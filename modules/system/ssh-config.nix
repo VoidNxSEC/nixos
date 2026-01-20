@@ -28,7 +28,7 @@ with lib;
     # Personal identity
     personalKey = mkOption {
       type = types.str;
-      default = "id_ed25519_marcos";
+      default = "id_ed25519";
       description = "Personal SSH key filename";
     };
 
