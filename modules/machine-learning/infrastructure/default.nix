@@ -11,6 +11,7 @@
 {
   imports = [
     ./storage.nix
+    ./model-profiles.nix
     ./vram
     ./hardware
   ];
