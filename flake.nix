@@ -213,8 +213,6 @@
                       src = old.src;
                       hash = "sha256-tguduQ+LInsaOHdjeSTTgahQLqgRCL1tsKY6uCPSPt0=";
                     };
-                    # Skip puppeteer Chrome download in sandbox
-                    PUPPETEER_SKIP_DOWNLOAD = "true";
                   });
                   securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
                   swissknife-tools = inputs.swissknife.packages.${system};
