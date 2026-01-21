@@ -12,6 +12,7 @@
     # Performance Optimizations
     # ./cache-optimization.nix
     ./electron-tuning-v2.nix # Per-app Electron tuning
+    ./chromium-log-suppression.nix # Suppress verbose GPU/Wayland logging
 
     # Browsers
     ./firefox-privacy.nix
