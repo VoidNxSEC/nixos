@@ -298,7 +298,7 @@
     };
 
     services.github-runner = {
-      enable = true;
+      enable = false;
       useSops = true;
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos";
