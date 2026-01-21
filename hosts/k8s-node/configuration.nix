@@ -108,6 +108,21 @@
   };
 
   # ============================================================================
+  # CI/CD - GITHUB RUNNER (Provider Host)
+  # ============================================================================
+  kernelcore.services.github-runner = {
+    enable = true;
+    useSops = true;
+    runnerName = "nixos-k8s-runner";
+    repoUrl = "https://github.com/VoidNxSEC/nixos";
+    extraLabels = [
+      "nixos"
+      "k8s"
+      "server"
+    ];
+  };
+
+  # ============================================================================
   # ADDITIONAL TOOLS & PACKAGES
   # ============================================================================
 
