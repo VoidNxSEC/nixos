@@ -7,7 +7,6 @@
 
 {
   imports = [
-    ./actions.nix
     ./claude-code.nix
     ./codex-agent.nix
     ./gemini-agent.nix
