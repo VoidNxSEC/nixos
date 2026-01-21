@@ -17,6 +17,13 @@
   #];
   #};
 
+  # Chromium/Electron log suppression (GPU/Wayland error spam)
+  kernelcore.chromium.logSuppression = {
+    enable = true;
+    applyGlobally = true;
+    enablePerformanceFlags = false; # Keep disabled for stability
+  };
+
   # Shell configuration - Training session logger
   shell.trainingLogger = {
     enable = false;
@@ -977,6 +984,7 @@
     };
     ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
     cognitive-vault.enable = true;
+
     vscodium-secure = {
       enable = true;
       enableGitLabDuo = true;
