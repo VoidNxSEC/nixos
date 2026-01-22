@@ -26,7 +26,8 @@
       "Bash(tree:*)",
       "Bash(brev --version:*)",
       "Bash(ssh:*)",
-      "Bash(docker info:*)"
+      "Bash(docker info:*)",
+      "Bash(swapon:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
