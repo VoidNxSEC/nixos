@@ -117,3 +117,6 @@ modules/packages/storage/*.tar.gz
 # SSH session databases
 ssh_sessions.db
 *.db-journal
+
+# Blockchain secrets (never commit unencrypted)
+secrets/blockchain*.yaml
