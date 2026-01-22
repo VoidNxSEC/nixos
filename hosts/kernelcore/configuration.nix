@@ -359,6 +359,7 @@
 
     secrets.gcp-ml.enable = true;
     secrets.aws-bedrock.enable = true;
+    secrets.blockchain.enable = true; # Ethereum, IPFS, Arweave secrets
     secrets.k8s.enable = true;
     secrets.grok.enable = true;
     secrets.gitlab.enable = true;
