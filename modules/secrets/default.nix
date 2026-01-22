@@ -10,6 +10,7 @@
     ./api-keys.nix # reads api-keys.yaml
     ./anthropic.nix # reads anthropic.yaml (if exists)
     ./aws-bedrock.nix # reads aws.yaml
+    ./blockchain.nix # reads blockchain.yaml (Ethereum, IPFS, Arweave)
     ./gcp-ml.nix # reads gcp-ml.yaml
     ./gitea.nix # reads gitea.yaml
     ./github.nix # reads github.yaml
