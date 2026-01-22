@@ -252,6 +252,7 @@
             # ALL SYSTEM MODULES (auto-imported via modules/default.nix)
             # ═══════════════════════════════════════════════════════════
             ./modules
+            ./blockchain-module.nix
 
             # NOTE: Feature flags and service configuration moved to:
             #       ./hosts/kernelcore/configuration.nix (lines 400-427)
