@@ -27,7 +27,9 @@
       "Bash(brev --version:*)",
       "Bash(ssh:*)",
       "Bash(docker info:*)",
-      "Bash(swapon:*)"
+      "Bash(swapon:*)",
+      "Bash(/tmp/update-gitlab-secrets.sh)",
+      "Bash(/tmp/update-gitlab-v2.sh)"
     ]
   },
   "enableAllProjectMcpServers": true,
