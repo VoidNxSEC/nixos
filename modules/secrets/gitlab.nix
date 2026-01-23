@@ -22,7 +22,7 @@ in
     # Decrypt GitLab secrets from /etc/nixos/secrets/gitlab.yaml
     sops.secrets = {
       # GitLab Personal Access Token
-      "gitlab_token" = {
+      "gitlab_deploy_token" = {
         sopsFile = ../../secrets/gitlab.yaml;
         mode = "0440";
         owner = config.users.users.kernelcore.name;
@@ -30,7 +30,7 @@ in
       };
 
       # GitLab username (optional, for automation)
-      "gitlab_username" = {
+      "gitlab_deploy_username" = {
         sopsFile = ../../secrets/gitlab.yaml;
         mode = "0440";
         owner = config.users.users.kernelcore.name;
@@ -38,12 +38,12 @@ in
       };
 
       # GitLab email (optional, for automation)
-      "gitlab_email" = {
-        sopsFile = ../../secrets/gitlab.yaml;
-        mode = "0440";
-        owner = config.users.users.kernelcore.name;
-        group = "users";
-      };
+      #"gitlab_email" = {
+      #  sopsFile = ../../secrets/gitlab.yaml;
+      #  mode = "0440";
+      #  owner = config.users.users.kernelcore.name;
+      #  group = "users";
+      #};
     };
 
     # Install GitLab CLI (glab)
@@ -55,7 +55,7 @@ in
     # This makes the token available to glab and other tools
     # Usage: GITLAB_TOKEN=$(cat $GITLAB_TOKEN_FILE)
     environment.variables = {
-      GITLAB_TOKEN_FILE = config.sops.secrets.gitlab_token.path;
+      GITLAB_TOKEN_FILE = config.sops.secrets.gitlab_deploy_token.path;
     };
   };
 }
