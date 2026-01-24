@@ -31,7 +31,10 @@
       "Bash(/tmp/update-gitlab-secrets.sh)",
       "Bash(/tmp/update-gitlab-v2.sh)",
       "Bash(sqlite3:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(nix-prefetch-github:*)",
+      "Bash(nix-prefetch-url:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
