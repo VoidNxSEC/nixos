@@ -27,5 +27,8 @@
 
     # Custom user-defined packages (Gemini/Antigravity custom builds)
     ./custom
+
+    # Music production and video tools
+    ./f5-tts
   ];
 }
