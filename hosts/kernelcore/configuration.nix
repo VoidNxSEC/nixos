@@ -134,6 +134,7 @@
     packages.zellij.enable = true;
     packages.lynis.enable = true;
     packages.js.enable = false;
+    packages.f5-tts.enable = false;
 
     # Custom individual packaging for Gemini/Antigravity
     packages.custom = {
