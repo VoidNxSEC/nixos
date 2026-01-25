@@ -40,6 +40,12 @@ in
       };
     };
 
+    # Create required directories for Nomad
+    systemd.tmpfiles.rules = lib.mkIf (cfg.orchestrator == "nomad") [
+      "d /var/lib/alloc_mounts 0755 root root -"
+      "d /var/lib/nomad 0755 root root -"
+    ];
+
     # Kafka-compatible Backbone (Redpanda)
     # Executado via Docker/Podman para manter o host limpo
     virtualisation.oci-containers.containers.redpanda = {
