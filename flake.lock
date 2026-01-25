@@ -8,8 +8,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1768759228,
-        "narHash": "sha256-kiW0O3qeshSCfn8bCLbvjRoY9bhtH1+Jm7uXQZ0Ra3A=",
+        "lastModified": 1769200874,
+        "narHash": "sha256-5nqSVzHCGzWFELRmip6iuZWNrslAqiXkayPBLHc3j14=",
         "path": "/home/kernelcore/arch/adr-ledger",
         "type": "path"
       },
@@ -21,11 +21,11 @@
     "advisory-db": {
       "flake": false,
       "locked": {
-        "lastModified": 1768679419,
-        "narHash": "sha256-l9rM4lXBeS2mIAJsJjVfl0UABx3S3zg5tul7bv+bn50=",
+        "lastModified": 1769147429,
+        "narHash": "sha256-EI04vtsDqLdSFVGGmYht0wh1QDoFRvKeOh7CUm/a2cY=",
         "owner": "rustsec",
         "repo": "advisory-db",
-        "rev": "c700e1cd023ca87343cbd9217d50d47023e9adc7",
+        "rev": "2a699493588fe2e3c0f6bdac7e14a5cc3701b8a8",
         "type": "github"
       },
       "original": {
@@ -67,11 +67,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1768407455,
-        "narHash": "sha256-jDvWBcoq2zeFQhvFEOpm5PhpJF8CTTiM4fVFgwZG7A0=",
+        "lastModified": 1769200838,
+        "narHash": "sha256-hqcIhxwlywyw0czCCchoTOH0LTFvruusZ6HDhHg72GI=",
         "ref": "refs/heads/main",
-        "rev": "2313a00c246ee630254217068053728526540378",
-        "revCount": 7,
+        "rev": "9654de4182a0b3840ca2075c1d7dfaac179feecb",
+        "revCount": 8,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/ai-agent-os"
       },
@@ -234,11 +234,11 @@
     },
     "crane": {
       "locked": {
-        "lastModified": 1768319649,
-        "narHash": "sha256-VFkNyxHxkqGp8gf8kfFMW1j6XeBy609kv6TE9uF/0Js=",
+        "lastModified": 1768873933,
+        "narHash": "sha256-CfyzdaeLNGkyAHp3kT5vjvXhA1pVVK7nyDziYxCPsNk=",
         "owner": "ipetkov",
         "repo": "crane",
-        "rev": "4b6527687cfd20da3c2ef8287e01b74c2d6c705b",
+        "rev": "0bda7e7d005ccb5522a76d11ccfbf562b71953ca",
         "type": "github"
       },
       "original": {
@@ -821,11 +821,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768942641,
-        "narHash": "sha256-i25tkhqjsfo0YKz8To/+gzazW1v4f8qUGqJQ8OLrkqE=",
+        "lastModified": 1769187349,
+        "narHash": "sha256-clG+nT6I2qxjIgk5WoSDKJyNhzKJs9jzbCujPF2S/yg=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "9997de2f62d1875644f02ddf96cf485a4baecb6f",
+        "rev": "082a4cd87c6089d1d9c58ebe52655f9e07245fcb",
         "type": "github"
       },
       "original": {
@@ -931,11 +931,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1768919552,
-        "narHash": "sha256-Q/Ao7Y+mvroY61ixn15PvDgOt0yk7qjC2u/Rrjqy4E4=",
+        "lastModified": 1769200850,
+        "narHash": "sha256-LKDwA8UEmfzUsYHwdy9WhBTweSevouv1o/YwA+Z1W88=",
         "ref": "refs/heads/main",
-        "rev": "c44292c72339b3d7820ca7444d45bab7e34ec74e",
-        "revCount": 6823,
+        "rev": "b1d1c9843f1977f80ca5c9e9ea01d3848e233fbe",
+        "revCount": 6834,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1229,11 +1229,11 @@
         "rust-overlay": "rust-overlay_3"
       },
       "locked": {
-        "lastModified": 1768407432,
-        "narHash": "sha256-iNWyk9ljkZGQWss1H7WMMBjof5O26lKNQeCMq0fYRt8=",
+        "lastModified": 1769107739,
+        "narHash": "sha256-MHHDOFbf1LH7yBXAwdy//kuw7jl901aD9mr+BlhZmb8=",
         "ref": "refs/heads/main",
-        "rev": "4c386d42bed7653439446b8bf242cf842717717a",
-        "revCount": 4,
+        "rev": "682c5651b90cbd80245075720c85e3aa1c49cb18",
+        "revCount": 6,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/ml-offload-api"
       },
@@ -1251,8 +1251,8 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1768922251,
-        "narHash": "sha256-sjHiGCxNhnBP/WhAcLdEG+brKmH3c+t3mC0Bj8A+gCQ=",
+        "lastModified": 1769227668,
+        "narHash": "sha256-WNlMe8D7qEjhSbt36RdeStAiNmsbeKd5YbfUmk2y1fs=",
         "path": "/home/kernelcore/arch/neoland",
         "type": "path"
       },
@@ -1273,11 +1273,11 @@
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
       },
       "locked": {
-        "lastModified": 1768877436,
-        "narHash": "sha256-ct4qxmFJeJbaJKiOnXOZmRmVmk7TpT+lohuTgTr+kYQ=",
+        "lastModified": 1769170609,
+        "narHash": "sha256-LiyaKNga2z/iG4pNr86iQLySEDoOytEzTCblxzRjnCk=",
         "owner": "sodiboo",
         "repo": "niri-flake",
-        "rev": "6581f5458309233622c1b73c8902dcaea7be16eb",
+        "rev": "08d6e6adf34b0af12be7eaeacc0b4c1a8580b3da",
         "type": "github"
       },
       "original": {
@@ -1436,11 +1436,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1768736227,
-        "narHash": "sha256-qgGq7CfrYKc3IBYQ7qp0Z/ZXndQVC5Bj0N8HW9mS2rM=",
+        "lastModified": 1769086393,
+        "narHash": "sha256-3ymIZ8s3+hu7sDl/Y48o6bwMxorfKrmn97KuWiw1vjY=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "d447553bcbc6a178618d37e61648b19e744370df",
+        "rev": "9f7ba891ea5fc3ededd7804f1a23fafadbcb26ca",
         "type": "github"
       },
       "original": {
@@ -1545,11 +1545,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1768773494,
-        "narHash": "sha256-XsM7GP3jHlephymxhDE+/TKKO1Q16phz/vQiLBGhpF4=",
+        "lastModified": 1769089682,
+        "narHash": "sha256-9yA/LIuAVQq0lXelrZPjLuLVuZdm03p8tfmHhnDIkms=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "77ef7a29d276c6d8303aece3444d61118ef71ac2",
+        "rev": "078d69f03934859a181e81ba987c2bb033eebfc5",
         "type": "github"
       },
       "original": {
@@ -1641,11 +1641,11 @@
     },
     "nixpkgs_7": {
       "locked": {
-        "lastModified": 1768564909,
-        "narHash": "sha256-Kell/SpJYVkHWMvnhqJz/8DqQg2b6PguxVWOuadbHCc=",
+        "lastModified": 1769018530,
+        "narHash": "sha256-MJ27Cy2NtBEV5tsK+YraYr2g851f3Fl1LpNHDzDX15c=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e4bae1bd10c9c57b2cf517953ab70060a828ee6f",
+        "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
         "type": "github"
       },
       "original": {
@@ -1740,11 +1740,11 @@
         "rust-overlay": "rust-overlay_6"
       },
       "locked": {
-        "lastModified": 1768683567,
-        "narHash": "sha256-fXTQ3xZHD2TelluffhZUGHv7tgDe036Woaf62SV8QGI=",
+        "lastModified": 1769227745,
+        "narHash": "sha256-bu4cvlDzJz0uIXUoLX8HFmEdl45ANVNeYoEfLzZEv3s=",
         "ref": "refs/heads/main",
-        "rev": "51f15bd19a33ac8d2724f4e54a9889c3773fc910",
-        "revCount": 51,
+        "rev": "11611460fdf44598ab12551bae6ba5d94af33ec0",
+        "revCount": 54,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/phantom"
       },
@@ -1813,11 +1813,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768359079,
-        "narHash": "sha256-a016mOfKconYrYo3fZLN6c2cnmqYYd44g2bUrBZAsQc=",
+        "lastModified": 1769136478,
+        "narHash": "sha256-8UNd5lmGf8phCr/aKxagJ4kNsF0pCHLish2G4ZKCFFY=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "0357d1826057686637e41147545402cbbda420ce",
+        "rev": "470ee44393bb19887056b557ea2c03fc5230bd5a",
         "type": "github"
       },
       "original": {
@@ -1867,11 +1867,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1768877311,
-        "narHash": "sha256-abSDl0cNr0B+YCsIDpO1SjXD9JMxE4s8EFnhLEFVovI=",
+        "lastModified": 1769136478,
+        "narHash": "sha256-8UNd5lmGf8phCr/aKxagJ4kNsF0pCHLish2G4ZKCFFY=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "59e4ab96304585fde3890025fd59bd2717985cc1",
+        "rev": "470ee44393bb19887056b557ea2c03fc5230bd5a",
         "type": "github"
       },
       "original": {
@@ -1909,11 +1909,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768617670,
-        "narHash": "sha256-Z3+6dxoWZn+QFwjxAt5ZGXkiuCvCLgQP6pTS5eSWXqk=",
+        "lastModified": 1769136478,
+        "narHash": "sha256-8UNd5lmGf8phCr/aKxagJ4kNsF0pCHLish2G4ZKCFFY=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "56d0fbdd732f3686e8414b857cf885038fc17d57",
+        "rev": "470ee44393bb19887056b557ea2c03fc5230bd5a",
         "type": "github"
       },
       "original": {
@@ -1992,11 +1992,11 @@
         "rust-overlay": "rust-overlay_8"
       },
       "locked": {
-        "lastModified": 1768937022,
-        "narHash": "sha256-mjA+zPHj4KC9VUEoUKQaPlOS6UWIryya1wdpSqo8Dl8=",
+        "lastModified": 1768962578,
+        "narHash": "sha256-bq/eTO/d2xKzwHowLAYGzZcAfsLqOqbGS8vQXWgf0kg=",
         "ref": "refs/heads/main",
-        "rev": "9bf9d000961a0a985db1406343e5de9898bb8c4d",
-        "revCount": 73,
+        "rev": "706e6469ad9ec2938efec44c3ae7db7b96799e03",
+        "revCount": 78,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
@@ -2047,11 +2047,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768480506,
-        "narHash": "sha256-i62QLtrVb0Bub7nFE+j2E5/7JU3gQiVWY4XT61eUyks=",
+        "lastModified": 1769152925,
+        "narHash": "sha256-lac8eIuG8QZTVdSe0kbzb0S+BPwVDtHM6X2XymefCl0=",
         "ref": "refs/heads/main",
-        "rev": "a93619ab54166acff0a61c49118014782af4f0c4",
-        "revCount": 7,
+        "rev": "c6a6e2de3e6c7a0cff68b2d8810e87317bdfd7c6",
+        "revCount": 8,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/spider-nix"
       },
