@@ -29,10 +29,8 @@ with lib;
     max-jobs = mkDefault 4; # Parallel build jobs (was "auto" = 12)
     cores = mkDefault 3; # Cores per job (was 0 = use all 12)
     require-sigs = true;
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
-    ];
+    # trusted-public-keys removed - using keys from modules/security/nix-daemon.nix
+    # This allows cachix caches (nix-community, devenv, pre-commit-hooks) to work
 
     auto-optimise-store = true;
     warn-dirty = true;
