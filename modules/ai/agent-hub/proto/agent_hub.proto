@@ -6,10 +6,14 @@ service AgentControl {
   // Gerenciamento de Agentes
   rpc RegisterAgent (AgentManifest) returns (AgentStatus);
   rpc TerminateAgent (AgentID) returns (Empty);
-  
+
   // Execução de Tarefas (Event-driven bridge)
   rpc DispatchTask (TaskRequest) returns (TaskResponse);
-  
+
+  // Speech Capabilities (TTS + STT)
+  rpc TextToSpeech (TTSRequest) returns (TTSResponse);
+  rpc SpeechToText (STTRequest) returns (STTResponse);
+
   // Observabilidade
   rpc StreamMetrics (AgentID) returns (stream MetricPoint);
 }
@@ -36,3 +40,32 @@ message AgentID { string id = 1; }
 message AgentStatus { string status = 1; string id = 2; }
 message MetricPoint { string timestamp = 1; float cpu_usage = 2; float mem_usage = 3; }
 message Empty {}
+
+// Speech Capabilities Messages
+message TTSRequest {
+  string agent_id = 1;
+  string text = 2;
+  string voice_profile = 3; // optional: voice cloning profile
+  string language = 4; // pt, en, es, etc
+}
+
+message TTSResponse {
+  string status = 1;
+  string audio_path = 2; // path to generated audio file
+  string request_id = 3;
+  int32 duration_ms = 4; // audio duration in milliseconds
+}
+
+message STTRequest {
+  string agent_id = 1;
+  string audio_path = 2;
+  string language = 3; // pt, en, es, etc
+  string model = 4; // whisper model: tiny, base, small, medium, large
+}
+
+message STTResponse {
+  string status = 1;
+  string text = 2; // transcribed text
+  string request_id = 3;
+  float confidence = 4; // transcription confidence score
+}
