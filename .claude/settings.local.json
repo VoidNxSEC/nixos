@@ -34,7 +34,8 @@
       "Bash(curl:*)",
       "WebFetch(domain:github.com)",
       "Bash(nix-prefetch-github:*)",
-      "Bash(nix-prefetch-url:*)"
+      "Bash(nix-prefetch-url:*)",
+      "Bash(nix-store --query --requisites:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
