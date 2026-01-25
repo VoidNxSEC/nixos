@@ -39,6 +39,7 @@
     ./development # Dev environments, Claude profiles, Jupyter, CI/CD
     # ./devops # DevOps tools - imported in home-manager (hosts/kernelcore/home/home.nix)
     ./machine-learning # Machine Learning infrastructure (llama.cpp-turbo, vLLM)
+    ./ai # AI Agent Hub (event-driven automation, speech capabilities)
 
     # CONTAINERS & VIRTUALIZATION
     # ═══════════════════════════════════════════════════════════
