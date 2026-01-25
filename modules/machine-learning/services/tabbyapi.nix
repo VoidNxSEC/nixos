@@ -201,7 +201,7 @@ in
           "run"
           "--rm"
           "--name tabbyapi-host"
-          "--gpus all"
+          "--nvidia.com/gpu=all"
           "--network host"
           "-v ${cfg.dataDir}:/app/data"
           "-v ${cfg.modelsDir}:/app/models:ro"
@@ -213,7 +213,7 @@ in
         Restart = "always";
         RestartSec = 10;
 
-        User = "root"; # Required for Docker socket access
+        User = "kernelcore"; # Required for Docker socket access
         Group = "docker";
 
         # Graceful shutdown
@@ -228,5 +228,5 @@ in
     };
   };
 
-  meta.maintainers = with lib.maintainers; [ ];
+  meta.maintainers = with lib.maintainers; [ marcosfpina ];
 }
