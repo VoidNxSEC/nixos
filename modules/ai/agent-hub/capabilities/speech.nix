@@ -19,13 +19,37 @@
 let
   cfg = config.kernelcore.ai.agent-hub.capabilities.speech;
 
+  # F5-TTS Python package (buildPythonPackage inline)
+  f5-tts-package = pkgs.python313Packages.buildPythonPackage rec {
+    pname = "f5_tts";
+    version = "1.1.15";
+    format = "wheel";
+
+    src = pkgs.python313Packages.fetchPypi {
+      inherit pname version;
+      format = "wheel";
+      python = "py3";
+      dist = "py3";
+      sha256 = "sha256-7FgP0mGYJa6f/mKvRzPo8yT5A0oc8gi9smKOPCrnjQw=";
+    };
+
+    doCheck = false;
+  };
+
+  # Python environment with F5-TTS
+  f5-tts-python = pkgs.python313.withPackages (ps: [
+    f5-tts-package
+    ps.torch-bin
+    ps.torchaudio-bin
+    ps.gradio
+  ]);
+
   # Speech Gateway - Bridge entre Kafka e F5-TTS/Whisper
   speech-gateway = pkgs.writeShellApplication {
     name = "speech-gateway";
     runtimeInputs = with pkgs; [
-      python313
       jq
-      kafkacat
+      kcat
     ];
     text = ''
       #!/usr/bin/env bash
@@ -34,7 +58,7 @@ let
       echo "🎤 Speech Gateway: Listening for TTS requests on Kafka..."
 
       # Consume TTS requests from Kafka topic: agent.tts.requests
-      kafkacat -C -b localhost:9092 -t agent.tts.requests -o end | while read -r message; do
+      kcat -C -b localhost:9092 -t agent.tts.requests -o end | while read -r message; do
         echo "📨 TTS Request: $message"
 
         # Extract text from JSON message
@@ -46,16 +70,16 @@ let
         output_file="/tmp/tts-$request_id.wav"
 
         # Call F5-TTS CLI
-        ${pkgs.python313.withPackages (ps: [ ps.f5-tts ])}/bin/python -m f5_tts.infer.infer_cli \
+        ${f5-tts-python}/bin/python -m f5_tts.infer.infer_cli \
           --text "$text" \
           --output "$output_file" \
           --model-name "F5-TTS" \
-          --ref-audio "${cfg.referenceVoice}" \
+          ${lib.optionalString (cfg.referenceVoice != null) ''--ref-audio "${cfg.referenceVoice}"''} \
           --ref-text "${cfg.referenceText}"
 
         # Publish completion event to Kafka
         echo "{\"request_id\":\"$request_id\",\"agent_id\":\"$agent_id\",\"status\":\"completed\",\"audio_path\":\"$output_file\"}" | \
-          kafkacat -P -b localhost:9092 -t agent.tts.completed
+          kcat -P -b localhost:9092 -t agent.tts.completed
 
         echo "✅ TTS Completed: $request_id → $output_file"
       done
@@ -68,7 +92,7 @@ let
     runtimeInputs = with pkgs; [
       python313Packages.openai-whisper
       python313Packages.torch
-      kafkacat
+      kcat
       jq
     ];
     text = ''
@@ -78,7 +102,7 @@ let
       echo "🎧 Whisper Gateway: Listening for STT requests on Kafka..."
 
       # Consume STT requests from Kafka topic: agent.stt.requests
-      kafkacat -C -b localhost:9092 -t agent.stt.requests -o end | while read -r message; do
+      kcat -C -b localhost:9092 -t agent.stt.requests -o end | while read -r message; do
         echo "📨 STT Request: $message"
 
         audio_path=$(echo "$message" | jq -r '.audio_path')
@@ -90,7 +114,7 @@ let
 
         # Publish transcription to Kafka
         echo "{\"request_id\":\"$request_id\",\"agent_id\":\"$agent_id\",\"status\":\"completed\",\"text\":\"$text\"}" | \
-          kafkacat -P -b localhost:9092 -t agent.stt.completed
+          kcat -P -b localhost:9092 -t agent.stt.completed
 
         echo "✅ STT Completed: $request_id"
       done
@@ -115,9 +139,9 @@ in
     };
 
     referenceVoice = lib.mkOption {
-      type = lib.types.path;
-      default = ./assets/reference-voice.wav;
-      description = "Reference voice audio for F5-TTS voice cloning";
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Reference voice audio for F5-TTS voice cloning (optional)";
     };
 
     referenceText = lib.mkOption {
@@ -193,11 +217,9 @@ in
       };
 
       environment = {
-        PYTHONPATH = "${pkgs.python313.withPackages (ps: [ ps.f5-tts ])}/${pkgs.python313.sitePackages}";
+        PYTHONPATH = "${f5-tts-python}/${f5-tts-python.sitePackages}";
       }
-      // lib.optionalAttrs config.kernelcore.nvidia.enable {
-        CUDA_VISIBLE_DEVICES = "0";
-      };
+      // lib.optionalAttrs config.kernelcore.nvidia.enable { CUDA_VISIBLE_DEVICES = "0"; };
     };
 
     # Whisper Gateway Service (STT)
