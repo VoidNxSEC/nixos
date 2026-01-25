@@ -793,7 +793,7 @@
 
     # TabbyAPI - OpenAI-compatible Inference Server
     tabbyapi = {
-      enable = true;
+      enable = false;
       host = "127.0.0.1";
       port = 5000;
       modelsDir = "/var/lib/ml-models";
@@ -1019,8 +1019,8 @@
         rooveterinaryinc.roo-cline
       ];
     };
-    brave-secure.enable = false;
-    firefox-privacy.enable = false;
+    brave-secure.enable = true;
+    firefox-privacy.enable = true;
     git.lfs.enable = true;
     nemo.enable = true;
 
