@@ -62,8 +62,8 @@ in
 
     # Monitoramento (Prometheus + Tempo para Tracing)
     services.prometheus = {
-      enable = true;
-      scrapeConfigs = [
+      enable = lib.mkDefault true;
+      scrapeConfigs = lib.mkDefault [
         {
           job_name = "agent-hub-core";
           static_configs = [ { targets = [ "127.0.0.1:8081" ]; } ];
