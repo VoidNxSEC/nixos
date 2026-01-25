@@ -916,7 +916,7 @@
   hardware.graphics.enable32Bit = true;
 
   modules.audio.videoProduction = {
-    enable = true;
+    enable = false;
     enableNVENC = true;
     fixHeadphoneMute = true;
     lowLatency = true;
@@ -1049,7 +1049,7 @@
     cudatoolkit
     cmake
     gcc
-    ffmpeg
+    # ffmpeg # TEMPORARILY DISABLED: Build broken in current nixpkgs
     yt-dlp
     docker-compose
     docker-buildx
@@ -1083,7 +1083,6 @@
     tshark
     gemini-cli
     sqlite
-    spider-nix
     # antigravity # Replaced by custom build
   ];
 
