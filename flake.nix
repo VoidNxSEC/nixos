@@ -212,10 +212,12 @@
                   securellm-mcp = inputs.securellm-mcp.packages.${system}.default.overrideAttrs (old: {
                     npmDeps = pkgs.fetchNpmDeps {
                       src = old.src;
-                      hash = pkgs.lib.fakeHash;
+                      hash = "sha256-KF7JPawB3W7jKO8gE5lqxWnZ9x3pMMJiHbKE1Ok5fUU=";
                     };
                     # Skip puppeteer Chrome download in sandbox
-                    PUPPETEER_SKIP_DOWNLOAD = "true";
+                    env = (old.env or { }) // {
+                      PUPPETEER_SKIP_DOWNLOAD = "1";
+                    };
                   });
                   securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
                   swissknife-tools = inputs.swissknife.packages.${system};
