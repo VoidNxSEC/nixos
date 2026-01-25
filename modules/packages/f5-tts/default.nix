@@ -18,11 +18,11 @@ let
   cfg = config.kernelcore.packages.f5-tts;
 
   # Python environment with F5-TTS from PyPI
-  f5-tts-python = pkgs.python311.withPackages (
+  f5-tts-python = pkgs.python313.withPackages (
     ps: with ps; [
       # Install F5-TTS from PyPI
       (ps.buildPythonPackage rec {
-        pname = "f5-tts";
+        pname = "f5_tts";
         version = "1.1.15";
         format = "wheel";
 
@@ -31,7 +31,7 @@ let
           format = "wheel";
           python = "py3";
           dist = "py3";
-          sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+          sha256 = "sha256-7FgP0mGYJa6f/mKvRzPo8yT5A0oc8gi9smKOPCrnjQw=";
         };
 
         doCheck = false;
