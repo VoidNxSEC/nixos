@@ -804,7 +804,7 @@
     };
 
     gitea-showcase = {
-      enable = true;
+      enable = false;
       domain = "git.voidnx.com";
       httpsPort = 3443;
       showcaseProjectsPath = "/home/kernelcore/dev/projects";

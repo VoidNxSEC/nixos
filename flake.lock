@@ -67,11 +67,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1769200838,
-        "narHash": "sha256-hqcIhxwlywyw0czCCchoTOH0LTFvruusZ6HDhHg72GI=",
+        "lastModified": 1769339602,
+        "narHash": "sha256-hbs8nHdXzbK2XLBREhAmwJXWkM09bBMYuKlWFvx6agk=",
         "ref": "refs/heads/main",
-        "rev": "9654de4182a0b3840ca2075c1d7dfaac179feecb",
-        "revCount": 8,
+        "rev": "f583d013400a67d87d9f20232fcf0521c10d4b26",
+        "revCount": 10,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/ai-agent-os"
       },
@@ -1251,7 +1251,7 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1769227668,
+        "lastModified": 1769360718,
         "narHash": "sha256-WNlMe8D7qEjhSbt36RdeStAiNmsbeKd5YbfUmk2y1fs=",
         "path": "/home/kernelcore/arch/neoland",
         "type": "path"
@@ -1273,11 +1273,11 @@
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
       },
       "locked": {
-        "lastModified": 1769323919,
-        "narHash": "sha256-sp9gOHOtXjVzQVv7+xlfLFicK6R3OVkwH90Kb28JsNw=",
+        "lastModified": 1769366931,
+        "narHash": "sha256-OMQ+aRJdx1x+u3JG/Zlj1YWeMPmJjKMyy6OMf3M7U78=",
         "owner": "sodiboo",
         "repo": "niri-flake",
-        "rev": "e62a66d8a81bc0c23e86c36ed16e733b38ca2d5d",
+        "rev": "419d7b73430a1f3de344a85bed50e770227f0b77",
         "type": "github"
       },
       "original": {
@@ -1306,11 +1306,11 @@
     "niri-unstable": {
       "flake": false,
       "locked": {
-        "lastModified": 1768678265,
-        "narHash": "sha256-Ub8eed4DsfIDWyg30xEe+8bSxL/z5Af/gCjmvJ0V/Hs=",
+        "lastModified": 1769363347,
+        "narHash": "sha256-fqaPwglujRdIXArV6a/0SG4otGPlvFGqFJo5EOAKnX0=",
         "owner": "YaLTeR",
         "repo": "niri",
-        "rev": "d7184a04b904e07113f4623610775ae78d32394c",
+        "rev": "5ddcf195dd6cb24cf67c24d4622ef0a4dca9ed12",
         "type": "github"
       },
       "original": {
@@ -1740,11 +1740,11 @@
         "rust-overlay": "rust-overlay_6"
       },
       "locked": {
-        "lastModified": 1769227745,
-        "narHash": "sha256-bu4cvlDzJz0uIXUoLX8HFmEdl45ANVNeYoEfLzZEv3s=",
+        "lastModified": 1769339658,
+        "narHash": "sha256-rCfsWB0LKoFxfBHoJmWrd7j6uEo/I7TQ/I9nt8tj+Hw=",
         "ref": "refs/heads/main",
-        "rev": "11611460fdf44598ab12551bae6ba5d94af33ec0",
-        "revCount": 54,
+        "rev": "df8dd375a27c33b3fd58cdc0570418487e862a99",
+        "revCount": 56,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/phantom"
       },
@@ -1948,11 +1948,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768877311,
-        "narHash": "sha256-abSDl0cNr0B+YCsIDpO1SjXD9JMxE4s8EFnhLEFVovI=",
+        "lastModified": 1769136478,
+        "narHash": "sha256-8UNd5lmGf8phCr/aKxagJ4kNsF0pCHLish2G4ZKCFFY=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "59e4ab96304585fde3890025fd59bd2717985cc1",
+        "rev": "470ee44393bb19887056b557ea2c03fc5230bd5a",
         "type": "github"
       },
       "original": {
@@ -1992,11 +1992,11 @@
         "rust-overlay": "rust-overlay_8"
       },
       "locked": {
-        "lastModified": 1768962578,
-        "narHash": "sha256-bq/eTO/d2xKzwHowLAYGzZcAfsLqOqbGS8vQXWgf0kg=",
+        "lastModified": 1769341165,
+        "narHash": "sha256-y3Hf3+DXxyWT0RSO0ZMFF6ABk2W3G7Lo0VeH92a4g6w=",
         "ref": "refs/heads/main",
-        "rev": "706e6469ad9ec2938efec44c3ae7db7b96799e03",
-        "revCount": 78,
+        "rev": "18b5665ae55a4496b4537d1994a2bf3408780a10",
+        "revCount": 89,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
@@ -2471,11 +2471,11 @@
     "xwayland-satellite-unstable": {
       "flake": false,
       "locked": {
-        "lastModified": 1769279212,
-        "narHash": "sha256-LAd6DYp6bbnQqtzMm62BE/0IMy67A4CgyYVi4xvyD6s=",
+        "lastModified": 1769356222,
+        "narHash": "sha256-Q0BVubV9ZnmLs506EhBSPglM+YJK56wsQNbeecvWPUo=",
         "owner": "Supreeeme",
         "repo": "xwayland-satellite",
-        "rev": "3af3e3ab78d0eb96fb9b5161693811e050b90991",
+        "rev": "cf14278b92b0a91d01587f09b4b00ea655ae24e6",
         "type": "github"
       },
       "original": {
