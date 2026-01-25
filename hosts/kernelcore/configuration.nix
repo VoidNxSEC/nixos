@@ -414,6 +414,31 @@
       };
     };
 
+    # ═══════════════════════════════════════════════════════════
+    # AI AGENT HUB - Event-Driven Automation with Speech
+    # ═══════════════════════════════════════════════════════════
+    ai.agent-hub = {
+      # Infrastructure (Nomad orchestrator + Redpanda/Kafka)
+      infra = {
+        enable = true;
+        orchestrator = "nomad";
+      };
+
+      # Speech Capabilities (F5-TTS + Whisper STT)
+      capabilities.speech = {
+        enable = true;
+        enableTTS = true; # F5-TTS text-to-speech
+        enableSTT = true; # Whisper speech-to-text
+
+        # Whisper model: tiny, base, small, medium, large
+        # base = good balance between speed and accuracy
+        whisperModel = "base";
+
+        # Voice cloning reference (opcional - deixar default por enquanto)
+        referenceText = "Olá, eu sou o assistente inteligente do Agent Hub.";
+      };
+    };
+
     system.ml-gpu-users.enable = true;
 
     # LlamaSwap - Hot Model Reloading Configuration
@@ -1058,6 +1083,7 @@
     tshark
     gemini-cli
     sqlite
+    spider-nix
     # antigravity # Replaced by custom build
   ];
 

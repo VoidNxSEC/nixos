@@ -145,6 +145,7 @@
             swissknife-tools = inputs.swissknife.packages.${system};
             phantom = inputs.phantom.packages.${system}.default;
             arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
+            spider-nix = inputs.spider-nix.packages.${system}.default;
           })
         ];
       };
@@ -211,8 +212,10 @@
                   securellm-mcp = inputs.securellm-mcp.packages.${system}.default.overrideAttrs (old: {
                     npmDeps = pkgs.fetchNpmDeps {
                       src = old.src;
-                      hash = "sha256-tguduQ+LInsaOHdjeSTTgahQLqgRCL1tsKY6uCPSPt0=";
+                      hash = pkgs.lib.fakeHash;
                     };
+                    # Skip puppeteer Chrome download in sandbox
+                    PUPPETEER_SKIP_DOWNLOAD = "true";
                   });
                   securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
                   swissknife-tools = inputs.swissknife.packages.${system};
