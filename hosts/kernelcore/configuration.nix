@@ -202,7 +202,7 @@
         dockerCompat = false;
         enableNvidia = true;
       };
-      nixos.enable = false;
+      nixos.enable = true;
 
       # ML/AI Containers
       ml = {
