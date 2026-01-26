@@ -1948,11 +1948,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769136478,
-        "narHash": "sha256-8UNd5lmGf8phCr/aKxagJ4kNsF0pCHLish2G4ZKCFFY=",
+        "lastModified": 1769396217,
+        "narHash": "sha256-YNzh46h8fby49yOIB40lNoQ9ucVoXe1bHVwkZ4AwGe0=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "470ee44393bb19887056b557ea2c03fc5230bd5a",
+        "rev": "e9bcd12156a577ac4e47d131c14dc0293cc9c8c2",
         "type": "github"
       },
       "original": {
@@ -1992,11 +1992,11 @@
         "rust-overlay": "rust-overlay_8"
       },
       "locked": {
-        "lastModified": 1769341165,
-        "narHash": "sha256-y3Hf3+DXxyWT0RSO0ZMFF6ABk2W3G7Lo0VeH92a4g6w=",
+        "lastModified": 1769443450,
+        "narHash": "sha256-OSBTvJ3mk7MCRoe8l5XVmz5fDEpntihjMHMr80DFiFI=",
         "ref": "refs/heads/main",
-        "rev": "18b5665ae55a4496b4537d1994a2bf3408780a10",
-        "revCount": 89,
+        "rev": "af5a5b7d19da865833a78f9257c80d396a7df5fb",
+        "revCount": 96,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
