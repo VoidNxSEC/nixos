@@ -6,17 +6,25 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = { self, nixpkgs, rust-overlay }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      rust-overlay,
+    }:
     let
       system = "x86_64-linux";
       overlays = [ (import rust-overlay) ];
       pkgs = import nixpkgs { inherit system overlays; };
     in
     {
-      devShells.''${system}.default = pkgs.mkShell {
+      devShells.${system}.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           (rust-bin.stable.latest.default.override {
-            extensions = [ "rust-src" "rust-analyzer" ];
+            extensions = [
+              "rust-src"
+              "rust-analyzer"
+            ];
             targets = [ "wasm32-wasi" ];
           })
           protobuf
@@ -28,7 +36,7 @@
           libcommon
           wayland
         ];
-        
+
         shellHook = ''
           echo "󱘗 Agent Hub Development Environment"
           echo "Kafka/Redpanda: localhost:9092"

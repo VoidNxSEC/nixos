@@ -10,17 +10,20 @@ with lib;
 let
   cfg = config.services.securellm-mcp;
 
-  # Generate .mcp.json configuration
-  mcpConfig = {
+  # Load MCP configuration template from root .mcp.json
+  mcpTemplate = builtins.fromJSON (builtins.readFile ../../.mcp.json);
+
+  # Overlay Nix-specific configuration
+  mcpConfig = lib.recursiveUpdate mcpTemplate {
     mcpServers = {
-      securellm-bridge = {
+      securellm-mcp = {
         # Use direct binary path (already in system packages)
         command = "${cfg.package}/bin/securellm-mcp";
         args = [ ];
         env = {
           KNOWLEDGE_DB_PATH = "${cfg.dataDir}/knowledge.db";
           ENABLE_KNOWLEDGE = "true";
-          NIXOS_HOST_NAME = "kernelcore";
+          NIXOS_HOST_NAME = config.networking.hostName;
         };
       };
     };
@@ -170,16 +173,16 @@ in
               config = load_config()
               abs_path = str(Path(path_str).resolve())
 
-              # Update securellm-bridge env
+              # Update securellm-mcp env
               servers = config.get("mcpServers", {})
-              if "securellm-bridge" in servers:
-                  env = servers["securellm-bridge"].get("env", {})
+              if "securellm-mcp" in servers:
+                  env = servers["securellm-mcp"].get("env", {})
                   env["MCP_WORKDIR"] = abs_path
                   env["PROJECT_ROOT"] = abs_path  # Legacy support
-                  servers["securellm-bridge"]["env"] = env
+                  servers["securellm-mcp"]["env"] = env
                   save_config(config)
               else:
-                  print("Server securellm-bridge not found in config")
+                  print("Server securellm-mcp not found in config")
 
 
           def apply_profile(profile_name):
@@ -198,8 +201,8 @@ in
               profile = profiles[profile_name]
               config = load_config()
 
-              if "securellm-bridge" in config.get("mcpServers", {}):
-                  env = config["mcpServers"]["securellm-bridge"].get("env", {})
+              if "securellm-mcp" in config.get("mcpServers", {}):
+                  env = config["mcpServers"]["securellm-mcp"].get("env", {})
 
                   # Apply profile settings
                   if profile.get("workdir"):
@@ -214,7 +217,7 @@ in
                   for k, v in profile.get("env", {}).items():
                       env[k] = v
 
-                  config["mcpServers"]["securellm-bridge"]["env"] = env
+                  config["mcpServers"]["securellm-mcp"]["env"] = env
                   save_config(config)
 
 

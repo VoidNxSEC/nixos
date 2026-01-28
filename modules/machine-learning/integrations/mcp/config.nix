@@ -21,7 +21,7 @@ let
             securellm-mcp = {
               # Use the securellm-mcp binary directly (installed via Nix)
               command = "${cfg.mcpPackage}/bin/securellm-mcp";
-              args = ["/home/kernelcore/arch/securellm-mcp/build/src/index.js"];
+              args = [ ];
               env = {
                 PROJECT_ROOT = agentCfg.projectRoot;
                 KNOWLEDGE_DB_PATH = cfg.knowledgeDbPath;
@@ -95,7 +95,7 @@ in
     # Create shared group for knowledge DB access
     # NOTE: Users must manually add themselves to mcp-shared group in their user configuration
     # Example: extraGroups = [ "mcp-shared" ];
-    users.groups.mcp-shared = {};
+    users.groups.mcp-shared = { };
 
     # Setup knowledge database and agent configs
     systemd.tmpfiles.rules = [

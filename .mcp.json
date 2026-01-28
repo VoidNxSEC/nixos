@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "securellm-mcp": {
-      "command": "node",
-      "args": ["/home/kernelcore/arch/securellm-mcp/build/src/index.js"],
+      "command": "securellm-mcp",
+      "args": [],
       "env": {
-        "PROJECT_ROOT": "/nix/store/7hhp5bx0czr0r0jbbkbjhrlk8g9bg66d-securellm-bridge-mcp-2.0.0/bin/securellm-mcp",
-        "KNOWLEDGE_DB_PATH": "/home/kernelcore/.local/share/securellm/knowledge.db",
+        "PROJECT_ROOT": ".",
+        "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
         "ENABLE_KNOWLEDGE": "true"
       },
       "metadata": {
