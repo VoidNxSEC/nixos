@@ -1013,13 +1013,13 @@
     cognitive-vault.enable = true;
 
     vscodium-secure = {
-      enable = true;
+      enable = false;
       enableGitLabDuo = true;
       extensions = with pkgs.vscode-extensions; [
         rooveterinaryinc.roo-cline
       ];
     };
-    brave-secure.enable = true;
+    brave-secure.enable = false;
     firefox-privacy.enable = true;
     git.lfs.enable = true;
     nemo.enable = true;
