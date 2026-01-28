@@ -277,7 +277,6 @@ in
   # Auto-mount logic is now handled by x-systemd.automount in fileSystems config above
   # This prevents boot blocking when desktop is offline
 
-
   # ===== POWER MANAGEMENT =====
   # Graceful unmount on shutdown/suspend
   systemd.services.offload-cleanup = {
