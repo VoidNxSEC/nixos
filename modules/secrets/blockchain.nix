@@ -24,7 +24,7 @@ in
       # Ethereum wallet private key
       "ethereum/private_key" = {
         sopsFile = ../../secrets/blockchain.yaml;
-        mode = "0400";  # Read-only for owner
+        mode = "0400"; # Read-only for owner
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
@@ -32,7 +32,7 @@ in
       # Ethereum deployer address (not sensitive, but kept with secrets)
       "ethereum/deployer_address" = {
         sopsFile = ../../secrets/blockchain.yaml;
-        mode = "0444";  # Readable by all
+        mode = "0444"; # Readable by all
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
