@@ -2088,11 +2088,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769754651,
-        "narHash": "sha256-DM4/XK6m9kMV+l0Eq0zHusZkpa5dAvIX2fiRIRRvM2U=",
+        "lastModified": 1769758695,
+        "narHash": "sha256-y2nXxYlyRSfzgYHoZ5xjcvAm2s8x1ew0z5dGpTDqa/Q=",
         "ref": "refs/heads/main",
-        "rev": "5fb8184a09d4d6e7fab626dcbe403bcaaf6e2ce5",
-        "revCount": 11,
+        "rev": "17f7cf720494599586953122b58f8deb95124306",
+        "revCount": 13,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/spider-nix"
       },
