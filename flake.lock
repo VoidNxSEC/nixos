@@ -2011,11 +2011,11 @@
         "spider-nix": "spider-nix"
       },
       "locked": {
-        "lastModified": 1769758464,
-        "narHash": "sha256-kGBwNDBS2i5VWzvbcvjqYUQa2JLYY4S32nANFb6mikg=",
+        "lastModified": 1769758751,
+        "narHash": "sha256-PiY0PiGtDHlqJHb7hvMAMPOg8vJc1BYxbhKySy44hPE=",
         "ref": "refs/heads/main",
-        "rev": "99be835a4d260980469f35a6e3bc651ccc7d32c1",
-        "revCount": 103,
+        "rev": "f755302ea1061bea54e7ed51ef34f403058ecb29",
+        "revCount": 104,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
@@ -2067,11 +2067,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769758270,
-        "narHash": "sha256-B+jpXlgaez0lpXE+pctqqZs9pK5CVU11F/iinWtJulE=",
+        "lastModified": 1769758695,
+        "narHash": "sha256-y2nXxYlyRSfzgYHoZ5xjcvAm2s8x1ew0z5dGpTDqa/Q=",
         "ref": "refs/heads/main",
-        "rev": "702954ec8225ecedda1fb3b51c4dea8cfc525152",
-        "revCount": 12,
+        "rev": "17f7cf720494599586953122b58f8deb95124306",
+        "revCount": 13,
         "type": "git",
         "url": "file:/home/kernelcore/arch/spider-nix"
       },
