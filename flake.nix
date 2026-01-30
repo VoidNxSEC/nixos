@@ -35,6 +35,7 @@
     securellm-mcp = {
       url = "git+ssh://git@github.com/marcosfpina/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.spider-nix.follows = "spider-nix";
     };
     securellm-bridge = {
       url = "git+ssh://git@github.com/marcosfpina/securellm-bridge";
