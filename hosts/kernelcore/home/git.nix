@@ -1,6 +1,23 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
+  # ═══════════════════════════════════════════════════════════
+  # Activation Script: Clean Local Git Config Conflicts
+  # ═══════════════════════════════════════════════════════════
+  # Remove imperative git configs that override declarative settings
+  home.activation.cleanNixosGitConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [ -f /etc/nixos/.git/config ]; then
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset user.name 2>/dev/null || true
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset user.email 2>/dev/null || true
+      echo "✓ Cleaned local git config overrides in /etc/nixos"
+    fi
+  '';
+
   programs.git = {
     enable = true;
 
@@ -96,6 +113,7 @@
         condition = "gitdir:~/github-legacy/";
         contents = {
           user = {
+            name = "marcosfpina";
             email = "sec@voidnxlabs.com";
             signingkey = "5606AB430E95F5AD"; # marcos (gh) <sec@voidnxlabs.com>
           };
