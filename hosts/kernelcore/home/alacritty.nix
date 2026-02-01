@@ -406,11 +406,11 @@
         enabled = [
           {
             # URL detection and opening
-            # Fixed: Removed Unicode ranges to be compatible with Alacritty's DFA regex engine
-            regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\\\\s<>\"{}|\\\\\\\\^`]+";
+            # Fixed: Improved regex to handle localhost ports correctly
+            regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\\\\s<>\"{}|\\\\\\\\^`\\[\\]]+";
             hyperlinks = true;
             post_processing = true;
-            command = "Copy";
+            command = "xdg-open";
 
             mouse = {
               enabled = true;
