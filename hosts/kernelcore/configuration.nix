@@ -793,14 +793,51 @@
 
     # TabbyAPI - OpenAI-compatible Inference Server
     tabbyapi = {
-      enable = false;
-      host = "127.0.0.1";
-      port = 5000;
+      enable = true;
+      host = "0.0.0.0";
+      port = 7734;
       modelsDir = "/var/lib/ml-models";
       maxSeqLen = 16384;
       cacheMode = "FP16";
       gpuSplitAuto = true;
-      openFirewall = false; # Acessível apenas via localhost ou proxy reverso
+      openFirewall = false; # Acessível de containers Docker, mas não da internet
+    };
+
+    # Open-WebUI - Self-hosted AI Chat Interface (ML Hardcore Mode)
+    open-webui = {
+      enable = true;
+      host = "127.0.0.1";
+      port = 3000;
+      apiBackend = "tabbyapi"; # Usa TabbyAPI na porta 7734
+      openFirewall = false;
+
+      # 🔥 ML HARDCORE OPTIMIZATIONS 🔥
+      performance = {
+        enableHardcoreMode = true;
+        workers = 4; # Multi-worker para alta carga
+        threadPoolSize = 16; # Thread pool robusto
+      };
+
+      # RAG & Vector DB (ChromaDB default, considere Milvus/PGVector para prod)
+      rag = {
+        vectorDB = "chroma"; # Opções: milvus, pgvector, qdrant
+        embeddingModelAutoUpdate = true;
+        enableMilvusMultitenancy = false; # true se usar Milvus
+      };
+
+      # Code Execution & Interpreter
+      codeExecution = {
+        enable = true;
+        engine = "pyodide"; # Ou "jupyter" se tiver servidor Jupyter
+        # jupyterUrl = "http://localhost:8888";  # Descomente se usar Jupyter
+      };
+
+      # Security & Audit
+      security = {
+        enableAuditLogs = true;
+        auditLogLevel = "REQUEST"; # METADATA, REQUEST, REQUEST_RESPONSE
+        jwtExpiresIn = "4w";
+      };
     };
 
     gitea-showcase = {

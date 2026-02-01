@@ -14,5 +14,6 @@
     ./llama-cpp-swap.nix
     ./tabbyapi.nix
     ./vllm.nix
+    ./open-webui.nix
   ];
 }
