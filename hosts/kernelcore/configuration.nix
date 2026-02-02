@@ -804,39 +804,30 @@
     };
 
     # Open-WebUI - Self-hosted AI Chat Interface (ML Hardcore Mode)
+    # Open-WebUI - upstream NixOS module (simple config)
     open-webui = {
       enable = true;
       host = "127.0.0.1";
       port = 3000;
-      apiBackend = "tabbyapi"; # Usa TabbyAPI na porta 7734
       openFirewall = false;
 
-      # 🔥 ML HARDCORE OPTIMIZATIONS 🔥
-      performance = {
-        enableHardcoreMode = true;
-        workers = 4; # Multi-worker para alta carga
-        threadPoolSize = 16; # Thread pool robusto
-      };
+      # Configuração via environment variables
+      environment = {
+        # Backend: TabbyAPI
+        OPENAI_API_BASE_URL = "http://127.0.0.1:7734/v1";
+        OPENAI_API_KEY = "not-needed";
+        ENABLE_OPENAI_API = "true";
+        ENABLE_OLLAMA_API = "false";
 
-      # RAG & Vector DB (ChromaDB default, considere Milvus/PGVector para prod)
-      rag = {
-        vectorDB = "chroma"; # Opções: milvus, pgvector, qdrant
-        embeddingModelAutoUpdate = true;
-        enableMilvusMultitenancy = false; # true se usar Milvus
-      };
+        # Disable analytics
+        SCARF_NO_ANALYTICS = "true";
+        DO_NOT_TRACK = "true";
+        ANONYMIZED_TELEMETRY = "false";
 
-      # Code Execution & Interpreter
-      codeExecution = {
-        enable = true;
-        engine = "pyodide"; # Ou "jupyter" se tiver servidor Jupyter
-        # jupyterUrl = "http://localhost:8888";  # Descomente se usar Jupyter
-      };
-
-      # Security & Audit
-      security = {
-        enableAuditLogs = true;
-        auditLogLevel = "REQUEST"; # METADATA, REQUEST, REQUEST_RESPONSE
-        jwtExpiresIn = "4w";
+        # Features
+        ENABLE_SIGNUP = "true";
+        DEFAULT_USER_ROLE = "user";
+        ENABLE_IMAGE_GENERATION = "false";
       };
     };
 

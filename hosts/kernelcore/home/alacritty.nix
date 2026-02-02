@@ -407,7 +407,7 @@
           {
             # URL detection and opening
             # Fixed: Improved regex to handle localhost ports correctly
-            regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\\\\s<>\"{}|\\\\\\\\^`\\[\\]]+";
+            regex = ''(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\s<>"{}|\\^`\[\]]+'';
             hyperlinks = true;
             post_processing = true;
             command = "xdg-open";
