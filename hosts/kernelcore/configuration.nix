@@ -772,7 +772,7 @@
     # LlamaSwap - Hot Model Reloading
     llamacpp-swap = {
       enable = true;
-      host = "127.0.0.1";
+      host = "0.0.0.0";
       port = 8081;
       n_threads = 12;
       n_threads_batch = 12;
