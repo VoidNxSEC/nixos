@@ -8,7 +8,7 @@
         ]
       },
       "locked": {
-        "lastModified": 1770312096,
+        "lastModified": 1770994630,
         "narHash": "sha256-NIPCM/zpkwqqFf+TaNUNUvymXCvx/5+XWgwDPCfjpBo=",
         "path": "/home/kernelcore/master/adr-ledger",
         "type": "path"
@@ -821,11 +821,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770975156,
-        "narHash": "sha256-bPKv7BcIOGp4R1Q3hKhiD2CT3+7D6ibNIaJfEJdeOzo=",
+        "lastModified": 1771014882,
+        "narHash": "sha256-M9t6MOoxVhOHDqDP+Ok8TKNN31G+6IR1m+ZAqWc1acE=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "de4cfffc98f43ab8ba90739b56991f068f9e9018",
+        "rev": "b3258dece8af087fd471a4ca6b106d02c330dd37",
         "type": "github"
       },
       "original": {
