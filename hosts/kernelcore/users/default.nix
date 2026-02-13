@@ -7,7 +7,7 @@
 
 {
   imports = [
-    ./actions.nix
+    # ./actions.nix # Removed: duplicate of modules/services/github-runner.nix
     ./claude-code.nix
     ./codex-agent.nix
     ./gemini-agent.nix
