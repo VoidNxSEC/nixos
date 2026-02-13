@@ -61,6 +61,9 @@
 
         # Show which key is being used
         show-key = "!git config user.signingkey";
+
+        # Push to all remotes (github + gitlab)
+        push-all = "!git push github \"$@\" && git push gitlab \"$@\" #";
       };
 
       # ───────────────────────────────────────────────────────
