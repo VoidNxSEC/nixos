@@ -66,11 +66,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     neoland = {
-      url = "path:/home/kernelcore/arch/neoland";
+      url = "path:/home/kernelcore/master/neoland";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     adr-ledger = {
-      url = "path:/home/kernelcore/arch/adr-ledger";
+      url = "path:/home/kernelcore/master/adr-ledger";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     #docker-hub = {
