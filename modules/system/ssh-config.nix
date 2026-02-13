@@ -60,13 +60,6 @@ with lib;
       description = "Nvidia Brev SSH key filename";
     };
 
-    # Nvidia Brev identity
-    brevKey = mkOption {
-      type = types.str;
-      default = "id_rsa_brev";
-      description = "Nvidia Brev SSH key filename";
-    };
-
     # Internal server details
     serverHost = mkOption {
       type = types.str;
