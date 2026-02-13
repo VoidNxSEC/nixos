@@ -10,11 +10,15 @@
   # Activation Script: Clean Local Git Config Conflicts
   # ═══════════════════════════════════════════════════════════
   # Remove imperative git configs that override declarative settings
+  # All signing/identity must come from home-manager (git.nix) via includeIf conditionals
   home.activation.cleanNixosGitConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ -f /etc/nixos/.git/config ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset user.name 2>/dev/null || true
       $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset user.email 2>/dev/null || true
-      echo "✓ Cleaned local git config overrides in /etc/nixos"
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset user.signingkey 2>/dev/null || true
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset commit.gpgsign 2>/dev/null || true
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset commit.template 2>/dev/null || true
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset tag.gpgsign 2>/dev/null || true
     fi
   '';
 
@@ -66,9 +70,7 @@
       core.editor = "nvim";
       pull.rebase = false;
 
-      # Security configurations
-      commit.gpgsign = true;
-      tag.gpgsign = true;
+      # NOTE: commit.gpgsign and tag.gpgsign are handled by signing.signByDefault above
 
       # Performance optimizations
       core.preloadindex = true;
@@ -97,14 +99,14 @@
     # Conditional Includes (por diretório/repositório)
     # ═══════════════════════════════════════════════════════════
     includes = [
-      # NixOS Configuration Repository (GitLab)
+      # NixOS Configuration Repository (GitHub: marcosfpina/nixos + GitLab: entropynix/nixos)
       {
         condition = "gitdir:/etc/nixos/";
         contents = {
           user = {
-            name = "VoidNX";
-            email = "pina@voidnx.com";
-            signingkey = "B08FA8030FF989EE"; # VoidNX <pina@voidnx.com>
+            name = "VoidNxLabs";
+            email = "sec@voidnxlabs.com";
+            signingkey = "82FBA1A53A3FFA8B"; # VoidNxLabs <sec@voidnxlabs.com>
           };
         };
       }
