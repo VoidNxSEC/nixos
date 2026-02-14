@@ -1,19 +1,16 @@
-# Claude Code - Patched nixpkgs package with version override
+# Claude Code - Patched nixpkgs package
 #
-# Fixes from upstream nixpkgs claude-code:
+# Applies build fixes to upstream nixpkgs claude-code:
 # 1. Add autoPatchelfHook to patch native .node binaries
 # 2. Add stdenv.cc.cc.lib for libstdc++.so.6 (sharp dependency)
 # 3. Ignore musl libc deps (glibc-only NixOS)
 #
-# Version tracking:
-# - nixpkgs: 2.1.37
-# - latest npm: 2.1.42 (checked 2026-02-14)
-#
-# To upgrade to latest:
-# 1. Set version = "2.1.42" below
-# 2. Update src.hash (already set for 2.1.42)
-# 3. Set npmDepsHash = "" and rebuild to get expected hash
-# 4. Update npmDepsHash with the hash from error message
+# NOTE: Version bumping via overrideAttrs does NOT work with
+# buildNpmPackage + finalAttrs pattern. The internal npmDeps
+# derivation gets a broken src (new URL, old hash) because
+# finalAttrs.version changes the URL but not the hardcoded hash.
+# To upgrade claude-code, wait for nixpkgs to update or use
+# an overlay that replaces the entire package definition.
 #
 {
   config,
@@ -26,13 +23,6 @@ let
   cfg = config.kernelcore.packages.claude;
 
   claude-code-patched = pkgs.claude-code.overrideAttrs (prev: {
-    version = "2.1.42";
-    src = pkgs.fetchzip {
-      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.42.tgz";
-      hash = "sha256-+99eaqKAOUvz+omHJ4bxlDepdpn8FNLmvxKcVDR76o4=";
-    };
-    npmDepsHash = ""; # Rebuild to get expected hash from error
-
     nativeBuildInputs = (prev.nativeBuildInputs or [ ]) ++ [
       pkgs.autoPatchelfHook
     ];
