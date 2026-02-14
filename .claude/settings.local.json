@@ -37,7 +37,9 @@
       "Bash(nix-prefetch-url:*)",
       "Bash(nix-store --query --requisites:*)",
       "Bash(nixos-option:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(tar:*)",
+      "Bash(sudo nixos-rebuild:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

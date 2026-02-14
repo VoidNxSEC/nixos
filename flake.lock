@@ -8,8 +8,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1771090932,
-        "narHash": "sha256-YcbzRl3HW2SMHO/WdWEOlYmjdOIJ3+9FkyCbYo5YGK4=",
+        "lastModified": 1771097849,
+        "narHash": "sha256-u9Jv249BM5KWSgt6VRJtVnZ+08c726x+agLRDy1eF3U=",
         "path": "/home/kernelcore/master/adr-ledger",
         "type": "path"
       },
