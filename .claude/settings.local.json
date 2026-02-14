@@ -36,7 +36,8 @@
       "Bash(nix-prefetch-github:*)",
       "Bash(nix-prefetch-url:*)",
       "Bash(nix-store --query --requisites:*)",
-      "Bash(nixos-option:*)"
+      "Bash(nixos-option:*)",
+      "Bash(python3:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
