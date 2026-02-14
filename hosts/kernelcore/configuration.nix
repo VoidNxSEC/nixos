@@ -131,6 +131,7 @@
       maxCacheSizeMB = 5;
     };
 
+    packages.claude.enable = true;
     packages.zellij.enable = true;
     packages.lynis.enable = true;
     packages.js.enable = false;
@@ -449,21 +450,21 @@
         coder = {
           modelPath = "/var/lib/ml-models/llamacpp/models/Qwen2.5_Coder_7B_Instruct";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 35;
+          gpuLayers = 42;
           contextSize = 8192;
         };
 
         reasoning = {
           modelPath = "/var/lib/ml-models/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
           displayName = "DeepSeek-R1 8B (Q4)";
-          gpuLayers = 35;
+          gpuLayers = 42;
           contextSize = 8192;
         };
 
         thinking = {
           modelPath = "/var/lib/ml-models/llamacpp/models/Llama3.3-8B-Instruct-Thinking-Claude-4.5-Opus-High-Reasoning.i1-Q4_K_M.gguf";
           displayName = "Llama 3.3 Thinking 8B (Q4)";
-          gpuLayers = 35;
+          gpuLayers = 42;
           contextSize = 8192;
         };
 
@@ -772,11 +773,11 @@
     # LlamaSwap - Hot Model Reloading
     llamacpp-swap = {
       enable = true;
-      host = "0.0.0.0";
+      host = "127.0.0.1";
       port = 8081;
       n_threads = 12;
       n_threads_batch = 12;
-      n_gpu_layers = 35;
+      n_gpu_layers = 45;
       mainGpu = 1;
       n_parallel = 4;
       n_ctx = 8192;
@@ -794,7 +795,7 @@
     # TabbyAPI - OpenAI-compatible Inference Server
     tabbyapi = {
       enable = false;
-      host = "0.0.0.0";
+      host = "127.0.0.1";
       port = 7734;
       modelsDir = "/var/lib/ml-models";
       maxSeqLen = 16384;
@@ -825,7 +826,7 @@
         ANONYMIZED_TELEMETRY = "false";
 
         # Features
-        ENABLE_SIGNUP = "true";
+        ENABLE_SIGNUP = "false";
         DEFAULT_USER_ROLE = "user";
         ENABLE_IMAGE_GENERATION = "false";
       };
@@ -1003,7 +1004,7 @@
       git-lfs
       certbot
       flameshot
-      claude-code
+      # claude-code → managed via modules/packages/claude (patched native binaries)
       codex
       vllm
       koboldcpp
