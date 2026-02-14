@@ -793,7 +793,7 @@
 
     # TabbyAPI - OpenAI-compatible Inference Server
     tabbyapi = {
-      enable = true;
+      enable = false;
       host = "0.0.0.0";
       port = 7734;
       modelsDir = "/var/lib/ml-models";
