@@ -1013,6 +1013,7 @@
       xclip
       glab
       gh
+      wrangler
       codeberg-cli
       brev-cli
       gnome-console
