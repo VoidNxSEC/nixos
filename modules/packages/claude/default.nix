@@ -1,6 +1,19 @@
-# Claude Code - AI Coding Assistant Module
+# Claude Code - Patched nixpkgs package with version override
 #
-# Provides the Claude Code CLI as a system package when enabled
+# Fixes from upstream nixpkgs claude-code:
+# 1. Add autoPatchelfHook to patch native .node binaries
+# 2. Add stdenv.cc.cc.lib for libstdc++.so.6 (sharp dependency)
+# 3. Ignore musl libc deps (glibc-only NixOS)
+#
+# Version tracking:
+# - nixpkgs: 2.1.37
+# - latest npm: 2.1.42 (checked 2026-02-14)
+#
+# To upgrade to latest:
+# 1. Set version = "2.1.42" below
+# 2. Update src.hash (already set for 2.1.42)
+# 3. Set npmDepsHash = "" and rebuild to get expected hash
+# 4. Update npmDepsHash with the hash from error message
 #
 {
   config,
@@ -12,56 +25,34 @@
 let
   cfg = config.kernelcore.packages.claude;
 
-  # Claude Code package definition
-  claude-code = pkgs.stdenv.mkDerivation {
-    pname = "claude-code";
-    version = "2.0.74";
-
-    src = pkgs.fetchurl {
-      url = "https://storage.googleapis.com/anthropic-artifacts/claude-code/linux-x64/claude-2.0.74";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Will be updated on first build
+  claude-code-patched = pkgs.claude-code.overrideAttrs (prev: {
+    version = "2.1.42";
+    src = pkgs.fetchzip {
+      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.42.tgz";
+      hash = "sha256-+99eaqKAOUvz+omHJ4bxlDepdpn8FNLmvxKcVDR76o4=";
     };
+    npmDepsHash = ""; # Rebuild to get expected hash from error
 
-    nativeBuildInputs = with pkgs; [
-      autoPatchelfHook
-      makeWrapper
+    nativeBuildInputs = (prev.nativeBuildInputs or [ ]) ++ [
+      pkgs.autoPatchelfHook
     ];
 
-    buildInputs = with pkgs; [
-      stdenv.cc.cc.lib
+    buildInputs = (prev.buildInputs or [ ]) ++ [
+      pkgs.stdenv.cc.cc.lib
     ];
 
-    dontUnpack = true;
-    dontBuild = true;
+    # The npm package ships MUSL variants of sharp/libvips alongside glibc.
+    # NixOS is glibc - ignore missing musl libc (those binaries never run).
+    autoPatchelfIgnoreMissingDeps = [ "libc.musl-x86_64.so.1" ];
+  });
 
-    installPhase = ''
-      runHook preInstall
-
-      # Install binary
-      install -Dm755 $src $out/bin/claude
-
-      # Add ripgrep to PATH (required dependency)
-      wrapProgram $out/bin/claude \
-        --prefix PATH : ${lib.makeBinPath [ pkgs.ripgrep ]}
-
-      runHook postInstall
-    '';
-
-    meta = with lib; {
-      description = "Claude Code - AI coding assistant for terminal";
-      homepage = "https://claude.com/product/claude-code";
-      license = licenses.unfree;
-      platforms = [ "x86_64-linux" ];
-    };
-  };
 in
 {
   options.kernelcore.packages.claude = {
-    enable = lib.mkEnableOption "Claude Code AI assistant";
+    enable = lib.mkEnableOption "Claude Code (patched native binaries)";
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ claude-code ];
-    nixpkgs.config.allowUnfree = true;
+    environment.systemPackages = [ claude-code-patched ];
   };
 }
