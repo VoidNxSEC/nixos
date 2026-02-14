@@ -18,6 +18,7 @@
     ./aliases
     ./training-logger.nix
     ./cli-helpers.nix # rebuild, dbg, nix-debug, audit-system, lynis-report
+    ./nix-ops.nix # unified system operations tool
   ];
 
   # ============================================================
@@ -131,24 +132,13 @@
       model-cache-clean = "python3 /etc/nixos-shell/scripts/model_manager.py cache-clean";
 
       # ============================================================
-      # EMERGENCY CLEANUP - Aliases de sobrevivência
+      # SYSTEM OPS - Replaced by nix-ops (see nix-ops.nix)
+      # Legacy aliases kept for muscle memory
       # ============================================================
-
-      # Menu interativo
-      sos = "sudo /etc/nixos/scripts/emergency-cleanup.sh";
-      "911" = "sudo /etc/nixos/scripts/emergency-cleanup.sh";
-
-      # Ações diretas (para ninjas de verdade)
-      killnix = "sudo /etc/nixos/scripts/emergency-cleanup.sh --kill-nix";
-      cooldown = "sudo /etc/nixos/scripts/emergency-cleanup.sh --cooldown";
-      stopall = "sudo /etc/nixos/scripts/emergency-cleanup.sh --stop-all";
-      cleanup = "sudo /etc/nixos/scripts/emergency-cleanup.sh --aggressive";
-      cleanlogs = "sudo /etc/nixos/scripts/emergency-cleanup.sh --clean-logs";
-      nixgc = "sudo /etc/nixos/scripts/emergency-cleanup.sh --nix-gc";
-
-      # Scripts legados (mantidos para compatibilidade)
-      limpa-processos = "/etc/nixos/scripts/limpa-processos.sh";
-      limpeza-agressiva = "/etc/nixos/scripts/limpeza-agressiva.sh";
+      killnix = "sudo nix-ops kill";
+      cooldown = "sudo nix-ops cooldown";
+      cleanup = "sudo nix-ops gc --aggressive";
+      nixgc = "sudo nix-ops gc";
     };
 
     # ============================================================
@@ -191,14 +181,15 @@
         ║           NixOS Shell Commands                         ║
         ╚════════════════════════════════════════════════════════╝
 
-        🚨 EMERGENCY CLEANUP (quando tudo der errado):
-          sos / 911           - Menu interativo de emergência
-          killnix             - Mata todos os builds Nix
-          cooldown            - CPU em modo powersave
-          stopall             - Para TUDO (serviços + builds)
-          cleanup             - Limpeza agressiva (50-200GB)
-          cleanlogs           - Limpa apenas logs
-          nixgc               - Nix GC rápido
+        🔧 SYSTEM OPS (nix-ops):
+          nix-ops status      - Quick system health check
+          nix-ops audit       - Full disk audit with breakdown
+          nix-ops gc          - Nix GC (add --aggressive for deep clean)
+          nix-ops gc --dry-run - Preview what gc would clean
+          nix-ops kill        - Kill nix builds (add --heavy for more)
+          nix-ops cooldown    - CPU powersave + kill builds
+          nix-ops monitor     - Live dashboard with auto-intervention
+          killnix / cooldown / cleanup / nixgc - Quick aliases
 
         🐳 DOCKER BUILD & RUN:
           dbuild              - Docker build with cache
