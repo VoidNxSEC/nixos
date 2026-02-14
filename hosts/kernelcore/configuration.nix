@@ -1121,6 +1121,8 @@
     hostName = "kernelcore";
   };
 
+  kernelcore.shell.nix-ops.enable = true;
+
   boot.initrd.prepend = [
     "${
       pkgs.runCommand "acpi-override"
