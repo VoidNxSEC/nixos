@@ -365,6 +365,7 @@
     secrets.k8s.enable = true;
     secrets.grok.enable = true;
     secrets.gitlab.enable = true;
+    secrets.api-keys.enable = true; # DeepSeek, Anthropic, Mistral, Gemini
 
     ml.models-storage = {
       enable = true;
@@ -807,7 +808,7 @@
     # Open-WebUI - Self-hosted AI Chat Interface (ML Hardcore Mode)
     # Open-WebUI - upstream NixOS module (simple config)
     open-webui = {
-      enable = true;
+      enable = false;
       host = "127.0.0.1";
       port = 3000;
       openFirewall = false;
