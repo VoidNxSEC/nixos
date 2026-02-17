@@ -21,11 +21,11 @@ let
 
   claude-code = pkgs.buildNpmPackage {
     pname = "claude-code";
-    version = "2.1.42";
+    version = "2.1.44";
 
     src = pkgs.fetchzip {
-      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.42.tgz";
-      hash = "sha256-+99eaqKAOUvz+omHJ4bxlDepdpn8FNLmvxKcVDR76o4=";
+      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.44.tgz";
+      hash = "sha256-3HhH7LOFA7sNOXGZa6reO3HfXcHFQO0mbFWFpPXFwcM=";
     };
 
     npmDepsHash = "sha256-Rbt6PiFJapHow4yEBafyMdHWLUaYIDRDDJB1a93ZqsI=";
@@ -59,11 +59,86 @@ let
         --set DISABLE_AUTOUPDATER 1 \
         --set DISABLE_INSTALLATION_CHECKS 1 \
         --unset DEV \
+        --suffix LD_LIBRARY_PATH : ${
+          lib.makeLibraryPath [
+            pkgs.stdenv.cc.cc.lib # libstdc++, libgcc_s
+            pkgs.zlib
+            pkgs.openssl
+            pkgs.curl
+            pkgs.glib
+            pkgs.icu
+          ]
+        } \
         --prefix PATH : ${
           lib.makeBinPath [
+            # Core runtime
             pkgs.procps
             pkgs.bubblewrap
             pkgs.socat
+            pkgs.coreutils
+            pkgs.findutils
+            pkgs.gnugrep
+            pkgs.gnused
+            pkgs.gawk
+            pkgs.diffutils
+
+            # Binary analysis / debugging
+            pkgs.strace
+            pkgs.ltrace
+            pkgs.gdb
+            pkgs.patchelf
+            pkgs.binutils # readelf, objdump, strings, ld
+            pkgs.file
+
+            # Nix tooling
+            pkgs.nix
+            pkgs.nixfmt-rfc-style
+
+            # Build toolchain
+            pkgs.gcc
+            pkgs.gnumake
+            pkgs.cmake
+
+            # Network / fetch
+            pkgs.curl
+            pkgs.wget
+            pkgs.openssh
+
+            # Git + forges
+            pkgs.git
+            pkgs.gh
+            pkgs.glab
+
+            # Archive / compression
+            pkgs.gnutar
+            pkgs.unzip
+            pkgs.zip
+            pkgs.gzip
+            pkgs.xz
+
+            # JSON / data
+            pkgs.jq
+            pkgs.yq-go
+            pkgs.sqlite
+
+            # System introspection
+            pkgs.lsof
+            pkgs.iproute2
+            pkgs.util-linux # lsblk, mount, etc.
+            pkgs.pstree
+
+            # Dev runtimes
+            pkgs.nodejs
+            pkgs.python3
+            pkgs.cargo
+            pkgs.go
+
+            # Container / infra
+            pkgs.docker-client
+
+            # Secrets
+            pkgs.sops
+            pkgs.openssl
           ]
         }
     '';
