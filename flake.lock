@@ -8,8 +8,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1771097849,
-        "narHash": "sha256-u9Jv249BM5KWSgt6VRJtVnZ+08c726x+agLRDy1eF3U=",
+        "lastModified": 1771369290,
+        "narHash": "sha256-CvKrd/aRQVnzuOzq1olUclhcN0zayA9XtGlPL9pzBcs=",
         "path": "/home/kernelcore/master/adr-ledger",
         "type": "path"
       },
@@ -1251,8 +1251,8 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1771050162,
-        "narHash": "sha256-J7SxwYXk/YaiHuPtY72LNEuNdEc1wbA4hmDkRPyub84=",
+        "lastModified": 1771324450,
+        "narHash": "sha256-PhScC78Gee6VfUidMzSIzq2xL/JofHOqPDeRFYub00g=",
         "path": "/home/kernelcore/master/neoland",
         "type": "path"
       },
@@ -2050,11 +2050,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769758695,
-        "narHash": "sha256-y2nXxYlyRSfzgYHoZ5xjcvAm2s8x1ew0z5dGpTDqa/Q=",
+        "lastModified": 1771366836,
+        "narHash": "sha256-TLDCUDxfWy2ESXY5aRHVkNJSC004ZQ8QUYqi7yjoeoM=",
         "ref": "refs/heads/main",
-        "rev": "17f7cf720494599586953122b58f8deb95124306",
-        "revCount": 13,
+        "rev": "e18158dfc28c71990b72153a973790a4f987588f",
+        "revCount": 15,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/spider-nix"
       },
