@@ -4,10 +4,6 @@
 # installer with a ZIP payload. We extract the ZIP at a fixed offset,
 # unpack it, and wire the ELF binaries with autoPatchelfHook.
 #
-# NOTE: The .sh installer binary is NOT tracked in git (see .gitignore).
-#       Place it manually in this directory before building:
-#         modules/packages/hubstaff/Hubstaff-<version>.sh
-#
 # To upgrade:
 # 1. Download new .sh installer from https://app.hubstaff.com/download/linux
 # 2. Find ZIP offset:  python3 -c "d=open('file.sh','rb').read(); print(d.index(b'PK\x03\x04'))"
