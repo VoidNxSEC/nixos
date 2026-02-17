@@ -1995,11 +1995,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771066839,
-        "narHash": "sha256-AVNYcemY54uvIzqoh9Y0Omgl3TUR11Az93UF6ZeLN/Q=",
+        "lastModified": 1771353623,
+        "narHash": "sha256-jJVfp/WWshNc8He3E5TWzFKcKKGP+c/iNNqCyMVNvk8=",
         "ref": "refs/heads/main",
-        "rev": "5ab6b36037a8d73ae47f4463a7e88153353dde61",
-        "revCount": 111,
+        "rev": "8cf5cf144e7dec1645741d9090b6ccf2ceede758",
+        "revCount": 112,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
