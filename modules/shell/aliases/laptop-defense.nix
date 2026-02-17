@@ -118,7 +118,7 @@
 
     # Profile management
     "profile-status" = "thermal-profile status";
-    "ps" = "thermal-profile status";
+    "tps" = "thermal-profile status";
 
     "profile-silent" = "thermal-profile silent && sudo systemctl restart thermal-profile-manager";
     "psi" = "thermal-profile silent && sudo systemctl restart thermal-profile-manager";
