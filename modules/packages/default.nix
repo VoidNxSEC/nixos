@@ -28,6 +28,9 @@
     # Custom user-defined packages (Gemini/Antigravity custom builds)
     ./custom
 
+    # Time tracking
+    ./hubstaff
+
     # Music production and video tools
     ./f5-tts
   ];
