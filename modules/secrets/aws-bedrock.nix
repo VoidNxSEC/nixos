@@ -56,7 +56,7 @@ in
         export AWS_DEFAULT_REGION="$AWS_REGION"
 
         # Bedrock specific (hardcoded from secrets/aws.yaml)
-        export BEDROCK_MODEL_ID="anthropic.claude-3-sonnet-20240229-v1:0"
+        export BEDROCK_MODEL_ID="anthropic.claude-sonnet-4-6"
         export BEDROCK_ENDPOINT="https://bedrock-runtime.us-east-1.amazonaws.com"
 
         # Claude Code specific environment variables

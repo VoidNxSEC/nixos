@@ -232,7 +232,7 @@ with lib;
         # Anthropic Official API
         export ANTHROPIC_API_KEY="$api_key"
         export CLAUDE_API_TYPE="anthropic"
-        export CLAUDE_MODEL="claude-sonnet-4"
+        export CLAUDE_MODEL="claude-sonnet-4-6"
         EOF
 
                       chmod 600 "$PROFILE_DIR/api.env"
@@ -266,7 +266,7 @@ with lib;
         export AWS_SECRET_ACCESS_KEY="$aws_secret"
         export AWS_REGION="$aws_region"
         export CLAUDE_API_TYPE="bedrock"
-        export CLAUDE_MODEL="anthropic.claude-sonnet-4-20250514-v1:0"
+        export CLAUDE_MODEL="anthropic.claude-sonnet-4-6"
         EOF
 
                       chmod 600 "$PROFILE_DIR/bedrock.env"
