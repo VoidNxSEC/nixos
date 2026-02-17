@@ -136,6 +136,7 @@
     packages.lynis.enable = true;
     packages.js.enable = false;
     packages.f5-tts.enable = true;
+    packages.hubstaff.enable = true;
 
     # Custom individual packaging for Gemini/Antigravity
     packages.custom = {
