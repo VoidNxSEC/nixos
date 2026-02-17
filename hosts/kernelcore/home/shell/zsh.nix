@@ -237,7 +237,7 @@ in
         export EDITOR="nvim"
         export VISUAL="nvim"
         export BROWSER="brave"
-        export ANTHROPIC_MODEL="claude-sonnet-4-5-20250929"
+        export ANTHROPIC_MODEL="claude-sonnet-4-6"
 
         # Security paranoia
         umask 077
