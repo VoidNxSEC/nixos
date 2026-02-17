@@ -197,8 +197,31 @@ in
     # CONFIGURAÇÕES GLOBAIS (SPEECH-DISPATCHER + WIREPLUMBER)
     # ═══════════════════════════════════════════════════════════════
     environment.etc = mkMerge [
-      # SPEECH-DISPATCHER - Módulos mínimos para evitar zumbis
+      # SPEECH-DISPATCHER - Carregar apenas módulos com backends funcionais
+      # Sem isto, o speech-dispatcher faz auto-discovery e tenta carregar TODOS
+      # os módulos (voxin, baratinoo, kali, etc.), que crasham por falta de
+      # libs proprietárias e viram processos zombie permanentes.
       {
+        "speech-dispatcher/speechd.conf".text = ''
+          LogLevel  3
+          LogDir  "default"
+          DefaultVolume 100
+          SymbolsPreproc "char"
+          SymbolsPreprocFile "gender-neutral.dic"
+          SymbolsPreprocFile "font-variants.dic"
+          SymbolsPreprocFile "symbols.dic"
+          SymbolsPreprocFile "emojis.dic"
+          SymbolsPreprocFile "orca.dic"
+          SymbolsPreprocFile "orca-chars.dic"
+
+          # Apenas módulos com backends funcionais no NixOS
+          AddModule "espeak-ng"  "sd_espeak-ng"  "espeak-ng.conf"
+          AddModule "flite"      "sd_flite"      "flite.conf"
+          AddModule "pico"       "sd_pico"       "pico.conf"
+
+          DefaultModule espeak-ng
+        '';
+
         "speech-dispatcher/modules/espeak-ng.conf".text = ''
           GenericExecuteSynth "echo \'$DATA\' | espeak-ng -v $VOICE --stdin"
           GenericStripPunctChars ""
