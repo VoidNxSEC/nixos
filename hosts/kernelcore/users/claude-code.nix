@@ -140,7 +140,7 @@ in
     environment.variables = {
       CLAUDE_CODE_USER = cfg.userName;
       CLAUDE_CODE_HOME = cfg.homeDirectory;
-      ANTHROPIC_MODEL = "claude-sonnet-4-5-20250929";
+      ANTHROPIC_MODEL = "claude-sonnet-4-6";
     };
   };
 }
