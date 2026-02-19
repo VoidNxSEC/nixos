@@ -37,6 +37,13 @@ in
       };
     };
 
+    # Environment variables for the session (evaluated at login)
+    environment.extraInit = ''
+      export GOOGLE_CLOUD_PROJECT="$(cat /run/secrets/GCP_PROJECT_ID 2>/dev/null || echo "")"
+      export GOOGLE_CLOUD_REGION="global"
+      export GOOGLE_CLOUD_LOCATION="global"
+    '';
+
     # Environment loader script
     environment.etc."load-gcp-ml.sh" = {
       text = ''
@@ -44,12 +51,14 @@ in
         # Load GCP ML credentials
         # Usage: source /etc/load-gcp-ml.sh
 
-        export GCP_PROJECT_ID="$(cat /run/secrets/GCP_PROJECT_ID 2>/dev/null || echo "")"
-        export GCP_LOCATION="$(cat /run/secrets/GCP_LOCATION 2>/dev/null || echo "")"
+        export GOOGLE_CLOUD_PROJECT="$(cat /run/secrets/GCP_PROJECT_ID 2>/dev/null || echo "")"
+        export GOOGLE_CLOUD_REGION="$(cat /run/secrets/GCP_LOCATION 2>/dev/null || echo "")"
+        export GCP_PROJECT_ID="$GOOGLE_CLOUD_PROJECT"
+        export GCP_LOCATION="$GOOGLE_CLOUD_REGION"
 
         echo "✓ GCP ML credentials loaded from gcp-ml.yaml"
-        echo "  - GCP_PROJECT_ID: $GCP_PROJECT_ID"
-        echo "  - GCP_LOCATION: $GCP_LOCATION"
+        echo "  - GOOGLE_CLOUD_PROJECT: $GOOGLE_CLOUD_PROJECT"
+        echo "  - GOOGLE_CLOUD_REGION: $GOOGLE_CLOUD_REGION"
       '';
       mode = "0755";
     };
