@@ -1,0 +1,13 @@
+🔍 AUDITORIA COMPLETA DE DISCO
+==============================
+
+Data: mar feb 17 2026 23:36:28 -02
+
+📊 1. RESUMO GERAL
+==================
+Filesystem                                             Size  Used Avail Use% Mounted on
+/dev/mapper/luks-49aa90f9-15d5-4622-a2e6-02a989ecc7e3  459G  401G   35G  92% /
+
+📁 2. TOP 30 DIRETÓRIOS MAIORES
+================================
+Analisando... (pode demorar 2-5 minutos)

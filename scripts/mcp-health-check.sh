@@ -12,7 +12,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-MCP_SERVER_DIR="${MCP_SERVER_DIR:-modules/ml/integration/mcp/server/src/index.ts}"
+MCP_SERVER_DIR="${MCP_SERVER_DIR:-/home/kernelcore/master/securellm-mcp}"
 REPORT_FILE="${REPORT_FILE:-/tmp/mcp-health-report-$(date +%Y%m%d-%H%M%S).txt}"
 
 # Counters
