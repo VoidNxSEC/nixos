@@ -927,6 +927,17 @@
     enable = true;
     withUWSM = true; # <--- Critical: Enables UWSM wrapper and integration
   };
+
+  # xdg.portal is managed by services.hyprland-desktop module
+  # xdg.portal = {
+  #   enable = true;
+  #   wlr.enable = true;
+  #   extraPortals = [
+  #     pkgs.xdg-desktop-portal-hyprland
+  #     pkgs.xdg-desktop-portal-gtk
+  #   ];
+  #   config.common.default = "*";
+  # };
   time.timeZone = "America/Scoresbysund";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
@@ -973,6 +984,7 @@
       "libvirtd"
       "kvm"
       "mcp-shared"
+      "input"
     ];
     hashedPasswordFile = "/etc/nixos/sec/user-password";
     openssh.authorizedKeys.keys = [
@@ -1018,6 +1030,8 @@
       wrangler
       codeberg-cli
       brev-cli
+      slack
+      zoom
       gnome-console
       zed-editor
       windsurf

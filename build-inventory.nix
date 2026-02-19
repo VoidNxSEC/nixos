@@ -66,7 +66,7 @@ let
     # Nix tools
     nixd
     nil
-    nixfmt-rfc-style
+    pkgs.nixfmt
     nix-tree
     nix-du
 
