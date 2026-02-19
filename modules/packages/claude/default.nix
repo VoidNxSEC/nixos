@@ -92,7 +92,7 @@ let
 
             # Nix tooling
             pkgs.nix
-            pkgs.nixfmt-rfc-style
+            pkgs.nixfmt
 
             # Build toolchain
             pkgs.gcc
