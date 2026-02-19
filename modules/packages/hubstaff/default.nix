@@ -82,10 +82,17 @@ let
       mkdir -p $out/opt/hubstaff/lib64/private
       cp -r data/x86_64/lib64/private/* $out/opt/hubstaff/lib64/private/
       cp -r data/data/resources $out/opt/hubstaff/
+      # Install icons into hicolor
       for size in 16 22 24 32 48 64 128 256 512; do
+        # Color icon (main app icon)
         install -Dm644 \
           "data/data/resources/hicolor/''${size}x''${size}/apps/hubstaff-color.png" \
           "$out/share/icons/hicolor/''${size}x''${size}/apps/hubstaff.png"
+        
+        # Monochrome/White icon (often used for tray)
+        install -Dm644 \
+          "data/data/resources/hicolor/''${size}x''${size}/apps/hubstaff-white.png" \
+          "$out/share/icons/hicolor/''${size}x''${size}/apps/hubstaff-white.png"
       done
       mkdir -p $out/share/gnome-shell/extensions
       cp -r data/data/gnome-shell-extension/app-es6@hubstaff.com $out/share/gnome-shell/extensions/
