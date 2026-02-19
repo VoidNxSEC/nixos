@@ -8,8 +8,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1771370275,
-        "narHash": "sha256-oMmVi9o9ddX+oE6CqqfIYNhaoZCTcQnXtQEBOmh5Lr0=",
+        "lastModified": 1771479183,
+        "narHash": "sha256-eRnchIYbQOCqvWBGezw8QZSqocgbXmYfSJ/d6m4KHe4=",
         "path": "/home/kernelcore/master/adr-ledger",
         "type": "path"
       },
@@ -1251,8 +1251,8 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1771370368,
-        "narHash": "sha256-mOW36qKRT7jEDf2B6noaPyFnHmkZ44bxtJlQtffidLk=",
+        "lastModified": 1771502615,
+        "narHash": "sha256-HtUdPckwocBnYvsIdm+EqIymQzKsLJYdk9m/6J9Ph38=",
         "path": "/home/kernelcore/master/neoland",
         "type": "path"
       },
