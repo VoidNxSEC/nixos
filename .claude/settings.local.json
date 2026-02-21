@@ -48,7 +48,9 @@
       "Bash(# Check what nix packages are pulling different nodejs versions echo \"\"=== Packages pulling nodejs-22 ===\"\" nix-store --query --referrers /nix/store/cv3yxgf7zp70wk8d8lg5zi84lg35nyxs-nodejs-22.22.0)",
       "mcp__securellm-mcp__system_health_check",
       "Bash(__NEW_LINE_32636ff257daceed__ echo \"\")",
-      "Bash(__NEW_LINE_c7ec35ae4d55c903__ echo \"\")"
+      "Bash(__NEW_LINE_c7ec35ae4d55c903__ echo \"\")",
+      "Bash(__NEW_LINE_c904e599b49bcda9__ echo \"=== nix-daemon connections ===\")",
+      "Bash(ss:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
