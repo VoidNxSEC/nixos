@@ -151,8 +151,12 @@ in
     )
     ++ optionals cfg.cache.enableOptimizations [
       # C-States
-      "intel_idle.max_cstate=2" # Cuidado: Isso limita a economia de energia drasticamente. Útil se houver freezes totais do sistema.
-      "processor.max_cstate=2"
+      # Desativado: limitar C-states ao C2 impede deep idle, aumenta interrupt pressure
+      # e provoca cascata de perf throttling (perf_event_max_sample_rate 100k→32k em ~1h).
+      # Re-habilitar apenas se houver freezes totais do sistema; considerar max_cstate=4
+      # como meio-termo antes de voltar para max_cstate=2.
+      # "intel_idle.max_cstate=2"
+      # "processor.max_cstate=2"
     ];
 
     boot.kernelModules = [
