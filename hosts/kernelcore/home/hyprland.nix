@@ -290,10 +290,6 @@
         "size 1000 700, match:class ^(agent-hub-chat)$"
         "opacity 0.95 0.90, match:class ^(agent-hub-chat)$"
 
-
-
-
-
         # Codex window
         "float 1, match:class ^(agent-hub-codex)$"
         "size 1200 800, match:class ^(agent-hub-codex)$"
