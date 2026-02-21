@@ -39,7 +39,7 @@
 
       # Local binary cache - uses offload-server's nix-serve
       binary-cache = {
-        enable = true;
+        enable = false;
         local.enable = false;
         # URL: http://192.168.15.9:5000 (default)
       };
@@ -958,7 +958,7 @@
   hardware.graphics.enable32Bit = true;
 
   modules.audio.videoProduction = {
-    enable = false;
+    enable = true;
     enableNVENC = true;
     fixHeadphoneMute = true;
     lowLatency = true;
