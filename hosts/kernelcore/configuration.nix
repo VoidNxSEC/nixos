@@ -340,8 +340,10 @@
       defaultMode = "local";
     };
 
+    # GitLab Runner disabled: token not configured (useSops=false + empty registrationToken)
+    # causes 400 Bad Request spam. Re-enable after setting a valid token via SOPS.
     services.gitlab-runner = {
-      enable = true;
+      enable = false;
       useSops = false;
       runnerName = "nixos-gitlab-runner";
       url = "https://gitlab.com";
@@ -422,8 +424,9 @@
     # ═══════════════════════════════════════════════════════════
     ai.agent-hub = {
       # Infrastructure (Nomad orchestrator + Redpanda/Kafka)
+      # Disabled: eating too much RAM; re-enable when needed
       infra = {
-        enable = true;
+        enable = false;
         orchestrator = "nomad";
       };
 
@@ -1020,7 +1023,7 @@
       flameshot
       # claude-code → managed via modules/packages/claude (patched native binaries)
       codex
-      vllm
+      # vllm # FIXME: upstream nixpkgs broken patch for llama-cpp-python (406)
       koboldcpp
       alacritty
       opencode

@@ -5,6 +5,7 @@
 pkgs.buildNpmPackage rec {
   pname = "gemini-cli";
   version = "0.24.0-nightly.20251231.05049b5ab";
+  nodejs = pkgs.nodejs_24;
 
   src = pkgs.fetchurl {
     url = "file://${./storage/gemini-cli-0.24.0-nightly.20251231.05049b5ab.tar.gz}";
