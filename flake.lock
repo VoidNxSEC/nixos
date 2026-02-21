@@ -1251,8 +1251,8 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1771701702,
-        "narHash": "sha256-94syesE8RldasGM7FhDR9o/Z/JOH0LXScBczifqlKX4=",
+        "lastModified": 1771704129,
+        "narHash": "sha256-66lNT7ynbexc7n6vNC+NeLvDUoOeHQFBuzGnbVJNk50=",
         "path": "/home/kernelcore/master/neoland",
         "type": "path"
       },
