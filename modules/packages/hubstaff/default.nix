@@ -256,6 +256,16 @@ in
     ];
 
     # ── Bind mount ~/Downloads into hubstaff's home ───────────────────────────
+    #
+    # DefaultDependencies = false é obrigatório aqui.
+    # Sem ele, o systemd adiciona automaticamente este mount unit ao local-fs.target,
+    # criando um ordering cycle:
+    #   var-lib-hubstaff-Downloads.mount → after → systemd-tmpfiles-setup.service
+    #   systemd-tmpfiles-setup.service   → after → local-fs.target
+    #   local-fs.target                  → wants  → var-lib-hubstaff-Downloads.mount  ← loop
+    # Com DefaultDependencies = false, a unit não entra em local-fs.target e o
+    # ciclo desaparece. O mount ainda sobe junto com multi-user.target, após o
+    # tmpfiles criar o diretório alvo (/var/lib/hubstaff/Downloads).
     systemd.mounts = [
       {
         what = "/home/kernelcore/Downloads";
@@ -264,6 +274,7 @@ in
         options = "bind";
         wantedBy = [ "multi-user.target" ];
         after = [ "systemd-tmpfiles-setup.service" ];
+        unitConfig.DefaultDependencies = false;
       }
     ];
 
