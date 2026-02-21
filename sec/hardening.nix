@@ -32,9 +32,8 @@ with lib;
     # trusted-public-keys removed - using keys from modules/security/nix-daemon.nix
     # This allows cachix caches (nix-community, devenv, pre-commit-hooks) to work
 
-    # Binary cache disabled — build everything from source
-    substituters = mkForce [ ];
-    trusted-public-keys = mkForce [ ];
+    # Binary cache: delegated to modules/security/nix-daemon.nix
+    # (cache.nixos.org, nix-community, devenv, pre-commit-hooks)
 
     auto-optimise-store = true;
     warn-dirty = true;
