@@ -39,7 +39,8 @@
       "Bash(nixos-option:*)",
       "Bash(python3:*)",
       "Bash(tar:*)",
-      "Bash(sudo nixos-rebuild:*)"
+      "Bash(sudo nixos-rebuild:*)",
+      "WebFetch(domain:mynixos.com)"
     ]
   },
   "enableAllProjectMcpServers": true,
