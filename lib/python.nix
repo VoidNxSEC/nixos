@@ -42,7 +42,7 @@ in
     litellm
     anthropic
     langchain-xai
-    langchain-mistralai
+    # langchain-mistralai  # broken: test failure in 26.05 (test_mistral_init)
     google-genai
     # crewai # Commented out if not stable
   ];
@@ -52,14 +52,14 @@ in
     ipykernel
     ipywidgets
     jupyter-core
-    jupyterlab-git
+    # jupyterlab-git  # broken: fetchYarnDeps hash desatualizado no nixpkgs 26.05
     nbconvert
     nbformat
     jupyter-client
     jupyter-sphinx
     jupyter-server-terminals
     jupyter-server
-    jupyter-repo2docker
+    # jupyter-repo2docker  # broken: escapism-1.1.0 missing setup.py (nixpkgs 26.05)
   ];
 
   # Package development and publishing
