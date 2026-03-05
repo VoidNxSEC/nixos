@@ -81,7 +81,8 @@ in
 
       ]
       ++ lib.optionals config.kernelcore.development.jupyter.kernels.nodejs.enable [
-        nodejs_24.pkgs.node2nix
+        # node2nix removed: broken in nixpkgs 26.05 (npm not found in build env)
+        # node2nix é ferramenta de packaging nix, não dependência do kernel nodejs
       ]
       # Jupyter extensions and server components (from lib/python.nix)
       ++ lib.optionals config.kernelcore.development.jupyter.extensions.enable pythonLib.jupyter;

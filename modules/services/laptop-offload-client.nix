@@ -1,5 +1,6 @@
-# NixOS Laptop Offload Client Configuration Template
-# Copy this to your laptop's /etc/nixos/ and customize the IP addresses
+# NixOS Laptop Offload Client Configuration
+# Configures this laptop as a remote build client for the desktop build server.
+# Enable with: kernelcore.services.laptop-offload-client.enable = true;
 
 {
   config,
@@ -8,299 +9,321 @@
   ...
 }:
 
+with lib;
+
 let
+  cfg = config.kernelcore.services.laptop-offload-client;
+
   # CONFIGURE THESE VALUES FOR YOUR SETUP
-  desktopIP = "192.168.15.7"; # Desktop server IP (Build server)
+  desktopIP = cfg.desktopIP;
   laptopIP = "192.168.15.9"; # Laptop IP (this machine)
 
   # SSH key path for builder authentication
-  builderKeyPath = "/etc/nix/builder_key";
+  builderKeyPath = cfg.builderKeyPath;
 in
 
 {
-  # ===== REMOTE BUILDERS CONFIGURATION =====
-  nix.settings = {
-    # Enable distributed builds (optional - only used when desktop is available)
-    builders = lib.mkDefault [
-      "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1 nixos-test,benchmark,big-parallel - -"
-    ];
+  options.kernelcore.services.laptop-offload-client = {
+    enable = mkEnableOption "laptop as remote build offload client (requires desktop build server)";
 
-    # Use remote builders for supported systems
-    builders-use-substitutes = true;
-
-    # Binary cache configuration (desktop-first)
-    substituters = [
-      "http://${desktopIP}:5000" # Desktop cache (highest priority)
-      "https://cache.nixos.org" # Official cache (fallback)
-    ];
-
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "cache-key:02WKFpKSXrblw9GTALpIE9qAMu5oGebPfpCizFCwHWE=" # Desktop cache key
-    ];
-
-    max-jobs = 4; # Allow local builds as fallback
-
-    # Build optimization
-    connect-timeout = 5;
-    stalled-download-timeout = 30;
-    fallback = true; # Allow local builds if remote fails
-  };
-
-  # ===== NFS MOUNTS FOR STORAGE OFFLOAD =====
-  fileSystems = {
-    # Mount desktop's /nix/store read-only for package sharing
-    "/nix/store-remote" = {
-      device = "${desktopIP}:/nix/store";
-      fsType = "nfs";
-      options = [
-        "ro"
-        "soft" # Use soft mount to avoid hanging if desktop is offline
-        "intr"
-        "rsize=8192"
-        "wsize=8192"
-        "timeo=14"
-        "retry=2"
-        "_netdev"
-        "noauto"
-        "x-systemd.automount"
-        "x-systemd.idle-timeout=600"
-      ];
+    desktopIP = mkOption {
+      type = types.str;
+      default = "192.168.15.7";
+      description = "IP address of the desktop build server";
     };
 
-    # Mount desktop's build workspace for shared artifacts
-    "/var/lib/nix-offload-remote" = {
-      device = "${desktopIP}:/var/lib/nix-offload";
-      fsType = "nfs";
-      options = [
-        "rw"
-        "soft"
-        "intr"
-        "rsize=8192"
-        "wsize=8192"
-        "timeo=14"
-        "retry=2"
-        "_netdev"
-        "noauto"
-        "x-systemd.automount"
-        "x-systemd.idle-timeout=600"
-      ];
+    builderKeyPath = mkOption {
+      type = types.str;
+      default = "/etc/nix/builder_key";
+      description = "Path to SSH private key for builder authentication";
     };
   };
 
-  # ===== SSH CLIENT CONFIGURATION =====
-  programs.ssh.extraConfig = ''
-    Host ${desktopIP}
-      HostName ${desktopIP}
-      User nix-builder
-      Port 22
-      IdentityFile ${builderKeyPath}
-      StrictHostKeyChecking no
-      UserKnownHostsFile /dev/null
-      LogLevel ERROR
+  config = mkIf cfg.enable {
+    # ===== REMOTE BUILDERS CONFIGURATION =====
+    nix.settings = {
+      # Enable distributed builds (optional - only used when desktop is available)
+      builders = lib.mkDefault [
+        "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1 nixos-test,benchmark,big-parallel - -"
+      ];
 
-      # Optimize for build transfers
-      Compression yes
-      ServerAliveInterval 60
-      ServerAliveCountMax 3
+      # Use remote builders for supported systems
+      builders-use-substitutes = true;
 
-      # Connection multiplexing for speed
-      ControlMaster auto
-      ControlPath ~/.ssh/nix-builder-%h-%p-%r
-      ControlPersist 600
-  '';
+      # Binary cache configuration (desktop-first)
+      substituters = [
+        "http://${desktopIP}:5000" # Desktop cache (highest priority)
+        "https://cache.nixos.org" # Official cache (fallback)
+      ];
 
-  # ===== SYSTEM PACKAGES AND SCRIPTS =====
-  environment.systemPackages = with pkgs; [
-    nfs-utils
+      trusted-public-keys = [
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "cache-key:02WKFpKSXrblw9GTALpIE9qAMu5oGebPfpCizFCwHWE=" # Desktop cache key
+      ];
 
-    (writeShellScriptBin "offload-status" ''
-      echo "🖥️  Laptop Offload Client Status"
-      echo "==============================="
-      echo
+      max-jobs = 4; # Allow local builds as fallback
 
-      # Check desktop connectivity
-      echo "📡 Desktop Connection:"
-      if ping -c 1 -W 2 ${desktopIP} >/dev/null 2>&1; then
-        echo "✅ Desktop reachable at ${desktopIP}"
-      else
-        echo "❌ Desktop unreachable at ${desktopIP}"
-      fi
+      # Build optimization
+      connect-timeout = 5;
+      stalled-download-timeout = 30;
+      fallback = true; # Allow local builds if remote fails
+    };
 
-      # Check SSH connectivity
-      echo
-      echo "🔑 SSH Builder Access:"
-      if ssh -o ConnectTimeout=5 -o BatchMode=yes nix-builder@${desktopIP} 'echo "SSH OK"' 2>/dev/null; then
-        echo "✅ SSH builder access working"
-      else
-        echo "❌ SSH builder access failed"
-      fi
+    # ===== NFS MOUNTS FOR STORAGE OFFLOAD =====
+    fileSystems = {
+      # Mount desktop's /nix/store read-only for package sharing
+      "/nix/store-remote" = {
+        device = "${desktopIP}:/nix/store";
+        fsType = "nfs";
+        options = [
+          "ro"
+          "soft" # Use soft mount to avoid hanging if desktop is offline
+          "intr"
+          "rsize=8192"
+          "wsize=8192"
+          "timeo=14"
+          "retry=2"
+          "_netdev"
+          "noauto"
+          "x-systemd.automount"
+          "x-systemd.idle-timeout=600"
+        ];
+      };
 
-      # Check NFS mounts
-      echo
-      echo "📁 NFS Mounts:"
-      if mountpoint -q /nix/store-remote; then
-        echo "✅ /nix/store-remote mounted"
-        echo "   Size: $(df -h /nix/store-remote | tail -1 | awk '{print $2}')"
-      else
-        echo "❌ /nix/store-remote not mounted"
-      fi
+      # Mount desktop's build workspace for shared artifacts
+      "/var/lib/nix-offload-remote" = {
+        device = "${desktopIP}:/var/lib/nix-offload";
+        fsType = "nfs";
+        options = [
+          "rw"
+          "soft"
+          "intr"
+          "rsize=8192"
+          "wsize=8192"
+          "timeo=14"
+          "retry=2"
+          "_netdev"
+          "noauto"
+          "x-systemd.automount"
+          "x-systemd.idle-timeout=600"
+        ];
+      };
+    };
 
-      if mountpoint -q /var/lib/nix-offload-remote; then
-        echo "✅ /var/lib/nix-offload-remote mounted"
-        echo "   Size: $(df -h /var/lib/nix-offload-remote | tail -1 | awk '{print $2}')"
-      else
-        echo "❌ /var/lib/nix-offload-remote not mounted"
-      fi
+    # ===== SSH CLIENT CONFIGURATION =====
+    programs.ssh.extraConfig = ''
+      Host ${desktopIP}
+        HostName ${desktopIP}
+        User nix-builder
+        Port 22
+        IdentityFile ${builderKeyPath}
+        StrictHostKeyChecking no
+        UserKnownHostsFile /dev/null
+        LogLevel ERROR
 
-      # Check cache access
-      echo
-      echo "🗄️  Cache Access:"
-      if curl -s -f http://${desktopIP}:5000/nix-cache-info >/dev/null; then
-        echo "✅ Desktop cache accessible"
-        echo "   Priority: $(nix show-config | grep substituters | head -1)"
-      else
-        echo "❌ Desktop cache unreachable"
-      fi
+        # Optimize for build transfers
+        Compression yes
+        ServerAliveInterval 60
+        ServerAliveCountMax 3
 
-      # Show build statistics
-      echo
-      echo "🔨 Build Statistics:"
-      echo "Local builds: $(nix-store -q --references /run/current-system | wc -l)"
-      echo "Remote store items: $(find /nix/store-remote -maxdepth 1 -type d 2>/dev/null | wc -l)"
-
-      # Storage usage
-      echo
-      echo "💾 Storage Usage:"
-      echo "Local /nix/store: $(du -sh /nix/store 2>/dev/null | cut -f1)"
-      echo "Remote store: $(du -sh /nix/store-remote 2>/dev/null | cut -f1)"
-      echo "Available: $(df -h / | tail -1 | awk '{print $4}')"
-    '')
-
-    (writeShellScriptBin "offload-test-build" ''
-      echo "🧪 Testing Remote Build Capability"
-      echo "=================================="
-      echo
-
-      # Test a simple remote build
-      echo "Testing remote build with hello package..."
-      echo
-
-      if nix-build --builders "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1" \
-                   --option substitute false \
-                   '<nixpkgs>' -A hello --no-out-link; then
-        echo
-        echo "✅ Remote build test successful!"
-      else
-        echo
-        echo "❌ Remote build test failed!"
-        echo "Check SSH connectivity and builder configuration."
-      fi
-    '')
-
-    (writeShellScriptBin "offload-mount" ''
-      echo "🔗 Mounting desktop offload resources..."
-
-      # Mount NFS shares
-      sudo mount /nix/store-remote 2>/dev/null && echo "✅ Mounted /nix/store-remote" || echo "❌ Failed to mount /nix/store-remote"
-      sudo mount /var/lib/nix-offload-remote 2>/dev/null && echo "✅ Mounted /var/lib/nix-offload-remote" || echo "❌ Failed to mount /var/lib/nix-offload-remote"
-
-      echo
-      offload-status
-    '')
-
-    (writeShellScriptBin "offload-unmount" ''
-      echo "🔌 Unmounting desktop offload resources..."
-
-      sudo umount /var/lib/nix-offload-remote 2>/dev/null && echo "✅ Unmounted /var/lib/nix-offload-remote" || echo "❌ Failed to unmount /var/lib/nix-offload-remote"
-      sudo umount /nix/store-remote 2>/dev/null && echo "✅ Unmounted /nix/store-remote" || echo "❌ Failed to unmount /nix/store-remote"
-    '')
-
-    (writeShellScriptBin "offload-setup" ''
-      echo "⚙️  Setting up laptop as offload client"
-      echo "======================================"
-      echo
-
-      # Check prerequisites
-      echo "1. Checking prerequisites..."
-
-      if [ ! -f ${builderKeyPath} ]; then
-        echo "❌ Builder key not found at ${builderKeyPath}"
-        echo
-        echo "📋 To complete setup:"
-        echo "1. Copy the SSH private key from desktop:"
-        echo "   scp cypher@${desktopIP}:~/.ssh/id_rsa ${builderKeyPath}"
-        echo "2. Set correct permissions:"
-        echo "   sudo chmod 600 ${builderKeyPath}"
-        echo "3. Add this laptop's public key to desktop:"
-        echo "   ssh-copy-id nix-builder@${desktopIP}"
-        echo
-        exit 1
-      else
-        echo "✅ Builder key found"
-      fi
-
-      # Test connectivity
-      echo
-      echo "2. Testing connectivity..."
-      offload-status
-
-      echo
-      echo "3. Testing remote build..."
-      offload-test-build
-
-      echo
-      echo "✅ Offload client setup complete!"
-      echo
-      echo "💡 Usage tips:"
-      echo "• Use 'offload-status' to check connection"
-      echo "• Use 'offload-mount' to manually mount NFS"
-      echo "• Builds will automatically use desktop when available"
-      echo "• Cache requests check desktop first, then internet"
-    '')
-  ];
-
-  # ===== NETWORK CONFIGURATION =====
-  # Ensure NFS client support
-  services.rpcbind.enable = true;
-
-  # Optimize network for offload usage
-  boot.kernel.sysctl = {
-    # NFS client tuning
-    "net.core.rmem_default" = 262144;
-    "net.core.rmem_max" = 16777216;
-    "net.core.wmem_default" = 262144;
-    "net.core.wmem_max" = 16777216;
-  };
-
-  # ===== SYSTEMD SERVICES =====
-  # Auto-mount logic is now handled by x-systemd.automount in fileSystems config above
-  # This prevents boot blocking when desktop is offline
-
-  # ===== POWER MANAGEMENT =====
-  # Graceful unmount on shutdown/suspend
-  systemd.services.offload-cleanup = {
-    description = "Cleanup offload mounts on shutdown";
-    before = [
-      "shutdown.target"
-      "sleep.target"
-    ];
-    wantedBy = [
-      "shutdown.target"
-      "sleep.target"
-    ];
-
-    script = ''
-      umount /var/lib/nix-offload-remote 2>/dev/null || true
-      umount /nix/store-remote 2>/dev/null || true
+        # Connection multiplexing for speed
+        ControlMaster auto
+        ControlPath ~/.ssh/nix-builder-%h-%p-%r
+        ControlPersist 600
     '';
 
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      TimeoutStopSec = "30s";
+    # ===== SYSTEM PACKAGES AND SCRIPTS =====
+    environment.systemPackages = with pkgs; [
+      nfs-utils
+
+      (writeShellScriptBin "offload-status" ''
+        echo "🖥️  Laptop Offload Client Status"
+        echo "==============================="
+        echo
+
+        # Check desktop connectivity
+        echo "📡 Desktop Connection:"
+        if ping -c 1 -W 2 ${desktopIP} >/dev/null 2>&1; then
+          echo "✅ Desktop reachable at ${desktopIP}"
+        else
+          echo "❌ Desktop unreachable at ${desktopIP}"
+        fi
+
+        # Check SSH connectivity
+        echo
+        echo "🔑 SSH Builder Access:"
+        if ssh -o ConnectTimeout=5 -o BatchMode=yes nix-builder@${desktopIP} 'echo "SSH OK"' 2>/dev/null; then
+          echo "✅ SSH builder access working"
+        else
+          echo "❌ SSH builder access failed"
+        fi
+
+        # Check NFS mounts
+        echo
+        echo "📁 NFS Mounts:"
+        if mountpoint -q /nix/store-remote; then
+          echo "✅ /nix/store-remote mounted"
+          echo "   Size: $(df -h /nix/store-remote | tail -1 | awk '{print $2}')"
+        else
+          echo "❌ /nix/store-remote not mounted"
+        fi
+
+        if mountpoint -q /var/lib/nix-offload-remote; then
+          echo "✅ /var/lib/nix-offload-remote mounted"
+          echo "   Size: $(df -h /var/lib/nix-offload-remote | tail -1 | awk '{print $2}')"
+        else
+          echo "❌ /var/lib/nix-offload-remote not mounted"
+        fi
+
+        # Check cache access
+        echo
+        echo "🗄️  Cache Access:"
+        if curl -s -f http://${desktopIP}:5000/nix-cache-info >/dev/null; then
+          echo "✅ Desktop cache accessible"
+          echo "   Priority: $(nix show-config | grep substituters | head -1)"
+        else
+          echo "❌ Desktop cache unreachable"
+        fi
+
+        # Show build statistics
+        echo
+        echo "🔨 Build Statistics:"
+        echo "Local builds: $(nix-store -q --references /run/current-system | wc -l)"
+        echo "Remote store items: $(find /nix/store-remote -maxdepth 1 -type d 2>/dev/null | wc -l)"
+
+        # Storage usage
+        echo
+        echo "💾 Storage Usage:"
+        echo "Local /nix/store: $(du -sh /nix/store 2>/dev/null | cut -f1)"
+        echo "Remote store: $(du -sh /nix/store-remote 2>/dev/null | cut -f1)"
+        echo "Available: $(df -h / | tail -1 | awk '{print $4}')"
+      '')
+
+      (writeShellScriptBin "offload-test-build" ''
+        echo "🧪 Testing Remote Build Capability"
+        echo "=================================="
+        echo
+
+        # Test a simple remote build
+        echo "Testing remote build with hello package..."
+        echo
+
+        if nix-build --builders "ssh://nix-builder@${desktopIP} x86_64-linux ${builderKeyPath} 2 1" \
+                     --option substitute false \
+                     '<nixpkgs>' -A hello --no-out-link; then
+          echo
+          echo "✅ Remote build test successful!"
+        else
+          echo
+          echo "❌ Remote build test failed!"
+          echo "Check SSH connectivity and builder configuration."
+        fi
+      '')
+
+      (writeShellScriptBin "offload-mount" ''
+        echo "🔗 Mounting desktop offload resources..."
+
+        # Mount NFS shares
+        sudo mount /nix/store-remote 2>/dev/null && echo "✅ Mounted /nix/store-remote" || echo "❌ Failed to mount /nix/store-remote"
+        sudo mount /var/lib/nix-offload-remote 2>/dev/null && echo "✅ Mounted /var/lib/nix-offload-remote" || echo "❌ Failed to mount /var/lib/nix-offload-remote"
+
+        echo
+        offload-status
+      '')
+
+      (writeShellScriptBin "offload-unmount" ''
+        echo "🔌 Unmounting desktop offload resources..."
+
+        sudo umount /var/lib/nix-offload-remote 2>/dev/null && echo "✅ Unmounted /var/lib/nix-offload-remote" || echo "❌ Failed to unmount /var/lib/nix-offload-remote"
+        sudo umount /nix/store-remote 2>/dev/null && echo "✅ Unmounted /nix/store-remote" || echo "❌ Failed to unmount /nix/store-remote"
+      '')
+
+      (writeShellScriptBin "offload-setup" ''
+        echo "⚙️  Setting up laptop as offload client"
+        echo "======================================"
+        echo
+
+        # Check prerequisites
+        echo "1. Checking prerequisites..."
+
+        if [ ! -f ${builderKeyPath} ]; then
+          echo "❌ Builder key not found at ${builderKeyPath}"
+          echo
+          echo "📋 To complete setup:"
+          echo "1. Copy the SSH private key from desktop:"
+          echo "   scp cypher@${desktopIP}:~/.ssh/id_rsa ${builderKeyPath}"
+          echo "2. Set correct permissions:"
+          echo "   sudo chmod 600 ${builderKeyPath}"
+          echo "3. Add this laptop's public key to desktop:"
+          echo "   ssh-copy-id nix-builder@${desktopIP}"
+          echo
+          exit 1
+        else
+          echo "✅ Builder key found"
+        fi
+
+        # Test connectivity
+        echo
+        echo "2. Testing connectivity..."
+        offload-status
+
+        echo
+        echo "3. Testing remote build..."
+        offload-test-build
+
+        echo
+        echo "✅ Offload client setup complete!"
+        echo
+        echo "💡 Usage tips:"
+        echo "• Use 'offload-status' to check connection"
+        echo "• Use 'offload-mount' to manually mount NFS"
+        echo "• Builds will automatically use desktop when available"
+        echo "• Cache requests check desktop first, then internet"
+      '')
+    ];
+
+    # ===== NETWORK CONFIGURATION =====
+    # Ensure NFS client support
+    services.rpcbind.enable = true;
+
+    # Optimize network for offload usage
+    boot.kernel.sysctl = {
+      # NFS client tuning
+      "net.core.rmem_default" = 262144;
+      "net.core.rmem_max" = 16777216;
+      "net.core.wmem_default" = 262144;
+      "net.core.wmem_max" = 16777216;
     };
-  };
+
+    # ===== SYSTEMD SERVICES =====
+    # Auto-mount logic is now handled by x-systemd.automount in fileSystems config above
+    # This prevents boot blocking when desktop is offline
+
+    # ===== POWER MANAGEMENT =====
+    # Graceful unmount on shutdown/suspend
+    systemd.services.offload-cleanup = {
+      description = "Cleanup offload mounts on shutdown";
+      before = [
+        "shutdown.target"
+        "sleep.target"
+      ];
+      wantedBy = [
+        "shutdown.target"
+        "sleep.target"
+      ];
+
+      script = ''
+        umount /var/lib/nix-offload-remote 2>/dev/null || true
+        umount /nix/store-remote 2>/dev/null || true
+      '';
+
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        TimeoutStopSec = "30s";
+      };
+    };
+  }; # end mkIf cfg.enable
 }
 
 # ===== SETUP INSTRUCTIONS =====
