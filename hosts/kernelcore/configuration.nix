@@ -135,8 +135,8 @@
     packages.zellij.enable = true;
     packages.lynis.enable = true;
     packages.js.enable = false;
-    packages.f5-tts.enable = true;
-    packages.hubstaff.enable = true;
+    packages.f5-tts.enable = lib.mkForce false;
+    packages.hubstaff.enable = false;
 
     # Custom individual packaging for Gemini/Antigravity
     packages.custom = {
@@ -433,7 +433,7 @@
       # Speech Capabilities (F5-TTS + Whisper STT)
       capabilities.speech = {
         enable = true;
-        enableTTS = true; # F5-TTS text-to-speech
+        enableTTS = false; # TODO: f5-tts wheel checa deps na instalação, falta propagatedBuildInputs completo
         enableSTT = true; # Whisper speech-to-text
 
         # Whisper model: tiny, base, small, medium, large
