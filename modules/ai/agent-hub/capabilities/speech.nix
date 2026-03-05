@@ -34,6 +34,9 @@ let
     };
 
     doCheck = false;
+    # torch/torchaudio/gradio são fornecidos no ambiente runtime (f5-tts-python),
+    # não no build — skip import check para evitar falso-negativo
+    pythonImportsCheck = [ ];
   };
 
   # Python environment with F5-TTS
