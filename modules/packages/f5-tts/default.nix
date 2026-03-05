@@ -35,6 +35,7 @@ let
         };
 
         doCheck = false;
+        pythonImportsCheck = [ ]; # deps fornecidas no env runtime, não no build
       })
 
       # Core ML frameworks

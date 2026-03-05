@@ -213,7 +213,7 @@
                   securellm-mcp = inputs.securellm-mcp.packages.${system}.default.overrideAttrs (old: {
                     npmDeps = pkgs.fetchNpmDeps {
                       src = old.src;
-                      hash = "sha256-KF7JPawB3W7jKO8gE5lqxWnZ9x3pMMJiHbKE1Ok5fUU=";
+                      hash = "sha256-Hgzua0vhdJpFBhirmLNtSfsYTXfATjWMqE9eig/zsgs=";
                     };
                     # Skip puppeteer Chrome download in sandbox
                     env = (old.env or { }) // {
