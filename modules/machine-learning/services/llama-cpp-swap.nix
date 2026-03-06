@@ -94,7 +94,7 @@ in
 
     n_gpu_layers = lib.mkOption {
       type = lib.types.int;
-      default = 30;
+      default = 45;
       description = ''
         Number of model layers to offload to GPU.
         Recommended: 30 for ~4GB VRAM (8B Q4), 40+ for 8GB+ VRAM.
@@ -133,7 +133,7 @@ in
 
     n_batch = lib.mkOption {
       type = lib.types.int;
-      default = 2048;
+      default = 8192;
       description = ''
         Batch size for prompt processing.
         Larger = faster prompt processing, more VRAM.
@@ -192,7 +192,7 @@ in
 
     noKvOffload = lib.mkOption {
       type = lib.types.bool;
-      default = false;
+      default = true;
       description = ''
         Disable KV cache offload to GPU.
         Set true if VRAM is limited.
