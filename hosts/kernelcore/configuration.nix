@@ -453,10 +453,12 @@
 
       profiles = {
         coder = {
-          modelPath = "/var/lib/ml-models/llamacpp/models/Qwen2.5_Coder_7B_Instruct";
+          modelPath = "/var/lib/ml-models/llamacpp/models/Lewdiculous_L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix_L3-8B-Stheno-v3.2-Q4_K_M-imat.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 42;
-          contextSize = 8192;
+          gpuLayers = 44;
+          contextSize = 4096;
+          #n_ctx = 8192;
+          #n_batch = 8192;
         };
 
         reasoning = {
@@ -1030,13 +1032,13 @@
       xclip
       glab
       gh
-      wrangler
+      #wrangler
       codeberg-cli
       brev-cli
       slack
       zoom
       gnome-console
-      zed-editor
+      #zed-editor
       windsurf
       code-cursor
       rust-analyzer
