@@ -68,6 +68,14 @@ in
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
+
+      "nvidia_api_key" = {
+        sopsFile = ../../secrets/api-keys.yaml;
+        mode = "0440";
+        owner = config.users.users.kernelcore.name;
+        group = "users";
+      };
+
     };
 
     # Environment loader script
