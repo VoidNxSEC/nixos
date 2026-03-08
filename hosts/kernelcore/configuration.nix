@@ -908,6 +908,16 @@
     tailscale.enable = true;
     config-auditor.enable = true;
     i915-governor.enable = false;
+
+    # ═══════════════════════════════════════════════════════════
+    # SPOOKNIX - Privacy-first STT Engine (Docker container)
+    # ═══════════════════════════════════════════════════════════
+    spooknix = {
+      enable = true;
+      model = "small";
+      device = "cuda";
+      port = 8000;
+    };
   }; # FIM DO BLOCO SERVICES
 
   programs.niri.enable = false;
@@ -1032,7 +1042,7 @@
       xclip
       glab
       gh
-      #wrangler
+      wrangler
       codeberg-cli
       brev-cli
       slack
@@ -1045,6 +1055,7 @@
       rustup
       terraform-providers.carlpett_sops
       terraform-providers.hashicorp_vault
+      anytype
     ];
   };
 
