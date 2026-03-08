@@ -133,6 +133,11 @@ in
       enable = true;
       enableDefaultConfig = false; # We manually configure defaults in matchBlocks."*"
 
+      # Permite que o Brev CLI escreva no brev_config sem tocar no config
+      # gerenciado pelo Nix (read-only). O Include é processado antes dos
+      # matchBlocks, então entradas do brev_config têm precedência.
+      includes = [ "~/.ssh/brev_config" ];
+
       # ═══════════════════════════════════════════════════════════
       # INTELLIGENT FORGE CONFIGURATIONS
       # ═══════════════════════════════════════════════════════════
