@@ -34,6 +34,11 @@
     ./services # Offload, users, GPU orchestration, Mosh, mobile workspace, MCP server
 
     # ═══════════════════════════════════════════════════════════
+    # BLOCKCHAIN & CRYPTO INTELLIGENCE
+    # ═══════════════════════════════════════════════════════════
+    ./blockchain # Algorand dev env, CHAINSCOPE crypto research pipeline
+
+    # ═══════════════════════════════════════════════════════════
     # DEVELOPMENT & ML
     # ═══════════════════════════════════════════════════════════
     ./development # Dev environments, Claude profiles, Jupyter, CI/CD
