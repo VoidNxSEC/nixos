@@ -784,11 +784,11 @@
       port = 8081;
       n_threads = 12;
       n_threads_batch = 12;
-      n_gpu_layers = 45;
+      n_gpu_layers = 52;
       mainGpu = 1;
-      n_parallel = 4;
+      n_parallel = 1;
       n_ctx = 8192;
-      n_batch = 2048;
+      n_batch = 512;
       n_ubatch = 512;
       cudaGraphs = true;
       flashAttention = true;
