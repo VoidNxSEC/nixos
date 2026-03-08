@@ -53,6 +53,14 @@
       url = "git+ssh://git@github.com/marcosfpina/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # ─────────────────────────────────────────────────────────────────────
+    # CHAINSCOPE — Crypto Intelligence Platform (B300 inference pipeline)
+    # ─────────────────────────────────────────────────────────────────────
+    chainscope = {
+      url = "git+ssh://git@github.com/marcosfpina/chainscope";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.spider-nix.follows = "spider-nix";
+    };
     i915-governor = {
       url = "git+ssh://git@github.com/VoidNxSEC/i915-governor";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -151,6 +159,7 @@
             phantom = inputs.phantom.packages.${system}.default;
             arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
             spider-nix = inputs.spider-nix.packages.${system}.default;
+            chainscope = inputs.chainscope.packages.${system}.default;
           })
         ];
       };
@@ -228,6 +237,7 @@
                   swissknife-tools = inputs.swissknife.packages.${system};
                   phantom = inputs.phantom.packages.${system}.default;
                   arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
+                  chainscope = inputs.chainscope.packages.${system}.default;
                 })
               ];
               nixpkgs.config.allowUnfree = true;
