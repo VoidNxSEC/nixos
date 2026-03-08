@@ -455,7 +455,7 @@
         coder = {
           modelPath = "/var/lib/ml-models/llamacpp/models/Lewdiculous_L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix_L3-8B-Stheno-v3.2-Q4_K_M-imat.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 44;
+          gpuLayers = 52;
           contextSize = 4096;
           #n_ctx = 8192;
           #n_batch = 8192;
@@ -579,7 +579,7 @@
       };
 
       gemini = {
-        workdir = "/var/lib/gemini-agent/dev";
+        workdir = "/home/kernelcore/.gemini/";
         environment = "development";
         env = {
           PROJECT_NAME = "Gemini Agent";
