@@ -266,6 +266,18 @@
         "--glob=!.git/*"
       ];
     };
+
+    # ── Spooknix — STT systray GUI ──────────────────────────────────────────
+    spooknix = {
+      enable = true;
+      serverUrl = "http://localhost:8000";
+      sourcePath = "/home/kernelcore/arch/spooknix";
+      hyprland = {
+        enable = true;
+        keybind = "SUPER, S";
+      };
+      waybar.enable = true;
+    };
   };
 
   # ============================================================

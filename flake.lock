@@ -1801,6 +1801,7 @@
         "securellm-mcp": "securellm-mcp",
         "sops-nix": "sops-nix",
         "spider-nix": "spider-nix",
+        "spooknix": "spooknix",
         "swissknife": "swissknife",
         "vmctl": "vmctl"
       }
@@ -2061,6 +2062,23 @@
       "original": {
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/spider-nix"
+      }
+    },
+    "spooknix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 0,
+        "narHash": "sha256-DXBYiDvz72BPrD2QHOFFI1JRBnfhSN3XR5yCvtFN0fg=",
+        "path": "/home/kernelcore/arch/spooknix",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/kernelcore/arch/spooknix",
+        "type": "path"
       }
     },
     "swissknife": {
