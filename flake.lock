@@ -2071,14 +2071,17 @@
         ]
       },
       "locked": {
-        "lastModified": 0,
-        "narHash": "sha256-DXBYiDvz72BPrD2QHOFFI1JRBnfhSN3XR5yCvtFN0fg=",
-        "path": "/home/kernelcore/arch/spooknix",
-        "type": "path"
+        "lastModified": 1772962253,
+        "narHash": "sha256-nVP6eMm2BJXYINRaddQyaHriOM52ep7qJdqS7lprGnk=",
+        "ref": "refs/heads/main",
+        "rev": "2f6689e084c7697f68c2c1ad6605d38839329eff",
+        "revCount": 4,
+        "type": "git",
+        "url": "ssh://git@github.com/marcosfpina/spooknix"
       },
       "original": {
-        "path": "/home/kernelcore/arch/spooknix",
-        "type": "path"
+        "type": "git",
+        "url": "ssh://git@github.com/marcosfpina/spooknix"
       }
     },
     "swissknife": {
