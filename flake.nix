@@ -73,6 +73,10 @@
       url = "path:/home/kernelcore/master/adr-ledger";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    spooknix = {
+      url = "git+ssh://git@github.com/marcosfpina/spooknix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     #docker-hub = {
     #url = "path:/home/kernelcore/dev/low-level/docker-hub";
     #inputs.nixpkgs.follows = "nixpkgs";
@@ -281,10 +285,18 @@
                 inherit inputs;
                 nix-colors = inputs.nix-colors;
               };
+              home-manager.sharedModules = [
+                inputs.spooknix.homeManagerModules.default
+              ];
               home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix;
               home-manager.backupFileExtension = null;
               home-manager.backupCommand = "${pkgs.coreutils}/bin/cp -a $1 $1.backup-$(date +%Y%m%d-%H%M%S)";
             }
+
+            # ═══════════════════════════════════════════════════════════
+            # SPOOKNIX - Privacy-first STT backend (Docker container)
+            # ═══════════════════════════════════════════════════════════
+            inputs.spooknix.nixosModules.default
 
             # ═══════════════════════════════════════════════════════════
             # SECURITY FINAL OVERRIDE (highest priority)
