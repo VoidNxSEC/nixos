@@ -41,14 +41,14 @@ in
     # Hyprland Integration Rules
     # Defines Neoland as a floating scratchpad window with special effects
     wayland.windowManager.hyprland.settings = {
-      windowrulev2 = [
-        "float,class:^(neoland)$"
-        "size 1000 800,class:^(neoland)$"
-        "center,class:^(neoland)$"
-        "opacity 0.95 override 0.90 override,class:^(neoland)$"
-        "workspace special:scratch_neoland,class:^(neoland)$"
-        "dimaround,class:^(neoland)$"
-        "animation popin,class:^(neoland)$"
+      windowrule = [
+        "float on, match:class ^(neoland)$"
+        "size 1000 800, match:class ^(neoland)$"
+        "center on, match:class ^(neoland)$"
+        "opacity 0.95 override 0.90 override, match:class ^(neoland)$"
+        "workspace special:scratch_neoland, match:class ^(neoland)$"
+        "dimaround on, match:class ^(neoland)$"
+        "animation popin, match:class ^(neoland)$"
       ];
 
       bind = [

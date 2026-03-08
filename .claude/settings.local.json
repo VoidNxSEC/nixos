@@ -50,7 +50,13 @@
       "Bash(__NEW_LINE_32636ff257daceed__ echo \"\")",
       "Bash(__NEW_LINE_c7ec35ae4d55c903__ echo \"\")",
       "Bash(__NEW_LINE_c904e599b49bcda9__ echo \"=== nix-daemon connections ===\")",
-      "Bash(ss:*)"
+      "Bash(ss:*)",
+      "mcp__securellm-mcp__research_agent",
+      "mcp__securellm-mcp__web_search",
+      "WebFetch(domain:wiki.hyprland.org)",
+      "WebFetch(domain:wiki.hypr.land)",
+      "mcp__securellm-mcp__web_crawl",
+      "WebFetch(domain:gist.github.com)"
     ]
   },
   "enableAllProjectMcpServers": true,
