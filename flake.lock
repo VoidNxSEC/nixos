@@ -8,8 +8,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1771701536,
-        "narHash": "sha256-lUYs6aAIcOaVUfHJlVKiZ3U8mheSk0ADgUrtwNdZIp4=",
+        "lastModified": 1773015679,
+        "narHash": "sha256-IAM8g0Jlkbfsy4gglxsDOre9JIfV7XL0SqDurJDriH0=",
         "path": "/home/kernelcore/master/adr-ledger",
         "type": "path"
       },
@@ -2094,11 +2094,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771681625,
-        "narHash": "sha256-jBYTSjI3sALjHyKw0vwOHaPfTzHjkeYC32y2XhbjchI=",
+        "lastModified": 1772783075,
+        "narHash": "sha256-XwRoqOYtVKm47dnHQIoUjMviyjEVdNl9l45SnpGnmzs=",
         "ref": "refs/heads/main",
-        "rev": "9f58ce198788ecb458312c9863609129f34591cd",
-        "revCount": 19,
+        "rev": "a05a569901ee73b0a8f61a756932eeeaf4fb0a81",
+        "revCount": 20,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/spider-nix"
       },
