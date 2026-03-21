@@ -1,0 +1,360 @@
+{
+  "mcpServers": {
+    "securellm-mcp": {
+      "command": "securellm-mcp",
+      "args": [],
+      "env": {
+        "PROJECT_ROOT": ".",
+        "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
+        "ENABLE_KNOWLEDGE": "true"
+      },
+      "metadata": {
+        "version": "2.0.0",
+        "description": "Comprehensive MCP server for NixOS system management, AI provider integration, emergency response, code analysis, and knowledge management",
+        "author": "SecureLLM Team",
+        "license": "MIT",
+        "repository": "https://github.com/marcosfpina/securellm-mcp",
+        "documentation": "https://github.com/marcosfpina/securellm-mcp/blob/main/README.md"
+      },
+      "capabilities": {
+        "tools": {
+          "count": "80+",
+          "categories": [
+            {
+              "name": "Provider & API Management",
+              "count": 6,
+              "tools": [
+                "provider_test",
+                "security_audit",
+                "rate_limit_check",
+                "build_and_test",
+                "provider_config_validate",
+                "crypto_key_generate"
+              ],
+              "description": "LLM provider connectivity testing, configuration validation, security auditing, and TLS certificate generation"
+            },
+            {
+              "name": "Emergency Framework",
+              "count": 7,
+              "tools": [
+                "emergency_status",
+                "emergency_abort",
+                "emergency_cooldown",
+                "emergency_nuke",
+                "emergency_swap",
+                "system_health_check",
+                "safe_rebuild_check"
+              ],
+              "description": "Critical system rescue operations for CPU, memory, SWAP emergencies; process termination and resource cleanup"
+            },
+            {
+              "name": "Laptop Defense Framework",
+              "count": 8,
+              "tools": [
+                "thermal_check",
+                "thermal_forensics",
+                "thermal_warroom",
+                "rebuild_safety_check",
+                "laptop_verdict",
+                "full_investigation",
+                "force_cooldown",
+                "reset_performance"
+              ],
+              "description": "Advanced thermal monitoring, forensic analysis, and hardware protection for laptop systems"
+            },
+            {
+              "name": "Web Search & Research",
+              "count": 7,
+              "tools": [
+                "web_search",
+                "nix_search",
+                "github_search",
+                "tech_news_search",
+                "nixos_discourse_search",
+                "stackoverflow_search",
+                "research_agent"
+              ],
+              "description": "Multi-source web searching, NixOS package lookup, GitHub exploration, and deep research with fact-checking"
+            },
+            {
+              "name": "Code Analysis & Debugging",
+              "count": 4,
+              "tools": [
+                "analyze_complexity",
+                "find_dead_code",
+                "advanced_code_analysis",
+                "socket_debug_report"
+              ],
+              "description": "TypeScript/JavaScript code analysis, complexity metrics, dead code detection, and network debugging"
+            },
+            {
+              "name": "SSH & Remote Access",
+              "count": 6,
+              "tools": [
+                "ssh_execute",
+                "ssh_file_transfer",
+                "ssh_maintenance_check",
+                "ssh_tunnel",
+                "ssh_jump_host",
+                "ssh_session_manager"
+              ],
+              "description": "Secure remote command execution, file transfers, tunnel management, and multi-hop SSH connections"
+            },
+            {
+              "name": "Browser Automation",
+              "count": 5,
+              "tools": [
+                "browser_launch_advanced",
+                "browser_extract_data",
+                "browser_interact_form",
+                "browser_monitor_changes",
+                "browser_search_aggregate"
+              ],
+              "description": "Puppeteer-based browser automation for web scraping, form interaction, and search aggregation"
+            },
+            {
+              "name": "Development Tools",
+              "count": 4,
+              "tools": [
+                "lint_code",
+                "format_code",
+                "run_tests",
+                "github_actions"
+              ],
+              "description": "Code linting (ESLint/Ruff), formatting (Prettier/Black), test execution, and GitHub Actions management"
+            },
+            {
+              "name": "Package Management",
+              "count": 3,
+              "tools": [
+                "package_diagnose",
+                "package_download",
+                "package_configure"
+              ],
+              "description": "NixOS package debugging, downloading from multiple sources, and automatic configuration generation"
+            },
+            {
+              "name": "Knowledge Management",
+              "count": 8,
+              "tools": [
+                "create_session",
+                "save_knowledge",
+                "search_knowledge",
+                "load_session",
+                "list_sessions",
+                "get_recent_knowledge",
+                "knowledge_maintenance",
+                "compact_knowledge"
+              ],
+              "description": "Persistent knowledge storage with sessions, tagging, full-text search, and intelligent compaction"
+            },
+            {
+              "name": "Secure Execution",
+              "count": 1,
+              "tools": [
+                "execute_in_sandbox"
+              ],
+              "description": "Isolated command execution in ephemeral Nix sandboxes with package dependency injection"
+            },
+            {
+              "name": "System Management & Cleanup",
+              "count": 9,
+              "tools": [
+                "cleanup_analyze_waste",
+                "cleanup_execute_smart",
+                "cleanup_duplicate_resolver",
+                "cleanup_log_rotation",
+                "files_analyze_structure",
+                "files_auto_organize",
+                "files_create_catalog",
+                "files_search_catalog",
+                "files_tag_manager"
+              ],
+              "description": "Smart file cleanup, duplicate detection, log rotation, directory organization, and cataloging"
+            },
+            {
+              "name": "Wildcard Commands",
+              "count": 12,
+              "templates": [
+                "fix nixos rebuild",
+                "debug systemd <service>",
+                "network diagnostics",
+                "disk cleanup",
+                "kill <pattern>",
+                "fix git",
+                "docker cleanup",
+                "check temperature",
+                "check port <port>",
+                "restart <service>",
+                "analyze logs <service>",
+                "safe build"
+              ],
+              "description": "Natural language command templates for common system operations with automatic safety checks"
+            },
+            {
+              "name": "Rate Limiting & Monitoring",
+              "count": 2,
+              "tools": [
+                "rate_limiter_status",
+                "cache_stats"
+              ],
+              "description": "Performance monitoring, rate limit tracking, semantic cache metrics, and Nix package cache stats"
+            }
+          ]
+        },
+        "resources": {
+          "guides": [
+            "Current Configuration",
+            "Audit Logs",
+            "Usage Metrics",
+            "Prometheus Metrics",
+            "Semantic Cache Metrics",
+            "API Documentation"
+          ],
+          "description": "Dynamic resources providing system status, metrics, and documentation"
+        },
+        "features": {
+          "semantic_cache": {
+            "enabled": true,
+            "description": "Intelligent caching for repeated queries with semantic similarity matching"
+          },
+          "context_management": {
+            "enabled": true,
+            "description": "Proactive context tracking and multi-step reasoning support"
+          },
+          "rate_limiting": {
+            "enabled": true,
+            "providers": [
+              "anthropic",
+              "openai",
+              "deepseek",
+              "gemini",
+              "openrouter",
+              "groq",
+              "mistral",
+              "nvidia",
+              "replicate"
+            ],
+            "description": "Smart rate limiting per provider with burst support and adaptive throttling"
+          },
+          "request_deduplication": {
+            "enabled": true,
+            "description": "Automatic deduplication of identical concurrent requests"
+          },
+          "tool_metrics": {
+            "enabled": true,
+            "description": "Detailed execution metrics for all tools including latency, errors, and usage patterns"
+          },
+          "project_watcher": {
+            "enabled": true,
+            "description": "Automatic detection of project changes for proactive suggestions"
+          },
+          "knowledge_persistence": {
+            "enabled": true,
+            "storage_types": [
+              "insight",
+              "code",
+              "decision",
+              "reference",
+              "question",
+              "answer"
+            ],
+            "features": [
+              "Full-text search",
+              "Tag-based filtering",
+              "Session management",
+              "Priority levels",
+              "Metadata support",
+              "Automatic compaction"
+            ],
+            "description": "SQLite-based knowledge storage with intelligent tiered archival and LLM summarization"
+          }
+        }
+      },
+      "requirements": {
+        "runtime": {
+          "node": ">=18.0.0",
+          "platform": "linux",
+          "os": "NixOS (recommended)"
+        },
+        "dependencies": {
+          "core": [
+            "@modelcontextprotocol/sdk",
+            "puppeteer",
+            "better-sqlite3",
+            "ssh2",
+            "node-fetch"
+          ],
+          "optional": [
+            "anthropic",
+            "openai",
+            "@google/generative-ai"
+          ]
+        },
+        "environment_variables": {
+          "required": [
+            "PROJECT_ROOT",
+            "KNOWLEDGE_DB_PATH"
+          ],
+          "optional": [
+            "ENABLE_KNOWLEDGE",
+            "ANTHROPIC_API_KEY",
+            "OPENAI_API_KEY",
+            "DEEPSEEK_API_KEY",
+            "GEMINI_API_KEY",
+            "OPENROUTER_API_KEY",
+            "GROQ_API_KEY",
+            "MISTRAL_API_KEY",
+            "NVIDIA_API_KEY",
+            "REPLICATE_API_TOKEN",
+            "NODE_ENV"
+          ]
+        },
+        "system": {
+          "minimum_memory": "2GB",
+          "recommended_memory": "4GB",
+          "disk_space": "500MB (excluding knowledge DB)",
+          "cpu_cores": "2+ (for parallel operations)"
+        }
+      },
+      "security": {
+        "sandbox_execution": true,
+        "tls_support": true,
+        "secret_detection": true,
+        "rate_limiting": true,
+        "audit_logging": true,
+        "ssh_whitelisting": true,
+        "browser_sandboxing": true,
+        "description": "Multi-layer security with sandboxed execution, secret scanning, and comprehensive audit trails"
+      },
+      "performance": {
+        "semantic_cache": "Reduces redundant API calls by ~40-60%",
+        "request_deduplication": "Eliminates duplicate concurrent requests",
+        "connection_pooling": "Reuses SSH and browser connections",
+        "lazy_loading": "Tools load on-demand to reduce memory footprint",
+        "async_operations": "Non-blocking I/O for all network and file operations"
+      },
+      "use_cases": [
+        "NixOS system administration and package management",
+        "Emergency system recovery and thermal protection",
+        "Multi-provider LLM integration and testing",
+        "Remote server management via SSH",
+        "Web research and data aggregation",
+        "Code analysis and quality assurance",
+        "Automated browser testing and web scraping",
+        "Knowledge persistence across sessions",
+        "CI/CD integration with GitHub Actions",
+        "Network debugging and socket analysis"
+      ],
+      "notes": {
+        "build_artifacts": "The build/ directory is ignored by git. Run 'npm run build' to generate before deployment.",
+        "knowledge_db": "Knowledge database path is configurable via KNOWLEDGE_DB_PATH environment variable.",
+        "thermal_protection": "Laptop defense tools are specifically designed for laptops with thermal constraints.",
+        "wildcard_commands": "Natural language commands are parsed and executed with safety validation.",
+        "provider_keys": "API keys are loaded from environment variables; recommend using SOPS for secret management.",
+        "auto_detection": "Project root and hostname are auto-detected if not explicitly configured.",
+        "cache_cleanup": "Semantic cache automatically cleans expired entries every 15 minutes."
+      }
+    }
+  }
+}
