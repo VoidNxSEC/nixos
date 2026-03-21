@@ -56,7 +56,7 @@
       # ─────────────────────────────────────────────────────
       # Terminal & System Intelligence
       # ─────────────────────────────────────────────────────
-      neofetch
+      fastfetch
       htop
       btop
       tree
