@@ -12,7 +12,7 @@
   imports = [
     ./llama-cpp-turbo.nix
     ./llama-cpp-swap.nix
-    ./tabbyapi.nix
+    #./tabbyapi.nix
     ./vllm.nix
   ];
 }

@@ -390,29 +390,29 @@
         # AGENTE CODEX (Agora Habilitado)
         # -----------------------------------------------------------
         codex = {
-          enable = false;
-          projectRoot = "/var/lib/codex/dev";
+          enable = true;
+          projectRoot = "~/master/";
           configPath = "/var/lib/codex/.codex/mcp.json";
           user = "kernelcore";
         };
 
         gemini = {
           enable = true;
-          projectRoot = "/var/lib/gemini-agent/dev";
+          projectRoot = "~/master/";
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
           user = "kernelcore";
         };
 
         antigravity = {
           enable = true;
-          projectRoot = "/etc/nixos";
+          projectRoot = "~/master/";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
         };
 
         zed-editor = {
           enable = true;
-          projectRoot = "/etc/nixos";
+          projectRoot = "~/master/";
           configPath = "/home/kernelcore/.config/zed/mcp_config.json";
           user = "kernelcore";
         };
@@ -453,7 +453,7 @@
 
       profiles = {
         coder = {
-          modelPath = "/var/lib/ml-models/llamacpp/models/Lewdiculous_L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix_L3-8B-Stheno-v3.2-Q4_K_M-imat.gguf";
+          modelPath = "/var/lib/ml-models/llamacpp/models/unsloth_Qwen3.5-9B-GGUF_Qwen3.5-9B-Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
           gpuLayers = 52;
           contextSize = 4096;
@@ -800,16 +800,16 @@
     };
 
     # TabbyAPI - OpenAI-compatible Inference Server
-    tabbyapi = {
-      enable = false;
-      host = "127.0.0.1";
-      port = 7734;
-      modelsDir = "/var/lib/ml-models";
-      maxSeqLen = 16384;
-      cacheMode = "FP16";
-      gpuSplitAuto = true;
-      openFirewall = false; # Acessível de containers Docker, mas não da internet
-    };
+    #tabbyapi = {
+    #enable = false;
+    #host = "127.0.0.1";
+    #port = 7734;
+    #modelsDir = "/var/lib/ml-models";
+    #maxSeqLen = 16384;
+    #cacheMode = "FP16";
+    #gpuSplitAuto = true;
+    #openFirewall = false; # Acessível de containers Docker, mas não da internet
+    #};
 
     # Open-WebUI - Self-hosted AI Chat Interface (ML Hardcore Mode)
     # Open-WebUI - upstream NixOS module (simple config)
