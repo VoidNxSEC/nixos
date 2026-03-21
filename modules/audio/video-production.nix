@@ -56,7 +56,8 @@ in
 
         # Áudio
         pavucontrol # Controle de volume avançado
-        helvum # Patchbay visual para PipeWire
+        crosspipe
+        #helvum # Patchbay visual para PipeWire/Comentado por que upstream está desatualizado
         easyeffects # Processamento de áudio em tempo real
 
         # Utilitários
