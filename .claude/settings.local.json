@@ -56,7 +56,11 @@
       "WebFetch(domain:wiki.hyprland.org)",
       "WebFetch(domain:wiki.hypr.land)",
       "mcp__securellm-mcp__web_crawl",
-      "WebFetch(domain:gist.github.com)"
+      "WebFetch(domain:gist.github.com)",
+      "Read(//home/kernelcore/master/spooknix/**)",
+      "Read(//home/kernelcore/arch/**)",
+      "Bash(cat ~/master/spooknix/nix/*.nix)",
+      "Bash(2)"
     ]
   },
   "enableAllProjectMcpServers": true,
