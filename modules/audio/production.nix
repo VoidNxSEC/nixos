@@ -56,7 +56,7 @@ in
         flac
         lame
         vorbis-tools
-        opusTools
+        opus-tools
         wavpack
 
         # Ferramentas de sistema
