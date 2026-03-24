@@ -131,7 +131,7 @@
       maxCacheSizeMB = 5;
     };
 
-    packages.claude.enable = true;
+    packages.claude.enable = false;
     packages.zellij.enable = true;
     packages.lynis.enable = true;
     packages.js.enable = false;
@@ -972,6 +972,8 @@
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
 
+  modules.audio.production.enable = true;
+
   modules.audio.videoProduction = {
     enable = true;
     enableNVENC = true;
@@ -1023,6 +1025,8 @@
       hakrawler
       python313Packages.pyyaml
       python313Packages.langchain
+      python313Packages.huggingface-hub_0
+      python313Packages.numpy
       awscli
       onlyoffice-desktopeditors
       google-cloud-sdk
@@ -1030,10 +1034,11 @@
       kubernetes
       kubernetes-polaris
       kubernetes-helm
+      kind
       git-lfs
       certbot
       flameshot
-      # claude-code → managed via modules/packages/claude (patched native binaries)
+      claude-code
       codex
       # vllm # FIXME: upstream nixpkgs broken patch for llama-cpp-python (406)
       koboldcpp
@@ -1049,7 +1054,6 @@
       zoom
       gnome-console
       #zed-editor
-      windsurf
       code-cursor
       rust-analyzer
       rustup

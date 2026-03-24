@@ -1,13 +1,15 @@
-# Claude Code 2.1.42 - Full package build (NOT overrideAttrs)
+# Claude Code 2.1.81 - Full package build (NOT overrideAttrs)
 #
 # overrideAttrs cannot bump versions on buildNpmPackage + finalAttrs
 # because the internal npmDeps gets a broken src (new URL, old hash).
 # Instead we call buildNpmPackage directly via callPackage.
 #
+# Uses npmDepsFetcherVersion = 2: fetcher gera o lock internamente,
+# não precisa de package-lock.json no source.
+#
 # To upgrade:
 # 1. Update version + src hash (nix-prefetch-url --unpack <url>)
-# 2. Regenerate package-lock.json: npm install --package-lock-only
-# 3. Set npmDepsHash = lib.fakeHash, rebuild, paste correct hash
+# 2. Set npmDepsHash = lib.fakeHash, rebuild, paste correct hash
 #
 {
   config,
@@ -21,19 +23,19 @@ let
 
   claude-code = pkgs.buildNpmPackage {
     pname = "claude-code";
-    version = "2.1.44";
+    version = "2.1.81";
 
     src = pkgs.fetchzip {
-      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.44.tgz";
-      hash = "sha256-3HhH7LOFA7sNOXGZa6reO3HfXcHFQO0mbFWFpPXFwcM=";
+      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.81.tgz";
+      hash = "sha256-WT+fj9H/5hlr/U8MygiIdE2QZ32kRz6wTjYEABtmBPU=";
     };
 
-    npmDepsHash = "sha256-Rbt6PiFJapHow4yEBafyMdHWLUaYIDRDDJB1a93ZqsI=";
+    npmDepsHash = lib.fakeHash;
+    npmDepsFetcherVersion = 2;
 
     strictDeps = true;
 
     postPatch = ''
-      cp ${./package-lock.json} package-lock.json
       substituteInPlace cli.js \
         --replace-fail '#!/bin/sh' '#!/usr/bin/env sh'
     '';
