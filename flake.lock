@@ -1844,7 +1844,6 @@
         "securellm-mcp": "securellm-mcp",
         "sops-nix": "sops-nix",
         "spider-nix": "spider-nix",
-        "spooknix": "spooknix",
         "swissknife": "swissknife",
         "vmctl": "vmctl"
       }
@@ -2070,27 +2069,6 @@
         "type": "github"
       }
     },
-    "sops-nix_2": {
-      "inputs": {
-        "nixpkgs": [
-          "spooknix",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1774303811,
-        "narHash": "sha256-fhG4JAcLgjKwt+XHbjs8brpWnyKUfU4LikLm3s0Q/ic=",
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "rev": "614e256310e0a4f8a9ccae3fa80c11844fba7042",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "type": "github"
-      }
-    },
     "spectrum": {
       "flake": false,
       "locked": {
@@ -2126,27 +2104,6 @@
       "original": {
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/spider-nix"
-      }
-    },
-    "spooknix": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "sops-nix": "sops-nix_2"
-      },
-      "locked": {
-        "lastModified": 1774310429,
-        "narHash": "sha256-tYv1m9dFl7b2gXMEXrZ9o1XAq4ry0WWekS+kGeqLyk4=",
-        "ref": "refs/heads/main",
-        "rev": "ba64170ef4bde8ae521edf9739f3113773c43b51",
-        "revCount": 15,
-        "type": "git",
-        "url": "ssh://git@github.com/marcosfpina/spooknix"
-      },
-      "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/marcosfpina/spooknix"
       }
     },
     "swissknife": {
