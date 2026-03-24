@@ -381,7 +381,7 @@
       agents = {
         roo = {
           enable = false;
-          projectRoot = "/home/kernelcore/dev";
+          projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.roo/mcp.json";
           user = "kernelcore";
         };
@@ -391,28 +391,28 @@
         # -----------------------------------------------------------
         codex = {
           enable = false;
-          projectRoot = "~/master/";
-          configPath = "/var/lib/codex/.codex/mcp.json";
+          projectRoot = "/home/kernelcore/master";
+          configPath = "/home/kernelcore/.codex/mcp.json";
           user = "kernelcore";
         };
 
         gemini = {
           enable = false;
-          projectRoot = "~/master/";
-          configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
+          projectRoot = "/home/kernelcore/master";
+          configPath = "/home/kernelcore/.gemini/mcp.json";
           user = "kernelcore";
         };
 
         antigravity = {
           enable = false;
-          projectRoot = "~/master/";
+          projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
         };
 
         zed-editor = {
           enable = false;
-          projectRoot = "~/master/";
+          projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.config/zed/mcp_config.json";
           user = "kernelcore";
         };
@@ -561,7 +561,7 @@
     # Dynamic project profiles - switch with: mcp-context profile <name>
     profiles = {
       nixos = {
-        workdir = "/etc/nixos";
+        workdir = "/home/kernelcore/master";
         environment = "production";
         env = {
           PROJECT_NAME = "NixOS Configuration";
@@ -570,7 +570,7 @@
       };
 
       dev = {
-        workdir = "/home/kernelcore/dev/Projects/";
+        workdir = "/home/kernelcore/arch";
         environment = "development";
         env = {
           PROJECT_NAME = "Development";
@@ -579,7 +579,7 @@
       };
 
       gemini = {
-        workdir = "/home/kernelcore/.gemini/";
+        workdir = "/home/kernelcore/master";
         environment = "development";
         env = {
           PROJECT_NAME = "Gemini Agent";
@@ -588,7 +588,7 @@
       };
 
       codex = {
-        workdir = "/var/lib/codex/dev";
+        workdir = "/home/kernelcore/master";
         environment = "development";
         env = {
           PROJECT_NAME = "Codex";
@@ -912,12 +912,12 @@
     # ═══════════════════════════════════════════════════════════
     # SPOOKNIX - Privacy-first STT Engine (Docker container)
     # ═══════════════════════════════════════════════════════════
-    spooknix = {
-      enable = true;
-      model = "small";
-      device = "cuda";
-      port = 8000;
-    };
+    # spooknix = {
+    #   enable = true;
+    #   model = "large-v3";
+    #   device = "cuda";
+    #   port = 8000;
+    # };
   }; # FIM DO BLOCO SERVICES
 
   programs.niri.enable = false;
