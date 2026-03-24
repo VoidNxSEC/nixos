@@ -387,31 +387,31 @@
         };
 
         # -----------------------------------------------------------
-        # AGENTE CODEX (Agora Habilitado)
+        # AGENTES MCP
         # -----------------------------------------------------------
         codex = {
-          enable = true;
+          enable = false;
           projectRoot = "~/master/";
           configPath = "/var/lib/codex/.codex/mcp.json";
           user = "kernelcore";
         };
 
         gemini = {
-          enable = true;
+          enable = false;
           projectRoot = "~/master/";
           configPath = "/var/lib/gemini-agent/.gemini/mcp.json";
           user = "kernelcore";
         };
 
         antigravity = {
-          enable = true;
+          enable = false;
           projectRoot = "~/master/";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
         };
 
         zed-editor = {
-          enable = true;
+          enable = false;
           projectRoot = "~/master/";
           configPath = "/home/kernelcore/.config/zed/mcp_config.json";
           user = "kernelcore";
@@ -914,7 +914,7 @@
     # ═══════════════════════════════════════════════════════════
     spooknix = {
       enable = true;
-      model = "small";
+      model = "large-v3";
       device = "cuda";
       port = 8000;
     };
