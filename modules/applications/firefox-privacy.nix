@@ -98,6 +98,16 @@ in
           Locked = true;
         };
 
+        # Desativa todas as features de IA generativa (Firefox 144+)
+        # Locked = true impede reativação pelo usuário
+        GenerativeAI = {
+          Enabled = false;
+          Chatbot = false;
+          LinkPreviews = false;
+          TabGroups = false;
+          Locked = true;
+        };
+
         # Hardening de Extensões
         ExtensionSettings = {
           "uBlock0@raymondhill.net" = {
