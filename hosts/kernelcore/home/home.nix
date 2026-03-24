@@ -271,7 +271,7 @@
     spooknix = {
       enable = true;
       serverUrl = "http://localhost:8000";
-      sourcePath = "/home/kernelcore/arch/spooknix";
+      sourcePath = "/home/kernelcore/master/spooknix";
       hyprland = {
         enable = true;
         keybind = "SUPER, S";
