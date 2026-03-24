@@ -1028,6 +1028,7 @@
       python313Packages.huggingface-hub_0
       python313Packages.numpy
       awscli
+      cemu
       onlyoffice-desktopeditors
       google-cloud-sdk
       minikube
