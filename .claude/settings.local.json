@@ -60,7 +60,19 @@
       "Read(//home/kernelcore/master/spooknix/**)",
       "Read(//home/kernelcore/arch/**)",
       "Bash(cat ~/master/spooknix/nix/*.nix)",
-      "Bash(2)"
+      "Bash(2)",
+      "Bash(bash auditoria-disco.sh)",
+      "Bash(tee /tmp/auditoria-output.txt)",
+      "Bash(du -sh /home/kernelcore/.cache/pypoetry/virtualenvs /home/kernelcore/.cache/uv /home/kernelcore/master/*/.venv /home/kernelcore/dev/Project/docker-hub/.venv)",
+      "Bash(du -sh /home/kernelcore/.cache/pypoetry/virtualenvs/*)",
+      "Bash(docker system:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker rmi:*)",
+      "Bash(sudo du:*)",
+      "WebFetch(domain:mozilla.github.io)",
+      "WebFetch(domain:support.mozilla.org)",
+      "WebFetch(domain:bugzilla.mozilla.org)"
     ]
   },
   "enableAllProjectMcpServers": true,
