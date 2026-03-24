@@ -44,6 +44,14 @@
         "app.shield.optoutstudies.enabled" = false;
         "datareporting.healthreport.uploadEnabled" = false;
 
+        # === AI FEATURES OFF ===
+        "browser.ml.chat.enabled" = false;
+        "browser.ml.linkPreview.enabled" = false;
+        "browser.tabs.groups.smart.userEnabled" = false;
+        "browser.ml.chat.menu" = false;
+        "browser.ml.chat.page" = false;
+        "browser.ml.pageAssist.enabled" = false;
+
         # === SEARCH & SUGGESTIONS ===
         "browser.search.suggest.enabled" = false;
         "browser.search.suggest.enabled.private" = false;
