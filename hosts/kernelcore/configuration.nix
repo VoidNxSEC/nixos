@@ -914,7 +914,7 @@
     # ═══════════════════════════════════════════════════════════
     spooknix = {
       enable = true;
-      model = "large-v3";
+      model = "small";
       device = "cuda";
       port = 8000;
     };
