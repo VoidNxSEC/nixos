@@ -111,7 +111,7 @@ in
           makeCacheWritable = true;
 
           nativeBuildInputs = with pkgs; [
-            python3
+            python313
             pkg-config
           ];
 
