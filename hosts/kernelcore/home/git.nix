@@ -27,7 +27,7 @@
 
     # Default GPG key (GitHub)
     signing = {
-      key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnx.com>
+      key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnxlabs.com>
       signByDefault = true;
     };
 
@@ -40,7 +40,7 @@
       # ───────────────────────────────────────────────────────
       user = {
         name = "marcosfpina";
-        email = "sec@voidnx.com";
+        email = "sec@voidnxlabs.com";
       };
 
       # ───────────────────────────────────────────────────────
