@@ -279,6 +279,20 @@
       };
       waybar.enable = true;
     };
+
+    actionsTv = {
+      enable = true;
+      pollInterval = 30;
+      waybar.enable = true;
+      ui.terminalCommand = "${pkgs.alacritty}/bin/alacritty -e";
+      projects = [
+        {
+          name = "spooknix";
+          repo = "marcosfpina/spooknix";
+          maxRuns = 5;
+        }
+      ];
+    };
   };
 
   # ============================================================
