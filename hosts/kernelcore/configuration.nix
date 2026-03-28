@@ -390,28 +390,28 @@
         # AGENTES MCP
         # -----------------------------------------------------------
         codex = {
-          enable = false;
+          enable = true;
           projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.codex/mcp.json";
           user = "kernelcore";
         };
 
         gemini = {
-          enable = false;
+          enable = true;
           projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.gemini/mcp.json";
           user = "kernelcore";
         };
 
         antigravity = {
-          enable = false;
+          enable = true;
           projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
         };
 
         zed-editor = {
-          enable = false;
+          enable = true;
           projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.config/zed/mcp_config.json";
           user = "kernelcore";
@@ -570,7 +570,7 @@
       };
 
       dev = {
-        workdir = "/home/kernelcore/arch";
+        workdir = "/home/kernelcore/master";
         environment = "development";
         env = {
           PROJECT_NAME = "Development";
@@ -1050,11 +1050,65 @@
       gh
       wrangler
       codeberg-cli
-      brev-cli
+
+      # Custom wrapper for brev to work with read-only .ssh/config
+      (pkgs.writeShellScriptBin "brev" ''
+        #!/usr/bin/env bash
+
+        # Original brev binary path
+        BREV_BIN="${pkgs.brev-cli}/bin/brev"
+
+        # Real paths
+        REAL_HOME="$HOME"
+        BREV_HOME="$REAL_HOME/.brev"
+        NIX_BREV_CONFIG="$REAL_HOME/.ssh/brev_config"
+
+        # Determine if we're running a command that needs config updates
+        NEEDS_REFRESH=false
+        if [[ "$1" == "refresh" ]] || [[ "$1" == "login" ]] || [[ "$1" == "start" ]] || [[ "$1" == "open" ]] || [[ "$1" == "shell" ]]; then
+            NEEDS_REFRESH=true
+        fi
+
+        if [ "$NEEDS_REFRESH" = true ]; then
+            # Create a fake home environment for SSH config checking
+            FAKE_HOME="/tmp/brev_fake_home_$$"
+            mkdir -p "$FAKE_HOME/.ssh"
+            
+            # Brev needs to see this exact line or it will try to write to it and fail
+            echo 'Include "/home/kernelcore/.brev/ssh_config"' > "$FAKE_HOME/.ssh/config"
+            chmod 600 "$FAKE_HOME/.ssh/config"
+            
+            # Symlink the real .brev directory so we don't lose session data
+            ln -s "$BREV_HOME" "$FAKE_HOME/.brev"
+            
+            # Run the actual command with the fake HOME
+            HOME="$FAKE_HOME" "$BREV_BIN" "$@" || EXIT_CODE=$?
+            
+            # Cleanup
+            rm -rf "$FAKE_HOME"
+            
+            echo "Syncing Brev SSH configuration for NixOS..."
+            # Wait a moment to ensure Brev finishes writing
+            sleep 1 
+            
+            if [ -f "$BREV_HOME/ssh_config" ]; then
+                # Replace the fake home path with the real home path in the config
+                sed "s|$FAKE_HOME|$REAL_HOME|g" "$BREV_HOME/ssh_config" > "$NIX_BREV_CONFIG"
+                # Ensure correct permissions
+                chmod 600 "$NIX_BREV_CONFIG"
+            fi
+            
+            exit ''${EXIT_CODE:-0}
+        else
+            # For pure read commands, just run normally
+            exec "$BREV_BIN" "$@"
+        fi
+      '')
+
       slack
       zoom
       gnome-console
-      #zed-editor
+      zed-editor
       code-cursor
       rust-analyzer
       rustup
