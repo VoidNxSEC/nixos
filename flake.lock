@@ -1758,11 +1758,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769661336,
-        "narHash": "sha256-/YlPTxJYVorK5vfF6hbuhiaSSiOqKKb58skMScBiAIY=",
+        "lastModified": 1774676389,
+        "narHash": "sha256-5FZVtvReM+5A3ltxYfEraPG9qin+Le40f6iWtCEdKCI=",
         "ref": "refs/heads/main",
-        "rev": "1acb4ac64bb3e12f1df8841dd7222d0e62ae744b",
-        "revCount": 14,
+        "rev": "b37d42434b3b2841933099cb5eb2f6f616d0d07f",
+        "revCount": 21,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/O.W.A.S.A.K.A."
       },
