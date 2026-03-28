@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "actions-tv": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1774709216,
+        "narHash": "sha256-xIaS3/FBDHxZt2RrcbDGYobnEKtKi1mCH5ypOkNlYdc=",
+        "ref": "refs/heads/main",
+        "rev": "5df72c93655545bede7f736cfe7eabf2fca82b84",
+        "revCount": 2,
+        "type": "git",
+        "url": "ssh://git@github.com/marcosfpina/actions-tv"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/marcosfpina/actions-tv"
+      }
+    },
     "adr-ledger": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -1820,6 +1840,7 @@
     },
     "root": {
       "inputs": {
+        "actions-tv": "actions-tv",
         "adr-ledger": "adr-ledger",
         "ai-agent-os": "ai-agent-os",
         "arch-analyzer": "arch-analyzer",
