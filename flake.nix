@@ -85,6 +85,10 @@
       url = "git+ssh://git@github.com/marcosfpina/spooknix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    actions-tv = {
+      url = "git+ssh://git@github.com/marcosfpina/actions-tv";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     #docker-hub = {
     #url = "path:/home/kernelcore/dev/low-level/docker-hub";
     #inputs.nixpkgs.follows = "nixpkgs";
@@ -297,6 +301,7 @@
               };
               home-manager.sharedModules = [
                 inputs.spooknix.homeManagerModules.default
+                inputs.actions-tv.homeManagerModules.github-actions-waybar
               ];
               home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix;
               home-manager.backupFileExtension = null;
