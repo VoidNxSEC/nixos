@@ -25,7 +25,7 @@
       use-agent = true;
 
       # Default key for signing (NEW key)
-      default-key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnx.com>
+      default-key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnxlabs.com>
 
       # Key server configuration
       keyserver = "hkps://keys.openpgp.org";
@@ -68,7 +68,7 @@
 
     # User identity
     userName = "marcosfpina";
-    userEmail = "sec@voidnx.com";
+    userEmail = "sec@voidnxlabs.com";
 
     # GPG signing configuration
     signing = {
