@@ -453,10 +453,10 @@
 
       profiles = {
         coder = {
-          modelPath = "/var/lib/ml-models/llamacpp/models/unsloth_Qwen3.5-9B-GGUF_Qwen3.5-9B-Q4_K_M.gguf";
+          modelPath = "/var/lib/ml-models/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 52;
-          contextSize = 4096;
+          gpuLayers = 47;
+          contextSize = 8192;
           #n_ctx = 8192;
           #n_batch = 8192;
         };
@@ -912,12 +912,12 @@
     # ═══════════════════════════════════════════════════════════
     # SPOOKNIX - Privacy-first STT Engine (Docker container)
     # ═══════════════════════════════════════════════════════════
-    # spooknix = {
-    #   enable = true;
-    #   model = "large-v3";
-    #   device = "cuda";
-    #   port = 8000;
-    # };
+    spooknix = {
+      enable = true;
+      model = "large-v3";
+      device = "cuda";
+      port = 8000;
+    };
   }; # FIM DO BLOCO SERVICES
 
   programs.niri.enable = false;
