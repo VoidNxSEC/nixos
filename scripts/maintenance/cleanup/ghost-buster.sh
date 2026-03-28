@@ -12,7 +12,7 @@ CYAN="\033[0;36m"
 NC="\033[0m"
 BOLD="\033[1m"
 
-PROJECTS_DIR="/home/kernelcore/arch"
+PROJECTS_DIR="/home/kernelcore/dev/Project/"
 USER_HOME="/home/kernelcore"
 
 banner() {
@@ -215,4 +215,3 @@ clean_docker_ghosts
 echo -e "\n${BOLD}--- Fim da fase de Caça aos Fantasmas ---${NC}"
 report_space
 echo -e "\n${CYAN}Recomendação: Agora rode o './limpeza-agressiva.sh' para finalizar o Garbage Collection do Nix.${NC}"
-
