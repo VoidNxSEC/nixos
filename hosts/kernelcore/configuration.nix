@@ -380,7 +380,7 @@
       knowledgeDbPath = "/var/lib/mcp-knowledge/knowledge.db";
       agents = {
         roo = {
-          enable = false;
+          enable = true;
           projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.roo/mcp.json";
           user = "kernelcore";
@@ -392,14 +392,14 @@
         codex = {
           enable = true;
           projectRoot = "/home/kernelcore/master";
-          configPath = "/home/kernelcore/.codex/mcp.json";
+          configPath = "/home/kernelcore/.codex/mcp_config.json";
           user = "kernelcore";
         };
 
         gemini = {
           enable = true;
           projectRoot = "/home/kernelcore/master";
-          configPath = "/home/kernelcore/.gemini/mcp.json";
+          configPath = "/home/kernelcore/.gemini/mcp_config.json";
           user = "kernelcore";
         };
 
@@ -1073,31 +1073,31 @@
             # Create a fake home environment for SSH config checking
             FAKE_HOME="/tmp/brev_fake_home_$$"
             mkdir -p "$FAKE_HOME/.ssh"
-            
+
             # Brev needs to see this exact line or it will try to write to it and fail
             echo 'Include "/home/kernelcore/.brev/ssh_config"' > "$FAKE_HOME/.ssh/config"
             chmod 600 "$FAKE_HOME/.ssh/config"
-            
+
             # Symlink the real .brev directory so we don't lose session data
             ln -s "$BREV_HOME" "$FAKE_HOME/.brev"
-            
+
             # Run the actual command with the fake HOME
             HOME="$FAKE_HOME" "$BREV_BIN" "$@" || EXIT_CODE=$?
-            
+
             # Cleanup
             rm -rf "$FAKE_HOME"
-            
+
             echo "Syncing Brev SSH configuration for NixOS..."
             # Wait a moment to ensure Brev finishes writing
-            sleep 1 
-            
+            sleep 1
+
             if [ -f "$BREV_HOME/ssh_config" ]; then
                 # Replace the fake home path with the real home path in the config
                 sed "s|$FAKE_HOME|$REAL_HOME|g" "$BREV_HOME/ssh_config" > "$NIX_BREV_CONFIG"
                 # Ensure correct permissions
                 chmod 600 "$NIX_BREV_CONFIG"
             fi
-            
+
             exit ''${EXIT_CODE:-0}
         else
             # For pure read commands, just run normally
