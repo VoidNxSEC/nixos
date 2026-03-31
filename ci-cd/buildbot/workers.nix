@@ -3,7 +3,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -11,8 +10,31 @@ with lib;
 
 let
   cfg = config.kernelcore.ci;
+  hasWorker = cfg.enable && builtins.elem cfg.role [
+    "worker"
+    "combined"
+  ];
 in
-mkIf cfg.enable {
+mkIf hasWorker {
+  services.buildbot-worker =
+    {
+      enable = true;
+      user = cfg.worker.systemUser;
+      group = cfg.worker.systemGroup;
+      extraGroups = cfg.worker.extraGroups;
+      workerUser = cfg.worker.name;
+      masterUrl = cfg.worker.masterUrl;
+      hostMessage = cfg.worker.hostMessage;
+      adminMessage = cfg.worker.adminMessage;
+      packages = cfg.worker.packages;
+    }
+    // optionalAttrs (cfg.worker.passwordFile == null) {
+      workerPass = cfg.worker.password;
+    }
+    // optionalAttrs (cfg.worker.passwordFile != null) {
+      workerPassFile = cfg.worker.passwordFile;
+    };
+
   # Worker-specific optimizations
   nix.settings = {
     # Build optimization for CI
@@ -40,8 +62,10 @@ mkIf cfg.enable {
   # Resource limits for builds
   systemd.services.buildbot-worker = {
     serviceConfig = {
-      MemoryMax = "8G";
-      CPUQuota = "400%"; # 4 cores
+      MemoryMax = cfg.worker.memoryMax;
+      CPUQuota = cfg.worker.cpuQuota;
     };
   };
+
+  nix.settings.trusted-users = mkAfter [ cfg.worker.systemUser ];
 }

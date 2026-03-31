@@ -2,11 +2,6 @@
   pkgs ? import <nixpkgs> { },
 }:
 
-# Import buildbot modules if directory exists
-let
-  buildbot = if builtins.pathExists ./buildbot then import ./buildbot else { };
-in
-
 let
   lib = pkgs.lib;
 
@@ -40,6 +35,7 @@ in
 
   # Export combined tests
   inherit allTests;
+  testSuites = allTests;
 
   # Export helpers for use in other tests
   inherit helpers;
@@ -58,7 +54,7 @@ in
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo "Running test: ${name}"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        nix build -f ${./default.nix} ${name} --print-build-logs || {
+        nix build -f ${./default.nix} ${lib.escapeShellArg "testSuites.${name}"} --print-build-logs || {
           echo "❌ Test failed: ${name}"
           exit 1
         }
@@ -78,7 +74,7 @@ in
     pkgs.writeShellScriptBin "run-test-${testName}" ''
       set -e
       echo "🧪 Running test: ${testName}"
-      nix build -f ${./default.nix} ${testName} --print-build-logs
+      nix build -f ${./default.nix} ${lib.escapeShellArg "testSuites.${testName}"} --print-build-logs
       echo "✅ Test passed: ${testName}"
     '';
 }
