@@ -269,7 +269,7 @@
 
     # ── Spooknix — STT systray GUI ──────────────────────────────────────────
     spooknix = {
-      enable = true;
+      enable = false;
       serverUrl = "http://localhost:8000";
       sourcePath = "/home/kernelcore/master/spooknix";
       model = "large-v3";
