@@ -15,6 +15,9 @@
   ...
 }:
 
+let
+  shellProgram = "${pkgs.zsh}/bin/zsh";
+in
 {
   programs.alacritty = {
     enable = true;
@@ -35,6 +38,7 @@
         TERM = "alacritty";
         # Enable better color support
         COLORTERM = "truecolor";
+        TERM_PROGRAM = "Alacritty";
       };
 
       # ============================================
@@ -42,8 +46,8 @@
       # ============================================
       window = {
         padding = {
-          x = 14;
-          y = 16;
+          x = 16;
+          y = 14;
         };
         dynamic_padding = true;
         decorations = "None";
@@ -68,7 +72,7 @@
       # ============================================
       scrolling = {
         history = 50000; # Large history for terminal scrollback
-        multiplier = 3;
+        multiplier = 4;
       };
 
       # ============================================
@@ -136,7 +140,7 @@
       # ============================================
       selection = {
         save_to_clipboard = true;
-        semantic_escape_chars = ",│`|:\"' ()[]{}<>\\t";
+        semantic_escape_chars = ",│`|:\"' ()[]{}<>\\t=,;";
       };
 
       # ============================================
@@ -258,8 +262,10 @@
         # Full OSC52 support for clipboard
         osc52 = "CopyPaste";
 
-        # Shell configuration - use user's default shell
-        # Keep Alacritty as a standalone terminal emulator
+        shell = {
+          program = shellProgram;
+          args = [ "-l" ];
+        };
       };
 
       # ============================================
@@ -450,6 +456,21 @@
 
             binding = {
               key = "P";
+              mods = "Control|Shift";
+            };
+          }
+          {
+            # Git commit hashes - useful in coding and incident response flows
+            regex = "[0-9a-f]{7,40}";
+            command = "Copy";
+
+            mouse = {
+              enabled = true;
+              mods = "Alt";
+            };
+
+            binding = {
+              key = "G";
               mods = "Control|Shift";
             };
           }
