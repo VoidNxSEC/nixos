@@ -119,11 +119,6 @@ in
         margin-right: 12px;
       }
 
-      /* Placeholder text */
-      #input:placeholder {
-        color: ${colors.base.fg3};
-      }
-
       /* Scrollable area */
       #scroll {
         background: transparent;
@@ -200,7 +195,7 @@ in
       scrollbar {
         background: transparent;
         border: none;
-        width: 6px;
+        min-width: 6px;
         margin-left: 8px;
       }
 
