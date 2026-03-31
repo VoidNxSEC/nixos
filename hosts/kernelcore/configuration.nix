@@ -49,6 +49,33 @@
       hardening.enable = true;
       sandbox-fallback = true;
       audit.enable = true;
+      tls = {
+        enable = true;
+        email = "sec@voidnxlabs.com";
+        dnsProvider = "cloudflare";
+        environmentFile =
+          if config.sops.secrets ? "certificates/dns-provider-env" then
+            config.sops.secrets."certificates/dns-provider-env".path
+          else
+            null;
+        credentialFiles =
+          if config.sops.secrets ? "certificates/cloudflare-dns-api-token" then
+            {
+              "CF_DNS_API_TOKEN_FILE" = config.sops.secrets."certificates/cloudflare-dns-api-token".path;
+              "CF_ZONE_API_TOKEN_FILE" = config.sops.secrets."certificates/cloudflare-dns-api-token".path;
+            }
+          else
+            { };
+        certs = {
+          "gitea.voidnx.com" = {
+            extraDomainNames = [ "git.voidnx.com" ];
+            reloadServices = [ "nginx.service" ];
+          };
+          "forgejo.voidnx.com" = {
+            reloadServices = [ "nginx.service" ];
+          };
+        };
+      };
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
       aide.enable = true;
@@ -321,7 +348,7 @@
     };
 
     services.mobile-workspace = {
-      enable = true;
+      enable = false;
       username = "mobile";
       workspaceDir = "/srv/mobile-workspace";
       enableGitAccess = true;
@@ -378,6 +405,8 @@
           enable = true;
           projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.roo/mcp.json";
+    secrets.ci.enable = true;
+    secrets.certificates.enable = true;
           user = "kernelcore";
         };
 
@@ -390,6 +419,23 @@
           configPath = "/home/kernelcore/.codex/mcp_config.json";
           user = "kernelcore";
         };
+
+    ci = {
+      enable = true;
+      role = "combined";
+      worker = {
+        passwordFile =
+          if config.sops.secrets ? "ci/buildbot-worker-password" then
+            config.sops.secrets."ci/buildbot-worker-password".path
+          else
+            null;
+        extraGroups = [ "buildbot" ];
+      };
+      jobs = {
+        suites = [ "security" ];
+        enableTailscaleSmoke = false;
+      };
+    };
 
         gemini = {
           enable = true;
