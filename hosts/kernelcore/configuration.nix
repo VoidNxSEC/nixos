@@ -124,15 +124,10 @@
 
     bluetooth.enable = true;
 
-    applications.zellij = {
-      enable = true;
-      autoCleanup = true;
-      cleanupInterval = "daily";
-      maxCacheSizeMB = 5;
-    };
+    applications.zellij.enable = false;
 
     packages.claude.enable = false;
-    packages.zellij.enable = true;
+    packages.zellij.enable = false;
     packages.lynis.enable = true;
     packages.js.enable = false;
     packages.f5-tts.enable = lib.mkForce false;

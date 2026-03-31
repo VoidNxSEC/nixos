@@ -23,6 +23,8 @@ let
   gpuMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/gpu-monitor.sh";
   diskMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/disk-monitor.sh";
   sshSessions = "${config.home.homeDirectory}/.config/waybar/scripts/ssh-sessions.sh";
+  actionsTvWaybarEnabled = lib.attrByPath [ "programs" "actionsTv" "waybar" "enable" ] false config;
+  spooknixWaybarEnabled = lib.attrByPath [ "programs" "spooknix" "waybar" "enable" ] false config;
 
   # Import glassmorphism design tokens
   colors = config.glassmorphism.colors;
@@ -38,11 +40,11 @@ in
             mainBar = {
               layer = "top";
               position = "top";
-              height = 52;
-              spacing = 8;
-              margin-top = 8;
-              margin-left = 16;
-              margin-right = 16;
+              height = 58;
+              spacing = 6;
+              margin-top = 10;
+              margin-left = 18;
+              margin-right = 18;
               margin-bottom = 0;
 
               # Module layout (compositor-agnostic)
@@ -64,19 +66,25 @@ in
                 "clock"
               ];
 
-              modules-right = [
-                "custom/flake"
-                "custom/system"
-                "custom/gpu"
-                "custom/disk"
-                "custom/ssh"
-                "custom/agent-hub"
-                "network"
-                "bluetooth"
-                "pulseaudio"
-                "battery"
-                "tray"
-              ];
+              modules-right = lib.mkForce (
+                [
+                  "custom/flake"
+                ]
+                ++ lib.optional actionsTvWaybarEnabled "custom/actions-tv"
+                ++ lib.optional spooknixWaybarEnabled "custom/spooknix"
+                ++ [
+                  "custom/agent-hub"
+                  "custom/system"
+                  "custom/gpu"
+                  "custom/disk"
+                  "custom/ssh"
+                  "network"
+                  "bluetooth"
+                  "pulseaudio"
+                  "battery"
+                  "tray"
+                ]
+              );
 
               # ============================================
               # LEFT MODULES
@@ -111,7 +119,7 @@ in
 
               "hyprland/window" = {
                 format = "{class}";
-                max-length = 40;
+                max-length = 48;
                 separate-outputs = true;
                 rewrite = {
                   # Terminal emulators
@@ -123,7 +131,7 @@ in
                   # Browsers
                   "firefox" = "󰈹 Firefox";
                   "brave-browser" = "󰖟 Brave";
-                  "chromium-browser" = " Chromium";
+                  "chromium-browser" = "󰊯 Chromium";
                   "code-oss" = "󰨞 VSCode";
                   "VSCodium" = "󰨞 VSCodium";
                   "codium" = "󰨞 VSCodium";
@@ -154,7 +162,7 @@ in
 
               "niri/window" = {
                 format = "{class}";
-                max-length = 40;
+                max-length = 48;
                 rewrite = {
                   # Terminal emulators
                   "Alacritty" = "󰆍 Alacritty";
@@ -164,7 +172,7 @@ in
                   # Browsers
                   "firefox" = "󰈹 Firefox";
                   "brave-browser" = "󰖟 Brave";
-                  "chromium-browser" = " Chromium";
+                  "chromium-browser" = "󰊯 Chromium";
                   "code-oss" = "󰨞 VSCode";
                   "VSCodium" = "󰨞 VSCodium";
                   "codium" = "󰨞 VSCodium";
@@ -179,8 +187,8 @@ in
               # CENTER MODULES
               # ============================================
               "clock" = {
-                format = "󰥔 {:%H:%M}";
-                format-alt = "󰃭 {:%A, %B %d, %Y}";
+                format = "󰃭 {:%a %d %b · %H:%M}";
+                format-alt = "󰥔 {:%A, %d %B %Y · %H:%M:%S}";
                 tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
                 calendar = {
                   mode = "month";
@@ -216,6 +224,7 @@ in
                 format = "{}";
                 tooltip = true;
                 on-click = "alacritty -e ${flakeManager} rebuild";
+                on-click-middle = "alacritty -e ${flakeManager} check";
                 on-click-right = "alacritty -e ${flakeManager} menu";
               };
 
@@ -270,13 +279,17 @@ in
                 on-click-right = "${config.home.homeDirectory}/.config/agent-hub/quick-prompt.sh";
               };
 
+              "custom/spooknix" = lib.mkIf spooknixWaybarEnabled {
+                on-click = lib.mkForce "${pkgs.systemd}/bin/systemctl --user start spooknix-gui.service";
+              };
+
               "network" = {
                 format-wifi = "󰤨 {signalStrength}%";
-                format-ethernet = "󰈀 {ipaddr}";
-                format-linked = "󰈀 {ifname}";
+                format-ethernet = "󰈀 {ifname}";
+                format-linked = "󰈀 link";
                 format-disconnected = "󰤭";
                 format-alt = "{ifname}: {ipaddr}/{cidr}";
-                tooltip-format = "󰩟 {ifname}\n󰩠 {ipaddr}/{cidr}\n󰁝 {bandwidthUpBytes}\n󰁅 {bandwidthDownBytes}";
+                tooltip-format = "󰩟 {ifname}\n󰩠 {ipaddr}/{cidr}\n󰖩 {essid}\n󰁝 {bandwidthUpBytes}\n󰁅 {bandwidthDownBytes}";
                 on-click-right = "nm-connection-editor";
               };
 
@@ -343,8 +356,8 @@ in
               };
 
               "tray" = {
-                icon-size = 22; # Increased from 18 for better visibility
-                spacing = 12; # More breathing room
+                icon-size = 18;
+                spacing = 8;
                 show-passive-items = true;
               };
             };
@@ -354,244 +367,459 @@ in
           # GLASSMORPHISM CSS STYLES (using design tokens)
           # ============================================
           style = lib.mkForce ''
-            /* ============================================
-             * Waybar - Glassmorphism Theme
-             * Premium frosted glass with electric accents
-             * Using design tokens from colors.nix
-             * ============================================ */
-
-            /* Reset and base styles */
             * {
               border: none;
               border-radius: 0;
-              font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", monospace;
+              min-height: 0;
+              font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", "Noto Color Emoji", monospace;
               font-size: 13px;
+              font-weight: 600;
             }
 
-            /* Main bar - frosted glass background */
             window#waybar {
-              background: ${colors.hexToRgba colors.base.bg0 "0.75"};
-              border-radius: ${toString colors.radius.large}px;
-              border: 1px solid ${colors.border.light};
-              box-shadow: 0 4px 20px ${colors.shadow.dark},
-                          0 0 40px ${colors.hexToRgba colors.accent.cyan "0.05"};
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.base.bg0 "0.86"},
+                ${colors.hexToRgba colors.base.bg1 "0.74"}
+              );
+              color: ${colors.base.fg1};
+              border-radius: 22px;
+              border: 1px solid ${colors.hexToRgba colors.base.fg0 "0.08"};
+              box-shadow: 0 18px 42px ${colors.shadow.dark},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.08"},
+                          0 0 36px ${colors.hexToRgba colors.accent.cyan "0.08"};
             }
 
             window#waybar.hidden {
-              opacity: 0;
+              opacity: 0.18;
             }
 
-            /* Tooltip styling */
+            window#waybar > box {
+              padding: 5px 8px;
+            }
+
             tooltip {
-              background: ${colors.hexToRgba colors.base.bg1 "0.95"};
-              border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.3"};
+              background: ${colors.hexToRgba colors.base.bg1 "0.96"};
+              border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.24"};
               border-radius: ${toString colors.radius.medium}px;
-              box-shadow: 0 4px 20px ${colors.shadow.dark},
-                          0 0 20px ${colors.hexToRgba colors.accent.cyan "0.1"};
+              box-shadow: 0 12px 36px ${colors.shadow.dark},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.05"};
             }
 
             tooltip label {
               color: ${colors.base.fg1};
-              padding: 8px 12px;
+              padding: 10px 14px;
             }
 
-            /* Module base styles */
             #workspaces,
             #window,
             #clock,
             #custom-flake,
+            #custom-actions-tv,
+            #custom-spooknix,
             #custom-system,
             #custom-gpu,
             #custom-disk,
             #custom-ssh,
+            #custom-agent-hub,
             #network,
             #bluetooth,
             #pulseaudio,
             #battery,
             #tray {
-              background: ${colors.hexToRgba colors.base.bg1 "0.8"};
-              border: 1px solid ${colors.border.lighter};
-              border-radius: ${toString colors.radius.pill}px;
-              padding: 4px 16px;
-              margin: 4px 4px;
+              min-height: 0;
+              margin: 0 4px;
+              padding: 0 15px;
+              border-radius: 16px;
+              background: linear-gradient(
+                180deg,
+                ${colors.hexToRgba colors.base.bg2 "0.88"},
+                ${colors.hexToRgba colors.base.bg1 "0.74"}
+              );
               color: ${colors.base.fg1};
-              transition: all 0.3s ease;
+              border: 1px solid ${colors.hexToRgba colors.base.fg0 "0.07"};
+              box-shadow: inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
+              transition: all ${toString colors.animation.normal}ms cubic-bezier(${colors.animation.bezier.gentle});
             }
 
-            /* Hover effects - cyan glow */
-            #workspaces:hover,
             #window:hover,
             #clock:hover,
             #custom-flake:hover,
+            #custom-actions-tv:hover,
+            #custom-spooknix:hover,
             #custom-system:hover,
             #custom-gpu:hover,
             #custom-disk:hover,
             #custom-ssh:hover,
+            #custom-agent-hub:hover,
             #network:hover,
             #bluetooth:hover,
             #pulseaudio:hover,
             #battery:hover,
             #tray:hover {
-              background: ${colors.hexToRgba colors.accent.cyan "0.15"};
-              border-color: ${colors.hexToRgba colors.accent.cyan "0.4"};
-              box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.cyan "0.2"};
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.24"};
+              box-shadow: 0 10px 24px ${colors.hexToRgba colors.base.bg0 "0.18"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.05"};
             }
 
-            /* ============================================
-             * WORKSPACES
-             * ============================================ */
+            @keyframes pulse-cyan {
+              0% {
+                box-shadow: 0 0 0 ${colors.hexToRgba colors.accent.cyan "0.00"};
+              }
+              50% {
+                box-shadow: 0 0 18px ${colors.hexToRgba colors.accent.cyan "0.28"};
+              }
+              100% {
+                box-shadow: 0 0 0 ${colors.hexToRgba colors.accent.cyan "0.00"};
+              }
+            }
+
+            @keyframes pulse-amber {
+              0% {
+                box-shadow: 0 0 0 ${colors.hexToRgba colors.accent.yellow "0.00"};
+              }
+              50% {
+                box-shadow: 0 0 18px ${colors.hexToRgba colors.accent.yellow "0.30"};
+              }
+              100% {
+                box-shadow: 0 0 0 ${colors.hexToRgba colors.accent.yellow "0.00"};
+              }
+            }
+
+            @keyframes pulse-magenta {
+              0% {
+                box-shadow: 0 0 0 ${colors.hexToRgba colors.accent.magenta "0.00"};
+              }
+              50% {
+                box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.magenta "0.36"};
+              }
+              100% {
+                box-shadow: 0 0 0 ${colors.hexToRgba colors.accent.magenta "0.00"};
+              }
+            }
+
             #workspaces {
-              padding: 2px 8px;
+              padding: 4px 8px;
+              border-radius: 18px;
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.cyan "0.08"},
+                ${colors.hexToRgba colors.accent.violet "0.10"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.16"};
             }
 
             #workspaces button {
+              min-width: 34px;
+              padding: 0 6px;
+              margin: 4px 2px;
+              border-radius: 12px;
               background: transparent;
               color: ${colors.base.fg3};
-              padding: 4px 8px;
-              margin: 2px;
-              border-radius: ${toString colors.radius.medium}px;
-              transition: all 0.3s ease;
+              transition: all ${toString colors.animation.fast}ms cubic-bezier(${colors.animation.bezier.snappy});
             }
 
             #workspaces button:hover {
-              background: ${colors.hexToRgba colors.accent.cyan "0.2"};
-              color: ${colors.accent.cyan};
+              background: ${colors.hexToRgba colors.accent.cyan "0.14"};
+              color: ${colors.accent.cyanLight};
             }
 
             #workspaces button.active {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.cyan "0.3"}, ${colors.hexToRgba colors.accent.violet "0.3"});
-              color: ${colors.accent.cyan};
-              border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.5"};
-              box-shadow: 0 0 15px ${colors.hexToRgba colors.accent.cyan "0.3"};
+              background: linear-gradient(135deg, ${colors.accent.cyanLight}, ${colors.accent.cyan});
+              color: ${colors.base.bg0};
+              box-shadow: 0 10px 20px ${colors.hexToRgba colors.accent.cyan "0.28"};
             }
 
             #workspaces button.urgent {
-              background: ${colors.hexToRgba colors.accent.magenta "0.3"};
-              color: ${colors.accent.magenta};
-              border: 1px solid ${colors.hexToRgba colors.accent.magenta "0.5"};
+              background: ${colors.hexToRgba colors.accent.magenta "0.22"};
+              color: ${colors.accent.magentaLight};
             }
 
-            /* ============================================
-             * WINDOW TITLE
-             * ============================================ */
+            #workspaces button.special {
+              background: ${colors.hexToRgba colors.accent.violet "0.18"};
+              color: ${colors.accent.violetLight};
+            }
+
             #window {
+              min-width: 260px;
+              padding-left: 18px;
+              padding-right: 20px;
               color: ${colors.base.fg2};
-              font-weight: 500;
+              background: linear-gradient(
+                120deg,
+                ${colors.hexToRgba colors.base.bg1 "0.82"},
+                ${colors.hexToRgba colors.base.bg2 "0.58"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.violet "0.18"};
             }
 
             window#waybar.empty #window {
               background: transparent;
-              border: none;
-              padding: 0;
-              margin: 0;
+              border-color: transparent;
+              box-shadow: none;
             }
 
-            /* ============================================
-             * CLOCK
-             * ============================================ */
             #clock {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.base.bg1 "0.9"}, ${colors.hexToRgba colors.base.bg2 "0.8"});
+              min-width: 232px;
+              padding: 0 24px;
               color: ${colors.base.fg0};
-              font-weight: 600;
-              font-size: 14px;
-              padding: 4px 20px;
-              border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.2"};
+              font-size: 15px;
+              font-weight: 700;
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.cyan "0.18"},
+                ${colors.hexToRgba colors.accent.violet "0.20"},
+                ${colors.hexToRgba colors.base.bg2 "0.92"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.28"};
+              box-shadow: 0 16px 30px ${colors.hexToRgba colors.base.bg0 "0.24"},
+                          0 0 22px ${colors.hexToRgba colors.accent.cyan "0.10"};
             }
 
-            #clock:hover {
-              border-color: ${colors.hexToRgba colors.accent.cyan "0.5"};
-              box-shadow: 0 0 25px ${colors.hexToRgba colors.accent.cyan "0.25"};
+            #custom-flake,
+            #custom-actions-tv,
+            #custom-spooknix,
+            #custom-agent-hub {
+              color: ${colors.base.fg0};
             }
 
-            /* ============================================
-             * GPU MODULE
-             * ============================================ */
+            #custom-flake {
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.violet "0.22"},
+                ${colors.hexToRgba colors.base.bg2 "0.86"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.violet "0.30"};
+              color: ${colors.accent.cyanLight};
+            }
+
+            #custom-flake.warning {
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.yellow "0.18"},
+                ${colors.hexToRgba colors.base.bg2 "0.86"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.yellow "0.36"};
+              color: ${colors.accent.yellow};
+            }
+
+            #custom-flake.building {
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.cyan "0.24"},
+                ${colors.hexToRgba colors.accent.violet "0.22"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.48"};
+              color: ${colors.base.fg0};
+              animation: pulse-cyan 1.6s infinite;
+            }
+
+            #custom-actions-tv {
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.blue "0.18"},
+                ${colors.hexToRgba colors.base.bg2 "0.86"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.blue "0.28"};
+              color: ${colors.accent.blue};
+            }
+
+            #custom-actions-tv.healthy {
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.green "0.20"},
+                ${colors.hexToRgba colors.base.bg2 "0.86"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.green "0.32"};
+              color: ${colors.accent.green};
+            }
+
+            #custom-actions-tv.running {
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.yellow "0.18"},
+                ${colors.hexToRgba colors.base.bg2 "0.86"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.yellow "0.34"};
+              color: ${colors.accent.yellow};
+              animation: pulse-amber 1.6s infinite;
+            }
+
+            #custom-actions-tv.failed,
+            #custom-actions-tv.error {
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.magenta "0.22"},
+                ${colors.hexToRgba colors.accent.red "0.14"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.magenta "0.44"};
+              color: ${colors.accent.magentaLight};
+            }
+
+            #custom-actions-tv.idle,
+            #custom-actions-tv.missing {
+              background: linear-gradient(
+                180deg,
+                ${colors.hexToRgba colors.base.bg2 "0.88"},
+                ${colors.hexToRgba colors.base.bg1 "0.74"}
+              );
+              color: ${colors.base.fg2};
+              border-color: ${colors.hexToRgba colors.base.fg0 "0.08"};
+            }
+
+            #custom-spooknix {
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.cyan "0.16"},
+                ${colors.hexToRgba colors.accent.blue "0.18"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.30"};
+              color: ${colors.accent.cyanLight};
+            }
+
+            #custom-spooknix.inactive {
+              background: linear-gradient(
+                180deg,
+                ${colors.hexToRgba colors.base.bg2 "0.88"},
+                ${colors.hexToRgba colors.base.bg1 "0.74"}
+              );
+              border-color: ${colors.hexToRgba colors.base.fg0 "0.06"};
+              color: ${colors.base.fg3};
+            }
+
+            #custom-agent-hub {
+              min-width: 44px;
+              padding: 0 14px;
+              font-size: 16px;
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.violet "0.30"},
+                ${colors.hexToRgba colors.accent.magenta "0.18"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.violet "0.36"};
+              color: ${colors.accent.violetLight};
+            }
+
+            #custom-agent-hub.active {
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.34"};
+              color: ${colors.accent.cyanLight};
+            }
+
+            #custom-agent-hub.thinking {
+              color: ${colors.base.fg0};
+              animation: pulse-magenta 1.3s infinite;
+            }
+
+            #custom-system,
+            #custom-gpu,
+            #custom-disk,
+            #custom-ssh {
+              padding: 0 14px;
+            }
+
+            #custom-system {
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.20"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.cyan "0.58"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
+            }
+
+            #custom-system.warning {
+              border-color: ${colors.hexToRgba colors.accent.yellow "0.34"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.yellow "0.70"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
+              color: ${colors.accent.yellow};
+            }
+
+            #custom-system.critical {
+              border-color: ${colors.hexToRgba colors.accent.red "0.36"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.red "0.72"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
+              color: ${colors.accent.red};
+            }
+
             #custom-gpu {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.green "0.15"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
-              border-color: ${colors.hexToRgba colors.accent.green "0.2"};
+              border-color: ${colors.hexToRgba colors.accent.green "0.20"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.green "0.58"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
             }
 
             #custom-gpu.warning {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.yellow "0.2"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
-              border-color: ${colors.hexToRgba colors.accent.yellow "0.4"};
+              border-color: ${colors.hexToRgba colors.accent.yellow "0.34"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.yellow "0.70"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
               color: ${colors.accent.yellow};
             }
 
             #custom-gpu.critical {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.magenta "0.2"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
-              border-color: ${colors.hexToRgba colors.accent.magenta "0.4"};
-              color: ${colors.accent.magenta};
+              border-color: ${colors.hexToRgba colors.accent.magenta "0.40"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.magenta "0.72"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
+              color: ${colors.accent.magentaLight};
+              animation: pulse-magenta 1.6s infinite;
             }
 
-            #custom-gpu:hover {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.green "0.25"}, ${colors.hexToRgba colors.accent.cyan "0.15"});
-              border-color: ${colors.hexToRgba colors.accent.cyan "0.4"};
+            #custom-gpu.disabled {
+              border-color: ${colors.hexToRgba colors.base.fg0 "0.08"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.base.fg0 "0.16"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
+              color: ${colors.base.fg3};
             }
 
-            /* ============================================
-             * DISK MODULE
-             * ============================================ */
             #custom-disk {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.15"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
-              border-color: ${colors.hexToRgba colors.accent.violet "0.2"};
+              border-color: ${colors.hexToRgba colors.accent.violet "0.20"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.violet "0.62"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
               color: ${colors.accent.violetLight};
             }
 
             #custom-disk.warning {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.yellow "0.2"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
-              border-color: ${colors.hexToRgba colors.accent.yellow "0.4"};
+              border-color: ${colors.hexToRgba colors.accent.yellow "0.34"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.yellow "0.70"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
               color: ${colors.accent.yellow};
             }
 
             #custom-disk.critical {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.magenta "0.2"}, ${colors.hexToRgba colors.base.bg1 "0.8"});
-              border-color: ${colors.hexToRgba colors.accent.magenta "0.4"};
-              color: ${colors.accent.magenta};
+              border-color: ${colors.hexToRgba colors.accent.magenta "0.40"};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.magenta "0.72"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
+              color: ${colors.accent.magentaLight};
             }
 
-            #custom-disk:hover {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.25"}, ${colors.hexToRgba colors.accent.cyan "0.15"});
-              border-color: ${colors.hexToRgba colors.accent.cyan "0.4"};
-            }
-
-            /* ============================================
-             * SSH INDICATOR
-             * ============================================ */
             #custom-ssh {
-              background: ${colors.hexToRgba colors.base.bg1 "0.8"};
               color: ${colors.base.fg3};
             }
 
             #custom-ssh.active {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.cyan "0.2"}, ${colors.hexToRgba colors.accent.violet "0.15"});
-              border-color: ${colors.hexToRgba colors.accent.cyan "0.4"};
-              color: ${colors.accent.cyan};
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.cyan "0.12"},
+                ${colors.hexToRgba colors.accent.violet "0.14"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.30"};
+              color: ${colors.accent.cyanLight};
+              box-shadow: inset 3px 0 0 ${colors.hexToRgba colors.accent.cyan "0.66"},
+                          inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.04"};
             }
 
-            #custom-ssh.active:hover {
-              box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.cyan "0.3"};
+            #network,
+            #bluetooth,
+            #pulseaudio,
+            #battery {
+              padding: 0 12px;
             }
 
-            /* ============================================
-             * NETWORK
-             * ============================================ */
             #network {
-              color: ${colors.accent.green};
+              color: ${colors.accent.cyanLight};
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.18"};
             }
 
             #network.disconnected {
               color: ${colors.accent.red};
-              background: ${colors.hexToRgba colors.accent.red "0.1"};
-              border-color: ${colors.hexToRgba colors.accent.red "0.3"};
+              background: ${colors.hexToRgba colors.accent.red "0.10"};
+              border-color: ${colors.hexToRgba colors.accent.red "0.30"};
             }
 
-            #network.wifi {
-              color: ${colors.accent.cyan};
-            }
-
-            /* ============================================
-             * BLUETOOTH
-             * ============================================ */
             #bluetooth {
               color: ${colors.accent.blue};
             }
@@ -604,160 +832,100 @@ in
               color: ${colors.accent.cyan};
             }
 
-            /* ============================================
-             * AUDIO
-             * ============================================ */
             #pulseaudio {
-              color: ${colors.accent.violet};
+              color: ${colors.accent.violetLight};
             }
 
             #pulseaudio.muted {
               color: ${colors.base.fg3};
-              background: ${colors.hexToRgba colors.base.fg3 "0.1"};
+              background: ${colors.hexToRgba colors.base.fg3 "0.08"};
             }
 
-            /* ============================================
-             * BATTERY
-             * ============================================ */
             #battery {
               color: ${colors.accent.green};
             }
 
             #battery.charging {
-              color: ${colors.accent.cyan};
-              background: ${colors.hexToRgba colors.accent.cyan "0.1"};
-              border-color: ${colors.hexToRgba colors.accent.cyan "0.3"};
+              color: ${colors.accent.cyanLight};
+              background: linear-gradient(
+                135deg,
+                ${colors.hexToRgba colors.accent.cyan "0.16"},
+                ${colors.hexToRgba colors.accent.green "0.14"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.32"};
             }
 
             #battery.warning:not(.charging) {
               color: ${colors.accent.yellow};
-              background: ${colors.hexToRgba colors.accent.yellow "0.1"};
-              border-color: ${colors.hexToRgba colors.accent.yellow "0.3"};
+              background: ${colors.hexToRgba colors.accent.yellow "0.10"};
+              border-color: ${colors.hexToRgba colors.accent.yellow "0.30"};
             }
 
             #battery.critical:not(.charging) {
-              color: ${colors.accent.magenta};
-              background: ${colors.hexToRgba colors.accent.magenta "0.15"};
-              border-color: ${colors.hexToRgba colors.accent.magenta "0.4"};
+              color: ${colors.accent.magentaLight};
+              background: ${colors.hexToRgba colors.accent.magenta "0.14"};
+              border-color: ${colors.hexToRgba colors.accent.magenta "0.36"};
+              animation: pulse-magenta 1.6s infinite;
             }
 
-            /* ============================================
-             * AGENT HUB
-             * ============================================ */
-            #custom-agent-hub {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.2"}, ${colors.hexToRgba colors.accent.magenta "0.1"});
-              border-color: ${colors.hexToRgba colors.accent.violet "0.3"};
-              color: ${colors.accent.violet};
-              font-size: 16px;
-              padding: 4px 12px;
-            }
-
-            #custom-agent-hub.active {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.4"}, ${colors.hexToRgba colors.accent.magenta "0.3"});
-              border-color: ${colors.hexToRgba colors.accent.cyan "0.5"};
-              color: ${colors.accent.cyan};
-              box-shadow: 0 0 15px ${colors.hexToRgba colors.accent.cyan "0.4"};
-            }
-
-            #custom-agent-hub.thinking {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.magenta "0.4"}, ${colors.hexToRgba colors.accent.violet "0.3"});
-              border-color: ${colors.accent.magenta};
-              color: ${colors.base.fg0};
-              animation: agent-thinking 1.5s infinite;
-            }
-
-            @keyframes agent-thinking {
-              0% { box-shadow: 0 0 5px ${colors.hexToRgba colors.accent.magenta "0.3"}; }
-              50% { box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.magenta "0.6"}; }
-              100% { box-shadow: 0 0 5px ${colors.hexToRgba colors.accent.magenta "0.3"}; }
-            }
-
-            #custom-agent-hub:hover {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.violet "0.3"}, ${colors.hexToRgba colors.accent.magenta "0.2"});
-              border-color: ${colors.hexToRgba colors.accent.violet "0.5"};
-              box-shadow: 0 0 20px ${colors.hexToRgba colors.accent.violet "0.3"};
-              color: ${colors.accent.violetLight};
-            }
-
-            /* ============================================
-             * SYSTEM TRAY - PREMIUM REFINED ICONS
-             * ============================================ */
             #tray {
-              padding: 6px 16px;
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.base.bg1 "0.85"}, ${colors.hexToRgba colors.base.bg2 "0.75"});
-              border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.15"};
-              margin-left: 8px; /* Visual separator from other modules */
+              padding: 0 14px;
+              background: linear-gradient(
+                180deg,
+                ${colors.hexToRgba colors.base.bg2 "0.90"},
+                ${colors.hexToRgba colors.base.bg1 "0.80"}
+              );
+              border-color: ${colors.hexToRgba colors.accent.cyan "0.14"};
+              margin-left: 6px;
             }
 
-            #tray:hover {
-              background: linear-gradient(135deg, ${colors.hexToRgba colors.base.bg1 "0.9"}, ${colors.hexToRgba colors.base.bg2 "0.8"});
-              border-color: ${colors.hexToRgba colors.accent.cyan "0.3"};
-              box-shadow: 0 0 15px ${colors.hexToRgba colors.accent.cyan "0.15"},
-                          inset 0 0 10px ${colors.hexToRgba colors.accent.cyan "0.05"};
-            }
-
-            /* Tray icons - individual styling */
             #tray > * {
-              padding: 4px;
-              margin: 0 2px;
-              border-radius: ${toString colors.radius.small}px;
-              transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+              padding: 0 4px;
+              margin: 6px 2px;
+              border-radius: 10px;
+              transition: all ${toString colors.animation.fast}ms cubic-bezier(${colors.animation.bezier.snappy});
             }
 
-            /* Passive icons - subtle but visible */
             #tray > .passive {
-              -gtk-icon-effect: none; /* Remove dim effect for better visibility */
-              opacity: 0.75;
+              -gtk-icon-effect: none;
+              opacity: 0.70;
             }
 
             #tray > .passive:hover {
               opacity: 1;
-              background: ${colors.hexToRgba colors.accent.cyan "0.1"};
-              box-shadow: 0 0 8px ${colors.hexToRgba colors.accent.cyan "0.4"};
+              background: ${colors.hexToRgba colors.accent.cyan "0.10"};
             }
 
-            /* Active icons - prominent with glow */
             #tray > .active {
               background: ${colors.hexToRgba colors.accent.cyan "0.08"};
-              box-shadow: 0 0 6px ${colors.hexToRgba colors.accent.cyan "0.3"};
             }
 
-            #tray > .active:hover {
-              background: ${colors.hexToRgba colors.accent.cyan "0.15"};
-              box-shadow: 0 0 10px ${colors.hexToRgba colors.accent.cyan "0.5"};
-            }
-
-            /* Attention-needed icons - magenta pulse effect */
             #tray > .needs-attention {
               -gtk-icon-effect: highlight;
               background: ${colors.hexToRgba colors.accent.magenta "0.15"};
-              border: 1px solid ${colors.hexToRgba colors.accent.magenta "0.4"};
+              border: 1px solid ${colors.hexToRgba colors.accent.magenta "0.34"};
             }
 
-            /* Tray context menu - glassmorphism */
             #tray menu {
-              background: ${colors.hexToRgba colors.base.bg1 "0.95"};
-              border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.3"};
+              background: ${colors.hexToRgba colors.base.bg1 "0.96"};
+              border: 1px solid ${colors.hexToRgba colors.accent.cyan "0.26"};
               border-radius: ${toString colors.radius.medium}px;
               padding: 6px;
-              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
-                          0 0 20px ${colors.hexToRgba colors.accent.cyan "0.15"};
+              box-shadow: 0 8px 32px ${colors.shadow.dark};
             }
 
             #tray menu menuitem {
               padding: 10px 14px;
               border-radius: ${toString colors.radius.small}px;
-              transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
               margin: 2px 0;
             }
 
             #tray menu menuitem:hover {
-              background: ${colors.hexToRgba colors.accent.cyan "0.2"};
-              box-shadow: 0 0 12px ${colors.hexToRgba colors.accent.cyan "0.2"};
+              background: ${colors.hexToRgba colors.accent.cyan "0.18"};
             }
 
             #tray menu separator {
-              background: ${colors.hexToRgba colors.base.fg0 "0.2"};
+              background: ${colors.hexToRgba colors.base.fg0 "0.16"};
               margin: 4px 8px;
             }
           '';
@@ -868,6 +1036,14 @@ in
 
           # Handle modes
           case "$1" in
+            rebuild)
+              cd "$FLAKE_DIR" && sudo nixos-rebuild switch --flake "$FLAKE_DIR"
+              exit $?
+              ;;
+            check)
+              cd "$FLAKE_DIR" && nix flake check
+              exit $?
+              ;;
             menu)
               show_menu
               exit 0
@@ -994,8 +1170,8 @@ in
             fi
 
             # Format display
-            local text="󰻠 ''${cpu_usage}%  ''${mem_percent}%"
-            [[ $cpu_temp -gt 0 ]] && text+="  ''${cpu_temp}°C"
+            local text="󰻠 ''${cpu_usage}% · 󰍛 ''${mem_percent}%"
+            [[ $cpu_temp -gt 0 ]] && text+=" · 󰔏 ''${cpu_temp}°"
 
             # Build tooltip
             local tooltip="System Resources\n━━━━━━━━━━━━━━━━━━━━━━\n"
@@ -1051,7 +1227,7 @@ in
             fi
 
             # Format display
-            local text="󰋊 ''${used}/''${size} (''${percent})"
+            local text="󰋊 ''${percent}"
 
             # Build tooltip
             local tooltip="Disk Usage (Root)\n━━━━━━━━━━━━━━━━━━━━━━\n"
@@ -1150,7 +1326,7 @@ in
             fi
 
             # Format output
-            local text="󰢮 ''${temp}°C  ''${vram_percent}%  ''${util}%"
+            local text="󰢮 ''${temp}° · ''${util}%"
 
             local tooltip="NVIDIA GPU Status\n━━━━━━━━━━━━━━━━━━━━━━\n"
             tooltip+="󰔏 Temperature: ''${temp}°C\n"

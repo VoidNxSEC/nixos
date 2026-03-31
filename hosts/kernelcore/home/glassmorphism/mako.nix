@@ -132,10 +132,6 @@ in
       [app-name="kitty"]
       border-color=${colors.accent.cyanLight}
 
-      # Zellij notifications
-      [app-name="zellij"]
-      border-color=${colors.accent.cyan}
-
       # System notifications
       [app-name="notify-send"]
       border-color=${colors.accent.violet}
