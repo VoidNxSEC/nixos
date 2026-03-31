@@ -24,6 +24,7 @@
     ./mobile-workspace.nix
 
     # Development & AI
+    ./buildbot-local.nix
     ./mcp-server.nix
     ./github-runner.nix
     ./gitlab-duo/default.nix

@@ -10,42 +10,67 @@ with lib;
 
 let
   cfg = config.kernelcore.ci;
+  hasMaster = cfg.enable && builtins.elem cfg.role [
+    "master"
+    "combined"
+  ];
+  escapePy = lib.escape [
+    "\\"
+    "'"
+  ];
+  workerPasswordExpr =
+    if cfg.worker.passwordFile != null then
+      "open('${escapePy (toString cfg.worker.passwordFile)}', 'r', encoding='utf-8').read().strip()"
+    else
+      "'${escapePy cfg.worker.password}'";
+
+  workerDefinitions = [
+    "worker.Worker('${escapePy cfg.worker.name}', ${workerPasswordExpr})"
+  ];
+
+  factorySteps =
+    optional cfg.jobs.enableFlakeCheck ''
+      steps.ShellCommand(
+        name='flake-check',
+        command=['${pkgs.bash}/bin/bash', '-lc', 'cd /etc/nixos && nix flake check --no-build path:.']
+      )
+    ''
+    ++ map (
+      suite:
+      ''
+        steps.ShellCommand(
+          name='suite-${suite}',
+          command=['${pkgs.bash}/bin/bash', '-lc', 'cd /etc/nixos && nix build -f ./ci-cd/default.nix ${escapeShellArg "testSuites.${suite}"} --print-build-logs']
+        )
+      ''
+    ) cfg.jobs.suites
+    ++ optional cfg.jobs.enableTailscaleSmoke ''
+      steps.ShellCommand(
+        name='tailscale-smoke',
+        command=['${pkgs.bash}/bin/bash', '-lc', 'cd /etc/nixos && nix build -f ./ci-cd/tailscale-integration-test.nix tailscale-service --print-build-logs']
+      )
+    '';
 in
-mkIf cfg.enable {
-  services.buildbot-nix.master = {
+mkIf hasMaster {
+  services.buildbot-master = {
     enable = true;
-    domain = cfg.domain;
-
-    # Web UI port
-    port = 8010;
-
-    # GitHub Integration
-    github = {
-      tokenFile = config.sops.secrets."ci/github_token".path;
-      webhookSecretFile = config.sops.secrets."ci/github_webhook_secret".path;
-
-      # Option 1: Topic-based discovery
-      topic = "nix-ci"; # Repos with this topic get CI automatically
-
-      # Option 2: Explicit repos (uncomment to use)
-      # inputs = [
-      #   "github:VoidNxLabs/swissknife"
-      #   "github:VoidNxLabs/securellm-mcp"
-      #   "github:VoidNxLabs/nixos"
-      # ];
-    };
-
-    # Worker configuration
-    workers = cfg.workers;
-
-    # Build settings
-    buildRetries = 1;
-    evalMaxMemorySize = 4096; # MB for flake evaluation
-
-    # Cachix integration
-    cachix = {
-      name = "marcosfpina";
-      signingKeyFile = config.sops.secrets."ci/cachix_signing_key".path;
-    };
+    title = cfg.title;
+    titleUrl = cfg.titleUrl;
+    buildbotUrl = cfg.buildbotUrl;
+    listenAddress = cfg.listenAddress;
+    port = cfg.port;
+    pbPort = cfg.pbPort;
+    packages = cfg.worker.packages;
+    workers = workerDefinitions;
+    schedulers = [
+      "schedulers.ForceScheduler(name='force-local', builderNames=['local-ci'])"
+    ];
+    builders = [
+      "util.BuilderConfig(name='local-ci', workernames=['${cfg.worker.name}'], factory=factory)"
+    ];
+    factorySteps = factorySteps;
+    extraConfig = ''
+      c['buildbotNetUsageData'] = None
+    '';
   };
 }
