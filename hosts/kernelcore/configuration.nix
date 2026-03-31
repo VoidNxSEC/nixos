@@ -351,7 +351,7 @@
     };
 
     services.github-runner = {
-      enable = true;
+      enable = false;
       useSops = true;
       runnerName = "nixos-self-hosted";
       repoUrl = "https://github.com/VoidNxSEC/nixos";
@@ -369,7 +369,7 @@
     };
 
     services.mobile-workspace = {
-      enable = false;
+      enable = true;
       username = "mobile";
       workspaceDir = "/srv/mobile-workspace";
       enableGitAccess = true;
@@ -405,6 +405,8 @@
       ageKeyFile = "/var/lib/sops-nix/key.txt";
     };
 
+    secrets.ci.enable = true;
+    secrets.certificates.enable = true;
     secrets.gcp-ml.enable = true;
     secrets.aws-bedrock.enable = true;
     secrets.blockchain.enable = true; # Ethereum, IPFS, Arweave secrets
@@ -417,29 +419,6 @@
       enable = true;
       baseDirectory = "/var/lib/ml-models";
     };
-
-    ml.mcp = {
-      enable = true;
-      knowledgeDbPath = "/var/lib/mcp-knowledge/knowledge.db";
-      agents = {
-        roo = {
-          enable = true;
-          projectRoot = "/home/kernelcore/master";
-          configPath = "/home/kernelcore/.roo/mcp.json";
-    secrets.ci.enable = true;
-    secrets.certificates.enable = true;
-          user = "kernelcore";
-        };
-
-        # -----------------------------------------------------------
-        # AGENTES MCP
-        # -----------------------------------------------------------
-        codex = {
-          enable = true;
-          projectRoot = "/home/kernelcore/master";
-          configPath = "/home/kernelcore/.codex/mcp_config.json";
-          user = "kernelcore";
-        };
 
     ci = {
       enable = true;
@@ -457,6 +436,27 @@
         enableTailscaleSmoke = false;
       };
     };
+
+    ml.mcp = {
+      enable = true;
+      knowledgeDbPath = "/var/lib/mcp-knowledge/knowledge.db";
+      agents = {
+        roo = {
+          enable = true;
+          projectRoot = "/home/kernelcore/master";
+          configPath = "/home/kernelcore/.roo/mcp.json";
+          user = "kernelcore";
+        };
+
+        # -----------------------------------------------------------
+        # AGENTES MCP
+        # -----------------------------------------------------------
+        codex = {
+          enable = true;
+          projectRoot = "/home/kernelcore/master";
+          configPath = "/home/kernelcore/.codex/mcp_config.json";
+          user = "kernelcore";
+        };
 
         gemini = {
           enable = true;
@@ -993,7 +993,7 @@
     # SPOOKNIX - Privacy-first STT Engine (Docker container)
     # ═══════════════════════════════════════════════════════════
     spooknix = {
-      enable = true;
+      enable = false;
       model = "large-v3";
       device = "cuda";
       port = 8000;
