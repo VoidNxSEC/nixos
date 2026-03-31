@@ -14,7 +14,7 @@
   imports = [
     ./shell # Modern shell configuration with zsh + powerlevel10k
     ./yazi.nix # Yazi file manager configuration
-    ./alacritty.nix # Alacritty terminal emulator (Zellij integration)
+    ./alacritty.nix # Alacritty terminal emulator
     ./git.nix # Git configuration
     ./tmux.nix # Tmux configuration
     ./flameshot.nix # Screenshot tool (legacy - swappy preferred)
