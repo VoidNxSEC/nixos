@@ -11,6 +11,8 @@
     ./anthropic.nix # reads anthropic.yaml (if exists)
     ./aws-bedrock.nix # reads aws.yaml
     ./blockchain.nix # reads blockchain.yaml (Ethereum, IPFS, Arweave)
+    ./certificates.nix # reads certificates.yaml
+    ./ci.nix # reads ci.yaml
     ./gcp-ml.nix # reads gcp-ml.yaml
     ./gitea.nix # reads gitea.yaml
     ./github.nix # reads github.yaml
