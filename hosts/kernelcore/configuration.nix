@@ -123,8 +123,29 @@
 
       proxy.nginx-tailscale = {
         enable = true;
-        tailnetDomain = "tail-scale.ts.net";
+        hostname = "kernelcore";
+        tailnetDomain = "tailb3b82e.ts.net";
       };
+
+      proxy.nginx-public = {
+        enable = true;
+        services = {
+          gitea = {
+            enable = true;
+            host = "gitea.voidnx.com";
+            upstreamPort = 3000;
+            maxBodySize = "200M";
+          };
+          forgejo = {
+            enable = true;
+            host = "forgejo.voidnx.com";
+            upstreamPort = 3002;
+            maxBodySize = "200M";
+          };
+        };
+      };
+
+      vpn.tailscale.hostname = lib.mkForce "kernelcore";
 
       security.firewall-zones = {
         enable = false;
@@ -881,23 +902,41 @@
     };
 
     gitea-showcase = {
-      enable = false;
-      domain = "git.voidnx.com";
-      httpsPort = 3443;
+      enable = true;
+      domain = "gitea.voidnx.com";
+      rootUrl = "https://gitea.voidnx.com/";
+      listenAddress = "127.0.0.1";
+      httpPort = 3000;
       showcaseProjectsPath = "/home/kernelcore/dev/projects";
-      cloudflare = {
-        enable = true;
-        zoneId = "2e7f7edeb989e58dc7eed3dc4e4b5622";
-        apiTokenFile = "/run/secrets/cloudflare-api-token";
-        updateInterval = "hourly";
-      };
       gitea = {
         adminTokenFile = "/run/secrets/gitea-admin-token";
         autoInitRepos = false;
       };
       autoMirror = {
-        enable = true;
+        enable = false;
         interval = "hourly";
+      };
+    };
+
+    forgejo = {
+      enable = true;
+      settings = {
+        DEFAULT.APP_NAME = "Forgejo";
+        server = {
+          DOMAIN = "forgejo.voidnx.com";
+          ROOT_URL = "https://forgejo.voidnx.com/";
+          HTTP_ADDR = "127.0.0.1";
+          HTTP_PORT = 3002;
+          PROTOCOL = "http";
+          DISABLE_SSH = true;
+          SSH_PORT = 22;
+        };
+        service = {
+          DISABLE_REGISTRATION = true;
+          DEFAULT_KEEP_EMAIL_PRIVATE = true;
+          DEFAULT_ORG_VISIBILITY = "private";
+        };
+        session.COOKIE_SECURE = true;
       };
     };
 
@@ -971,9 +1010,6 @@
   #};
 
   systemd.tmpfiles.rules = [
-    "d /var/lib/gitea/custom/https 0750 gitea gitea -"
-    "L+ /var/lib/gitea/custom/https/localhost.crt - - - - /home/kernelcore/localhost.crt"
-    "L+ /var/lib/gitea/custom/https/localhost.key - - - - /home/kernelcore/localhost.key"
     "d /var/lib/mcp-knowledge 0755 kernelcore users -"
   ];
 
