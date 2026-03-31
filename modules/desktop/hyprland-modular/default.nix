@@ -364,7 +364,7 @@ in
             "none"
           ]
         );
-        default = "zellij";
+        default = "none";
         description = "Terminal multiplexer to auto-attach";
       };
     };
