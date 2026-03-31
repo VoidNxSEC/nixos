@@ -27,6 +27,7 @@
     ./network.nix
     ./pam.nix
     ./ssh.nix
+    ./tls.nix
     ./nix-daemon.nix
     ./packages.nix
     ./keyring.nix
