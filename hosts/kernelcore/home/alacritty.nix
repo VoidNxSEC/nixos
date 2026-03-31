@@ -2,7 +2,7 @@
 # Alacritty Terminal Configuration
 # ============================================
 # Declarative configuration for Alacritty terminal emulator
-# - Optimized for Zellij integration
+# - Optimized for standalone terminal use
 # - Glassmorphism Dark theme with electric accents
 # - Performance tuning for modern systems
 # - URL hints and clipboard integration
@@ -50,7 +50,7 @@
         opacity = 0.94;
         blur = true; # Enable background blur (Wayland/compositor dependent)
         startup_mode = "Maximized";
-        title = "Alacritty + Zellij";
+        title = "Alacritty";
         dynamic_title = true;
 
         # Window class for WM integration
@@ -67,7 +67,7 @@
       # SCROLLING CONFIGURATION
       # ============================================
       scrolling = {
-        history = 50000; # Large history for Zellij scrollback
+        history = 50000; # Large history for terminal scrollback
         multiplier = 3;
       };
 
@@ -259,8 +259,7 @@
         osc52 = "CopyPaste";
 
         # Shell configuration - use user's default shell
-        # Zellij is launched via Hyprland keybindings, not auto-started
-        # This keeps alacritty as a standalone terminal emulator
+        # Keep Alacritty as a standalone terminal emulator
       };
 
       # ============================================
@@ -407,7 +406,7 @@
           {
             # URL detection and opening
             # Fixed: Improved regex to handle localhost ports correctly
-            regex = ''(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\s<>"{}|\\^`\[\]]+'';
+            regex = ''(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\\s<>"{}|\\\\^`\\[\\]]+'';
             hyperlinks = true;
             post_processing = true;
             command = "xdg-open";
