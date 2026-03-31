@@ -114,7 +114,7 @@
     terminal = {
       primary = "kitty";
       secondary = "alacritty";
-      multiplexer = "zellij"; # Auto-attach to zellij sessions
+      multiplexer = "none"; # Launch terminals directly
     };
 
     launcher = "wofi"; # Application launcher (can be wofi/rofi/fuzzel)
@@ -154,10 +154,10 @@
         # TERMINAL VARIANTS
         # ========================================
         # NOTE: Terminal keybindings already provided by 'core' module:
-        #   SUPER+Return          → kitty with zellij (main session)
-        #   SUPER+SHIFT+Return    → alacritty with zellij (alt session)
-        #   SUPER+CTRL+Return     → kitty (no multiplexer)
-        #   SUPER+CTRL+SHIFT+Return → alacritty (no multiplexer)
+        #   SUPER+Return          → kitty
+        #   SUPER+SHIFT+Return    → alacritty
+        #   SUPER+CTRL+Return     → kitty
+        #   SUPER+CTRL+SHIFT+Return → alacritty
         #   SUPER+ALT+Return      → foot (emergency)
         # No need to duplicate here!
 
