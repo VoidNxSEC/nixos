@@ -17,7 +17,7 @@ Features:
 - Intelligent Diff Truncation
 - Pre-flight Health Checks
 
-Version: 2.2.0-clean
+Version: 2.3.0 OG
 License: MIT
 """
 
@@ -493,21 +493,34 @@ class ChainOfThoughtLLM:
             except Exception:
                 return False
 
-    def generate_commit(self, diff_analysis: DiffAnalysis, hint: Optional[str] = None) -> CommitGenerationResult:
-        """Generate a validated commit message and keep thinking separate from final JSON."""
+    def generate_commit(
+        self,
+        diff_analysis: DiffAnalysis,
+        hint: Optional[str] = None,
+        context: Optional[str] = None,
+    ) -> CommitGenerationResult:
+        """Generate a validated commit message.
+
+        If `context` is provided it is injected directly as the reasoning summary,
+        bypassing all native/app reasoning steps (fast-path).
+        """
         for attempt in range(MAX_RETRIES):
             try:
-                reasoning_summary = None
                 model_thinking = None
                 app_reasoning = None
 
-                if self.settings.enable_native_thinking:
+                if context:
+                    # ⚡ Fast-path: user-supplied context, skip all reasoning LLM calls
+                    reasoning_summary: Optional[str] = context
+                elif self.settings.enable_native_thinking:
                     native_reasoning = self._native_reasoning_step(diff_analysis, hint)
                     reasoning_summary = native_reasoning.content
                     model_thinking = native_reasoning.thinking
                 elif self.settings.enable_app_reasoning:
                     app_reasoning = self._app_reasoning_step(diff_analysis, hint)
                     reasoning_summary = app_reasoning
+                else:
+                    reasoning_summary = None
 
                 response = self._generation_step(diff_analysis, reasoning_summary, hint)
                 commit_data = self._parse_json(response.content)
@@ -1009,45 +1022,54 @@ class SmartCommitOrchestrator:
         self.analyzer = GitDiffAnalyzer()
         self.llm = ChainOfThoughtLLM(MODEL_NAME, API_URL, REQUEST_TIMEOUT, settings)
     
-    def run(self, hint: Optional[str] = None) -> None:
+    def run(self, hint: Optional[str] = None, context: Optional[str] = None) -> None:
         self._verify_git_repo()
-        
+
         log.info(f"{Colors.CYAN}🔌 Checking LLM connection...{Colors.ENDC}")
         if not self.llm.check_health():
             log.error(f"{Colors.FAIL}❌ Cannot connect to LLM at {API_URL}{Colors.ENDC}")
             log.info("Please ensure your local inference server (llama.cpp/ollama) is running.")
             sys.exit(1)
-            
+
         self._run_pipeline_check()
         self._scope_guard()
-        
+
         log.info(f"{Colors.CYAN}🔍 Analyzing repository state...{Colors.ENDC}")
         raw_diff = self._get_staged_diff()
-        
+
         if len(raw_diff) > MAX_DIFF_SIZE:
             log.warning(
                 f"{Colors.WARNING}⚠️ Diff is large ({len(raw_diff)} chars). "
                 f"The parser will analyze the full diff, but LLM context will be summarized.{Colors.ENDC}"
             )
-            
-        diff_analysis = self.analyzer.parse_diff(raw_diff)
-        
-        log.info(f"{Colors.GREEN}📈 Analysis complete:{Colors.ENDC} {len(diff_analysis.files_changed)} files, {diff_analysis.change_complexity}")
-        
-        log.info(f"{Colors.CYAN}🤖 Generating commit message...{Colors.ENDC}")
-        generation = self.llm.generate_commit(diff_analysis, hint)
 
-        if self.settings.show_thinking and generation.model_thinking:
-            self._display_text_block("MODEL THINKING", generation.model_thinking, Colors.BLUE)
-        elif self.settings.show_thinking and generation.reasoning_summary:
-            self._display_text_block("REASONING SUMMARY", generation.reasoning_summary, Colors.CYAN)
-        elif self.settings.show_thinking and self.settings.enable_native_thinking:
-            log.warning(
-                f"{Colors.WARNING}Native thinking was enabled, but the backend returned no visible reasoning block.{Colors.ENDC}"
+        diff_analysis = self.analyzer.parse_diff(raw_diff)
+
+        log.info(
+            f"{Colors.GREEN}📈 Analysis complete:{Colors.ENDC} "
+            f"{len(diff_analysis.files_changed)} files, {diff_analysis.change_complexity}"
+        )
+
+        if context:
+            print(
+                f"{Colors.WARNING}⚡ Fast-path: skipping reasoning — using provided context{Colors.ENDC}\n"
+                f"   {Colors.CYAN}{context}{Colors.ENDC}"
             )
 
-        if self.settings.show_thinking and generation.app_reasoning:
-            self._display_text_block("APP REASONING", generation.app_reasoning, Colors.CYAN)
+        log.info(f"{Colors.CYAN}🤖 Generating commit message...{Colors.ENDC}")
+        generation = self.llm.generate_commit(diff_analysis, hint, context=context)
+
+        if not context:
+            if self.settings.show_thinking and generation.model_thinking:
+                self._display_text_block("MODEL THINKING", generation.model_thinking, Colors.BLUE)
+            elif self.settings.show_thinking and generation.reasoning_summary:
+                self._display_text_block("REASONING SUMMARY", generation.reasoning_summary, Colors.CYAN)
+            elif self.settings.show_thinking and self.settings.enable_native_thinking:
+                log.warning(
+                    f"{Colors.WARNING}Native thinking was enabled, but the backend returned no visible reasoning block.{Colors.ENDC}"
+                )
+            if self.settings.show_thinking and generation.app_reasoning:
+                self._display_text_block("APP REASONING", generation.app_reasoning, Colors.CYAN)
 
         self._display_commit(generation.commit)
         self._display_release_notes(diff_analysis, generation.commit)
@@ -1168,8 +1190,28 @@ class SmartCommitOrchestrator:
             log.info(f"{Colors.WARNING}❌ Cancelled{Colors.ENDC}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Smart Commit V2 - Enterprise Edition')
-    parser.add_argument('hint', nargs='?', help='Context hint')
+    parser = argparse.ArgumentParser(
+        description="Smart Commit V2 - Enterprise Edition",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""examples:
+  git-commit-ai                                  # full auto
+  git-commit-ai "refactor templates"             # with intent hint
+  git-commit-ai -c "add streaming to LLM calls" # ⚡ fast-path, skip reasoning
+  git-commit-ai -c "add streaming" "refactor"    # fast-path + hint
+""",
+    )
+    parser.add_argument('hint', nargs='?', help='Intent hint fed to the LLM (optional)')
+    parser.add_argument(
+        '-c', '--context',
+        dest='context',
+        default=None,
+        metavar='TEXT',
+        help=(
+            '⚡ Fast-path: inject your own description of the changes. '
+            'Skips all reasoning LLM calls and sends a single generation request. '
+            'Dramatically reduces latency on large diffs.'
+        ),
+    )
     parser.set_defaults(
         native_thinking=ENABLE_NATIVE_THINKING,
         show_thinking=SHOW_THINKING,
@@ -1190,7 +1232,7 @@ if __name__ == "__main__":
     )
 
     try:
-        SmartCommitOrchestrator(settings).run(args.hint)
+        SmartCommitOrchestrator(settings).run(args.hint, context=args.context)
     except KeyboardInterrupt:
         print("\nInterrupted.")
     except Exception as e:
