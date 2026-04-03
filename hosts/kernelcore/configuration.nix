@@ -837,7 +837,7 @@
       port = 8081;
       n_threads = 12;
       n_threads_batch = 12;
-      n_gpu_layers = 52;
+      n_gpu_layers = 37;
       mainGpu = 1;
       n_parallel = 1;
       n_ctx = 8192;
