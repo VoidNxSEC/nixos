@@ -84,5 +84,11 @@
     "db-up" = "docker compose -f docker-compose.db.yml up -d";
     "db-down" = "docker compose -f docker-compose.db.yml down";
     "db-logs" = "docker compose -f docker-compose.db.yml logs -f";
+
+    # Master workspace stack with all compose profiles enabled
+    "master-up" =
+      "docker compose -f /home/kernelcore/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full up -d --remove-orphans";
+    "master-down" =
+      "docker compose -f /home/kernelcore/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full down --remove-orphans";
   };
 }

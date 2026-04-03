@@ -71,9 +71,6 @@
             extraDomainNames = [ "git.voidnx.com" ];
             reloadServices = [ "nginx.service" ];
           };
-          "forgejo.voidnx.com" = {
-            reloadServices = [ "nginx.service" ];
-          };
         };
       };
 
@@ -134,12 +131,6 @@
             enable = true;
             host = "gitea.voidnx.com";
             upstreamPort = 3000;
-            maxBodySize = "200M";
-          };
-          forgejo = {
-            enable = true;
-            host = "forgejo.voidnx.com";
-            upstreamPort = 3002;
             maxBodySize = "200M";
           };
         };
@@ -453,28 +444,28 @@
         # -----------------------------------------------------------
         codex = {
           enable = true;
-          projectRoot = "/home/kernelcore/master";
+          projectRoot = "/var/lib/codex";
           configPath = "/home/kernelcore/.codex/mcp_config.json";
           user = "kernelcore";
         };
 
         gemini = {
           enable = true;
-          projectRoot = "/home/kernelcore/master";
+          projectRoot = "/var/lib/gemini";
           configPath = "/home/kernelcore/.gemini/mcp_config.json";
           user = "kernelcore";
         };
 
         antigravity = {
           enable = true;
-          projectRoot = "/home/kernelcore/master";
+          projectRoot = "/var/lib/antigravity";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
         };
 
         zed-editor = {
           enable = true;
-          projectRoot = "/home/kernelcore/master";
+          projectRoot = "/var/lib/zed";
           configPath = "/home/kernelcore/.config/zed/mcp_config.json";
           user = "kernelcore";
         };
@@ -515,10 +506,10 @@
 
       profiles = {
         coder = {
-          modelPath = "/var/lib/ml-models/llamacpp/models/L3-8B-Stheno-v3.2-Q4_K_S.gguf";
+          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 47;
-          contextSize = 8192;
+          gpuLayers = 37;
+          contextSize = 4096;
           #n_ctx = 8192;
           #n_batch = 8192;
         };
@@ -623,7 +614,7 @@
     # Dynamic project profiles - switch with: mcp-context profile <name>
     profiles = {
       nixos = {
-        workdir = "/home/kernelcore/master";
+        workdir = "/etc/nixos";
         environment = "production";
         env = {
           PROJECT_NAME = "NixOS Configuration";
@@ -632,7 +623,7 @@
       };
 
       dev = {
-        workdir = "/home/kernelcore/master";
+        workdir = "/home/kernelcore/arch";
         environment = "development";
         env = {
           PROJECT_NAME = "Development";
@@ -641,7 +632,7 @@
       };
 
       gemini = {
-        workdir = "/home/kernelcore/master";
+        workdir = "/var/lib/gemini";
         environment = "development";
         env = {
           PROJECT_NAME = "Gemini Agent";
@@ -650,7 +641,7 @@
       };
 
       codex = {
-        workdir = "/home/kernelcore/master";
+        workdir = "/var/lib/codex";
         environment = "development";
         env = {
           PROJECT_NAME = "Codex";
@@ -920,28 +911,22 @@
 
     forgejo = {
       enable = true;
-      settings = {
-        DEFAULT.APP_NAME = "Forgejo";
-        server = {
-          DOMAIN = "forgejo.voidnx.com";
-          ROOT_URL = "https://forgejo.voidnx.com/";
-          HTTP_ADDR = "127.0.0.1";
-          HTTP_PORT = 3002;
-          PROTOCOL = "http";
-          DISABLE_SSH = true;
-          SSH_PORT = 22;
+      integration = {
+        publicDomain = "forgejo.voidnx.com";
+        publicUrl = "https://forgejo.voidnx.com/";
+        listenPort = 3002;
+        database = {
+          type = "postgres";
+          name = "forgejo";
+          user = "forgejo";
+          createLocally = true;
         };
-        service = {
-          DISABLE_REGISTRATION = true;
-          DEFAULT_KEEP_EMAIL_PRIVATE = true;
-          DEFAULT_ORG_VISIBILITY = "private";
-        };
-        session.COOKIE_SECURE = true;
       };
     };
 
     postgresql = {
-      enable = false;
+      enable = true;
+      enableTCPIP = false;
       ensureDatabases = [ "kernelcore" ];
       ensureUsers = [
         {
@@ -1097,7 +1082,12 @@
       starship
       terraform
       nushell
+      azure-cli
+      ibmcloud-cli
       glab
+      mkdocs
+      cachix
+      python313Packages.mkdocs
       waybackurls
       hakrawler
       python313Packages.pyyaml

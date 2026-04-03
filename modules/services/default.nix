@@ -28,6 +28,7 @@
     ./mcp-server.nix
     ./github-runner.nix
     ./gitlab-duo/default.nix
+    ./forgejo.nix
     ./gitea-showcase.nix # Self-hosted Git with auto-mirror for showcase projects
     # ./firefox-self-hosted.nix
 
