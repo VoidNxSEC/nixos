@@ -708,6 +708,14 @@ JSON:"""
             messages.append({"role": "system", "content": system})
         messages.append({"role": "user", "content": prompt})
 
+        # ── Thinking suppression via assistant prefill ─────────────────────────
+        # The most portable method: inject a pre-closed <think></think> block as
+        # the first assistant token. Works regardless of llama.cpp version or
+        # NixOS build flags, because it operates at the prompt level.
+        # The trailing `{"` biases the model to start JSON output immediately.
+        if disable_thinking:
+            messages.append({"role": "assistant", "content": "<think>\n</think>\n"})
+
         if use_native_thinking is None:
             use_native_thinking = self.settings.enable_native_thinking
 
@@ -865,6 +873,10 @@ JSON:"""
 
             elapsed = time.monotonic() - start_time
             full_content = "".join(content_parts)
+            # When using assistant prefill, the model continues after the prefill
+            # without repeating the opening `{` — prepend it back to form valid JSON.
+            if disable_thinking and full_content.lstrip()[:1] not in ("", "{"):
+                full_content = "{" + full_content
             full_thinking = "".join(thinking_parts) or None
 
             if show_progress:
