@@ -38,6 +38,8 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Literal
 import urllib.request
 import urllib.error
+import http.client
+import urllib.parse
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Configuration
@@ -47,10 +49,14 @@ API_URL = os.environ.get("LLAMACPP_URL", "http://127.0.0.1:8081") + "/v1/chat/co
 MODEL_NAME = os.getenv("LLM_MODEL", "unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf")
 MAX_DIFF_SIZE = 12000  # Increased char limit
 MAX_RETRIES = 3
-REQUEST_TIMEOUT = 30  # Reduced for faster health check
-ENABLE_NATIVE_THINKING = os.getenv("ENABLE_NATIVE_THINKING", "true").lower() == "true"
+REQUEST_TIMEOUT = int(os.getenv("LLM_REQUEST_TIMEOUT", "120"))
+HEALTH_TIMEOUT = int(os.getenv("LLM_HEALTH_TIMEOUT", "3"))
+STATUS_UPDATE_INTERVAL = float(os.getenv("LLM_STATUS_INTERVAL", "5"))
+ENABLE_NATIVE_THINKING = os.getenv("ENABLE_NATIVE_THINKING", "false").lower() == "true"
 SHOW_THINKING = os.getenv("SHOW_THINKING", "true").lower() == "true"
 ENABLE_APP_REASONING = os.getenv("ENABLE_APP_REASONING", os.getenv("ENABLE_COT", "false")).lower() == "true"
+REASONING_MAX_TOKENS = int(os.getenv("REASONING_MAX_TOKENS", "384"))
+GENERATION_MAX_TOKENS = int(os.getenv("GENERATION_MAX_TOKENS", "256"))
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Utilities & Logging
@@ -198,18 +204,21 @@ class LLMSettings:
     enable_native_thinking: bool = ENABLE_NATIVE_THINKING
     show_thinking: bool = SHOW_THINKING
     enable_app_reasoning: bool = ENABLE_APP_REASONING
+    status_update_interval: float = STATUS_UPDATE_INTERVAL
 
 @dataclass
 class LLMCallResult:
     content: str
     thinking: Optional[str] = None
     raw_response: Dict[str, Any] = field(default_factory=dict)
+    elapsed_seconds: float = 0.0
 
 @dataclass
 class CommitGenerationResult:
     commit: CommitMessage
     model_thinking: Optional[str] = None
     app_reasoning: Optional[str] = None
+    reasoning_summary: Optional[str] = None
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Git Diff Analyzer
@@ -449,17 +458,19 @@ class CommitMessageValidator:
 # ═══════════════════════════════════════════════════════════════════════════
 
 class ChainOfThoughtLLM:
-    """Generate commit JSON while optionally surfacing native model thinking."""
-    
+    """Generate commit JSON while keeping reasoning and final output separate."""
+
     THINK_TAG_RE = re.compile(r"<think>(.*?)</think>", re.DOTALL | re.IGNORECASE)
-    
+    JSON_FENCE_RE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.DOTALL | re.IGNORECASE)
+    JSON_INLINE_RE = re.compile(r"(\{[\s\S]*\})")
+
     def __init__(self, model: str, api_url: str, timeout: int, settings: LLMSettings):
         self.model = model
         self.api_url = api_url
         self.timeout = timeout
         self.settings = settings
         self.validator = CommitMessageValidator()
-    
+
     def check_health(self) -> bool:
         """Verify LLM availability."""
         try:
@@ -467,11 +478,17 @@ class ChainOfThoughtLLM:
                 self.api_url.replace("/chat/completions", "/models"),
                 headers={"User-Agent": "SmartCommitV2"}
             )
-            with urllib.request.urlopen(req, timeout=3) as _:
+            with urllib.request.urlopen(req, timeout=HEALTH_TIMEOUT) as _:
                 return True
         except Exception:
             try:
-                self._call_llm("ping", max_tokens=1, use_native_thinking=False)
+                self._call_llm(
+                    "ping",
+                    max_tokens=1,
+                    use_native_thinking=False,
+                    status_label="Health ping",
+                    show_progress=False,
+                )
                 return True
             except Exception:
                 return False
@@ -480,19 +497,28 @@ class ChainOfThoughtLLM:
         """Generate a validated commit message and keep thinking separate from final JSON."""
         for attempt in range(MAX_RETRIES):
             try:
+                reasoning_summary = None
+                model_thinking = None
                 app_reasoning = None
-                if self.settings.enable_app_reasoning:
-                    app_reasoning = self._reasoning_step(diff_analysis, hint)
 
-                response = self._generation_step(diff_analysis, app_reasoning, hint)
+                if self.settings.enable_native_thinking:
+                    native_reasoning = self._native_reasoning_step(diff_analysis, hint)
+                    reasoning_summary = native_reasoning.content
+                    model_thinking = native_reasoning.thinking
+                elif self.settings.enable_app_reasoning:
+                    app_reasoning = self._app_reasoning_step(diff_analysis, hint)
+                    reasoning_summary = app_reasoning
+
+                response = self._generation_step(diff_analysis, reasoning_summary, hint)
                 commit_data = self._parse_json(response.content)
 
                 validation = self.validator.validate_full(commit_data, diff_analysis)
                 if validation.is_valid:
                     return CommitGenerationResult(
                         commit=self._build_commit(commit_data),
-                        model_thinking=response.thinking,
+                        model_thinking=model_thinking,
                         app_reasoning=app_reasoning,
+                        reasoning_summary=reasoning_summary,
                     )
 
                 if attempt < MAX_RETRIES - 1:
@@ -504,55 +530,134 @@ class ChainOfThoughtLLM:
                 time.sleep(1)
 
         raise RuntimeError("Failed to generate valid commit after retries")
-    
-    def _reasoning_step(self, analysis: DiffAnalysis, hint: Optional[str]) -> str:
-        files_summary = self._format_files(analysis.files_changed[:12])
-        prompt = f"""Analyze this git diff.
-CONTEXT: Files: {len(analysis.files_changed)}, Lines: +{analysis.total_additions}/-{analysis.total_deletions}, Patterns: {', '.join(p.value for p in analysis.change_patterns)}
-FILES:
-{files_summary}
+
+    def _native_reasoning_step(self, analysis: DiffAnalysis, hint: Optional[str]) -> LLMCallResult:
+        prompt = f"""Analyze this staged git diff and reason before answering.
+{self._build_prompt_context(analysis)}
 {f"USER HINT: {hint}" if hint else ""}
 
-Determine: 1. Primary intent (feat/fix/refactor) 2. Component/Scope 3. Breaking changes?
-Respond with 3 sentences."""
-        result = self._call_llm(prompt, temperature=0.3, max_tokens=200, use_native_thinking=False)
+After thinking, return exactly 3 concise lines:
+- intent: ...
+- scope: ...
+- risk: ..."""
+        return self._call_llm(
+            prompt,
+            temperature=0.6,
+            max_tokens=REASONING_MAX_TOKENS,
+            use_native_thinking=True,
+            status_label="Native reasoning",
+            show_progress=True,
+        )
+
+    def _app_reasoning_step(self, analysis: DiffAnalysis, hint: Optional[str]) -> str:
+        prompt = f"""Analyze this staged git diff.
+{self._build_prompt_context(analysis)}
+{f"USER HINT: {hint}" if hint else ""}
+
+Respond with exactly 3 concise lines:
+- intent: ...
+- scope: ...
+- risk: ..."""
+        result = self._call_llm(
+            prompt,
+            temperature=0.3,
+            max_tokens=160,
+            use_native_thinking=False,
+            status_label="App reasoning",
+            show_progress=True,
+        )
         return result.content
-    
+
     def _generation_step(
         self,
         analysis: DiffAnalysis,
-        app_reasoning: Optional[str],
+        reasoning_summary: Optional[str],
         hint: Optional[str],
     ) -> LLMCallResult:
         system_prompt = """Generate a JSON commit message.
 RULES:
 1. Format: {"type": "...", "scope": "...", "subject": "...", "body": "...", "semver_bump": "major|minor|patch"}
 2. Type: feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert
-3. Subject: lowercase, imperative, no period, < 72 chars.
-4. Scope: lowercase-kebab-case or null.
-5. Body: detailed explanation.
-6. The final answer must be a single JSON object. If thinking mode is enabled, keep it separate from the final JSON.
+3. Subject: lowercase, imperative, no period, under 72 chars
+4. Scope: lowercase-kebab-case or null
+5. Body: concise but specific
+6. Return only one JSON object and nothing else"""
 
-Example:
-{"type": "fix", "scope": "api", "subject": "handle timeouts gracefully", "body": "Added retry logic.", "semver_bump": "patch"}"""
+        prompt = f"""REASONING SUMMARY:
+{reasoning_summary or "No extra reasoning summary available."}
 
-        reasoning_block = f"APP REASONING: {app_reasoning}\n" if app_reasoning else ""
-        prompt = f"""{reasoning_block}DIFF: +{analysis.total_additions}/-{analysis.total_deletions} lines.
-SCOPES: {', '.join(analysis.affected_scopes)}
-{f"HINT: {hint}" if hint else ""}
+DIFF CONTEXT:
+{self._build_prompt_context(analysis)}
+{f"USER HINT: {hint}" if hint else ""}
+
 Generate JSON:"""
         return self._call_llm(
             prompt,
             system=system_prompt,
             temperature=0.2,
-            max_tokens=400,
+            max_tokens=GENERATION_MAX_TOKENS,
             expect_json=True,
-            use_native_thinking=self.settings.enable_native_thinking,
+            use_native_thinking=False,
+            status_label="Commit JSON generation",
+            show_progress=True,
         )
-    
+
+    def _build_prompt_context(self, analysis: DiffAnalysis) -> str:
+        files_summary = self._format_files(analysis.files_changed[:12])
+        hunk_summary = self._format_hunks(analysis.files_changed[:6])
+        patterns = ", ".join(p.value for p in analysis.change_patterns) or "none"
+        scopes = ", ".join(analysis.affected_scopes) or "unknown"
+        languages = ", ".join(analysis.primary_languages) or "unknown"
+        return (
+            f"FILES CHANGED: {len(analysis.files_changed)}\n"
+            f"LINES: +{analysis.total_additions}/-{analysis.total_deletions}\n"
+            f"COMPLEXITY: {analysis.change_complexity}\n"
+            f"PATTERNS: {patterns}\n"
+            f"SCOPES: {scopes}\n"
+            f"LANGUAGES: {languages}\n"
+            f"FILES:\n{files_summary}\n"
+            f"HUNKS:\n{hunk_summary}"
+        )
+
     def _format_files(self, files: List[FileChange]) -> str:
-        return "\n".join(f"  [{'NEW' if f.is_new else 'MOD'}] {f.path}" for f in files)
-    
+        if not files:
+            return "  - none"
+        lines = []
+        for file_change in files:
+            markers = []
+            if file_change.is_new:
+                markers.append("new")
+            if file_change.is_deleted:
+                markers.append("deleted")
+            if file_change.is_renamed:
+                markers.append("renamed")
+            marker_text = f" ({', '.join(markers)})" if markers else ""
+            lines.append(
+                f"  - {file_change.path} [{file_change.category.value}] "
+                f"+{file_change.additions}/-{file_change.deletions}{marker_text}"
+            )
+        return "\n".join(lines)
+
+    def _format_hunks(self, files: List[FileChange]) -> str:
+        excerpts = []
+        for file_change in files:
+            for hunk in file_change.change_hunks[:2]:
+                preview_lines = []
+                for line in hunk.content.splitlines()[:8]:
+                    compact = re.sub(r"\s+", " ", line).strip()
+                    if compact:
+                        preview_lines.append(compact[:160])
+                if preview_lines:
+                    excerpts.append(
+                        f"  [{file_change.path}] "
+                        + " | ".join(preview_lines)
+                    )
+                if len(excerpts) >= 8:
+                    break
+            if len(excerpts) >= 8:
+                break
+        return "\n".join(excerpts) if excerpts else "  - no representative hunk content"
+
     def _call_llm(
         self,
         prompt: str,
@@ -561,7 +666,10 @@ Generate JSON:"""
         max_tokens: int = 400,
         expect_json: bool = False,
         use_native_thinking: Optional[bool] = None,
+        status_label: str = "LLM request",
+        show_progress: bool = True,
     ) -> LLMCallResult:
+        """Stream the LLM response via SSE, printing thinking tokens in real-time."""
         messages = []
         if system:
             messages.append({"role": "system", "content": system})
@@ -575,19 +683,184 @@ Generate JSON:"""
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
+            "stream": True,
             "chat_template_kwargs": {"enable_thinking": use_native_thinking},
         }
         if expect_json:
             payload["response_format"] = {"type": "json_object"}
 
-        req = urllib.request.Request(
-            self.api_url,
-            data=json.dumps(payload).encode(),
-            headers={"Content-Type": "application/json"},
-        )
-        with urllib.request.urlopen(req, timeout=self.timeout) as res:
-            raw_response = json.loads(res.read().decode())
-        return self._extract_llm_result(raw_response)
+        parsed = urllib.parse.urlparse(self.api_url)
+        host = parsed.hostname
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        path = parsed.path
+        if parsed.query:
+            path += "?" + parsed.query
+
+        start_time = time.monotonic()
+
+        if show_progress:
+            print(
+                f"{Colors.CYAN}◆ {status_label}...{Colors.ENDC}",
+                end="",
+                flush=True,
+            )
+
+        try:
+            conn = http.client.HTTPConnection(host, port, timeout=self.timeout)
+            conn.request(
+                "POST",
+                path,
+                body=json.dumps(payload).encode(),
+                headers={"Content-Type": "application/json"},
+            )
+            response = conn.getresponse()
+            if response.status != 200:
+                body = response.read().decode(errors="replace")
+                raise RuntimeError(f"HTTP {response.status}: {body[:200]}")
+
+            # SSE streaming accumulation
+            content_parts: List[str] = []
+            thinking_parts: List[str] = []
+
+            # Track whether we are currently inside a <think> block
+            in_think_stream = False
+            think_buf = ""
+            content_buf = ""
+
+            # Print a newline after the label so streaming tokens appear cleanly
+            if show_progress:
+                print()  # newline after the label
+                if self.settings.show_thinking:
+                    print(
+                        f"{Colors.BLUE}┌─ thinking ──────────────────────────{Colors.ENDC}"
+                    )
+
+            for raw_line in response:
+                line = raw_line.decode(errors="replace").rstrip()
+                if not line.startswith("data: "):
+                    continue
+                data_str = line[6:].strip()
+                if data_str == "[DONE]":
+                    break
+                try:
+                    chunk = json.loads(data_str)
+                except json.JSONDecodeError:
+                    continue
+
+                delta = (chunk.get("choices") or [{}])[0].get("delta") or {}
+
+                # Native reasoning_content field (some backends)
+                rc = delta.get("reasoning_content") or ""
+                if rc:
+                    thinking_parts.append(rc)
+                    if self.settings.show_thinking:
+                        print(
+                            f"{Colors.BLUE}{rc}{Colors.ENDC}",
+                            end="",
+                            flush=True,
+                        )
+
+                token = delta.get("content") or ""
+                if not token:
+                    continue
+
+                # Handle inline <think>…</think> tags emitted token-by-token
+                for ch in token:
+                    if not in_think_stream:
+                        think_buf += ch
+                        # Check if we just completed <think>
+                        if think_buf.endswith("<think>"):
+                            in_think_stream = True
+                            think_buf = ""
+                            if self.settings.show_thinking and not rc:
+                                print(
+                                    f"{Colors.BLUE}┌─ thinking ──────────────────────────{Colors.ENDC}"
+                                )
+                        elif len(think_buf) > 7:
+                            # flush safe prefix to content
+                            flush_ch = think_buf[:-6]
+                            content_buf += flush_ch
+                            content_parts.append(flush_ch)
+                            think_buf = think_buf[-6:]
+                    else:
+                        # inside think block – look for </think>
+                        think_buf += ch
+                        if think_buf.endswith("</think>"):
+                            captured = think_buf[:-8]
+                            thinking_parts.append(captured)
+                            if self.settings.show_thinking and not rc:
+                                print(
+                                    f"{Colors.BLUE}{captured}{Colors.ENDC}"
+                                )
+                                print(
+                                    f"{Colors.BLUE}└────────────────────────────────────{Colors.ENDC}"
+                                )
+                            in_think_stream = False
+                            think_buf = ""
+                        elif self.settings.show_thinking and not rc:
+                            # stream think token live
+                            print(
+                                f"{Colors.BLUE}{ch}{Colors.ENDC}",
+                                end="",
+                                flush=True,
+                            )
+
+                if not in_think_stream:
+                    # leftover think_buf that didn't match tag – treat as content
+                    if think_buf and not think_buf.startswith("<"):
+                        content_buf += think_buf
+                        content_parts.append(think_buf)
+                        think_buf = ""
+
+            # Close think block if stream ended mid-tag
+            if in_think_stream and think_buf:
+                thinking_parts.append(think_buf)
+                if self.settings.show_thinking:
+                    print(f"{Colors.BLUE}└────────────────────────────────────{Colors.ENDC}")
+
+            # Flush any remaining content buffer
+            if think_buf and not in_think_stream:
+                content_parts.append(think_buf)
+
+            if self.settings.show_thinking and thinking_parts:
+                print()  # clean newline after thinking block
+
+            elapsed = time.monotonic() - start_time
+            full_content = "".join(content_parts)
+            full_thinking = "".join(thinking_parts) or None
+
+            if show_progress:
+                print(
+                    f"{Colors.GREEN}✓ {status_label} done in {elapsed:.1f}s{Colors.ENDC}"
+                )
+
+            # Reconstruct a minimal raw_response for _extract_llm_result compatibility
+            synthetic_response: Dict[str, Any] = {
+                "choices": [{"message": {"content": full_content, "reasoning_content": full_thinking}}]
+            }
+            result = self._extract_llm_result(synthetic_response)
+            result.elapsed_seconds = elapsed
+            return result
+
+        except Exception as e:
+            elapsed = time.monotonic() - start_time
+            if self._is_timeout_error(e):
+                raise TimeoutError(
+                    f"{status_label} timed out after {elapsed:.1f}s (timeout={self.timeout}s)"
+                ) from e
+            raise RuntimeError(f"{status_label} failed after {elapsed:.1f}s: {e}") from e
+        finally:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+    def _is_timeout_error(self, error: Exception) -> bool:
+        if isinstance(error, TimeoutError):
+            return True
+        if isinstance(error, urllib.error.URLError) and isinstance(error.reason, TimeoutError):
+            return True
+        return "timed out" in str(error).lower()
 
     def _extract_llm_result(self, raw_response: Dict[str, Any]) -> LLMCallResult:
         choices = raw_response.get("choices") or []
@@ -661,13 +934,61 @@ Generate JSON:"""
         return self.THINK_TAG_RE.sub("", text).strip()
 
     def _parse_json(self, response: str) -> Dict:
-        response = self._strip_think_blocks(response)
-        response = re.sub(r"```json\s*|\s*```", "", response, flags=re.IGNORECASE).strip()
-        start, end = response.find("{"), response.rfind("}") + 1
-        if start >= 0 and end > start:
-            response = response[start:end]
-        return json.loads(response)
-    
+        cleaned = self._strip_think_blocks(response)
+        cleaned = cleaned.strip()
+
+        for candidate in (cleaned, self._extract_json_candidate(cleaned)):
+            if not candidate:
+                continue
+            try:
+                return json.loads(candidate)
+            except json.JSONDecodeError:
+                continue
+
+        raise ValueError(f"Could not extract valid JSON from LLM response: {cleaned[:240]}")
+
+    def _extract_json_candidate(self, text: str) -> str:
+        fence_match = self.JSON_FENCE_RE.search(text)
+        if fence_match:
+            return fence_match.group(1).strip()
+
+        inline_match = self.JSON_INLINE_RE.search(text)
+        if inline_match:
+            candidate = inline_match.group(1).strip()
+            balanced = self._extract_balanced_json(candidate)
+            if balanced:
+                return balanced
+
+        return self._extract_balanced_json(text)
+
+    def _extract_balanced_json(self, text: str) -> str:
+        start = text.find("{")
+        if start < 0:
+            return ""
+
+        depth = 0
+        in_string = False
+        escaped = False
+        for index, char in enumerate(text[start:], start=start):
+            if escaped:
+                escaped = False
+                continue
+            if char == "\\":
+                escaped = True
+                continue
+            if char == '"':
+                in_string = not in_string
+                continue
+            if in_string:
+                continue
+            if char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+                if depth == 0:
+                    return text[start:index + 1]
+        return ""
+
     def _build_commit(self, data: Dict) -> CommitMessage:
         return CommitMessage(
             type=CommitType(data.get("type", "chore")),
@@ -703,10 +1024,11 @@ class SmartCommitOrchestrator:
         log.info(f"{Colors.CYAN}🔍 Analyzing repository state...{Colors.ENDC}")
         raw_diff = self._get_staged_diff()
         
-        # Truncate if too large
         if len(raw_diff) > MAX_DIFF_SIZE:
-            log.warning(f"{Colors.WARNING}⚠️ Diff too large ({len(raw_diff)} chars), truncating to {MAX_DIFF_SIZE}{Colors.ENDC}")
-            raw_diff = raw_diff[:MAX_DIFF_SIZE] + "\n... (truncated)"
+            log.warning(
+                f"{Colors.WARNING}⚠️ Diff is large ({len(raw_diff)} chars). "
+                f"The parser will analyze the full diff, but LLM context will be summarized.{Colors.ENDC}"
+            )
             
         diff_analysis = self.analyzer.parse_diff(raw_diff)
         
@@ -717,13 +1039,18 @@ class SmartCommitOrchestrator:
 
         if self.settings.show_thinking and generation.model_thinking:
             self._display_text_block("MODEL THINKING", generation.model_thinking, Colors.BLUE)
+        elif self.settings.show_thinking and generation.reasoning_summary:
+            self._display_text_block("REASONING SUMMARY", generation.reasoning_summary, Colors.CYAN)
         elif self.settings.show_thinking and self.settings.enable_native_thinking:
-            log.warning(f"{Colors.WARNING}Native thinking was enabled, but the backend returned no visible reasoning.{Colors.ENDC}")
+            log.warning(
+                f"{Colors.WARNING}Native thinking was enabled, but the backend returned no visible reasoning block.{Colors.ENDC}"
+            )
 
         if self.settings.show_thinking and generation.app_reasoning:
             self._display_text_block("APP REASONING", generation.app_reasoning, Colors.CYAN)
 
         self._display_commit(generation.commit)
+        self._display_release_notes(diff_analysis, generation.commit)
         self._confirm_and_commit(generation.commit)
     
     def _verify_git_repo(self):
@@ -766,18 +1093,63 @@ class SmartCommitOrchestrator:
     
     def _display_commit(self, msg: CommitMessage):
         full = msg.format()
-        print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
-        print(f"{Colors.BOLD}SUGGESTED COMMIT{Colors.ENDC} ({msg.type.value})")
-        print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}")
+        print(f"\n{Colors.HEADER}{'═'*60}{Colors.ENDC}")
+        print(f"{Colors.BOLD}  SUGGESTED COMMIT  ({msg.type.value.upper()})  [semver: {msg.semver_bump}]{Colors.ENDC}")
+        print(f"{Colors.HEADER}{'═'*60}{Colors.ENDC}")
         print(f"{Colors.GREEN}{full}{Colors.ENDC}")
-        print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}\n")
+        print(f"{Colors.HEADER}{'═'*60}{Colors.ENDC}\n")
+
+    def _display_release_notes(self, diff_analysis: DiffAnalysis, msg: CommitMessage) -> None:
+        """Print a professional release-notes block after commit generation."""
+        import datetime
+        date_str = datetime.date.today().isoformat()
+
+        # Build the change list from diff analysis
+        changes: List[str] = []
+        for fc in diff_analysis.files_changed:
+            action = "Add" if fc.is_new else "Remove" if fc.is_deleted else "Update"
+            name = fc.path.split("/")[-1]
+            delta = f"+{fc.additions}/-{fc.deletions}"
+            changes.append(f"  * {action} `{name}` ({fc.category.value}, {delta} lines)")
+
+        # Severity badge
+        semver_color = {
+            "major": Colors.FAIL,
+            "minor": Colors.WARNING,
+            "patch": Colors.GREEN,
+        }.get(msg.semver_bump, Colors.CYAN)
+
+        patterns_str = (
+            ", ".join(p.value for p in diff_analysis.change_patterns)
+            or "general"
+        )
+        scope_str = msg.scope or "global"
+
+        print(f"\n{Colors.CYAN}{'═'*60}{Colors.ENDC}")
+        print(f"{Colors.BOLD}  📋 RELEASE NOTES{Colors.ENDC}")
+        print(f"{Colors.CYAN}{'─'*60}{Colors.ENDC}")
+        print(f"  Date    : {date_str}")
+        print(f"  Scope   : {scope_str}")
+        print(f"  Version : {semver_color}{msg.semver_bump.upper()} bump{Colors.ENDC}")
+        print(f"  Type    : {patterns_str}")
+        print(f"  Files   : {len(diff_analysis.files_changed)} changed  "
+              f"(+{diff_analysis.total_additions} / -{diff_analysis.total_deletions} lines)")
+        print(f"{Colors.CYAN}{'─'*60}{Colors.ENDC}")
+        print(f"  {Colors.BOLD}Changes{Colors.ENDC}")
+        print("\n".join(changes) or "  * (no file-level details)")
+        if msg.body:
+            print(f"{Colors.CYAN}{'─'*60}{Colors.ENDC}")
+            print(f"  {Colors.BOLD}Notes{Colors.ENDC}")
+            for line in msg.body.splitlines():
+                print(f"  {line}")
+        print(f"{Colors.CYAN}{'═'*60}{Colors.ENDC}\n")
 
     def _display_text_block(self, title: str, content: str, color: str):
-        print(f"\n{color}{'=' * 60}{Colors.ENDC}")
-        print(f"{Colors.BOLD}{title}{Colors.ENDC}")
-        print(f"{color}{'=' * 60}{Colors.ENDC}")
+        print(f"\n{color}{'═' * 60}{Colors.ENDC}")
+        print(f"{Colors.BOLD}  {title}{Colors.ENDC}")
+        print(f"{color}{'─' * 60}{Colors.ENDC}")
         print(content)
-        print(f"{color}{'=' * 60}{Colors.ENDC}\n")
+        print(f"{color}{'═' * 60}{Colors.ENDC}\n")
     
     def _confirm_and_commit(self, msg: CommitMessage):
         choice = input(f"{Colors.BOLD}Commit? [Y/n/e(dit)]: {Colors.ENDC}").lower()
