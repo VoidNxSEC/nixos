@@ -508,8 +508,8 @@
         coder = {
           modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 37;
-          contextSize = 4096;
+          gpuLayers = 30;
+          contextSize = 8192;
           #n_ctx = 8192;
           #n_batch = 8192;
         };
