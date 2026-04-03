@@ -850,6 +850,7 @@
       continuousBatching = true;
       speculativeDecoding.enable = false;
       metricsEndpoint = true;
+      embeddings = true;
     };
 
     # TabbyAPI - OpenAI-compatible Inference Server
