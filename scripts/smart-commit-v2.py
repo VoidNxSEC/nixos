@@ -17,7 +17,7 @@ Features:
 - Intelligent Diff Truncation
 - Pre-flight Health Checks
 
-Version: 2.1.0-enterprise
+Version: 2.2.0-clean
 License: MIT
 """
 
@@ -48,7 +48,9 @@ MODEL_NAME = os.getenv("LLM_MODEL", "unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_Deep
 MAX_DIFF_SIZE = 12000  # Increased char limit
 MAX_RETRIES = 3
 REQUEST_TIMEOUT = 30  # Reduced for faster health check
-ENABLE_CHAIN_OF_THOUGHT = os.getenv("ENABLE_COT", "true").lower() == "true"
+ENABLE_NATIVE_THINKING = os.getenv("ENABLE_NATIVE_THINKING", "true").lower() == "true"
+SHOW_THINKING = os.getenv("SHOW_THINKING", "true").lower() == "true"
+ENABLE_APP_REASONING = os.getenv("ENABLE_APP_REASONING", os.getenv("ENABLE_COT", "false")).lower() == "true"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Utilities & Logging
@@ -173,10 +175,11 @@ class CommitMessage:
         header = f"{self.type.value}"
         if self.scope:
             header += f"({self.scope})"
-        header += f": {self.subject}"
         
         if self.breaking:
             header += "!"
+
+        header += f": {self.subject}"
         
         full_msg = header
         if self.body:
@@ -189,6 +192,24 @@ class CommitMessage:
             full_msg += f"\n\nRefs: #{issue_id}"
         
         return full_msg
+
+@dataclass
+class LLMSettings:
+    enable_native_thinking: bool = ENABLE_NATIVE_THINKING
+    show_thinking: bool = SHOW_THINKING
+    enable_app_reasoning: bool = ENABLE_APP_REASONING
+
+@dataclass
+class LLMCallResult:
+    content: str
+    thinking: Optional[str] = None
+    raw_response: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass
+class CommitGenerationResult:
+    commit: CommitMessage
+    model_thinking: Optional[str] = None
+    app_reasoning: Optional[str] = None
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Git Diff Analyzer
@@ -424,60 +445,64 @@ class CommitMessageValidator:
         return warnings
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Chain-of-Thought LLM Generator
+# LLM Generator
 # ═══════════════════════════════════════════════════════════════════════════
 
 class ChainOfThoughtLLM:
-    """Multi-step reasoning for superior context understanding."""
+    """Generate commit JSON while optionally surfacing native model thinking."""
     
-    def __init__(self, model: str, api_url: str, timeout: int):
+    THINK_TAG_RE = re.compile(r"<think>(.*?)</think>", re.DOTALL | re.IGNORECASE)
+    
+    def __init__(self, model: str, api_url: str, timeout: int, settings: LLMSettings):
         self.model = model
         self.api_url = api_url
         self.timeout = timeout
+        self.settings = settings
         self.validator = CommitMessageValidator()
     
     def check_health(self) -> bool:
         """Verify LLM availability."""
         try:
-            # Just verify we can reach the server, don't need a full completion
             req = urllib.request.Request(
                 self.api_url.replace("/chat/completions", "/models"),
-                headers={'User-Agent': 'SmartCommitV2'}
+                headers={"User-Agent": "SmartCommitV2"}
             )
             with urllib.request.urlopen(req, timeout=3) as _:
                 return True
         except Exception:
-            # Try a very cheap completion if models endpoint fails
             try:
-                self._call_llm("ping", max_tokens=1)
+                self._call_llm("ping", max_tokens=1, use_native_thinking=False)
                 return True
             except Exception:
                 return False
 
-    def generate_with_cot(self, diff_analysis: DiffAnalysis, hint: Optional[str] = None) -> CommitMessage:
-        """Generate commit with chain-of-thought reasoning."""
-        
+    def generate_commit(self, diff_analysis: DiffAnalysis, hint: Optional[str] = None) -> CommitGenerationResult:
+        """Generate a validated commit message and keep thinking separate from final JSON."""
         for attempt in range(MAX_RETRIES):
             try:
-                reasoning = self._reasoning_step(diff_analysis, hint)
-                if ENABLE_CHAIN_OF_THOUGHT:
-                    log.info(f"{Colors.BLUE}🧠 CoT Reasoning:{Colors.ENDC} {reasoning[:120]}...")
-                
-                response = self._generation_step(diff_analysis, reasoning, hint)
-                commit_data = self._parse_json(response)
-                
+                app_reasoning = None
+                if self.settings.enable_app_reasoning:
+                    app_reasoning = self._reasoning_step(diff_analysis, hint)
+
+                response = self._generation_step(diff_analysis, app_reasoning, hint)
+                commit_data = self._parse_json(response.content)
+
                 validation = self.validator.validate_full(commit_data, diff_analysis)
                 if validation.is_valid:
-                    return self._build_commit(commit_data)
-                
+                    return CommitGenerationResult(
+                        commit=self._build_commit(commit_data),
+                        model_thinking=response.thinking,
+                        app_reasoning=app_reasoning,
+                    )
+
                 if attempt < MAX_RETRIES - 1:
-                    log.warning(f"{Colors.WARNING}Validation failed (attempt {attempt+1}), retrying...{Colors.ENDC}")
-                    diff_analysis.reasoning_context['validation_errors'] = [e.message for e in validation.errors]
-            
+                    log.warning(f"{Colors.WARNING}Validation failed (attempt {attempt + 1}), retrying...{Colors.ENDC}")
+                    diff_analysis.reasoning_context["validation_errors"] = [e.message for e in validation.errors]
+
             except Exception as e:
-                log.warning(f"{Colors.WARNING}Attempt {attempt+1} failed: {e}{Colors.ENDC}")
+                log.warning(f"{Colors.WARNING}Attempt {attempt + 1} failed: {e}{Colors.ENDC}")
                 time.sleep(1)
-        
+
         raise RuntimeError("Failed to generate valid commit after retries")
     
     def _reasoning_step(self, analysis: DiffAnalysis, hint: Optional[str]) -> str:
@@ -490,9 +515,15 @@ FILES:
 
 Determine: 1. Primary intent (feat/fix/refactor) 2. Component/Scope 3. Breaking changes?
 Respond with 3 sentences."""
-        return self._call_llm(prompt, temperature=0.3, max_tokens=200)
+        result = self._call_llm(prompt, temperature=0.3, max_tokens=200, use_native_thinking=False)
+        return result.content
     
-    def _generation_step(self, analysis: DiffAnalysis, reasoning: str, hint: Optional[str]) -> str:
+    def _generation_step(
+        self,
+        analysis: DiffAnalysis,
+        app_reasoning: Optional[str],
+        hint: Optional[str],
+    ) -> LLMCallResult:
         system_prompt = """Generate a JSON commit message.
 RULES:
 1. Format: {"type": "...", "scope": "...", "subject": "...", "body": "...", "semver_bump": "major|minor|patch"}
@@ -500,55 +531,151 @@ RULES:
 3. Subject: lowercase, imperative, no period, < 72 chars.
 4. Scope: lowercase-kebab-case or null.
 5. Body: detailed explanation.
+6. The final answer must be a single JSON object. If thinking mode is enabled, keep it separate from the final JSON.
 
 Example:
 {"type": "fix", "scope": "api", "subject": "handle timeouts gracefully", "body": "Added retry logic.", "semver_bump": "patch"}"""
-        
-        prompt = f"""REASONING: {reasoning}
-DIFF: +{analysis.total_additions}/-{analysis.total_deletions} lines.
+
+        reasoning_block = f"APP REASONING: {app_reasoning}\n" if app_reasoning else ""
+        prompt = f"""{reasoning_block}DIFF: +{analysis.total_additions}/-{analysis.total_deletions} lines.
+SCOPES: {', '.join(analysis.affected_scopes)}
 {f"HINT: {hint}" if hint else ""}
 Generate JSON:"""
-        return self._call_llm(prompt, system=system_prompt, temperature=0.2, max_tokens=400)
+        return self._call_llm(
+            prompt,
+            system=system_prompt,
+            temperature=0.2,
+            max_tokens=400,
+            expect_json=True,
+            use_native_thinking=self.settings.enable_native_thinking,
+        )
     
     def _format_files(self, files: List[FileChange]) -> str:
-        return "\n".join([f"  [{'NEW' if f.is_new else 'MOD'}] {f.path}" for f in files])
+        return "\n".join(f"  [{'NEW' if f.is_new else 'MOD'}] {f.path}" for f in files)
     
-    def _call_llm(self, prompt: str, system: Optional[str] = None, temperature: float = 0.2, max_tokens: int = 400) -> str:
+    def _call_llm(
+        self,
+        prompt: str,
+        system: Optional[str] = None,
+        temperature: float = 0.2,
+        max_tokens: int = 400,
+        expect_json: bool = False,
+        use_native_thinking: Optional[bool] = None,
+    ) -> LLMCallResult:
         messages = []
-        if system: messages.append({"role": "system", "content": system})
+        if system:
+            messages.append({"role": "system", "content": system})
         messages.append({"role": "user", "content": prompt})
-        
-        payload = {
+
+        if use_native_thinking is None:
+            use_native_thinking = self.settings.enable_native_thinking
+
+        payload: Dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
-            "chat_template_kwargs": {"enable_thinking": False},  # desativa thinking nativo do modelo (evita double CoT)
-            "response_format": {"type": "json_object"} if "JSON" in prompt else {}
+            "chat_template_kwargs": {"enable_thinking": use_native_thinking},
         }
-        
+        if expect_json:
+            payload["response_format"] = {"type": "json_object"}
+
         req = urllib.request.Request(
             self.api_url,
             data=json.dumps(payload).encode(),
-            headers={'Content-Type': 'application/json'}
+            headers={"Content-Type": "application/json"},
         )
         with urllib.request.urlopen(req, timeout=self.timeout) as res:
-            return json.loads(res.read().decode())['choices'][0]['message']['content']
-    
+            raw_response = json.loads(res.read().decode())
+        return self._extract_llm_result(raw_response)
+
+    def _extract_llm_result(self, raw_response: Dict[str, Any]) -> LLMCallResult:
+        choices = raw_response.get("choices") or []
+        if not choices:
+            raise ValueError("LLM response missing choices")
+
+        choice = choices[0]
+        message = choice.get("message") or {}
+        content = self._coerce_text(message.get("content"))
+        thinking = self._extract_reasoning(raw_response, choice, message, content)
+        clean_content = self._strip_think_blocks(content)
+
+        return LLMCallResult(
+            content=clean_content or content,
+            thinking=thinking,
+            raw_response=raw_response,
+        )
+
+    def _extract_reasoning(
+        self,
+        raw_response: Dict[str, Any],
+        choice: Dict[str, Any],
+        message: Dict[str, Any],
+        content: str,
+    ) -> Optional[str]:
+        candidates = [
+            message.get("reasoning_content"),
+            message.get("reasoning"),
+            choice.get("reasoning_content"),
+            choice.get("reasoning"),
+            raw_response.get("reasoning_content"),
+            raw_response.get("reasoning"),
+        ]
+
+        reasoning_parts: List[str] = []
+        seen = set()
+        for candidate in candidates:
+            text = self._coerce_text(candidate)
+            if text and text not in seen:
+                reasoning_parts.append(text)
+                seen.add(text)
+
+        think_block = self._extract_think_blocks(content)
+        if think_block and think_block not in seen:
+            reasoning_parts.append(think_block)
+
+        return "\n\n".join(reasoning_parts) if reasoning_parts else None
+
+    def _coerce_text(self, value: Any) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            return value.strip()
+        if isinstance(value, list):
+            parts = []
+            for item in value:
+                if isinstance(item, str):
+                    parts.append(item)
+                elif isinstance(item, dict):
+                    text = item.get("text") or item.get("content") or ""
+                    if text:
+                        parts.append(str(text))
+            return "\n".join(part.strip() for part in parts if part).strip()
+        return str(value).strip()
+
+    def _extract_think_blocks(self, text: str) -> str:
+        matches = [match.strip() for match in self.THINK_TAG_RE.findall(text) if match.strip()]
+        return "\n\n".join(matches)
+
+    def _strip_think_blocks(self, text: str) -> str:
+        return self.THINK_TAG_RE.sub("", text).strip()
+
     def _parse_json(self, response: str) -> Dict:
-        response = re.sub(r'```json\s*|\s*```', '', response, flags=re.IGNORECASE).strip()
+        response = self._strip_think_blocks(response)
+        response = re.sub(r"```json\s*|\s*```", "", response, flags=re.IGNORECASE).strip()
         start, end = response.find("{"), response.rfind("}") + 1
-        if start >= 0 and end > start: response = response[start:end]
+        if start >= 0 and end > start:
+            response = response[start:end]
         return json.loads(response)
     
     def _build_commit(self, data: Dict) -> CommitMessage:
         return CommitMessage(
-            type=CommitType(data.get('type', 'chore')),
-            scope=data.get('scope') or None,
-            subject=data.get('subject', 'update code'),
-            body=data.get('body', ''),
-            breaking=data.get('breaking', False),
-            semver_bump=data.get('semver_bump', 'patch')
+            type=CommitType(data.get("type", "chore")),
+            scope=data.get("scope") or None,
+            subject=data.get("subject", "update code"),
+            body=data.get("body", ""),
+            breaking=data.get("breaking", False),
+            semver_bump=data.get("semver_bump", "patch"),
         )
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -556,9 +683,10 @@ Generate JSON:"""
 # ═══════════════════════════════════════════════════════════════════════════
 
 class SmartCommitOrchestrator:
-    def __init__(self):
+    def __init__(self, settings: LLMSettings):
+        self.settings = settings
         self.analyzer = GitDiffAnalyzer()
-        self.llm = ChainOfThoughtLLM(MODEL_NAME, API_URL, REQUEST_TIMEOUT)
+        self.llm = ChainOfThoughtLLM(MODEL_NAME, API_URL, REQUEST_TIMEOUT, settings)
     
     def run(self, hint: Optional[str] = None) -> None:
         self._verify_git_repo()
@@ -585,10 +713,18 @@ class SmartCommitOrchestrator:
         log.info(f"{Colors.GREEN}📈 Analysis complete:{Colors.ENDC} {len(diff_analysis.files_changed)} files, {diff_analysis.change_complexity}")
         
         log.info(f"{Colors.CYAN}🤖 Generating commit message...{Colors.ENDC}")
-        commit_msg = self.llm.generate_with_cot(diff_analysis, hint)
-        
-        self._display_commit(commit_msg)
-        self._confirm_and_commit(commit_msg)
+        generation = self.llm.generate_commit(diff_analysis, hint)
+
+        if self.settings.show_thinking and generation.model_thinking:
+            self._display_text_block("MODEL THINKING", generation.model_thinking, Colors.BLUE)
+        elif self.settings.show_thinking and self.settings.enable_native_thinking:
+            log.warning(f"{Colors.WARNING}Native thinking was enabled, but the backend returned no visible reasoning.{Colors.ENDC}")
+
+        if self.settings.show_thinking and generation.app_reasoning:
+            self._display_text_block("APP REASONING", generation.app_reasoning, Colors.CYAN)
+
+        self._display_commit(generation.commit)
+        self._confirm_and_commit(generation.commit)
     
     def _verify_git_repo(self):
         if not Path(".git").exists():
@@ -635,6 +771,13 @@ class SmartCommitOrchestrator:
         print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}")
         print(f"{Colors.GREEN}{full}{Colors.ENDC}")
         print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}\n")
+
+    def _display_text_block(self, title: str, content: str, color: str):
+        print(f"\n{color}{'=' * 60}{Colors.ENDC}")
+        print(f"{Colors.BOLD}{title}{Colors.ENDC}")
+        print(f"{color}{'=' * 60}{Colors.ENDC}")
+        print(content)
+        print(f"{color}{'=' * 60}{Colors.ENDC}\n")
     
     def _confirm_and_commit(self, msg: CommitMessage):
         choice = input(f"{Colors.BOLD}Commit? [Y/n/e(dit)]: {Colors.ENDC}").lower()
@@ -655,13 +798,27 @@ class SmartCommitOrchestrator:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Smart Commit V2 - Enterprise Edition')
     parser.add_argument('hint', nargs='?', help='Context hint')
-    parser.add_argument('--no-cot', action='store_true', help='Disable Chain-of-Thought')
+    parser.set_defaults(
+        native_thinking=ENABLE_NATIVE_THINKING,
+        show_thinking=SHOW_THINKING,
+        app_reasoning=ENABLE_APP_REASONING,
+    )
+    parser.add_argument('--native-thinking', dest='native_thinking', action='store_true', help='Enable native model thinking')
+    parser.add_argument('--no-native-thinking', dest='native_thinking', action='store_false', help='Disable native model thinking')
+    parser.add_argument('--show-thinking', dest='show_thinking', action='store_true', help='Print model thinking in the terminal')
+    parser.add_argument('--hide-thinking', dest='show_thinking', action='store_false', help='Hide thinking output in the terminal')
+    parser.add_argument('--app-reasoning', dest='app_reasoning', action='store_true', help='Run an extra reasoning pass before generating JSON')
+    parser.add_argument('--no-cot', dest='app_reasoning', action='store_false', help='Disable the extra reasoning pass')
     args = parser.parse_args()
-    
-    if args.no_cot: ENABLE_CHAIN_OF_THOUGHT = False
-    
+
+    settings = LLMSettings(
+        enable_native_thinking=args.native_thinking,
+        show_thinking=args.show_thinking,
+        enable_app_reasoning=args.app_reasoning,
+    )
+
     try:
-        SmartCommitOrchestrator().run(args.hint)
+        SmartCommitOrchestrator(settings).run(args.hint)
     except KeyboardInterrupt:
         print("\nInterrupted.")
     except Exception as e:
