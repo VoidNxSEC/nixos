@@ -274,6 +274,14 @@ in
       description = "Enable /metrics endpoint for Prometheus.";
     };
 
+    embeddings = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Enable embeddings support in llama-server via --embeddings.
+      '';
+    };
+
     extraFlags = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -349,6 +357,8 @@ in
           ++ lib.optionals (cfg.apiKey != null) [ "--api-key ${cfg.apiKey}" ]
           # Metrics
           ++ lib.optionals cfg.metricsEndpoint [ "--metrics" ]
+          # Embeddings
+          ++ lib.optionals cfg.embeddings [ "--embeddings" ]
           # Disable web UI for server-only mode
           #++ [ "--no-webui" ]
           # Extra flags
