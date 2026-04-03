@@ -522,7 +522,12 @@ class ChainOfThoughtLLM:
                 else:
                     reasoning_summary = None
 
-                response = self._generation_step(diff_analysis, reasoning_summary, hint)
+                response = self._generation_step(
+                    diff_analysis,
+                    reasoning_summary,
+                    hint,
+                    disable_thinking=context is not None,
+                )
                 commit_data = self._parse_json(response.content)
 
                 validation = self.validator.validate_full(commit_data, diff_analysis)
@@ -586,8 +591,21 @@ Respond with exactly 3 concise lines:
         analysis: DiffAnalysis,
         reasoning_summary: Optional[str],
         hint: Optional[str],
+        disable_thinking: bool = False,
     ) -> LLMCallResult:
-        system_prompt = """Generate a JSON commit message.
+        if disable_thinking:
+            system_prompt = (
+                "You are a JSON-only commit message generator.\n"
+                "OUTPUT RULES (STRICT):\n"
+                "- Respond with ONE JSON object, nothing else\n"
+                "- No thinking, no preamble, no markdown fences\n"
+                '- Format: {"type":"...","scope":"...","subject":"...","body":"...","semver_bump":"major|minor|patch"}\n'
+                "- Type: feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert\n"
+                "- Subject: lowercase imperative verb, no period, max 72 chars\n"
+                "- Scope: kebab-case or null"
+            )
+        else:
+            system_prompt = """Generate a JSON commit message.
 RULES:
 1. Format: {"type": "...", "scope": "...", "subject": "...", "body": "...", "semver_bump": "major|minor|patch"}
 2. Type: feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert
@@ -596,21 +614,22 @@ RULES:
 5. Body: concise but specific
 6. Return only one JSON object and nothing else"""
 
-        prompt = f"""REASONING SUMMARY:
-{reasoning_summary or "No extra reasoning summary available."}
+        prompt = f"""CONTEXT:
+{reasoning_summary or "No extra context available."}
 
 DIFF CONTEXT:
 {self._build_prompt_context(analysis)}
 {f"USER HINT: {hint}" if hint else ""}
 
-Generate JSON:"""
+JSON:"""
         return self._call_llm(
             prompt,
             system=system_prompt,
-            temperature=0.2,
+            temperature=0.0 if disable_thinking else 0.2,
             max_tokens=GENERATION_MAX_TOKENS,
             expect_json=True,
             use_native_thinking=False,
+            disable_thinking=disable_thinking,
             status_label="Commit JSON generation",
             show_progress=True,
         )
@@ -679,6 +698,7 @@ Generate JSON:"""
         max_tokens: int = 400,
         expect_json: bool = False,
         use_native_thinking: Optional[bool] = None,
+        disable_thinking: bool = False,
         status_label: str = "LLM request",
         show_progress: bool = True,
     ) -> LLMCallResult:
@@ -691,14 +711,19 @@ Generate JSON:"""
         if use_native_thinking is None:
             use_native_thinking = self.settings.enable_native_thinking
 
+        # When thinking must be suppressed, hit it from multiple angles:
+        # 1. chat_template_kwargs (Qwen3 /no_think token via llama.cpp template)
+        # 2. thinking field (some llama.cpp builds honour budget_tokens=0)
         payload: Dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
             "stream": True,
-            "chat_template_kwargs": {"enable_thinking": use_native_thinking},
+            "chat_template_kwargs": {"enable_thinking": use_native_thinking and not disable_thinking},
         }
+        if disable_thinking or not use_native_thinking:
+            payload["thinking"] = {"type": "disabled", "budget_tokens": 0}
         if expect_json:
             payload["response_format"] = {"type": "json_object"}
 
