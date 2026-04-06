@@ -30,12 +30,12 @@ on:
     branches: [ main, develop ]
 
 env:
-  CACHIX_NAME: kernelcore
+  CACHIX_NAME: ${{ vars.CACHIX_CACHE_NAME }}
 
 jobs:
   format-check:
     name: Check Formatting
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     steps:
 
       - name: Checkout
@@ -77,7 +77,7 @@ jobs:
 
   flake-check:
     name: Validate Flake
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     steps:
 
       - name: Checkout
@@ -117,7 +117,7 @@ jobs:
 
   build-test:
     name: Build Test
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     needs: [format-check, flake-check]
     steps:
 
@@ -166,7 +166,7 @@ jobs:
 
   security-scan:
     name: Security Scan
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     needs: build-test
     continue-on-error: true
     steps:
@@ -210,7 +210,7 @@ jobs:
 
   summary:
     name: PR Summary
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     needs: [format-check, flake-check, build-test, security-scan]
     if: always()
     steps:
