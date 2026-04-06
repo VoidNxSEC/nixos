@@ -165,7 +165,7 @@
 
     applications.zellij.enable = false;
 
-    packages.claude.enable = false; # usando nix run github:sadjow/claude-code-nix
+    packages.claude.enable = true;
     packages.zellij.enable = false;
     packages.lynis.enable = true;
     packages.js.enable = false;
