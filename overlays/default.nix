@@ -2,13 +2,13 @@
 # Each overlay is imported from a separate file for better organization
 [
   # libcanberra patch URL fix (0pointer.net cgit returns HTML, use GitHub mirror)
-  (import ./libcanberra-patch-fix.nix)
+  #(import ./libcanberra-patch-fix.nix)
 
   # weston patch hash fix (GitLab serves different content for commit patch URL)
-  (import ./weston-patch-fix.nix)
+  #(import ./weston-patch-fix.nix)
 
   # Python package fixes (test failures, resource issues)
-  (import ./python-packages.nix)
+  #(import ./python-packages.nix)
   # (import ./python-tests-fix.nix) # Merged into python-packages.nix to avoid global rebuilds
 
   # Add more overlays here as needed:
