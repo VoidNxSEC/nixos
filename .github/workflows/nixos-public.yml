@@ -118,7 +118,7 @@ jobs:
       - name: Verify Health
         run: |
           systemctl is-system-running
-          
+
       - name: Cleanup Secrets
         if: always()
         run: rm -f ~/.config/sops/age/keys.txt
