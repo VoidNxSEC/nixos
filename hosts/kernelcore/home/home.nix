@@ -175,7 +175,7 @@
       # Browser Fleet
       # ─────────────────────────────────────────────────────
       vivaldi
-      chromium
+      #chromium
 
       # ─────────────────────────────────────────────────────
       # Communication Channels
@@ -269,7 +269,7 @@
 
     # ── Spooknix — STT systray GUI ──────────────────────────────────────────
     spooknix = {
-      enable = false;
+      enable = true;
       serverUrl = "http://localhost:8000";
       sourcePath = "/home/kernelcore/master/spooknix";
       model = "large-v3";
@@ -281,7 +281,7 @@
     };
 
     actionsTv = {
-      enable = true;
+      enable = false;
       pollInterval = 30;
       waybar.enable = true;
       ui.terminalCommand = "${pkgs.alacritty}/bin/alacritty -e";

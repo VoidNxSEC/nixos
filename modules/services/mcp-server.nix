@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -69,7 +70,7 @@ in
 
     package = mkOption {
       type = types.package;
-      default = pkgs.securellm-mcp or (throw "securellm-mcp package not found in pkgs");
+      default = inputs.securellm-mcp.packages.${pkgs.system}.default;
       description = "The SecureLLM MCP package to use";
     };
 
