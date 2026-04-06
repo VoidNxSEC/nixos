@@ -10,30 +10,31 @@ with lib;
 
 let
   cfg = config.kernelcore.ci;
-  hasWorker = cfg.enable && builtins.elem cfg.role [
-    "worker"
-    "combined"
-  ];
+  hasWorker =
+    cfg.enable
+    && builtins.elem cfg.role [
+      "worker"
+      "combined"
+    ];
 in
 mkIf hasWorker {
-  services.buildbot-worker =
-    {
-      enable = true;
-      user = cfg.worker.systemUser;
-      group = cfg.worker.systemGroup;
-      extraGroups = cfg.worker.extraGroups;
-      workerUser = cfg.worker.name;
-      masterUrl = cfg.worker.masterUrl;
-      hostMessage = cfg.worker.hostMessage;
-      adminMessage = cfg.worker.adminMessage;
-      packages = cfg.worker.packages;
-    }
-    // optionalAttrs (cfg.worker.passwordFile == null) {
-      workerPass = cfg.worker.password;
-    }
-    // optionalAttrs (cfg.worker.passwordFile != null) {
-      workerPassFile = cfg.worker.passwordFile;
-    };
+  services.buildbot-worker = {
+    enable = true;
+    user = cfg.worker.systemUser;
+    group = cfg.worker.systemGroup;
+    extraGroups = cfg.worker.extraGroups;
+    workerUser = cfg.worker.name;
+    masterUrl = cfg.worker.masterUrl;
+    hostMessage = cfg.worker.hostMessage;
+    adminMessage = cfg.worker.adminMessage;
+    packages = cfg.worker.packages;
+  }
+  // optionalAttrs (cfg.worker.passwordFile == null) {
+    workerPass = cfg.worker.password;
+  }
+  // optionalAttrs (cfg.worker.passwordFile != null) {
+    workerPassFile = cfg.worker.passwordFile;
+  };
 
   # Worker-specific optimizations
   nix.settings = {
