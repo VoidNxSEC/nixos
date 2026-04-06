@@ -165,7 +165,7 @@
 
     applications.zellij.enable = false;
 
-    packages.claude.enable = false;
+    #packages.claude.enable = false;
     packages.zellij.enable = false;
     packages.lynis.enable = true;
     packages.js.enable = false;
@@ -1107,7 +1107,7 @@
       git-lfs
       certbot
       flameshot
-      claude-code
+      # claude-code # FIXME: upstream nixpkgs 2.1.88 tarball unpublished from npm (404)
       codex
       # vllm # FIXME: upstream nixpkgs broken patch for llama-cpp-python (406)
       koboldcpp
