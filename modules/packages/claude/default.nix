@@ -23,10 +23,10 @@ let
 
   claude-code = pkgs.buildNpmPackage {
     pname = "claude-code";
-    version = "2.1.81";
+    version = "2.1.92";
 
     src = pkgs.fetchzip {
-      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.81.tgz";
+      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.92.tgz";
       hash = "sha256-WT+fj9H/5hlr/U8MygiIdE2QZ32kRz6wTjYEABtmBPU=";
     };
 
@@ -36,8 +36,7 @@ let
     strictDeps = true;
 
     postPatch = ''
-      substituteInPlace cli.js \
-        --replace-fail '#!/bin/sh' '#!/usr/bin/env sh'
+      cp ${./package-lock.json} package-lock.json
     '';
 
     dontNpmBuild = true;
