@@ -52,11 +52,11 @@ with lib;
     (mkIf config.kernelcore.development.nodejs.enable {
       environment.systemPackages = with pkgs; [
         nodejs_24
-        nodePackages.npm
-        nodePackages.pnpm
-        nodePackages.yarn
-        nodePackages.typescript
-        nodePackages.eslint
+        #nodePackages.npm
+        #nodePackages.pnpm
+        #nodePackages.yarn
+        #nodePackages.typescript
+        #nodePackages.eslint
       ];
     })
 
