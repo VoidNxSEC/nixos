@@ -76,7 +76,7 @@ jobs:
       - name: Setup Cachix
         uses: cachix/cachix-action@v14
         # Gracefully handle missing secrets for forks
-        if: ${{ secrets.CACHIX_AUTH_TOKEN != '' }}
+        if: ${{ env.CACHIX_CACHE_NAME != '' }}
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
