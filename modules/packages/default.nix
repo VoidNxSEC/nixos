@@ -17,7 +17,7 @@
 
     # Active packages - each is completely self-contained
     ./zellij
-    #./claude
+    ./claude
     ./lynis
     ./appflowy
     ./antigravity
