@@ -1095,6 +1095,7 @@
       python313Packages.langchain
       python313Packages.huggingface-hub_0
       python313Packages.numpy
+      google-chrome
       awscli
       cemu
       onlyoffice-desktopeditors
