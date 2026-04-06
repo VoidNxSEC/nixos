@@ -10,10 +10,12 @@ with lib;
 
 let
   cfg = config.kernelcore.ci;
-  hasMaster = cfg.enable && builtins.elem cfg.role [
-    "master"
-    "combined"
-  ];
+  hasMaster =
+    cfg.enable
+    && builtins.elem cfg.role [
+      "master"
+      "combined"
+    ];
   escapePy = lib.escape [
     "\\"
     "'"
@@ -35,15 +37,12 @@ let
         command=['${pkgs.bash}/bin/bash', '-lc', 'cd /etc/nixos && nix flake check --no-build path:.']
       )
     ''
-    ++ map (
-      suite:
-      ''
-        steps.ShellCommand(
-          name='suite-${suite}',
-          command=['${pkgs.bash}/bin/bash', '-lc', 'cd /etc/nixos && nix build -f ./ci-cd/default.nix ${escapeShellArg "testSuites.${suite}"} --print-build-logs']
-        )
-      ''
-    ) cfg.jobs.suites
+    ++ map (suite: ''
+      steps.ShellCommand(
+        name='suite-${suite}',
+        command=['${pkgs.bash}/bin/bash', '-lc', 'cd /etc/nixos && nix build -f ./ci-cd/default.nix ${escapeShellArg "testSuites.${suite}"} --print-build-logs']
+      )
+    '') cfg.jobs.suites
     ++ optional cfg.jobs.enableTailscaleSmoke ''
       steps.ShellCommand(
         name='tailscale-smoke',
