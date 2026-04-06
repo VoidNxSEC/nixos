@@ -16,7 +16,10 @@
     # ═══════════════════════════════════════════════════════════════
     # HYPRLAND - Official Flake (replaces custom overlay)
     # ═══════════════════════════════════════════════════════════════
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hyprland = {
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Niri - Scrollable Tiling Window Manager (niri-flake with NixOS module)
     niri = {
@@ -28,27 +31,27 @@
     # PROJECTS - Independent flakes (local development) - Development Tools & Infrastructure
     # ═══════════════════════════════════════════════════════════════
     # ML Offload API - Multi-backend ML orchestration
-    ml-offload-api = {
-      url = "git+ssh://git@github.com/marcosfpina/ml-offload-api";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #ml-offload-api = {
+    #url = "git+ssh://git@github.com/marcosfpina/ml-offload-api";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
     securellm-mcp = {
       url = "git+ssh://git@github.com/marcosfpina/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.spider-nix.follows = "spider-nix";
+      #inputs.spider-nix.follows = "spider-nix";
     };
-    securellm-bridge = {
-      url = "git+ssh://git@github.com/marcosfpina/securellm-bridge";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    cognitive-vault = {
-      url = "git+ssh://git@github.com/marcosfpina/cognitive-vault";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    vmctl = {
-      url = "git+ssh://git@github.com/marcosfpina/vmctl";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #securellm-bridge = {
+    #url = "git+ssh://git@github.com/marcosfpina/securellm-bridge";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
+    #cognitive-vault = {
+    #url = "git+ssh://git@github.com/marcosfpina/cognitive-vault";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
+    #vmctl = {
+    #url = "git+ssh://git@github.com/marcosfpina/vmctl";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
     spider-nix = {
       url = "git+ssh://git@github.com/marcosfpina/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -56,27 +59,27 @@
     # ─────────────────────────────────────────────────────────────────────
     # CHAINSCOPE — Crypto Intelligence Platform (B300 inference pipeline)
     # ─────────────────────────────────────────────────────────────────────
-    chainscope = {
-      url = "git+ssh://git@github.com/marcosfpina/chainscope";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.spider-nix.follows = "spider-nix";
-    };
-    i915-governor = {
-      url = "git+ssh://git@github.com/VoidNxSEC/i915-governor";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    swissknife = {
-      url = "git+ssh://git@github.com/marcosfpina/swissknife";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #chainscope = {
+    #url = "git+ssh://git@github.com/marcosfpina/chainscope";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #inputs.spider-nix.follows = "spider-nix";
+    #};
+    #i915-governor = {
+    #url = "git+ssh://git@github.com/VoidNxSEC/i915-governor";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
+    #swissknife = {
+    #url = "git+ssh://git@github.com/marcosfpina/swissknife";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
     arch-analyzer = {
       url = "git+ssh://git@github.com/marcosfpina/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    neoland = {
-      url = "path:/home/kernelcore/master/neoland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #neoland = {
+    #url = "path:/home/kernelcore/master/neoland";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
     adr-ledger = {
       url = "path:/home/kernelcore/master/adr-ledger";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -94,15 +97,15 @@
     #inputs.nixpkgs.follows = "nixpkgs";
     #};
     # Notion → Markdown/JSON exporter for platform migration
-    notion-exporter = {
-      url = "git+ssh://git@github.com/marcosfpina/notion-exporter";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #notion-exporter = {
+    #url = "git+ssh://git@github.com/marcosfpina/notion-exporter";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
     # Declarative mini-datacenter with Docker+Nix synergy
-    nixos-hyperlab = {
-      url = "git+ssh://git@github.com/marcosfpina/nixos-hyperlab";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #nixos-hyperlab = {
+    #url = "git+ssh://git@github.com/marcosfpina/nixos-hyperlab";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
 
     # TUI debug pipeline with semantic filtering & LLM analysis
     #shadow-debug-pipeline = {
@@ -126,10 +129,10 @@
     # ═══════════════════════════════════════════════════════════════
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
-    owasaka = {
-      url = "git+ssh://git@github.com/marcosfpina/O.W.A.S.A.K.A.";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #owasaka = {
+    #url = "git+ssh://git@github.com/marcosfpina/O.W.A.S.A.K.A.";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
     # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows
     # Commented for now, can be enabled when needed for Apple Silicon development
     # mlx-mcp = {
@@ -155,17 +158,7 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = overlays ++ [
-          (final: prev: {
-            securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
-            securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
-            swissknife-tools = inputs.swissknife.packages.${system};
-            phantom = inputs.phantom.packages.${system}.default;
-            arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
-            spider-nix = inputs.spider-nix.packages.${system}.default;
-            chainscope = inputs.chainscope.packages.${system}.default;
-          })
-        ];
+        inherit overlays;
       };
 
       # coleção de shells (definido abaixo em lib/shells.nix)
@@ -184,12 +177,12 @@
       apps.${system} = {
         securellm-mcp = {
           type = "app";
-          program = "${self.packages.${system}.securellm-mcp}/bin/securellm-mcp";
+          program = "${inputs.securellm-mcp.packages.${system}.default}/bin/securellm-mcp";
         };
-        securellm-bridge = {
-          type = "app";
-          program = "${self.packages.${system}.securellm-bridge}/bin/securellm-bridge";
-        };
+        #securellm-bridge = {
+        #  type = "app";
+        #  program = "${inputs.securellm-bridge.packages.${system}.default}/bin/securellm-bridge";
+        #};
       };
 
       # Fast checks for CI/CD (heavy builds moved to packages)
@@ -204,7 +197,7 @@
 
         # Package builds (relatively fast)
         mcp-server = self.packages.${system}.securellm-mcp;
-        llm-bridge = self.packages.${system}.securellm-bridge;
+        #llm-bridge = self.packages.${system}.securellm-bridge;
 
         # NOTE: Heavy builds (iso, vm, docker-app) removed from checks for performance
         # These are still available via packages: nix build .#iso, .#vm-image, .#image-app
@@ -222,28 +215,7 @@
             # NIXPKGS CONFIGURATION
             # ═══════════════════════════════════════════════════════════
             {
-              nixpkgs.overlays = overlays ++ [
-                # TEMPORARILY DISABLED: Testing if Hyprland overlay breaks Electron/Chromium apps
-                # inputs.hyprland.overlays.default # Official Hyprland overlay
-                # Niri overlay not needed - module provides package
-                (final: prev: {
-                  securellm-mcp = inputs.securellm-mcp.packages.${system}.default.overrideAttrs (old: {
-                    npmDeps = pkgs.fetchNpmDeps {
-                      src = old.src;
-                      hash = "sha256-Hgzua0vhdJpFBhirmLNtSfsYTXfATjWMqE9eig/zsgs=";
-                    };
-                    # Skip puppeteer Chrome download in sandbox
-                    env = (old.env or { }) // {
-                      PUPPETEER_SKIP_DOWNLOAD = "1";
-                    };
-                  });
-                  securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
-                  swissknife-tools = inputs.swissknife.packages.${system};
-                  phantom = inputs.phantom.packages.${system}.default;
-                  arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
-                  chainscope = inputs.chainscope.packages.${system}.default;
-                })
-              ];
+              nixpkgs.overlays = overlays;
               nixpkgs.config.allowUnfree = true;
             }
 
@@ -349,15 +321,7 @@
             # NIXPKGS CONFIGURATION
             # ═══════════════════════════════════════════════════════════
             {
-              nixpkgs.overlays = overlays ++ [
-                (final: prev: {
-                  securellm-mcp = inputs.securellm-mcp.packages.${system}.default;
-                  securellm-bridge = inputs.securellm-bridge.packages.${system}.default;
-                  swissknife-tools = inputs.swissknife.packages.${system};
-                  phantom = inputs.phantom.packages.${system}.default;
-                  arch-analyzer = inputs.arch-analyzer.packages.${system}.default;
-                })
-              ];
+              nixpkgs.overlays = overlays;
               nixpkgs.config.allowUnfree = true;
             }
 
