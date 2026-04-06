@@ -20,9 +20,9 @@ in
     inputs.securellm-mcp.packages.${system}.default
       or inputs.securellm-mcp.packages.${system}.securellm-mcp or null;
 
-  securellm-bridge =
-    inputs.securellm-bridge.packages.${system}.default
-      or inputs.securellm-bridge.packages.${system}.securellm-bridge or null;
+  #securellm-bridge =
+  #  inputs.securellm-bridge.packages.${system}.default
+  #    or inputs.securellm-bridge.packages.${system}.securellm-bridge or null;
 
   # Docker images - exposed as individual packages
   image-app = pkgs.dockerTools.buildImage {
