@@ -211,7 +211,6 @@ in
               python313Packages.pandas
               python313Packages.scikit-learn
               nodejs_24
-              nodePackages.npm
               go
               rustc
               cargo
@@ -258,8 +257,6 @@ in
             devCommonPackages
             ++ (with pkgs; [
               nodejs_24
-              nodePackages.npm
-              nodePackages.pnpm
               git
             ]);
 

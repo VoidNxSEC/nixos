@@ -163,10 +163,10 @@ in
       paths = with pkgs; [
         bash
         coreutils
-        nodejs_22
-        nodePackages.npm
-        nodePackages.pnpm
-        nodePackages.yarn
+        nodejs_24
+        #nodePackages.npm
+        #nodePackages.pnpm
+        #nodePackages.yarn
         git
         curl
         wget
