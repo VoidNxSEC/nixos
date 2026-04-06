@@ -10,10 +10,7 @@ with lib;
 let
   cfg = config.services.gitea-showcase;
   publicUrl = removeSuffix "/" (
-    if cfg.rootUrl != null then
-      cfg.rootUrl
-    else
-      "http://${cfg.domain}:${toString cfg.httpPort}/"
+    if cfg.rootUrl != null then cfg.rootUrl else "http://${cfg.domain}:${toString cfg.httpPort}/"
   );
   authenticatedPublicUrl =
     if hasPrefix "https://" publicUrl then
@@ -153,8 +150,7 @@ in
           HTTP_ADDR = cfg.listenAddress;
           HTTP_PORT = cfg.httpPort;
           PROTOCOL = "http";
-        }
-        ;
+        };
 
         service = {
           DISABLE_REGISTRATION = false;
@@ -354,41 +350,41 @@ in
         '')
 
         (writeScriptBin "gitea-help" ''
-                  #!${pkgs.bash}/bin/bash
-                  cat << 'HELP'
-	          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-	          🎯 Gitea Showcase - Full Documentation
-	          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                            #!${pkgs.bash}/bin/bash
+                            cat << 'HELP'
+          	          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          	          🎯 Gitea Showcase - Full Documentation
+          	          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-	          📍 Access URL:
-	             ${publicUrl}
+          	          📍 Access URL:
+          	             ${publicUrl}
 
-          🔐 First Time Setup:
-             1. Access the URL above
-             2. Create admin account (first user = admin)
-             3. Settings > Applications > Generate Token
-             4. Add token to: /etc/nixos/secrets/gitea.yaml
-                → sops /etc/nixos/secrets/gitea.yaml
-                → Replace gitea-admin-token: PLACEHOLDER with real token
-             5. Restart services:
-                → sudo systemctl restart gitea-init-repos.service
-                → sudo systemctl restart gitea-mirror-showcases.service
+                    🔐 First Time Setup:
+                       1. Access the URL above
+                       2. Create admin account (first user = admin)
+                       3. Settings > Applications > Generate Token
+                       4. Add token to: /etc/nixos/secrets/gitea.yaml
+                          → sops /etc/nixos/secrets/gitea.yaml
+                          → Replace gitea-admin-token: PLACEHOLDER with real token
+                       5. Restart services:
+                          → sudo systemctl restart gitea-init-repos.service
+                          → sudo systemctl restart gitea-mirror-showcases.service
 
-	          📊 Monitoring:
-	             gitea-status       - Quick status check
-	             gitea-logs         - View Gitea logs
-	             gitea-mirror       - Manual project mirror sync
+          	          📊 Monitoring:
+          	             gitea-status       - Quick status check
+          	             gitea-logs         - View Gitea logs
+          	             gitea-mirror       - Manual project mirror sync
 
-	          🔧 Systemd Services:
-	             systemctl status gitea.service
-	             ${optionalString cfg.gitea.autoInitRepos "systemctl status gitea-init-repos.service"}
-	             ${optionalString cfg.autoMirror.enable "systemctl status gitea-mirror-showcases.timer"}
+          	          🔧 Systemd Services:
+          	             systemctl status gitea.service
+          	             ${optionalString cfg.gitea.autoInitRepos "systemctl status gitea-init-repos.service"}
+          	             ${optionalString cfg.autoMirror.enable "systemctl status gitea-mirror-showcases.timer"}
 
-          📖 Full Guide:
-             /etc/nixos/docs/GITEA-SHOWCASE-DECLARATIVE-SETUP.md
+                    📖 Full Guide:
+                       /etc/nixos/docs/GITEA-SHOWCASE-DECLARATIVE-SETUP.md
 
-          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          HELP
+                    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                    HELP
         '')
       ]
       ++ lib.optionals cfg.autoMirror.enable [
@@ -419,7 +415,6 @@ in
     warnings =
       optional (cfg.protocol != "http")
         "services.gitea-showcase.protocol = \"https\" is deprecated; terminate TLS at the central NGINX/ACME layer instead."
-      ++ optional cfg.cloudflare.enable
-        "services.gitea-showcase.cloudflare.enable is deprecated; manage DNS and TLS centrally via the repo-wide proxy/TLS modules.";
+      ++ optional cfg.cloudflare.enable "services.gitea-showcase.cloudflare.enable is deprecated; manage DNS and TLS centrally via the repo-wide proxy/TLS modules.";
   };
 }
