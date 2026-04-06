@@ -76,13 +76,15 @@
       "Bash(bash -n /etc/nixos/scripts/maintenance/cleanup/artifact-cleaner.sh)",
       "Bash(bash -n /etc/nixos/scripts/maintenance/cleanup/ghost-buster.sh)",
       "Bash(bash -n /etc/nixos/scripts/maintenance/cleanup/limpeza-agressiva.sh)",
-      "Bash(bash -n /etc/nixos/scripts/home-cleanup.sh)"
+      "Bash(bash -n /etc/nixos/scripts/home-cleanup.sh)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)"
     ]
   },
+  "model": "claude-opus-4-6",
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "securellm-mcp"
   ],
-  "alwaysPlanModeEnabled": false,
-  "model": "claude-opus-4-6"
+  "alwaysPlanModeEnabled": false
 }
