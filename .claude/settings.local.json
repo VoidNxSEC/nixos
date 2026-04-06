@@ -72,7 +72,10 @@
       "Bash(sudo du:*)",
       "WebFetch(domain:mozilla.github.io)",
       "WebFetch(domain:support.mozilla.org)",
-      "WebFetch(domain:bugzilla.mozilla.org)"
+      "WebFetch(domain:bugzilla.mozilla.org)",
+      "Bash(bash -n /etc/nixos/scripts/maintenance/cleanup/artifact-cleaner.sh)",
+      "Bash(bash -n /etc/nixos/scripts/maintenance/cleanup/ghost-buster.sh)",
+      "Bash(bash -n /etc/nixos/scripts/maintenance/cleanup/limpeza-agressiva.sh)"
     ]
   },
   "enableAllProjectMcpServers": true,
