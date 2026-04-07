@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "securellm-mcp": {
-      "command": "securellm-mcp",
+      "command": "node",
       "args": [],
       "env": {
         "PROJECT_ROOT": "/etc/nixos",
