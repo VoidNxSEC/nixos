@@ -62,6 +62,13 @@ in
       default = "/var/lib/neoland/checkpoints/adr";
     };
 
+    # ── Ciclo 1 — Fase A: mmap IPC ────────────────────────────────────────
+    shmPath = lib.mkOption {
+      type = lib.types.str;
+      default = "/run/neoland/agent-flags.shm";
+      description = "Path do arquivo mmap IPC com o control plane Rust.";
+    };
+
     user = lib.mkOption {
       type = lib.types.str;
       default = "neoland";
@@ -96,6 +103,7 @@ in
         NEOLAND_CHECKPOINT_DIR = cfg.checkpointDir;
         NEOLAND_PIPELINE_PORT = toString cfg.port;
         NEOLAND_RAG_TOP_K = "5";
+        NEOLAND_SHM_PATH = cfg.shmPath;
         # Ecosystem service URLs available to the pipeline
         AI_CEREBRO_URL = eco.services.cerebro.url;
         AI_CEREBRO_ENABLED = lib.boolToString eco.services.cerebro.enabled;
