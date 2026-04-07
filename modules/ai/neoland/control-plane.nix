@@ -1,5 +1,10 @@
 # Neoland Control Plane — Rust binary (systemd service)
 # Kubernetes equivalent: Deployment + Service + liveness/readiness probes
+#
+# Ciclo 1 additions:
+#   - shmPath    — mmap IPC com o pipeline Python (Fase A)
+#   - natsUrl    — NATS publisher via spectre-events (Fase B)
+#   - RuntimeDirectory = "neoland" — cria /run/neoland/ para o shm
 
 {
   config,
@@ -36,6 +41,20 @@ in
       description = "PostgreSQL connection string (via sops-nix)";
     };
 
+    # ── Ciclo 1 — Fase A: mmap IPC ────────────────────────────────────────
+    shmPath = lib.mkOption {
+      type = lib.types.str;
+      default = "/run/neoland/agent-flags.shm";
+      description = "Path do arquivo mmap IPC com o pipeline Python.";
+    };
+
+    # ── Ciclo 1 — Fase B: NATS publisher ──────────────────────────────────
+    natsUrl = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "NATS server URL. Vazio = NATS desabilitado.";
+    };
+
     user = lib.mkOption {
       type = lib.types.str;
       default = "neoland";
@@ -66,10 +85,12 @@ in
         "neoland-dspy-pipeline.service"
       ];
 
-      environment = {
+      environment = lib.filterAttrs (_: v: v != "") {
         NEOLAND_GRPC_PORT = toString cfg.grpcPort;
         NEOLAND_REST_PORT = toString cfg.restPort;
         DATABASE_URL = cfg.databaseUrl;
+        NEOLAND_SHM_PATH = cfg.shmPath;
+        NEOLAND_NATS_URL = cfg.natsUrl;
         # Service discovery from ecosystem registry
         NEOLAND_AGENTS_DSPY_URL = eco.services.neoland.pipelineUrl;
         AI_NEOTRON_URL = eco.services.neotron.url;
@@ -86,6 +107,7 @@ in
         Restart = "on-failure";
         RestartSec = "5s";
         StateDirectory = "neoland";
+        RuntimeDirectory = "neoland"; # cria /run/neoland/ — necessário para o shm
         LogsDirectory = "neoland";
 
         # Resource limits (mirrors k8s limits)
@@ -100,6 +122,7 @@ in
         ReadWritePaths = [
           "/var/lib/neoland"
           "/var/log/neoland"
+          "/run/neoland"
         ];
       };
     };
