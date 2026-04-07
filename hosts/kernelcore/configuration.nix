@@ -979,7 +979,7 @@
     # SPOOKNIX - Privacy-first STT Engine (Docker container)
     # ═══════════════════════════════════════════════════════════
     spooknix = {
-      enable = false;
+      enable = true;
       model = "large-v3";
       device = "cuda";
       port = 8000;
