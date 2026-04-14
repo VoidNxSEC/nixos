@@ -434,7 +434,7 @@
       knowledgeDbPath = "/var/lib/mcp-knowledge/knowledge.db";
       agents = {
         roo = {
-          enable = true;
+          enable = false;
           projectRoot = "/home/kernelcore/master";
           configPath = "/home/kernelcore/.roo/mcp.json";
           user = "kernelcore";
@@ -444,21 +444,21 @@
         # AGENTES MCP
         # -----------------------------------------------------------
         codex = {
-          enable = true;
+          enable = false;
           projectRoot = "/var/lib/codex";
           configPath = "/home/kernelcore/.codex/mcp_config.json";
           user = "kernelcore";
         };
 
         gemini = {
-          enable = true;
+          enable = false;
           projectRoot = "/var/lib/gemini";
           configPath = "/home/kernelcore/.gemini/mcp_config.json";
           user = "kernelcore";
         };
 
         antigravity = {
-          enable = true;
+          enable = false;
           projectRoot = "/var/lib/antigravity";
           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
           user = "kernelcore";
@@ -838,11 +838,11 @@
       port = 8081;
       n_threads = 12;
       n_threads_batch = 12;
-      n_gpu_layers = 37;
+      n_gpu_layers = 30;
       mainGpu = 1;
       n_parallel = 1;
       n_ctx = 8192;
-      n_batch = 512;
+      n_batch = 1024;
       n_ubatch = 512;
       cudaGraphs = true;
       flashAttention = true;

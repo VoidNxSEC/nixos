@@ -1661,11 +1661,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774535687,
-        "narHash": "sha256-dpKS/8+uB0EoI4mCrpio+xs8Xxry6ZhLLwV8VIbbfrs=",
+        "lastModified": 1776136407,
+        "narHash": "sha256-Cp8XrVLGruSDBTRs8L4LmvaEcd76tHHU9esLk7Ysa4E=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "75900435aa883f84b038316864b3f60956681523",
+        "rev": "753568957a87312ed599cba5699e67126eded6c0",
         "type": "github"
       },
       "original": {
@@ -1875,14 +1875,17 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay_14"
+        "rust-overlay": "rust-overlay_14",
+        "spider-nix": [
+          "spider-nix"
+        ]
       },
       "locked": {
-        "lastModified": 1775494866,
-        "narHash": "sha256-0xbB/6h9hqtACLo3D6pGCfbovyhRgsqfqee0Ob86KgE=",
+        "lastModified": 1776181004,
+        "narHash": "sha256-qD3h9UhL+ouRzqYW37WFwvvKkRt6X7SClIua/hhq4J0=",
         "ref": "refs/heads/main",
-        "rev": "89f46e3a1b273518ac152bcb0e9846aacc5b5d96",
-        "revCount": 136,
+        "rev": "8b0fa7ec39cd28bca2d24ab897292864d6b0ed83",
+        "revCount": 140,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
       },
