@@ -403,7 +403,7 @@
     };
 
     # ==========================================================================
-    # RAW HYPRLAND CONFIG - Blur definition (fixes serialization issues)
+    # RAW HYPRLAND CONFIG - Blur and Smart Gaps
     # ==========================================================================
     extraConfig = ''
       decoration {
@@ -415,6 +415,13 @@
           ignore_opacity = false
         }
       }
+
+      # Redimensionamento Automático Inteligente (Smart Gaps)
+      # Maximiza o espaço removendo bordas/gaps quando há apenas uma janela na tela
+      workspace = w[tv1], gapsout:0, gapsin:0
+      workspace = f[1], gapsout:0, gapsin:0
+      # Note: border_size/rounding cannot be set via windowrule workspace match in Hyprland 0.54+
+      # The workspace= rules above handle gap removal (gapsout:0, gapsin:0)
     '';
   };
 
