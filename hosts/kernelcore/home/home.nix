@@ -280,7 +280,7 @@
     };
 
     actionsTv = {
-      enable = false;
+      enable = true;
       pollInterval = 30;
       waybar.enable = true;
       ui.terminalCommand = "${pkgs.alacritty}/bin/alacritty -e";
