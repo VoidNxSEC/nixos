@@ -274,6 +274,7 @@
     };
 
     virtualization = {
+      # TODO: Needs ajustments related to libvirt-kvm root and user group permissions, need sync and tests
       enable = true;
       virt-manager = true;
       libvirtdGroup = [ "libvirtd" ];
@@ -1097,7 +1098,7 @@
       python313Packages.numpy
       google-chrome
       awscli
-      cemu
+      #cemu
       onlyoffice-desktopeditors
       google-cloud-sdk
       minikube
