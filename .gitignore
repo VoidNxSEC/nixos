@@ -5,6 +5,8 @@ build/
 cache/
 node_modules/
 
+logs/**
+
 # Nix build results
 result
 result-*

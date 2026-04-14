@@ -50,6 +50,7 @@
 
       # Nvidia Brev Development Environments
       "*.brev.dev" = {
+        hostname = "brev-knyy8dch4";
         user = "kernelcore";
         identityFile = "~/.ssh/id_rsa_brev";
         identitiesOnly = true;
