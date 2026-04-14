@@ -386,7 +386,7 @@
     #'';
 
     ".config/nvim".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/arch/nvim";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/neovim";
 
     # Desktop entry
     ".local/share/applications/htop.desktop".text = ''
