@@ -335,8 +335,8 @@
     extraSettings = {
       # General settings
       general = {
-        gaps_in = 6;
-        gaps_out = 12;
+        gaps_in = lib.mkForce 4;
+        gaps_out = lib.mkForce 8;
         border_size = 1;
         "col.active_border" = "rgba(00d4ffff) rgba(7c3aedff) 45deg";
         "col.inactive_border" = "rgba(22222e88)";
