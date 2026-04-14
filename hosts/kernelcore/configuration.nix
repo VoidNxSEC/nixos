@@ -1110,8 +1110,9 @@
       flameshot
       # claude-code # FIXME: upstream nixpkgs 2.1.88 tarball unpublished from npm (404)
       codex
+      qbittorrent
       # vllm # FIXME: upstream nixpkgs broken patch for llama-cpp-python (406)
-      koboldcpp
+      #koboldcpp
       alacritty
       opencode
       xclip
@@ -1132,48 +1133,49 @@
         BREV_HOME="$REAL_HOME/.brev"
         NIX_BREV_CONFIG="$REAL_HOME/.ssh/brev_config"
 
-        # Determine if we're running a command that needs config updates
-        NEEDS_REFRESH=false
-        if [[ "$1" == "refresh" ]] || [[ "$1" == "login" ]] || [[ "$1" == "start" ]] || [[ "$1" == "open" ]] || [[ "$1" == "shell" ]]; then
-            NEEDS_REFRESH=true
-        fi
+        # Usar um cache persistente para não matar processos em background (ex: Fleet IDE)
+        FAKE_HOME="$REAL_HOME/.cache/brev_fake_home"
 
-        if [ "$NEEDS_REFRESH" = true ]; then
-            # Create a fake home environment for SSH config checking
-            FAKE_HOME="/tmp/brev_fake_home_$$"
-            mkdir -p "$FAKE_HOME/.ssh"
+        # Setup do ambiente Fake
+        mkdir -p "$FAKE_HOME/.ssh"
+        echo 'Include "/home/kernelcore/.brev/ssh_config"' > "$FAKE_HOME/.ssh/config"
+        chmod 600 "$FAKE_HOME/.ssh/config"
 
-            # Brev needs to see this exact line or it will try to write to it and fail
-            echo 'Include "/home/kernelcore/.brev/ssh_config"' > "$FAKE_HOME/.ssh/config"
-            chmod 600 "$FAKE_HOME/.ssh/config"
+        # Symlink do diretório .brev e de chaves conhecidas para não quebrar o handshake
+        ln -sfn "$BREV_HOME" "$FAKE_HOME/.brev"
 
-            # Symlink the real .brev directory so we don't lose session data
-            ln -s "$BREV_HOME" "$FAKE_HOME/.brev"
-
-            # Run the actual command with the fake HOME
-            HOME="$FAKE_HOME" "$BREV_BIN" "$@" || EXIT_CODE=$?
-
-            # Cleanup
-            rm -rf "$FAKE_HOME"
-
-            echo "Syncing Brev SSH configuration for NixOS..."
-            # Wait a moment to ensure Brev finishes writing
-            sleep 1
+        # Função para extrair o config de forma limpa
+        sync_config() {
+            echo "[NixOS] Sincronizando o estado declarativo do Brev..."
+            # Rodamos um refresh silencioso no Fake Home para forçar a escrita do arquivo
+            HOME="$FAKE_HOME" "$BREV_BIN" refresh > /dev/null 2>&1
 
             if [ -f "$BREV_HOME/ssh_config" ]; then
-                # Replace the fake home path with the real home path in the config
+                # Substitui o caminho do cache persistente pelo real e gera o arquivo final
                 sed "s|$FAKE_HOME|$REAL_HOME|g" "$BREV_HOME/ssh_config" > "$NIX_BREV_CONFIG"
-                # Ensure correct permissions
                 chmod 600 "$NIX_BREV_CONFIG"
             fi
+        }
 
+        # Lógica de Roteamento
+        if [[ "$1" == "login" ]] || [[ "$1" == "start" ]] || [[ "$1" == "refresh" ]]; then
+            # Executa o comando na sandbox, depois sincroniza os configs
+            HOME="$FAKE_HOME" "$BREV_BIN" "$@" || EXIT_CODE=$?
+            sync_config
             exit ''${EXIT_CODE:-0}
+
+        elif [[ "$1" == "open" ]] || [[ "$1" == "shell" ]]; then
+            # Pulo do Gato: Sincroniza o estado ANTES de abrir a IDE/Shell
+            sync_config
+
+            # Executa o shell/IDE passando o FAKE_HOME persistente,
+            # garantindo que o Fleet não perca o File Descriptor depois.
+            exec env HOME="$FAKE_HOME" "$BREV_BIN" "$@"
         else
-            # For pure read commands, just run normally
+            # Comandos read-only passam direto
             exec "$BREV_BIN" "$@"
         fi
       '')
-
       slack
       zoom
       gnome-console
