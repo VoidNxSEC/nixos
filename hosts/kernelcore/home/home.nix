@@ -280,7 +280,7 @@
     };
 
     actionsTv = {
-      enable = true;
+      enable = false;
       pollInterval = 30;
       waybar.enable = true;
       ui.terminalCommand = "${pkgs.alacritty}/bin/alacritty -e";
@@ -386,7 +386,7 @@
     #'';
 
     ".config/nvim".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/nvim.rescue";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/arch/nvim";
 
     # Desktop entry
     ".local/share/applications/htop.desktop".text = ''
