@@ -509,7 +509,7 @@
         coder = {
           modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 30;
+          gpuLayers = 40;
           contextSize = 8192;
           #n_ctx = 8192;
           #n_batch = 8192;
@@ -838,11 +838,11 @@
       port = 8081;
       n_threads = 12;
       n_threads_batch = 12;
-      n_gpu_layers = 30;
+      n_gpu_layers = 40;
       mainGpu = 1;
       n_parallel = 1;
       n_ctx = 8192;
-      n_batch = 1024;
+      n_batch = 2048;
       n_ubatch = 512;
       cudaGraphs = true;
       flashAttention = true;
@@ -1114,6 +1114,7 @@
       qbittorrent
       # vllm # FIXME: upstream nixpkgs broken patch for llama-cpp-python (406)
       #koboldcpp
+      #sillytavern
       alacritty
       opencode
       xclip
@@ -1276,6 +1277,8 @@
     tshark
     gemini-cli
     sqlite
+    koboldcpp
+    sillytavern
     # antigravity # Replaced by custom build
   ];
 
