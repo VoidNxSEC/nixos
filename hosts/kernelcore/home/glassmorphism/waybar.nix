@@ -40,11 +40,11 @@ in
             mainBar = {
               layer = "top";
               position = "top";
-              height = 58;
+              height = 44;
               spacing = 6;
-              margin-top = 10;
-              margin-left = 18;
-              margin-right = 18;
+              margin-top = 6;
+              margin-left = 12;
+              margin-right = 12;
               margin-bottom = 0;
 
               # Module layout (compositor-agnostic)
@@ -428,9 +428,9 @@ in
             #battery,
             #tray {
               min-height: 0;
-              margin: 0 4px;
-              padding: 0 15px;
-              border-radius: 16px;
+              margin: 0 3px;
+              padding: 0 12px;
+              border-radius: 12px;
               background: linear-gradient(
                 180deg,
                 ${colors.hexToRgba colors.base.bg2 "0.88"},
@@ -667,6 +667,7 @@ in
               border-color: ${colors.hexToRgba colors.base.fg0 "0.08"};
             }
 
+            #custom-spooknix.active,
             #custom-spooknix {
               background: linear-gradient(
                 135deg,

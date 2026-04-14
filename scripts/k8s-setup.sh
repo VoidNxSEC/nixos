@@ -14,7 +14,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-NIXOS_CONFIG_DIR="/etc/nixos"
+NIXOS_CONFIG_DIR="/etc/nixos#kernelcore"
 MODULES_DIR="${NIXOS_CONFIG_DIR}/modules"
 K8S_MODULES_DIR="${MODULES_DIR}/k8s"
 KUBECONFIG="/etc/rancher/k3s/k3s.yaml"
