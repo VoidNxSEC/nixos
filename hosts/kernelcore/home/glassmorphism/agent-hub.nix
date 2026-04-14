@@ -20,8 +20,8 @@ let
   # API Configuration - uses your local llama.cpp server
   llamaCppApi = {
     host = "127.0.0.1";
-    port = 8080;
-    model = "local"; # Name for display
+    port = 8081;
+    model = "current-model"; # Name for display
   };
 
   # Color palette for agents
@@ -357,7 +357,7 @@ in
         fi
 
         # Check active agents with single pgrep
-        agents=$(pgrep -f "codex|gemini|neoland" 2>/dev/null || true)
+        agents=$(pgrep -af "codex|gemini|neoland" 2>/dev/null || true)
 
         if echo "$agents" | grep -q "codex"; then
           ((ACTIVE++))
