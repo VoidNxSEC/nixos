@@ -33,11 +33,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774724411,
-        "narHash": "sha256-Buwwa4yCPJTRIvm0lzAWtR1kN3wHH0D2MzAjg7/b+DQ=",
+        "lastModified": 1775603162,
+        "narHash": "sha256-/7mcSqbT6pgd64p7PwaRx9b7sX8+Kiu+OUJjWG0paGY=",
         "ref": "refs/heads/main",
-        "rev": "02f3c7a0d21959f16a93b32b9c8b31f8f6aa9129",
-        "revCount": 8,
+        "rev": "7128fd3baac93f51e3527bfef0129e9c63513f58",
+        "revCount": 9,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/actions-tv"
       },
