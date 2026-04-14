@@ -287,7 +287,7 @@
       projects = [
         {
           name = "spooknix";
-          repo = "marcosfpina/spooknix";
+          repo = "VoidNxSEC/spooknix";
           maxRuns = 5;
         }
       ];
