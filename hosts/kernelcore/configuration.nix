@@ -343,15 +343,13 @@
     };
 
     services.github-runner = {
-      enable = false;
-      useSops = true;
-      runnerName = "nixos-self-hosted";
-      repoUrl = "https://github.com/VoidNxSEC/nixos";
-      extraLabels = [
-        "nixos"
-        "nix"
-        "linux"
-      ];
+      enable = true;
+      repos = {
+        nixos-self-hosted = {
+          url = "https://github.com/VoidNxSEC/nixos";
+          labels = [ "linux" ];
+        };
+      };
     };
 
     services.mosh = {
@@ -397,6 +395,7 @@
       ageKeyFile = "/var/lib/sops-nix/key.txt";
     };
 
+    secrets.github.enable = true;
     secrets.ci.enable = true;
     secrets.certificates.enable = true;
     secrets.gcp-ml.enable = true;
@@ -413,20 +412,7 @@
     };
 
     ci = {
-      enable = true;
-      role = "combined";
-      worker = {
-        passwordFile =
-          if config.sops.secrets ? "ci/buildbot-worker-password" then
-            config.sops.secrets."ci/buildbot-worker-password".path
-          else
-            null;
-        extraGroups = [ "buildbot" ];
-      };
-      jobs = {
-        suites = [ "security" ];
-        enableTailscaleSmoke = false;
-      };
+      enable = false; # Substituído pelo GitHub Actions self-hosted runner
     };
 
     ml.mcp = {
@@ -1277,7 +1263,7 @@
     tshark
     gemini-cli
     sqlite
-    lxc
+    #lxc
     incus
     sillytavern
     koboldcpp
