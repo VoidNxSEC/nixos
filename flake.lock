@@ -2107,11 +2107,11 @@
         "sops-nix": "sops-nix_3"
       },
       "locked": {
-        "lastModified": 1776197203,
-        "narHash": "sha256-jzmvP3YFFNF4/XEQe7f0jKfPFbr65Htgc+ka1d00898=",
+        "lastModified": 1776293795,
+        "narHash": "sha256-MUeK/yAkNjrKmvf8KXgOr/CDg0oYZ1K3ZilUu3Erpmc=",
         "ref": "refs/heads/main",
-        "rev": "97aa6025e5abd42edab6b76a6a5ebd3931f7957c",
-        "revCount": 21,
+        "rev": "ac317273f235f9e640d3bebe0c5e2f782fec77e7",
+        "revCount": 22,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/spooknix"
       },
