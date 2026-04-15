@@ -22,36 +22,18 @@ in
 
   config = mkIf cfg.enable {
     sops.secrets = mkIf (pathExists cfg.secretsFile) {
+      # Buildbot worker password — kept for backwards compat, root-owned
       "ci/buildbot-worker-password" = {
         sopsFile = cfg.secretsFile;
         key = "buildbot_worker_password";
-        mode = "0440";
-        owner = "buildbot";
-        group = "buildbot";
+        mode = "0400";
       };
 
-      "ci/github-token" = {
-        sopsFile = cfg.secretsFile;
-        key = "github_token";
-        mode = "0440";
-        owner = "buildbot";
-        group = "buildbot";
-      };
-
+      # GitHub webhook secret — used by CI ingress / buildbot webhook handler
       "ci/github-webhook-secret" = {
         sopsFile = cfg.secretsFile;
         key = "github_webhook_secret";
-        mode = "0440";
-        owner = "buildbot";
-        group = "buildbot";
-      };
-
-      "ci/cachix-auth-token" = {
-        sopsFile = cfg.secretsFile;
-        key = "cachix_auth_token";
-        mode = "0440";
-        owner = "buildbot";
-        group = "buildbot";
+        mode = "0400";
       };
     };
 
