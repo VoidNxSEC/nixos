@@ -26,7 +26,7 @@ jobs:
   # ══════════════════════════════════════════════════════════════
   security-audit:
     name: "🛡️ Security Audit"
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,26 +43,26 @@ jobs:
       - name: Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
+          scan-type: "fs"
+          scan-ref: "."
           trivy-config: trivy.yaml
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH"
         continue-on-error: true
 
       - name: Upload Trivy Scan Results
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
   # ══════════════════════════════════════════════════════════════
   # 2. NIXOS CI (BUILD & CHECK)
   # ══════════════════════════════════════════════════════════════
   nix-ci:
     name: "❄️ Nix Integration"
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
     needs: [security-audit]
     steps:
       - name: Checkout
