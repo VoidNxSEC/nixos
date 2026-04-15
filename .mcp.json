@@ -2,19 +2,26 @@
   "mcpServers": {
     "securellm-mcp": {
       "command": "node",
-      "args": [],
+      "args": [
+        "/home/kernelcore/master/securellm-mcp/build/src/index.js"
+      ],
       "env": {
-        "PROJECT_ROOT": "/etc/nixos",
-        "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
-        "ENABLE_KNOWLEDGE": "true"
+        "PROJECT_ROOT": "~/master",
+        "KNOWLEDGE_DB_PATH": "/home/kernelcore/.local/share/securellm/knowledge.db",
+        "ENABLE_KNOWLEDGE": "true",
+        "MCP_WORKDIR": "~/master",
+        "MCP_ENV": "production",
+        "NODE_ENV": "production",
+        "PROJECT_NAME": "NixOS Configuration",
+        "PROJECT_TYPE": "infrastructure"
       },
       "metadata": {
         "version": "2.0.0",
         "description": "Comprehensive MCP server for NixOS system management, AI provider integration, emergency response, code analysis, and knowledge management",
         "author": "SecureLLM Team",
         "license": "MIT",
-        "repository": "https://github.com/VoidNxSEC/securellm-mcp",
-        "documentation": "https://github.com/VoidNxSEC/securellm-mcp/blob/main/README.md"
+        "repository": "https://github.com/marcosfpina/securellm-mcp",
+        "documentation": "https://github.com/marcosfpina/securellm-mcp/blob/main/README.md"
       },
       "capabilities": {
         "tools": {
