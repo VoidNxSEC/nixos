@@ -1,19 +1,19 @@
-name: 'Rollback System'
+name: "Rollback System"
 
 on:
   workflow_dispatch:
     inputs:
       generation:
-        description: 'Generation number to rollback to (empty for previous)'
+        description: "Generation number to rollback to (empty for previous)"
         required: false
-        default: ''
+        default: ""
       reason:
-        description: 'Reason for rollback'
+        description: "Reason for rollback"
         required: true
       notify-team:
-        description: 'Send notification to team'
+        description: "Send notification to team"
         required: false
-        default: 'true'
+        default: true
         type: boolean
 
 jobs:
@@ -21,7 +21,6 @@ jobs:
     name: Execute Rollback
     runs-on: [self-hosted, nixos]
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -32,7 +31,7 @@ jobs:
         id: identify
         run: |
           echo "🔍 Identifying rollback target..."
-          
+
           if [ -z "${{ inputs.generation }}" ]; then
             echo "Rolling back to previous generation"
             GENERATION="previous"
@@ -40,9 +39,9 @@ jobs:
             echo "Rolling back to generation ${{ inputs.generation }}"
             GENERATION="${{ inputs.generation }}"
           fi
-          
+
           echo "generation=$GENERATION" >> $GITHUB_OUTPUT
-          
+
           # List available generations
           echo "Available generations:"
           sudo nix-env --list-generations -p /nix/var/nix/profiles/system | tail -10
@@ -51,63 +50,63 @@ jobs:
         id: backup
         run: |
           echo "💾 Backing up current state..."
-          
+
           CURRENT_GEN=$(sudo nix-env --list-generations -p /nix/var/nix/profiles/system | grep '(current)' | awk '{print $1}')
           echo "current_generation=$CURRENT_GEN" >> $GITHUB_OUTPUT
-          
+
           # Save current configuration
           sudo cp -r /etc/nixos /tmp/nixos-backup-$CURRENT_GEN
-          
+
           echo "✅ Current generation $CURRENT_GEN backed up"
 
       - name: Perform rollback
         id: rollback
         run: |
           echo "⏮️  Performing rollback..."
-          
+
           if [ "${{ steps.identify.outputs.generation }}" == "previous" ]; then
             sudo nixos-rebuild switch --rollback
           else
             sudo nix-env --switch-generation ${{ steps.identify.outputs.generation }} -p /nix/var/nix/profiles/system
             sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
           fi
-          
+
           NEW_GEN=$(sudo nix-env --list-generations -p /nix/var/nix/profiles/system | grep '(current)' | awk '{print $1}')
           echo "new_generation=$NEW_GEN" >> $GITHUB_OUTPUT
-          
+
           echo "✅ Rolled back to generation $NEW_GEN"
 
       - name: Verify system health
         id: verify
         run: |
           echo "🔍 Verifying system health..."
-          
+
           # Check systemd services
           echo "Checking failed services..."
           FAILED_SERVICES=$(systemctl --failed --no-legend | wc -l)
-          
+
           if [ $FAILED_SERVICES -gt 0 ]; then
             echo "⚠️  Warning: $FAILED_SERVICES services failed"
             systemctl --failed
           else
             echo "✅ No failed services"
           fi
-          
+
           # Check journal errors
           echo "Checking recent errors..."
           ERRORS=$(journalctl -p err -n 20 --no-pager | wc -l)
-          
+
           if [ $ERRORS -gt 0 ]; then
             echo "⚠️  Warning: $ERRORS errors in journal"
             journalctl -p err -n 20 --no-pager
           else
             echo "✅ No critical errors"
           fi
-          
+
           # Check disk space
           echo "Checking disk space..."
           df -h /
-          
+
           echo "health_status=ok" >> $GITHUB_OUTPUT
 
       - name: Generate rollback report
