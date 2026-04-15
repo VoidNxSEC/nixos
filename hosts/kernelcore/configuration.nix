@@ -1277,8 +1277,10 @@
     tshark
     gemini-cli
     sqlite
-    koboldcpp
+    lxc
+    incus
     sillytavern
+    koboldcpp
     # antigravity # Replaced by custom build
   ];
 
