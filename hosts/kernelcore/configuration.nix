@@ -218,7 +218,7 @@
         enable = true;
         platforms = {
           github = true;
-          gitlab = true;
+          gitlab = false;
           gitea = false;
         };
         pre-commit = {
