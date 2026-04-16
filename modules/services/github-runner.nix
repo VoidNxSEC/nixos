@@ -167,6 +167,8 @@ let
     name: url:
     nameValuePair "github-runner-${name}-token-refresh" {
       description = "Refresh GitHub Actions token for runner ${name}";
+      wants = [ "network-online.target" ];
+      after = [ "network-online.target" ];
       before = [ "github-runner-${name}.service" ];
       requiredBy = [ "github-runner-${name}.service" ];
       path = with pkgs; [
@@ -179,6 +181,8 @@ let
       ];
       serviceConfig = {
         Type = "oneshot";
+        Restart = "on-failure";
+        RestartSec = "15s";
         ExecStart = mkTokenRefreshScript name url;
       };
     };
@@ -258,7 +262,7 @@ in
             ephemeral = mkOption {
               type = types.bool;
               default = false;
-              description = "Runner removes itself after one job.";
+              description = "Runner removes itself after one job. Disable for a persistent runner.";
             };
           };
         }

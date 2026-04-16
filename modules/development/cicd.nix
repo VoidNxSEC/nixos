@@ -272,31 +272,9 @@ with lib;
       };
     };
 
-    # ═══════════════════════════════════════════════════════════
-    # GitHub Runner Service (optional)
-    # ═══════════════════════════════════════════════════════════
-
-    # services.github-runner = mkIf config.kernelcore.development.cicd.platforms.github {
-    #   enable = false; # Enable manually with token
-    #   url = "https://github.com/your-org/your-repo";
-    #   tokenFile = "/run/secrets/github-runner-token";
-    #   extraLabels = [ "nixos" "self-hosted" ];
-    # };
-
-    # ═══════════════════════════════════════════════════════════
-    # GitLab Runner Service (optional)
-    # ═══════════════════════════════════════════════════════════
-
-    # services.gitlab-runner = mkIf config.kernelcore.development.cicd.platforms.gitlab {
-    #   enable = false; # Enable manually with token
-    #   services = {
-    #     nixos-runner = {
-    #       registrationConfigFile = "/run/secrets/gitlab-runner-token";
-    #       executor = "docker";
-    #       dockerImage = "nixos/nix:latest";
-    #     };
-    #   };
-    # };
+    # Runner services live under modules/services/*.nix.
+    # This development module only provides local CI/CD tooling, hooks, and aliases.
+    # Keeping service declarations out of here avoids a second "source of truth".
 
     # ═══════════════════════════════════════════════════════════
     # Security Hardening

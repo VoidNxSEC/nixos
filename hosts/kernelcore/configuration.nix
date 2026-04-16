@@ -347,6 +347,7 @@
       repos = {
         nixos-self-hosted = {
           url = "https://github.com/VoidNxSEC/nixos";
+          ephemeral = false;
           labels = [ "linux" ];
         };
       };
