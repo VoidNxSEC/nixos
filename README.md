@@ -492,7 +492,7 @@ Built with excellent open-source projects:
 - [NixOS](https://nixos.org) - Declarative Linux distribution
 - [Hyprland](https://hyprland.org) - Modern Wayland compositor
 - [Wazuh](https://wazuh.com) - Open-source XDR/SIEM
-- [Ollama](https://ollama.ai) - Local LLM deployment
+- [llama.cpp](https://github.com/ggml-org/llama.cpp) - Local LLM inference
 
 ---
 
