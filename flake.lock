@@ -1491,11 +1491,11 @@
         "rust-overlay": "rust-overlay_13"
       },
       "locked": {
-        "lastModified": 1776334375,
-        "narHash": "sha256-50cWAkz2wx8p6tpxY1tFAcUKitMHjHvO7fpNzOUfFZA=",
+        "lastModified": 1776573908,
+        "narHash": "sha256-lV4VCoWz+xFEBuMdX2rHkMjwGoQVmemQOhOIslddg3g=",
         "ref": "refs/heads/main",
-        "rev": "e58802b6f43f90b59ce68b9994f94657ddfd02db",
-        "revCount": 102,
+        "rev": "95529cb837cc91f720dd11bcee8270155ef6e62d",
+        "revCount": 103,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/phantom"
       },
@@ -1887,11 +1887,11 @@
         "rev": "539e15ae7724f4e1cdec8c93ebe8b66eb8d934f4",
         "revCount": 141,
         "type": "git",
-        "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
+        "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/marcosfpina/securellm-mcp"
+        "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
       }
     },
     "sentinel": {
@@ -2086,17 +2086,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1774757061,
-        "narHash": "sha256-EpKUha2neiwBQRSJ4LtwezC95h+LfWWqfUytX8CVsGE=",
+        "lastModified": 1776574123,
+        "narHash": "sha256-QytKQt25QENkijQ3ajzbt9KtQfm5Q/PCwpCc49kI8Do=",
         "ref": "refs/heads/main",
-        "rev": "77b5d37a12627b9487e3c15738b2d689f931427b",
-        "revCount": 21,
+        "rev": "2ae13c772247b50b5d5a7908114e5e37121c4ce2",
+        "revCount": 23,
         "type": "git",
-        "url": "ssh://git@github.com/marcosfpina/spider-nix"
+        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/marcosfpina/spider-nix"
+        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
       }
     },
     "spooknix": {
