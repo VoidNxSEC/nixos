@@ -390,6 +390,8 @@ in
 
         Restart = "always";
         RestartSec = 5;
+        MemoryHigh = "7G";
+        MemoryMax = "10G";
 
         # Use dedicated user
         DynamicUser = lib.mkForce false;
