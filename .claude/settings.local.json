@@ -85,7 +85,8 @@
       "Bash(cargo check:*)",
       "Bash(wait)",
       "Bash(nixfmt modules/ai/ecosystem.nix modules/ai/default.nix modules/ai/neoland/*.nix modules/ai/neotron/default.nix modules/ai/ml-ops-api/default.nix modules/ai/cerebro/default.nix modules/ai/phantom/default.nix)",
-      "Bash(cat /home/kernelcore/dev/_ARCHIVE_2025_12_10/frontend/backend/src/routes/*.ts)"
+      "Bash(cat /home/kernelcore/dev/_ARCHIVE_2025_12_10/frontend/backend/src/routes/*.ts)",
+      "mcp__securellm-mcp__github_search"
     ]
   },
   "model": "claude-opus-4-6",
