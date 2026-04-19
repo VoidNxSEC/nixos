@@ -67,7 +67,8 @@ jobs:
       - name: Check for trailing whitespace
         run: |
           echo "🔍 Checking for trailing whitespace..."
-          if git diff --check HEAD^ HEAD; then
+          BASE=$(git rev-parse --verify HEAD^ 2>/dev/null || git hash-object -t tree /dev/null)
+          if git diff --check "$BASE" HEAD; then
             echo "✅ No trailing whitespace found"
           else
             echo "❌ Trailing whitespace found"
@@ -187,7 +188,7 @@ jobs:
       - name: Scan for vulnerabilities
         run: |
           echo "🔒 Scanning for known vulnerabilities..."
-          nix run nixpkgs#vulnix -- -w \
+          nix run nixpkgs#vulnix -- \
             $(nix build ${{ inputs.config-path }} --no-link --print-out-paths) \
             || echo "⚠️  Vulnerabilities found (non-blocking)"
 

@@ -1,5 +1,9 @@
 name: "Rollback System"
 
+permissions:
+  contents: read
+  issues: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -85,9 +89,12 @@ jobs:
           echo "Checking failed services..."
           FAILED_SERVICES=$(systemctl --failed --no-legend | wc -l)
 
+          HEALTH="ok"
+
           if [ $FAILED_SERVICES -gt 0 ]; then
             echo "⚠️  Warning: $FAILED_SERVICES services failed"
             systemctl --failed
+            HEALTH="degraded"
           else
             echo "✅ No failed services"
           fi
@@ -96,9 +103,10 @@ jobs:
           echo "Checking recent errors..."
           ERRORS=$(journalctl -p err -n 20 --no-pager | wc -l)
 
-          if [ $ERRORS -gt 0 ]; then
+          if [ $ERRORS -gt 5 ]; then
             echo "⚠️  Warning: $ERRORS errors in journal"
             journalctl -p err -n 20 --no-pager
+            HEALTH="degraded"
           else
             echo "✅ No critical errors"
           fi
@@ -107,7 +115,7 @@ jobs:
           echo "Checking disk space..."
           df -h /
 
-          echo "health_status=ok" >> $GITHUB_OUTPUT
+          echo "health_status=$HEALTH" >> $GITHUB_OUTPUT
 
       - name: Generate rollback report
         run: |

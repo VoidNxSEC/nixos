@@ -64,27 +64,27 @@ runs:
           TRUSTED_SUBSTITUTERS="trusted-substituters = ${{ inputs.local-cache-url }}"
         fi
 
-        cat << EOF | sudo tee -a /etc/nix/nix.conf
-        # GitHub Actions optimizations
-        max-jobs = auto
-        cores = 0
+        sudo tee -a /etc/nix/nix.conf > /dev/null << EOF
+# GitHub Actions optimizations
+max-jobs = auto
+cores = 0
 
-        # Flakes support
-        experimental-features = nix-command flakes
+# Flakes support
+experimental-features = nix-command flakes
 
-        # Build optimization
-        keep-outputs = true
-        keep-derivations = true
+# Build optimization
+keep-outputs = true
+keep-derivations = true
 
-        # Substituters
-        substituters = $SUBSTITUTERS
-        trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-        $TRUSTED_SUBSTITUTERS
+# Substituters
+substituters = $SUBSTITUTERS
+trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+$TRUSTED_SUBSTITUTERS
 
-        # Cache connection settings
-        connect-timeout = 2
-        fallback = true
-        EOF
+# Cache connection settings
+connect-timeout = 2
+fallback = true
+EOF
         
         # Add extra config if provided
         if [ -n "${{ inputs.nix-conf-extra }}" ]; then
@@ -126,7 +126,7 @@ runs:
         
         # Check flakes support
         if [ "${{ inputs.enable-flakes }}" == "true" ]; then
-          if nix flake --version &> /dev/null; then
+          if nix flake show --help &> /dev/null; then
             echo "✅ Flakes support: enabled"
           else
             echo "❌ Flakes support: disabled"
