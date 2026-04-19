@@ -36,7 +36,7 @@
     #inputs.nixpkgs.follows = "nixpkgs";
     #};
     securellm-mcp = {
-      url = "git+ssh://git@github.com/marcosfpina/securellm-mcp";
+      url = "git+ssh://git@github.com/VoidNxSEC/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.spider-nix.follows = "spider-nix";
     };
@@ -53,7 +53,7 @@
     #inputs.nixpkgs.follows = "nixpkgs";
     #};
     spider-nix = {
-      url = "git+ssh://git@github.com/marcosfpina/spider-nix";
+      url = "git+ssh://git@github.com/VoidNxSEC/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # ─────────────────────────────────────────────────────────────────────
