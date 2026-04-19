@@ -5,6 +5,8 @@ build/
 cache/
 node_modules/
 
+.claude/**
+
 logs/**
 
 # Nix build results
