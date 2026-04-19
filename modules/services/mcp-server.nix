@@ -470,8 +470,10 @@ in
 
         # Restart configuration
         Restart = if cfg.daemon.restartOnFailure then "on-failure" else "no";
-        RestartSec = "5s";
+        RestartSec = "10s";
         RestartPreventExitStatus = "0";
+        StartLimitIntervalSec = "120s";
+        StartLimitBurst = 5;
 
         # Security hardening
         NoNewPrivileges = true;
