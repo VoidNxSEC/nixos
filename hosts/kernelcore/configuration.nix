@@ -1221,6 +1221,7 @@
     gcc
     # ffmpeg # TEMPORARILY DISABLED: Build broken in current nixpkgs
     yt-dlp
+    cri-tools
     docker-compose
     docker-buildx
     docker
