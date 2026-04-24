@@ -212,7 +212,7 @@ with lib;
   ];
 
   boot.kernelParams = [
-    "lockdown=confidentiality"
+    "lockdown=integrity"
     "init_on_alloc=1"
     "init_on_free=1"
     "page_alloc.shuffle=1"
