@@ -289,6 +289,7 @@
             # SECURITY FINAL OVERRIDE (highest priority)
             # ═══════════════════════════════════════════════════════════
             ./sec/hardening.nix
+            ./profiles/k8s-lab.nix
           ];
         };
 
