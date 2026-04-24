@@ -9,7 +9,12 @@
 # Para ativar, importe este arquivo em hosts/kernelcore/configuration.nix:
 #   imports = [ ... ./../../profiles/k8s-lab.nix ];
 #
-{ lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # ──────────────────────────────────────────────────────────────
@@ -46,6 +51,21 @@
       51820 # WireGuard (Cilium WireGuard mode)
     ];
 
+    trustedInterfaces = [
+      "docker0"
+      "tailscale0"
+      "br+"
+      "kind+"
+    ];
+
+    extraCommands = lib.mkAfter ''
+
+      iptables -I FORWARD -s 172.16.0.0/12 -j ACCEPT
+      iptables -I FORWARD -d 172.16.0.0/12 -j ACCEPT
+
+      iptables -t nat -A POSTROUTING -s 172.16.0.0/12 ! -o docker0 -j MASQUERADE
+    '';
+
     # CNI plugins (flannel, calico, cilium) precisam de encaminhamento;
     # desabilitar rejectPackets evita drops silenciosos durante setup.
     rejectPackets = lib.mkForce false;
@@ -75,6 +95,9 @@
     # rootless e para o runtime de alguns operadores.
     "kernel.unprivileged_userns_clone" = lib.mkForce 1;
 
+    "net.bridge.bridge-nf-call-iptables" = lib.mkForce 1;
+    "net.bridge.bridge-nf-call-ip6tables" = lib.mkForce 1;
+
     # Aumenta o limite de mapeamentos de memória; Elasticsearch, JVM e
     # algumas imagens de ML exigem valores acima de 262144.
     "vm.max_map_count" = lib.mkForce 524288;
@@ -83,6 +106,20 @@
     "net.netfilter.nf_conntrack_max" = lib.mkForce 524288;
     "net.nf_conntrack_max" = lib.mkForce 524288;
   };
+
+  environment.systemPackages = with pkgs; [
+    kind
+    kubectl
+    kubernetes-helm
+    k9s
+    kubectx
+  ];
+
+  boot.kernelModules = [
+    "veth"
+    "br_netfilter"
+    "overlay"
+  ];
 
   # ──────────────────────────────────────────────────────────────
   # Módulos de kernel blacklistados no hardening que o k8s precisa
@@ -95,9 +132,12 @@
   #   (lib.filter (m: m != "sctp") config.boot.blacklistedKernelModules);
 
   # ──────────────────────────────────────────────────────────────
-  # AppArmor — não matar processos não-confinados em lab
+  # AppArmor — desabilitado no perfil k8s-lab
   # ──────────────────────────────────────────────────────────────
-  # containerd e o runtime de pods podem iniciar processos sem perfil
-  # AppArmor definido; killUnconfinedConfinables = true os encerraria.
-  security.apparmor.killUnconfinedConfinables = lib.mkForce false;
+  # Dois motivos para desabilitar aqui:
+  # 1. nixpkgs recente exige modulePath absoluto no PAM quando AppArmor
+  #    está ativo; o serviço "login" usa caminho relativo → build falha.
+  # 2. containerd/k3s criam processos sem perfil AppArmor definido;
+  #    killUnconfinedConfinables = true os encerraria em produção.
+  security.apparmor.enable = lib.mkForce false;
 }

@@ -43,7 +43,7 @@ let
     findutils
     sops
     yq-go
-    nixfmt-rfc-style
+    nixfmt
     age
     gh
   ];
