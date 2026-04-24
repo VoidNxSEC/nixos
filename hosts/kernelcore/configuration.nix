@@ -497,8 +497,6 @@
           displayName = "Qwen 2.5 Coder 7B (Q4)";
           gpuLayers = 40;
           contextSize = 8192;
-          #n_ctx = 8192;
-          #n_batch = 8192;
         };
 
         reasoning = {

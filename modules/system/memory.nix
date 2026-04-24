@@ -41,6 +41,12 @@ with lib;
       "vm.min_free_kbytes" = 131072; # Keep 128MB free for emergencies
       "vm.watermark_scale_factor" = 200; # More aggressive reclaim
       "vm.admin_reserve_kbytes" = 131072; # 128MB reserved for admin recovery
+
+      # inotify — dev tools (Vite, VS Code, Tailscale, udev) + Python .venv
+      # + node_modules exhaust the default 8192/524288 limits quickly
+      "fs.inotify.max_user_watches" = 1048576;
+      "fs.inotify.max_user_instances" = 1024;
+      "fs.inotify.max_queued_events" = 32768;
     };
 
     # ============================================

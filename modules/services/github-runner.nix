@@ -71,59 +71,64 @@ let
   #   1. Delete any existing runner with the same name (idempotent)
   #   2. Request a fresh registration token
   #   3. Write it to /run/github-runner-<name>-regtoken
-  mkTokenRefreshScript =
-    name: url:
-    pkgs.writeShellScript "github-runner-${name}-refresh-token" ''
-      set -euo pipefail
+  # HISTORICAL CONTEXT: The manual token refresh script was removed.
+  # It was fragile, caused split-brain scenarios with GitHub, and reinvented
+  # native NixOS wrapper functionality that handles PAT rotation directly.
+  /*
+    mkTokenRefreshScript =
+      name: url:
+      pkgs.writeShellScript "github-runner-${name}-refresh-token" ''
+        set -euo pipefail
 
-      PAT=$(cat "${patSecretPath}")
-      TOKEN_FILE="/run/github-runner-${name}-regtoken"
+        PAT=$(cat "${patSecretPath}")
+        TOKEN_FILE="/run/github-runner-${name}-regtoken"
 
-      # ── Derive API base URL from GitHub URL ──────────────────────────────
-      PATH_PART=$(echo "${url}" | ${pkgs.gnused}/bin/sed 's|https://github.com/||')
-      DEPTH=$(echo "$PATH_PART" | ${pkgs.gawk}/bin/awk -F/ '{print NF}')
+        # ── Derive API base URL from GitHub URL ──────────────────────────────
+        PATH_PART=$(echo "${url}" | ${pkgs.gnused}/bin/sed 's|https://github.com/||')
+        DEPTH=$(echo "$PATH_PART" | ${pkgs.gawk}/bin/awk -F/ '{print NF}')
 
-      if [ "$DEPTH" -eq 1 ]; then
-        API_BASE="https://api.github.com/orgs/$PATH_PART/actions/runners"
-      else
-        API_BASE="https://api.github.com/repos/$PATH_PART/actions/runners"
-      fi
+        if [ "$DEPTH" -eq 1 ]; then
+          API_BASE="https://api.github.com/orgs/$PATH_PART/actions/runners"
+        else
+          API_BASE="https://api.github.com/repos/$PATH_PART/actions/runners"
+        fi
 
-      AUTH_HEADER="Authorization: token $PAT"
-      ACCEPT_HEADER="Accept: application/vnd.github+json"
+        AUTH_HEADER="Authorization: token $PAT"
+        ACCEPT_HEADER="Accept: application/vnd.github+json"
 
-      # ── 1. Force-delete existing runner by name ──────────────────────────
-      RUNNER_ID=$(${pkgs.curl}/bin/curl -sf \
-        -H "$AUTH_HEADER" -H "$ACCEPT_HEADER" \
-        "$API_BASE" \
-        | ${pkgs.jq}/bin/jq -r \
-          --arg name "${name}" \
-          '.runners[] | select(.name == $name) | .id // empty') || true
-
-      if [ -n "''${RUNNER_ID:-}" ]; then
-        echo "→ Removing stale runner '${name}' (id=$RUNNER_ID)"
-        ${pkgs.curl}/bin/curl -sf -X DELETE \
+        # ── 1. Force-delete existing runner by name ──────────────────────────
+        RUNNER_ID=$(${pkgs.curl}/bin/curl -sf \
           -H "$AUTH_HEADER" -H "$ACCEPT_HEADER" \
-          "$API_BASE/$RUNNER_ID" || true
-        echo "✓ Removed"
-      fi
+          "$API_BASE" \
+          | ${pkgs.jq}/bin/jq -r \
+            --arg name "${name}" \
+            '.runners[] | select(.name == $name) | .id // empty') || true
 
-      # ── 2. Get fresh registration token ───────────────────────────────────
-      REG_TOKEN=$(${pkgs.curl}/bin/curl -sf -X POST \
-        -H "$AUTH_HEADER" -H "$ACCEPT_HEADER" \
-        "$API_BASE/registration-token" \
-        | ${pkgs.jq}/bin/jq -r '.token')
+        if [ -n "''${RUNNER_ID:-}" ]; then
+          echo "→ Removing stale runner '${name}' (id=$RUNNER_ID)"
+          ${pkgs.curl}/bin/curl -sf -X DELETE \
+            -H "$AUTH_HEADER" -H "$ACCEPT_HEADER" \
+            "$API_BASE/$RUNNER_ID" || true
+          echo "✓ Removed"
+        fi
 
-      if [ -z "''${REG_TOKEN:-}" ] || [ "$REG_TOKEN" = "null" ]; then
-        echo "ERROR: Failed to obtain registration token" >&2
-        exit 1
-      fi
+        # ── 2. Get fresh registration token ───────────────────────────────────
+        REG_TOKEN=$(${pkgs.curl}/bin/curl -sf -X POST \
+          -H "$AUTH_HEADER" -H "$ACCEPT_HEADER" \
+          "$API_BASE/registration-token" \
+          | ${pkgs.jq}/bin/jq -r '.token')
 
-      # ── 3. Write token to runtime file ────────────────────────────────────
-      echo -n "$REG_TOKEN" > "$TOKEN_FILE"
-      chmod 400 "$TOKEN_FILE"
-      echo "✓ Token written to $TOKEN_FILE"
-    '';
+        if [ -z "''${REG_TOKEN:-}" ] || [ "$REG_TOKEN" = "null" ]; then
+          echo "ERROR: Failed to obtain registration token" >&2
+          exit 1
+        fi
+
+        # ── 3. Write token to runtime file ────────────────────────────────────
+        echo -n "$REG_TOKEN" > "$TOKEN_FILE"
+        chmod 400 "$TOKEN_FILE"
+        echo "✓ Token written to $TOKEN_FILE"
+      '';
+  */
 
   # ── Helper: build one services.github-runners entry ───────────────────────
   mkRunnerEntry =
@@ -137,7 +142,11 @@ let
       enable = true;
       inherit url ephemeral;
       name = name;
-      tokenFile = "/run/github-runner-${name}-regtoken";
+      # ── Directly use SOPS PAT; NixOS/GitHub runner daemon handles token rotation
+      tokenFile = patSecretPath;
+      # ── Ensures upstream runner replaces any stale runner on GitHub side
+      replace = true;
+      # tokenFile = "/run/github-runner-${name}-regtoken"; # Old method
       extraLabels = [
         "nixos"
         "nix"
@@ -163,31 +172,35 @@ let
 
   # ── Token refresh oneshot services ────────────────────────────────────────
   # Separate root service per runner — clean systemd dependency, no + hacks
-  mkRefreshService =
-    name: url:
-    nameValuePair "github-runner-${name}-token-refresh" {
-      description = "Refresh GitHub Actions token for runner ${name}";
-      before = [ "github-runner-${name}.service" ];
-      requiredBy = [ "github-runner-${name}.service" ];
-      path = with pkgs; [
-        coreutils
-        curl
-        jq
-        gnused
-        gawk
-        bash
-      ];
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = mkTokenRefreshScript name url;
+  # HISTORICAL CONTEXT: Oneshot services are no longer needed because the
+  # PAT is passed directly to the runner service.
+  /*
+    mkRefreshService =
+      name: url:
+      nameValuePair "github-runner-${name}-token-refresh" {
+        description = "Refresh GitHub Actions token for runner ${name}";
+        before = [ "github-runner-${name}.service" ];
+        requiredBy = [ "github-runner-${name}.service" ];
+        path = with pkgs; [
+          coreutils
+          curl
+          jq
+          gnused
+          gawk
+          bash
+        ];
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = mkTokenRefreshScript name url;
+        };
       };
-    };
 
-  repoRefreshServices = listToAttrs (mapAttrsToList (name: r: mkRefreshService name r.url) cfg.repos);
+    repoRefreshServices = listToAttrs (mapAttrsToList (name: r: mkRefreshService name r.url) cfg.repos);
 
-  orgRefreshServices = optionalAttrs cfg.org.enable (listToAttrs [
-    (mkRefreshService cfg.org.name cfg.org.url)
-  ]);
+    orgRefreshServices = optionalAttrs cfg.org.enable (listToAttrs [
+      (mkRefreshService cfg.org.name cfg.org.url)
+    ]);
+  */
 
   # ── Environment overrides (proper quoting via NixOS environment attr) ─────
   mkEnvOverride = name: {
@@ -288,8 +301,9 @@ in
     # 1. Runner services
     services.github-runners = orgRunner // repoRunners;
 
-    # 2. Systemd: token refresh (oneshot) + environment overrides
-    systemd.services = orgRefreshServices // repoRefreshServices // orgEnvOverrides // repoEnvOverrides;
+    # 2. Systemd: environment overrides
+    # HISTORICAL: systemd.services = orgRefreshServices // repoRefreshServices // orgEnvOverrides // repoEnvOverrides;
+    systemd.services = orgEnvOverrides // repoEnvOverrides;
 
     # 3. Nix daemon trust
     nix.settings.trusted-users = allRunnerNames;
