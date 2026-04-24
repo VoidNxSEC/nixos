@@ -122,3 +122,6 @@ modules/packages/google-chrome/*
 ssh_sessions.db
 *.db-journal
 
+cloudflared-linux-amd64
+log.txt
+trivy-results.json
