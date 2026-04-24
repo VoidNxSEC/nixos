@@ -189,7 +189,7 @@
       };
 
       antigravity = {
-        enable = true; # Set to true to enable custom Antigravity build
+        enable = false; # Set to true to enable custom Antigravity build
         profile = "balanced"; # Options: performance, balanced, minimal
         enableCache = true;
       };
@@ -1163,6 +1163,7 @@
       terraform-providers.carlpett_sops
       terraform-providers.hashicorp_vault
       anytype
+      antigravity
     ];
   };
 
