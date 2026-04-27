@@ -493,9 +493,9 @@
 
       profiles = {
         coder = {
-          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
+          modelPath = "/var/lib/ml-models/llamacpp/models/DarkSapling-V2-Ultra-Quality-7B-GGUF:Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 40;
+          gpuLayers = 42;
           contextSize = 8192;
         };
 
@@ -831,11 +831,12 @@
       cudaGraphs = true;
       flashAttention = true;
       mmap = true;
-      mlock = true;
+      mlock = false;
       continuousBatching = true;
       speculativeDecoding.enable = false;
       metricsEndpoint = true;
       embeddings = true;
+      extraFlags = [ ];
     };
 
     # TabbyAPI - OpenAI-compatible Inference Server
@@ -899,7 +900,7 @@
       enable = true;
       integration = {
         publicDomain = "forgejo.voidnx.com";
-        publicUrl = "https://forgejo.voidnx.com/";
+        publicUrl = "http://localhost:3002/";
         listenPort = 3002;
         database = {
           type = "postgres";

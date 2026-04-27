@@ -86,7 +86,8 @@
       "Bash(wait)",
       "Bash(nixfmt modules/ai/ecosystem.nix modules/ai/default.nix modules/ai/neoland/*.nix modules/ai/neotron/default.nix modules/ai/ml-ops-api/default.nix modules/ai/cerebro/default.nix modules/ai/phantom/default.nix)",
       "Bash(cat /home/kernelcore/dev/_ARCHIVE_2025_12_10/frontend/backend/src/routes/*.ts)",
-      "mcp__securellm-mcp__github_search"
+      "mcp__securellm-mcp__github_search",
+      "Bash(nvidia-smi --query-gpu=name,memory.total,memory.used,memory.free --format=csv,noheader)"
     ]
   },
   "model": "claude-opus-4-6",

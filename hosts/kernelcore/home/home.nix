@@ -274,7 +274,7 @@
       model = "large-v3";
       hyprland = {
         enable = true;
-        keybind = "SUPER, S";
+        keybind = "SUPER, R";
       };
       waybar.enable = true;
     };
@@ -385,8 +385,8 @@
 
     #'';
 
-    ".config/nvim".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/neovim";
+    #".config/nvim".source =
+    #config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/neovim";
 
     # Desktop entry
     ".local/share/applications/htop.desktop".text = ''
