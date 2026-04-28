@@ -265,11 +265,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777349711,
-        "narHash": "sha256-PGKgo2dO6fK603QGI+DWXdKmS09pbJjjTxwRHdhkGZA=",
+        "lastModified": 1777387187,
+        "narHash": "sha256-+c51GFvEZQ+XtfiFNJ65HJ5G3nDY+AaZ1rRyJihA+g0=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "c1140540536d483e2730320100f6835d62c94fdf",
+        "rev": "982139628581c309b6a25c55deed564b546ebf74",
         "type": "github"
       },
       "original": {
@@ -355,11 +355,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1777371432,
-        "narHash": "sha256-8iNWrocMpzYhygCIdbI/GNZYPWrmuDTnfRaNupQwrtk=",
+        "lastModified": 1777388167,
+        "narHash": "sha256-rFmvr29MM1enxPZwJfb4qp9g13JC4VIK07T6Or1kTqw=",
         "ref": "refs/heads/main",
-        "rev": "d4c6ff434c5c7aa66bc7c28e5ce336d2a694bfcc",
-        "revCount": 7197,
+        "rev": "98fbbafef78057c818fb02b15c27e38ad2f5b5bc",
+        "revCount": 7198,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -843,11 +843,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777259803,
-        "narHash": "sha256-fIb/EoVu/1U0qVrE6qZCJ2WCfprRpywNIAVzKEACIQc=",
+        "lastModified": 1777346187,
+        "narHash": "sha256-oVxyGjpiIsrXhWTJVUOs38fZQkLjd0nZGOY9K7Kfot8=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "a6cb2224d975e16b5e67de688c6ad306f7203425",
+        "rev": "146e7bf7569b8288f24d41d806b9f584f7cfd5b5",
         "type": "github"
       },
       "original": {
@@ -868,11 +868,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777293519,
-        "narHash": "sha256-LK7M4pxyFcS5oYYLmi0LEq1mZrfcqeX45zD6Es3V7L0=",
+        "lastModified": 1777388101,
+        "narHash": "sha256-mFc6TFx/JSBvB8Ho9AeFjSIxIRZ8rjXAbjJjvwLRmEw=",
         "ref": "refs/heads/main",
-        "rev": "bf4788878a45538967067873e069554df509e483",
-        "revCount": 149,
+        "rev": "9044e02d201d856d21429d0ad36a6ad4a7c7eca9",
+        "revCount": 150,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
       },
