@@ -10,6 +10,7 @@ with lib;
 
 let
   cfg = config.kernelcore.ml.mcp;
+  securellmMcpPackage = import ../../../../pkgs/securellm-mcp.nix { inherit pkgs inputs; };
 
   # Template para gerar mcp.json personalizado por agente
   generateMcpConfig =
@@ -45,7 +46,7 @@ in
 
     mcpPackage = mkOption {
       type = types.package;
-      default = inputs.securellm-mcp.packages.${pkgs.system}.default;
+      default = securellmMcpPackage;
       description = "The securellm-mcp package to use";
     };
 
