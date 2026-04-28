@@ -14,7 +14,7 @@
     ./ecosystem.nix
     ./neoland
     ./neotron
-    ./ml-ops-api
+    #./ml-ops-api
     ./cerebro
     ./phantom
     # Legacy agent-hub (mantido para compatibilidade)
