@@ -96,7 +96,12 @@ jobs:
           chmod 600 ~/.config/sops/age/keys.txt
 
       - name: Build & switch
-        run: sudo nixos-rebuild switch --flake .#kernelcore --show-trace
+        run: |
+          if command -v sudo >/dev/null 2>&1; then
+            sudo nixos-rebuild switch --flake .#kernelcore --show-trace
+          else
+            nixos-rebuild switch --flake .#kernelcore --show-trace
+          fi
 
       - name: Verify system health
         run: systemctl is-system-running --wait
