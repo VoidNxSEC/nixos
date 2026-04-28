@@ -52,9 +52,11 @@ runs:
       shell: bash
       run: |
         echo "🔧 Configuring Nix..."
-        
-        # Create nix.conf if not exists
-        sudo mkdir -p /etc/nix
+
+        # Use per-user Nix config so the action works on self-hosted runners
+        # that don't ship sudo inside job environments.
+        USER_NIX_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/nix/nix.conf"
+        mkdir -p "$(dirname "$USER_NIX_CONF")"
         
         # Base configuration
         SUBSTITUTERS="https://cache.nixos.org https://nix-community.cachix.org"
@@ -64,7 +66,7 @@ runs:
           TRUSTED_SUBSTITUTERS="trusted-substituters = ${{ inputs.local-cache-url }}"
         fi
 
-        sudo tee -a /etc/nix/nix.conf > /dev/null << EOF
+        cat >> "$USER_NIX_CONF" << EOF
         # GitHub Actions optimizations
         max-jobs = auto
         cores = 0
@@ -88,7 +90,7 @@ runs:
         
         # Add extra config if provided
         if [ -n "${{ inputs.nix-conf-extra }}" ]; then
-          echo "${{ inputs.nix-conf-extra }}" | sudo tee -a /etc/nix/nix.conf
+          echo "${{ inputs.nix-conf-extra }}" >> "$USER_NIX_CONF"
         fi
         
         echo "✅ Nix configured"
