@@ -25,7 +25,7 @@
 
     # Development & AI
     ./buildbot-local.nix
-    ./mcp-server.nix
+    #./mcp-server.nix
     ./github-runner.nix
     ./gitlab-duo/default.nix
     ./forgejo.nix
