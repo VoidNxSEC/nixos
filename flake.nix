@@ -35,11 +35,11 @@
     #url = "git+ssh://git@github.com/marcosfpina/ml-offload-api";
     #inputs.nixpkgs.follows = "nixpkgs";
     #};
-    #securellm-mcp = {
-    #url = "git+ssh://git@github.com/VoidNxSEC/securellm-mcp";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #inputs.spider-nix.follows = "spider-nix";
-    #};
+    securellm-mcp = {
+      url = "git+ssh://git@github.com/VoidNxSEC/securellm-mcp";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.spider-nix.follows = "spider-nix";
+    };
     #securellm-bridge = {
     #url = "git+ssh://git@github.com/marcosfpina/securellm-bridge";
     #inputs.nixpkgs.follows = "nixpkgs";

@@ -10,7 +10,7 @@
 
 {
   imports = [
-    #./config.nix
+    ./config.nix
     # ./server is a separate TypeScript project, not imported here
   ];
 }

@@ -10,6 +10,7 @@ with lib;
 
 let
   cfg = config.services.securellm-mcp;
+  securellmMcpPackage = import ../../pkgs/securellm-mcp.nix { inherit pkgs inputs; };
 
   # Load MCP configuration template from root .mcp.json
   mcpTemplate = builtins.fromJSON (builtins.readFile ../../.mcp.json);
@@ -70,7 +71,7 @@ in
 
     package = mkOption {
       type = types.package;
-      default = inputs.securellm-mcp.packages.${pkgs.system}.default;
+      default = securellmMcpPackage;
       description = "The SecureLLM MCP package to use";
     };
 
