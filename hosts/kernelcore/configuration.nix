@@ -353,8 +353,28 @@
           "linux"
           "gpu"
           "nix"
+          "docker"
+          "python"
+          "node"
+          "containers"
+          "security"
         ];
       };
+      extraPackages = with pkgs; [
+        docker
+        docker-compose
+        docker-buildx
+        podman
+        podman-compose
+        python3
+        python3Packages.pip
+        pipx
+        nodejs
+        bun
+        trivy
+        syft
+        semgrep
+      ];
     };
 
     services.mosh = {
