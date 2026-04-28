@@ -35,11 +35,11 @@
     #url = "git+ssh://git@github.com/marcosfpina/ml-offload-api";
     #inputs.nixpkgs.follows = "nixpkgs";
     #};
-    securellm-mcp = {
-      url = "git+ssh://git@github.com/VoidNxSEC/securellm-mcp";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.spider-nix.follows = "spider-nix";
-    };
+    #securellm-mcp = {
+    #url = "git+ssh://git@github.com/VoidNxSEC/securellm-mcp";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #inputs.spider-nix.follows = "spider-nix";
+    #};
     #securellm-bridge = {
     #url = "git+ssh://git@github.com/marcosfpina/securellm-bridge";
     #inputs.nixpkgs.follows = "nixpkgs";
@@ -174,16 +174,16 @@
       packages.${system} = import ./lib/packages.nix { inherit pkgs self inputs; };
 
       # nix run .#securellm-mcp
-      apps.${system} = {
-        securellm-mcp = {
-          type = "app";
-          program = "${inputs.securellm-mcp.packages.${system}.default}/bin/securellm-mcp";
-        };
-        #securellm-bridge = {
-        #  type = "app";
-        #  program = "${inputs.securellm-bridge.packages.${system}.default}/bin/securellm-bridge";
-        #};
-      };
+      #apps.${system} = {
+      #securellm-mcp = {
+      #type = "app";
+      #program = "${inputs.securellm-mcp.packages.${system}.default}/bin/securellm-mcp";
+      #};
+      #securellm-bridge = {
+      #  type = "app";
+      #  program = "${inputs.securellm-bridge.packages.${system}.default}/bin/securellm-bridge";
+      #};
+      #};
 
       # Fast checks for CI/CD (heavy builds moved to packages)
       # Run with: nix flake check
@@ -194,9 +194,8 @@
           nixfmt --check ${self}
           touch $out
         '';
-
         # Package builds (relatively fast)
-        mcp-server = self.packages.${system}.securellm-mcp;
+        #mcp-server = self.packages.${system}.securellm-mcp;
         #llm-bridge = self.packages.${system}.securellm-bridge;
 
         # NOTE: Heavy builds (iso, vm, docker-app) removed from checks for performance
@@ -355,6 +354,5 @@
           ];
         };
       };
-
     };
 }
