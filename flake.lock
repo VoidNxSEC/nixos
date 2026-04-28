@@ -83,11 +83,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777372452,
-        "narHash": "sha256-yv38PkF4NEoEJklf672yCwyc5qwUSZW0kA5g3Gyzo9c=",
+        "lastModified": 1777403192,
+        "narHash": "sha256-t5EUd1LPQc117ixi91P6m55fVc1/IwJvOEvDx7qL1Vc=",
         "ref": "refs/heads/main",
-        "rev": "8c69aead575271d9c73d8b442468e62af6725928",
-        "revCount": 12,
+        "rev": "38b4935f0de3dee32dc7589e94861abc663e194a",
+        "revCount": 13,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/arch-analyzer"
       },
