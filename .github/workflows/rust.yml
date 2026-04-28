@@ -24,7 +24,7 @@ permissions:
 jobs:
   fmt:
     name: Format
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -34,7 +34,7 @@ jobs:
 
   clippy:
     name: Clippy
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -45,7 +45,7 @@ jobs:
 
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -54,14 +54,14 @@ jobs:
 
   deny:
     name: Deny
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
     steps:
       - uses: actions/checkout@v4
       - uses: EmbarkStudios/cargo-deny-action@v2
 
   audit:
     name: Audit
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
     permissions:
       contents: read
       issues: write

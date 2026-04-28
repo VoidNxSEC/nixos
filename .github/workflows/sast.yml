@@ -20,7 +20,7 @@ permissions:
 jobs:
   semgrep:
     name: Semgrep
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
     container:
       image: semgrep/semgrep:latest
     steps:
@@ -40,7 +40,7 @@ jobs:
 
   codeql:
     name: CodeQL (${{ matrix.language }})
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
     strategy:
       fail-fast: false
       matrix:
