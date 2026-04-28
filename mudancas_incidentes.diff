@@ -1,0 +1,645 @@
+diff --git a/flake.lock b/flake.lock
+index bcda8bf4..aff882f2 100755
+--- a/flake.lock
++++ b/flake.lock
+@@ -66,8 +66,8 @@
+         "spider-nix": "spider-nix"
+       },
+       "locked": {
+-        "lastModified": 1777236975,
+-        "narHash": "sha256-bZuVXlx53E5H9TFnNP5nyNNA6CgTUYHsQNpFXNGf5YY=",
++        "lastModified": 1777293685,
++        "narHash": "sha256-fyOK/fGwvs/xvOxDSq2+QsnFsR6KNfQJHDyI0vp9ZiM=",
+         "path": "/home/kernelcore/master/adr-ledger",
+         "type": "path"
+       },
+@@ -215,11 +215,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1776702787,
+-        "narHash": "sha256-qc5uwEWbuubzYthmZcfCapooZGXhoYZWfTQ24TozbCQ=",
++        "lastModified": 1776876344,
++        "narHash": "sha256-Ubqb/agkuMJK+k19gjQgHux/eOYRc1sRGoOZOho8+VY=",
+         "owner": "hyprwm",
+         "repo": "aquamarine",
+-        "rev": "9a1ca6b8cb4d86a599787a55b78f2ddf809bf945",
++        "rev": "648a13d0ee1e03a843b3e145b8ece15393058701",
+         "type": "github"
+       },
+       "original": {
+@@ -694,11 +694,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1777004352,
+-        "narHash": "sha256-SV+9PgNwZ8jHVCjK6YaCBzaheLSW7cDnm5DpOYrD8Vw=",
++        "lastModified": 1777258755,
++        "narHash": "sha256-EC07KwADRE2LdIk7vEDyAaD3I0ZUq24T9jQF9L0iEPk=",
+         "owner": "nix-community",
+         "repo": "home-manager",
+-        "rev": "6012cf1fed3eba66115f3fd117b9be6bd2a15b2f",
++        "rev": "7f8bbc93d63401e41368d6ddc46a4f631610fa90",
+         "type": "github"
+       },
+       "original": {
+@@ -784,11 +784,11 @@
+         "xdph": "xdph"
+       },
+       "locked": {
+-        "lastModified": 1776947531,
+-        "narHash": "sha256-BnUJwexEDpt10Csws8UNq/34r5zaUl8oXNrDHd6oJVA=",
++        "lastModified": 1777292678,
++        "narHash": "sha256-QUFiLlqhT2UgfyO1JOk0NPA96yyMXljOW2q/VVzGP70=",
+         "ref": "refs/heads/main",
+-        "rev": "b65714e3b8e123fb2febd507905d25fa6abd0400",
+-        "revCount": 7171,
++        "rev": "9e357f2481fedfa75899d9721fe1cfc581b3bfc0",
++        "revCount": 7189,
+         "submodules": true,
+         "type": "git",
+         "url": "https://github.com/hyprwm/Hyprland"
+@@ -963,11 +963,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1776428866,
+-        "narHash": "sha256-XfRlBolGtjvalTHJp3XvvpYLBjkMhaZLLU0WqZ91Fcg=",
++        "lastModified": 1777148223,
++        "narHash": "sha256-PTf7kRFFzCW6rIYxLH2fWfVJmj86FSYe3k6L8B+IM9o=",
+         "owner": "hyprwm",
+         "repo": "hyprutils",
+-        "rev": "eedd60805cd96d4442586f2ba5fe51d549b12674",
++        "rev": "fa3992be2dfebe4ab06d753c6ca59bea298e798f",
+         "type": "github"
+       },
+       "original": {
+@@ -988,11 +988,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1776430932,
+-        "narHash": "sha256-Yv3RPiUvl7CAsJgwIVsqcj7akn1gLyJP1F/mocof5hA=",
++        "lastModified": 1777148232,
++        "narHash": "sha256-Uv0WZLhu89SafuSOmYDA7akrPt4wBRmsa1ucasO5aXg=",
+         "owner": "hyprwm",
+         "repo": "hyprwayland-scanner",
+-        "rev": "4c2fcc06dc9722c97dbb54ba649c69b18ce83d2e",
++        "rev": "fec9cf1abcc1011e46f0a0986f46bf93c6bf8b92",
+         "type": "github"
+       },
+       "original": {
+@@ -1069,11 +1069,11 @@
+         "rust-overlay": "rust-overlay_4"
+       },
+       "locked": {
+-        "lastModified": 1776593419,
+-        "narHash": "sha256-hX11+0Ds5TWzWGnQx4Ztr76DTfh+4g+rmm3ucdq7oLc=",
++        "lastModified": 1777273687,
++        "narHash": "sha256-r8C4NECtGsgLA0W0mgoW6Ifq3cOzKrFqeL2XYI5Rl4E=",
+         "ref": "refs/heads/main",
+-        "rev": "b4f38601a9c01f267a1bfacd757d8660e085fc35",
+-        "revCount": 23,
++        "rev": "559e27a39b23b0bdc9764bb2fba4157c116dcc95",
++        "revCount": 26,
+         "type": "git",
+         "url": "ssh://git@github.com/VoidNxSEC/ml-ops-api"
+       },
+@@ -1166,11 +1166,11 @@
+         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
+       },
+       "locked": {
+-        "lastModified": 1776879043,
+-        "narHash": "sha256-M9RjuowtoqQbFRdQAm2P6GjFwgHjRcnWYcB7ChSjDms=",
++        "lastModified": 1777240421,
++        "narHash": "sha256-ooPmu+8tqOGh4kozPW4rJC7Y7WM/FHtEY3OK1PoNW7g=",
+         "owner": "sodiboo",
+         "repo": "niri-flake",
+-        "rev": "535ebbe038039215a5d1c6c0c67f833409a5be96",
++        "rev": "2bb22af2985e5f3cfd051b3d977ebfbf81126280",
+         "type": "github"
+       },
+       "original": {
+@@ -1199,11 +1199,11 @@
+     "niri-unstable": {
+       "flake": false,
+       "locked": {
+-        "lastModified": 1776853441,
+-        "narHash": "sha256-mSxfoEs7DiDhMCBzprI/1K7UXzMISuGq0b7T06LVJXE=",
++        "lastModified": 1777237919,
++        "narHash": "sha256-bZHBzo4EuW/xLzXnnMKsIMdZYqgY2O0mIMdplwDHB8Y=",
+         "owner": "YaLTeR",
+         "repo": "niri",
+-        "rev": "74d2b18603366b98ec9045ecf4a632422f472365",
++        "rev": "a85b922919815c32a3ae34e0838830fe522d6a1c",
+         "type": "github"
+       },
+       "original": {
+@@ -1318,11 +1318,11 @@
+     },
+     "nixpkgs-stable": {
+       "locked": {
+-        "lastModified": 1776734388,
+-        "narHash": "sha256-vl3dkhlE5gzsItuHoEMVe+DlonsK+0836LIRDnm6MXQ=",
++        "lastModified": 1777077449,
++        "narHash": "sha256-AIiMJiqvGrN4HyLEbKAoCSRRYn0rnlW5VbKNIMIYqm4=",
+         "owner": "NixOS",
+         "repo": "nixpkgs",
+-        "rev": "10e7ad5bbcb421fe07e3a4ad53a634b0cd57ffac",
++        "rev": "a4bf06618f0b5ee50f14ed8f0da77d34ecc19160",
+         "type": "github"
+       },
+       "original": {
+@@ -1382,11 +1382,11 @@
+     },
+     "nixpkgs_5": {
+       "locked": {
+-        "lastModified": 1776548001,
+-        "narHash": "sha256-ZSK0NL4a1BwVbbTBoSnWgbJy9HeZFXLYQizjb2DPF24=",
++        "lastModified": 1776877367,
++        "narHash": "sha256-EHq1/OX139R1RvBzOJ0aMRT3xnWyqtHBRUBuO1gFzjI=",
+         "owner": "NixOS",
+         "repo": "nixpkgs",
+-        "rev": "b12141ef619e0a9c1c84dc8c684040326f27cdcc",
++        "rev": "0726a0ecb6d4e08f6adced58726b95db924cef57",
+         "type": "github"
+       },
+       "original": {
+@@ -1632,11 +1632,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1776568404,
+-        "narHash": "sha256-Xng/brVgk+0+ggo/4xnaxb5v4lU82RxPpmFlMHXLGYg=",
++        "lastModified": 1777259803,
++        "narHash": "sha256-fIb/EoVu/1U0qVrE6qZCJ2WCfprRpywNIAVzKEACIQc=",
+         "owner": "oxalica",
+         "repo": "rust-overlay",
+-        "rev": "e65c31bc66b9194a9fc5b5a9f97ac049523f9438",
++        "rev": "a6cb2224d975e16b5e67de688c6ad306f7203425",
+         "type": "github"
+       },
+       "original": {
+@@ -1757,11 +1757,11 @@
+         "nixpkgs": "nixpkgs_2"
+       },
+       "locked": {
+-        "lastModified": 1769309768,
+-        "narHash": "sha256-AbOIlNO+JoqRJkK1VrnDXhxuX6CrdtIu2hSuy4pxi3g=",
++        "lastModified": 1777173302,
++        "narHash": "sha256-ERiu3cbxvnTDxiDcimRA7af7xp6x1y0sRyLGm28Qzz8=",
+         "owner": "oxalica",
+         "repo": "rust-overlay",
+-        "rev": "140c9dc582cb73ada2d63a2180524fcaa744fad5",
++        "rev": "aaec8c50baeaf2f2ba653e8aae71778a2bbbac94",
+         "type": "github"
+       },
+       "original": {
+@@ -1801,11 +1801,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1776568404,
+-        "narHash": "sha256-Xng/brVgk+0+ggo/4xnaxb5v4lU82RxPpmFlMHXLGYg=",
++        "lastModified": 1777259803,
++        "narHash": "sha256-fIb/EoVu/1U0qVrE6qZCJ2WCfprRpywNIAVzKEACIQc=",
+         "owner": "oxalica",
+         "repo": "rust-overlay",
+-        "rev": "e65c31bc66b9194a9fc5b5a9f97ac049523f9438",
++        "rev": "a6cb2224d975e16b5e67de688c6ad306f7203425",
+         "type": "github"
+       },
+       "original": {
+@@ -1890,11 +1890,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1776576533,
+-        "narHash": "sha256-P82tqNhlp9FBF0av7aNOXyWmfXHtPMpc+xLIHlQ13E0=",
++        "lastModified": 1777293519,
++        "narHash": "sha256-LK7M4pxyFcS5oYYLmi0LEq1mZrfcqeX45zD6Es3V7L0=",
+         "ref": "refs/heads/main",
+-        "rev": "8209278dda8c0309897cb32af2f44933bd827264",
+-        "revCount": 144,
++        "rev": "bf4788878a45538967067873e069554df509e483",
++        "revCount": 149,
+         "type": "git",
+         "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
+       },
+@@ -1915,11 +1915,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1777269142,
+-        "narHash": "sha256-c8C2/VH68f3o5t/lyaJ/GKnuGGcu1nLp/i+twkza/q0=",
++        "lastModified": 1777293519,
++        "narHash": "sha256-LK7M4pxyFcS5oYYLmi0LEq1mZrfcqeX45zD6Es3V7L0=",
+         "ref": "refs/heads/main",
+-        "rev": "8d28282c53a774e08e4224e3f1e6998984ae0b55",
+-        "revCount": 148,
++        "rev": "bf4788878a45538967067873e069554df509e483",
++        "revCount": 149,
+         "type": "git",
+         "url": "ssh://git@github.com/VoidNxSEC/securellm-mcp"
+       },
+@@ -1990,11 +1990,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1776119890,
+-        "narHash": "sha256-Zm6bxLNnEOYuS/SzrAGsYuXSwk3cbkRQZY0fJnk8a5M=",
++        "lastModified": 1776771786,
++        "narHash": "sha256-DRFGPfFV6hbrfO9a1PH1FkCi7qR5FgjSqsQGGvk1rdI=",
+         "owner": "Mic92",
+         "repo": "sops-nix",
+-        "rev": "d4971dd58c6627bfee52a1ad4237637c0a2fb0cd",
++        "rev": "bef289e2248991f7afeb95965c82fbcd8ff72598",
+         "type": "github"
+       },
+       "original": {
+@@ -2029,11 +2029,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1776119890,
+-        "narHash": "sha256-Zm6bxLNnEOYuS/SzrAGsYuXSwk3cbkRQZY0fJnk8a5M=",
++        "lastModified": 1776771786,
++        "narHash": "sha256-DRFGPfFV6hbrfO9a1PH1FkCi7qR5FgjSqsQGGvk1rdI=",
+         "owner": "Mic92",
+         "repo": "sops-nix",
+-        "rev": "d4971dd58c6627bfee52a1ad4237637c0a2fb0cd",
++        "rev": "bef289e2248991f7afeb95965c82fbcd8ff72598",
+         "type": "github"
+       },
+       "original": {
+@@ -2080,11 +2080,11 @@
+         "sops-nix": "sops-nix_2"
+       },
+       "locked": {
+-        "lastModified": 1776576203,
+-        "narHash": "sha256-pNlXTw+ZL5Q35HcrhorkkHT+tRWCWWwXAYfutNDtA7c=",
++        "lastModified": 1777293570,
++        "narHash": "sha256-OHSrANU18a6L1MrtX+pPQ9+Pj72sT72VaRNcoRVQxEI=",
+         "ref": "refs/heads/main",
+-        "rev": "c42d746cb301f9df03b7ff49099e6a699f08238e",
+-        "revCount": 72,
++        "rev": "75965d7e985d6b3059c3eeac92e517b4b8d21360",
++        "revCount": 74,
+         "type": "git",
+         "url": "ssh://git@github.com/VoidNxSEC/spectre"
+       },
+@@ -2147,11 +2147,11 @@
+         "sops-nix": "sops-nix_4"
+       },
+       "locked": {
+-        "lastModified": 1777154345,
+-        "narHash": "sha256-wmBoIwCn+w3GFyDd1xm8UQueP2TD3UA+40L0D0UDP7c=",
++        "lastModified": 1777293539,
++        "narHash": "sha256-xefuy612H1+5Fk29+FQmqV5Ie1sZF7L71e7d/zm18aM=",
+         "ref": "refs/heads/main",
+-        "rev": "0b1d3eedf7296aea5079049344c815c8debd0a36",
+-        "revCount": 25,
++        "rev": "f151066afbd35fb24a2343f862a53eae8206939a",
++        "revCount": 26,
+         "type": "git",
+         "url": "ssh://git@github.com/marcosfpina/spooknix"
+       },
+@@ -2466,11 +2466,11 @@
+         ]
+       },
+       "locked": {
+-        "lastModified": 1776608502,
+-        "narHash": "sha256-UH8YoQxx4hFOm6qjMdjRQNRvSejFIR/wBZ8fW1p9sME=",
++        "lastModified": 1777035886,
++        "narHash": "sha256-m1TNuBoSXUBSKhD9UVMkU90M0wFTPTfvIOOltO8IM8A=",
+         "owner": "hyprwm",
+         "repo": "xdg-desktop-portal-hyprland",
+-        "rev": "4a293523d36dfa367e67ec304cc718ea66a8fec2",
++        "rev": "ecfcdcc781f48821d83e1e2a0e30d7beca0eeb5e",
+         "type": "github"
+       },
+       "original": {
+diff --git a/hosts/kernelcore/configuration.nix b/hosts/kernelcore/configuration.nix
+index 7e79cd2c..fbbb427c 100755
+--- a/hosts/kernelcore/configuration.nix
++++ b/hosts/kernelcore/configuration.nix
+@@ -344,11 +344,16 @@
+ 
+     services.github-runner = {
+       enable = true;
+-      repos = {
+-        nixos-self-hosted = {
+-          url = "https://github.com/VoidNxSEC/nixos";
+-          labels = [ "linux" ];
+-        };
++      org = {
++        enable = true;
++        # Covers all repos in the VoidNxSEC org automatically
++        url = "https://github.com/VoidNxSEC";
++        name = "kernelcore-org";
++        labels = [
++          "linux"
++          "gpu"
++          "nix"
++        ];
+       };
+     };
+ 
+@@ -369,7 +374,7 @@
+     };
+ 
+     services.gpu-orchestration = {
+-      enable = true;
++      enable = false;
+       defaultMode = "local";
+     };
+ 
+@@ -965,7 +970,7 @@
+     # SPOOKNIX - Privacy-first STT Engine (Docker container)
+     # ═══════════════════════════════════════════════════════════
+     spooknix = {
+-      enable = true;
++      enable = false;
+       model = "large-v3";
+       device = "cuda";
+       port = 8000;
+diff --git a/modules/ai/ml-ops-api/default.nix b/modules/ai/ml-ops-api/default.nix
+index 920c5c0b..2137fcf4 100644
+--- a/modules/ai/ml-ops-api/default.nix
++++ b/modules/ai/ml-ops-api/default.nix
+@@ -1,6 +1,12 @@
+-# ML-Ops API — Inference Backend
+-# Suporta múltiplos runtimes: local FastAPI, Triton, vLLM, custom Rust
+-# Target: Kubernetes GPU fleets (NVIDIA Inception Program)
++# ML-Ops API — Rust inference gateway (ml-offload-api)
++#
++# Manages: OpenAI-compatible endpoints, priority queue orchestrator,
++#          VRAM-aware backend router, Prometheus metrics, auth + rate-limiting.
++#
++# Secrets via sops-nix:
++#   Set apiKeysSecretFile to a sops-managed EnvironmentFile containing
++#   ML_OFFLOAD_API_KEYS=key1,key2,...
++#   Leave unset for dev mode (no auth).
+ 
+ {
+   config,
+@@ -15,93 +21,205 @@ let
+ in
+ {
+   options.services.ml-ops-api = {
+-    enable = lib.mkEnableOption "ML-Ops API inference backend";
++    enable = lib.mkEnableOption "ML-Ops API Rust inference gateway";
++
++    package = lib.mkOption {
++      type = lib.types.package;
++      description = "The ml-offload-api Rust binary package";
++    };
++
++    # ── Network ───────────────────────────────────────────────────────────────
++
++    host = lib.mkOption {
++      type = lib.types.str;
++      default = "127.0.0.1";
++      description = "Bind address. Use 0.0.0.0 only behind a reverse proxy.";
++    };
+ 
+     port = lib.mkOption {
+       type = lib.types.port;
+-      default = 8080;
++      default = 9000;
+     };
+ 
+-    runtime = lib.mkOption {
+-      type = lib.types.enum [
+-        "fastapi"
+-        "triton"
+-        "vllm"
+-        "custom-rust"
+-      ];
+-      default = "fastapi";
++    corsEnabled = lib.mkOption {
++      type = lib.types.bool;
++      default = false;
++      description = "Enable permissive CORS (only for local dev behind a proxy)";
++    };
++
++    # ── Storage ───────────────────────────────────────────────────────────────
++
++    dataDir = lib.mkOption {
++      type = lib.types.str;
++      default = "/var/lib/ml-offload";
++    };
++
++    modelsPath = lib.mkOption {
++      type = lib.types.str;
++      default = "/var/lib/ml-models";
++      description = "Directory where GGUF / safetensors model files are stored";
++    };
++
++    dbPath = lib.mkOption {
++      type = lib.types.str;
++      default = "/var/lib/ml-offload/registry.db";
++      description = "SQLite model registry database path";
++    };
++
++    # ── Backends ──────────────────────────────────────────────────────────────
++
++    llamacppUrl = lib.mkOption {
++      type = lib.types.str;
++      default = "http://127.0.0.1:8080";
++      description = "llama-server base URL";
++    };
++
++    vllmUrl = lib.mkOption {
++      type = lib.types.str;
++      default = "";
++      description = "vLLM server base URL. Empty = vLLM disabled.";
++    };
++
++    # ── Auth + Rate limiting ──────────────────────────────────────────────────
++
++    apiKeysSecretFile = lib.mkOption {
++      type = lib.types.nullOr lib.types.path;
++      default = null;
+       description = ''
+-        Inference runtime:
+-        - fastapi: local Python, dev/test only
+-        - triton: NVIDIA Triton Inference Server (k8s GPU fleet)
+-        - vllm: vLLM for LLM serving (k8s GPU fleet, NVIDIA Inception)
+-        - custom-rust: Candle-based Rust inference (neoland engine.rs)
++        Path to a systemd EnvironmentFile containing:
++          ML_OFFLOAD_API_KEYS=key1,key2,...
++        Typically a sops-nix secret path:
++          config.sops.secrets."ml-ops-api/api-keys".path
++        Leave null for dev mode (no auth enforced).
+       '';
+     };
+ 
+-    # GPU configuration (k8s: resources.limits."nvidia.com/gpu")
+-    gpu = {
+-      enable = lib.mkOption {
+-        type = lib.types.bool;
+-        default = false;
+-      };
+-      count = lib.mkOption {
++    rateLimitRpm = lib.mkOption {
++      type = lib.types.int;
++      default = 60;
++      description = "Per-API-key rate limit in requests per minute";
++    };
++
++    # ── Orchestrator ──────────────────────────────────────────────────────────
++
++    orchestrator = {
++      workers = lib.mkOption {
+         type = lib.types.int;
+-        default = 1;
+-        description = "Number of GPUs to request (k8s GPU fleet)";
++        default = 4;
++        description = "Number of worker tasks in the priority queue pool";
+       };
+-      runtimeClass = lib.mkOption {
+-        type = lib.types.str;
+-        default = "nvidia";
+-        description = "Kubernetes RuntimeClass for GPU (NVIDIA Inception: 'nvidia')";
++      maxConcurrent = lib.mkOption {
++        type = lib.types.int;
++        default = 8;
++        description = "Max in-flight requests across all workers (semaphore)";
++      };
++      timeoutSecs = lib.mkOption {
++        type = lib.types.int;
++        default = 300;
++        description = "Per-request timeout before worker returns error";
+       };
+     };
+ 
+-    # Kubernetes-specific (used when eco.deploymentMode != nixos)
+-    kubernetes = {
+-      serviceType = lib.mkOption {
+-        type = lib.types.enum [
+-          "ClusterIP"
+-          "LoadBalancer"
+-          "NodePort"
+-        ];
+-        default = "ClusterIP";
+-      };
+-      replicaCount = lib.mkOption {
++    # ── NATS ──────────────────────────────────────────────────────────────────
++
++    natsUrl = lib.mkOption {
++      type = lib.types.str;
++      default = "";
++      description = "NATS server URL for inference event publishing. Empty = disabled.";
++    };
++
++    # ── Resources (mirrors k8s requests/limits) ───────────────────────────────
++
++    resources = {
++      memoryMb = lib.mkOption {
+         type = lib.types.int;
+-        default = 1;
+-        description = "Number of replicas in k8s Deployment";
++        default = 1024;
++        description = "Memory limit in MB";
++      };
++      cpuPercent = lib.mkOption {
++        type = lib.types.int;
++        default = 200;
++        description = "CPU quota percent (200 = 2 cores)";
+       };
+     };
+ 
+     user = lib.mkOption {
+       type = lib.types.str;
+-      default = "ml-ops";
++      default = "ml-offload";
+     };
+   };
+ 
+   config = lib.mkIf cfg.enable {
+-    warnings = lib.optionals (cfg.runtime != "fastapi") [
+-      "ml-ops-api runtime '${cfg.runtime}' requires manual k8s deployment. NixOS systemd service only supports 'fastapi'."
+-    ];
+-
+-    # Only start systemd service for local fastapi runtime
+-    systemd.services.ml-ops-api = lib.mkIf (cfg.runtime == "fastapi") {
+-      description = "ML-Ops API (FastAPI — local dev mode)";
++    systemd.services.ml-ops-api = {
++      description = "ML-Ops API — Rust inference gateway";
+       wantedBy = [ "multi-user.target" ];
+-      after = [ "network.target" ];
++      after = [
++        "network.target"
++        "llama-server.service"
++      ];
++
++      environment = lib.filterAttrs (_: v: v != "") {
++        ML_OFFLOAD_HOST = cfg.host;
++        ML_OFFLOAD_PORT = toString cfg.port;
++        ML_OFFLOAD_DATA_DIR = cfg.dataDir;
++        ML_OFFLOAD_MODELS_PATH = cfg.modelsPath;
++        ML_OFFLOAD_DB_PATH = cfg.dbPath;
++        ML_OFFLOAD_CORS_ENABLED = lib.boolToString cfg.corsEnabled;
++
++        LLAMACPP_URL = cfg.llamacppUrl;
++        VLLM_URL = cfg.vllmUrl;
++
++        ML_OFFLOAD_RATE_LIMIT_RPM = toString cfg.rateLimitRpm;
++
++        ORCHESTRATOR_WORKERS = toString cfg.orchestrator.workers;
++        ORCHESTRATOR_MAX_CONCURRENT = toString cfg.orchestrator.maxConcurrent;
++        ORCHESTRATOR_TIMEOUT_SECS = toString cfg.orchestrator.timeoutSecs;
++
++        NATS_URL = cfg.natsUrl;
++      };
++
+       serviceConfig = {
+-        ExecStart = "${pkgs.python311}/bin/python -m uvicorn ml_ops.app:app --host 127.0.0.1 --port ${toString cfg.port}";
++        ExecStart = "${cfg.package}/bin/ml-offload-api";
+         User = cfg.user;
++        Group = cfg.user;
+         Restart = "on-failure";
+-        MemoryMax = "2G";
++        RestartSec = "5s";
++
++        # Secrets injected at runtime — never in the Nix store
++        EnvironmentFiles = lib.optional (cfg.apiKeysSecretFile != null) cfg.apiKeysSecretFile;
++
++        StateDirectory = "ml-offload";
++        LogsDirectory = "ml-offload";
++
++        # Resource limits
++        MemoryMax = "${toString cfg.resources.memoryMb}M";
++        CPUQuota = "${toString cfg.resources.cpuPercent}%";
++
++        # Hardening
++        NoNewPrivileges = true;
++        PrivateTmp = true;
++        ProtectSystem = "strict";
++        ProtectHome = true;
++        ReadWritePaths = [
++          cfg.dataDir
++          cfg.modelsPath
++          "/var/log/ml-offload"
++        ];
+       };
+     };
+ 
+-    users.users.${cfg.user} = lib.mkIf (cfg.runtime == "fastapi") {
++    users.users.${cfg.user} = {
+       isSystemUser = true;
+       group = cfg.user;
++      home = cfg.dataDir;
++      createHome = false;
+     };
+-    users.groups.${cfg.user} = lib.mkIf (cfg.runtime == "fastapi") { };
++    users.groups.${cfg.user} = { };
++
++    # Create data and models directories with correct ownership
++    systemd.tmpfiles.rules = [
++      "d ${cfg.dataDir}   0750 ${cfg.user} ${cfg.user} -"
++      "d ${cfg.modelsPath} 0750 ${cfg.user} ${cfg.user} -"
++    ];
+   };
+ }

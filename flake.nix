@@ -80,10 +80,10 @@
     #url = "path:/home/kernelcore/master/neoland";
     #inputs.nixpkgs.follows = "nixpkgs";
     #};
-    adr-ledger = {
-      url = "path:/home/kernelcore/master/adr-ledger";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #adr-ledger = {
+    #url = "path:/home/kernelcore/master/adr-ledger";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
     spooknix = {
       url = "git+ssh://git@github.com/marcosfpina/spooknix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -121,10 +121,10 @@
     # ═══════════════════════════════════════════════════════════════
     # PHANTOM - AI Forensic Intelligence Enterprise Grade Dynamic Pipeline (AI Forensics)
     # ═══════════════════════════════════════════════════════════════
-    phantom = {
-      url = "git+ssh://git@github.com/marcosfpina/phantom";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #phantom = {
+    #url = "git+ssh://git@github.com/marcosfpina/phantom";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #};
 
     # ═══════════════════════════════════════════════════════════════
     # SECURITY & SIEM TOOLS

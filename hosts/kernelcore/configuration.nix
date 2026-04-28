@@ -344,11 +344,16 @@
 
     services.github-runner = {
       enable = true;
-      repos = {
-        nixos-self-hosted = {
-          url = "https://github.com/VoidNxSEC/nixos";
-          labels = [ "linux" ];
-        };
+      org = {
+        enable = true;
+        # Covers all repos in the VoidNxSEC org automatically
+        url = "https://github.com/VoidNxSEC";
+        name = "kernelcore-org";
+        labels = [
+          "linux"
+          "gpu"
+          "nix"
+        ];
       };
     };
 
@@ -369,7 +374,7 @@
     };
 
     services.gpu-orchestration = {
-      enable = true;
+      enable = false;
       defaultMode = "local";
     };
 
@@ -502,7 +507,7 @@
         reasoning = {
           modelPath = "/var/lib/ml-models/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
           displayName = "DeepSeek-R1 8B (Q4)";
-          gpuLayers = 42;
+          gpuLayers = 36;
           contextSize = 8192;
         };
 
@@ -965,7 +970,7 @@
     # SPOOKNIX - Privacy-first STT Engine (Docker container)
     # ═══════════════════════════════════════════════════════════
     spooknix = {
-      enable = true;
+      enable = false;
       model = "large-v3";
       device = "cuda";
       port = 8000;
