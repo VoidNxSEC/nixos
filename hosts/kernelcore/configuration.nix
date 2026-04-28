@@ -346,7 +346,7 @@
       enable = true;
       org = {
         enable = true;
-        # Covers all repos in the VoidNxSEC org automatically
+        # Covers all repos in the VoidNxSEC org automatically.
         url = "https://github.com/VoidNxSEC";
         name = "kernelcore-org";
         labels = [
@@ -420,49 +420,49 @@
       enable = false; # Substituído pelo GitHub Actions self-hosted runner
     };
 
-    ml.mcp = {
-      enable = true;
-      knowledgeDbPath = "/var/lib/mcp-knowledge/knowledge.db";
-      agents = {
-        roo = {
-          enable = false;
-          projectRoot = "/home/kernelcore/master";
-          configPath = "/home/kernelcore/.roo/mcp.json";
-          user = "kernelcore";
-        };
+    #ml.mcp = {
+    #enable = true;
+    #knowledgeDbPath = "/var/lib/mcp-knowledge/knowledge.db";
+    #agents = {
+    #roo = {
+    #enable = false;
+    #projectRoot = "/home/kernelcore/master";
+    #configPath = "/home/kernelcore/.roo/mcp.json";
+    #user = "kernelcore";
+    #};
 
-        # -----------------------------------------------------------
-        # AGENTES MCP
-        # -----------------------------------------------------------
-        codex = {
-          enable = false;
-          projectRoot = "/var/lib/codex";
-          configPath = "/home/kernelcore/.codex/mcp_config.json";
-          user = "kernelcore";
-        };
+    # -----------------------------------------------------------
+    # AGENTES MCP
+    # -----------------------------------------------------------
+    #codex = {
+    #enable = false;
+    #projectRoot = "/var/lib/codex";
+    #configPath = "/home/kernelcore/.codex/mcp_config.json";
+    #user = "kernelcore";
+    #};
 
-        gemini = {
-          enable = false;
-          projectRoot = "/var/lib/gemini";
-          configPath = "/home/kernelcore/.gemini/mcp_config.json";
-          user = "kernelcore";
-        };
+    #gemini = {
+    #enable = false;
+    #projectRoot = "/var/lib/gemini";
+    #configPath = "/home/kernelcore/.gemini/mcp_config.json";
+    #user = "kernelcore";
+    #};
 
-        antigravity = {
-          enable = false;
-          projectRoot = "/var/lib/antigravity";
-          configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
-          user = "kernelcore";
-        };
+    #antigravity = {
+    #enable = false;
+    #projectRoot = "/var/lib/antigravity";
+    #configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
+    #user = "kernelcore";
+    #};
 
-        zed-editor = {
-          enable = true;
-          projectRoot = "/var/lib/zed";
-          configPath = "/home/kernelcore/.config/zed/mcp_config.json";
-          user = "kernelcore";
-        };
-      };
-    };
+    #zed-editor = {
+    #enable = true;
+    #projectRoot = "/var/lib/zed";
+    #configPath = "/home/kernelcore/.config/zed/mcp_config.json";
+    #user = "kernelcore";
+    #};
+    #};
+    #};
 
     # ═══════════════════════════════════════════════════════════
     # AI AGENT HUB - Event-Driven Automation with Speech
@@ -596,50 +596,50 @@
   # FEATURE FLAGS
   # ═══════════════════════════════════════════════════════════
 
-  services.securellm-mcp = {
-    enable = true;
-    daemon.enable = true;
-    daemon.logLevel = "INFO";
+  #services.securellm-mcp = {
+  #enable = true;
+  #daemon.enable = true;
+  #daemon.logLevel = "INFO";
 
-    # Dynamic project profiles - switch with: mcp-context profile <name>
-    profiles = {
-      nixos = {
-        workdir = "/etc/nixos";
-        environment = "production";
-        env = {
-          PROJECT_NAME = "NixOS Configuration";
-          PROJECT_TYPE = "infrastructure";
-        };
-      };
+  # Dynamic project profiles - switch with: mcp-context profile <name>
+  #profiles = {
+  #nixos = {
+  #workdir = "/etc/nixos";
+  #environment = "production";
+  #env = {
+  #PROJECT_NAME = "NixOS Configuration";
+  #PROJECT_TYPE = "infrastructure";
+  #};
+  #};
 
-      dev = {
-        workdir = "/home/kernelcore/arch";
-        environment = "development";
-        env = {
-          PROJECT_NAME = "Development";
-          PROJECT_TYPE = "general";
-        };
-      };
+  #dev = {
+  #workdir = "/home/kernelcore/arch";
+  #environment = "development";
+  #env = {
+  #PROJECT_NAME = "Development";
+  #PROJECT_TYPE = "general";
+  #};
+  #};
 
-      gemini = {
-        workdir = "/var/lib/gemini";
-        environment = "development";
-        env = {
-          PROJECT_NAME = "Gemini Agent";
-          PROJECT_TYPE = "ai-agent";
-        };
-      };
+  #gemini = {
+  #workdir = "/var/lib/gemini";
+  #environment = "development";
+  #env = {
+  #PROJECT_NAME = "Gemini Agent";
+  #PROJECT_TYPE = "ai-agent";
+  #};
+  #};
 
-      codex = {
-        workdir = "/var/lib/codex";
-        environment = "development";
-        env = {
-          PROJECT_NAME = "Codex";
-          PROJECT_TYPE = "ai-agent";
-        };
-      };
-    };
-  };
+  #codex = {
+  #workdir = "/var/lib/codex";
+  #environment = "development";
+  #env = {
+  #PROJECT_NAME = "Codex";
+  #PROJECT_TYPE = "ai-agent";
+  #};
+  #};
+  #};
+  #};
 
   kernelcore.tools = {
     enable = true;
