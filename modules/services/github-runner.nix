@@ -53,9 +53,12 @@ let
   # because serviceOverrides.Environment doesn't handle spaces correctly.
   commonServiceOverrides = {
     PrivateUsers = false;
+    SupplementaryGroups = [ "docker" ];
     ReadWritePaths = [
       "/nix/var/nix/daemon-socket"
       "/nix/store"
+      "/run/docker.sock"
+      "/var/run/docker.sock"
     ];
     BindReadOnlyPaths = [
       "/etc/nix"
