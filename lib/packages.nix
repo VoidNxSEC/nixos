@@ -16,9 +16,7 @@ in
   iso = self.nixosConfigurations.kernelcore-iso.config.system.build.isoImage;
 
   # SecureLLM MCP - from external flake input
-  securellm-mcp =
-    inputs.securellm-mcp.packages.${system}.default
-      or inputs.securellm-mcp.packages.${system}.securellm-mcp or null;
+  securellm-mcp = import ../pkgs/securellm-mcp.nix { inherit pkgs inputs; };
 
   #securellm-bridge =
   #  inputs.securellm-bridge.packages.${system}.default
