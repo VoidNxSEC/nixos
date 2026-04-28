@@ -33,17 +33,20 @@ jobs:
       - name: Update flake inputs
         run: nix flake update
 
-      - name: Validate updated lockfile
-        run: nix flake check --show-trace
-
       - name: Check for changes
         id: diff
         run: |
           if git diff --quiet flake.lock; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "### Updated inputs" >> $GITHUB_STEP_SUMMARY
+            git diff flake.lock >> $GITHUB_STEP_SUMMARY
           fi
+
+      - name: Validate updated lock
+        if: steps.diff.outputs.changed == 'true'
+        run: nix flake check --show-trace
 
       - uses: peter-evans/create-pull-request@v6
         if: steps.diff.outputs.changed == 'true'
@@ -55,6 +58,8 @@ jobs:
           body: |
             Automated weekly update of `flake.lock`.
 
-            Validation run: `nix flake check --show-trace`
+            **Validation**: `nix flake check` passed on the updated lock.
+
+            [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           labels: dependencies,automated
           delete-branch: true

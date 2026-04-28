@@ -1,0 +1,54 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        description: Target NixOS host
+        required: true
+        default: kernelcore
+        type: string
+
+concurrency:
+  group: deploy-${{ inputs.host }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.host }}
+    runs-on: [self-hosted, nixos]
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Setup SOPS age key
+        run: |
+          mkdir -p ~/.config/sops/age
+          echo "${{ secrets.AGE_SECRET_KEY }}" > ~/.config/sops/age/keys.txt
+          chmod 600 ~/.config/sops/age/keys.txt
+
+      - name: Switch system
+        run: |
+          if command -v sudo >/dev/null 2>&1; then
+            sudo nixos-rebuild switch --flake .#${{ inputs.host }} --show-trace
+          else
+            nixos-rebuild switch --flake .#${{ inputs.host }} --show-trace
+          fi
+
+      - name: Verify system state
+        run: systemctl is-system-running --wait
+
+      - name: Cleanup SOPS age key
+        if: always()
+        run: rm -f ~/.config/sops/age/keys.txt
