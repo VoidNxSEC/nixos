@@ -112,14 +112,15 @@
   # ============================================================================
   kernelcore.services.github-runner = {
     enable = false;
-    useSops = true;
-    runnerName = "nixos-k8s-runner";
-    repoUrl = "https://github.com/VoidNxSEC/nixos";
-    extraLabels = [
-      "nixos"
-      "k8s"
-      "server"
-    ];
+    org = {
+      enable = true;
+      url = "https://github.com/VoidNxSEC";
+      name = "nixos-k8s-runner";
+      labels = [
+        "k8s"
+        "server"
+      ];
+    };
   };
 
   # ============================================================================
