@@ -31,19 +31,19 @@
     # PROJECTS - Independent flakes (local development) - Development Tools & Infrastructure
     # ═══════════════════════════════════════════════════════════════
     # ML Offload API - Multi-backend ML orchestration
-    #ml-offload-api = {
-    #url = "git+ssh://git@github.com/marcosfpina/ml-offload-api";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    ml-offload-api = {
+      url = "git+ssh://git@github.com/marcosfpina/ml-offload-api";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     securellm-mcp = {
       url = "git+ssh://git@github.com/VoidNxSEC/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.spider-nix.follows = "spider-nix";
     };
-    #securellm-bridge = {
-    #url = "git+ssh://git@github.com/marcosfpina/securellm-bridge";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    securellm-bridge = {
+      url = "git+ssh://git@github.com/marcosfpina/securellm-bridge";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     #cognitive-vault = {
     #url = "git+ssh://git@github.com/marcosfpina/cognitive-vault";
     #inputs.nixpkgs.follows = "nixpkgs";
@@ -76,14 +76,14 @@
       url = "git+ssh://git@github.com/marcosfpina/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    #neoland = {
-    #url = "path:/home/kernelcore/master/neoland";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
-    #adr-ledger = {
-    #url = "path:/home/kernelcore/master/adr-ledger";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    neoland = {
+      url = "path:/home/kernelcore/master/neoland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    adr-ledger = {
+      url = "path:/home/kernelcore/master/adr-ledger";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     spooknix = {
       url = "git+ssh://git@github.com/marcosfpina/spooknix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -121,18 +121,18 @@
     # ═══════════════════════════════════════════════════════════════
     # PHANTOM - AI Forensic Intelligence Enterprise Grade Dynamic Pipeline (AI Forensics)
     # ═══════════════════════════════════════════════════════════════
-    #phantom = {
-    #url = "git+ssh://git@github.com/marcosfpina/phantom";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    phantom = {
+      url = "git+ssh://git@github.com/marcosfpina/phantom";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # ═══════════════════════════════════════════════════════════════
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
-    #owasaka = {
-    #url = "git+ssh://git@github.com/marcosfpina/O.W.A.S.A.K.A.";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    owasaka = {
+      url = "git+ssh://git@github.com/marcosfpina/O.W.A.S.A.K.A.";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows
     # Commented for now, can be enabled when needed for Apple Silicon development
     # mlx-mcp = {
@@ -174,16 +174,16 @@
       packages.${system} = import ./lib/packages.nix { inherit pkgs self inputs; };
 
       # nix run .#securellm-mcp
-      #apps.${system} = {
-      #securellm-mcp = {
-      #type = "app";
-      #program = "${inputs.securellm-mcp.packages.${system}.default}/bin/securellm-mcp";
-      #};
-      #securellm-bridge = {
-      #  type = "app";
-      #  program = "${inputs.securellm-bridge.packages.${system}.default}/bin/securellm-bridge";
-      #};
-      #};
+      apps.${system} = {
+        securellm-mcp = {
+          type = "app";
+          program = "${inputs.securellm-mcp.packages.${system}.default}/bin/securellm-mcp";
+        };
+        securellm-bridge = {
+          type = "app";
+          program = "${inputs.securellm-bridge.packages.${system}.default}/bin/securellm-bridge";
+        };
+      };
 
       # Fast checks for CI/CD (heavy builds moved to packages)
       # Run with: nix flake check
@@ -195,8 +195,8 @@
           touch $out
         '';
         # Package builds (relatively fast)
-        #mcp-server = self.packages.${system}.securellm-mcp;
-        #llm-bridge = self.packages.${system}.securellm-bridge;
+        mcp-server = self.packages.${system}.securellm-mcp;
+        llm-bridge = self.packages.${system}.securellm-bridge;
 
         # NOTE: Heavy builds (iso, vm, docker-app) removed from checks for performance
         # These are still available via packages: nix build .#iso, .#vm-image, .#image-app
