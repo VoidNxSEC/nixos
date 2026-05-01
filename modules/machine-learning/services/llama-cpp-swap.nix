@@ -183,7 +183,7 @@ in
 
     mlock = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = ''
         Lock model pages in RAM (prevents swapping).
         Requires sufficient RAM for the model.
@@ -279,7 +279,7 @@ in
 
     metricsEndpoint = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = "Enable /metrics endpoint for Prometheus.";
     };
 
@@ -305,7 +305,7 @@ in
 
     openFirewall = lib.mkOption {
       type = lib.types.bool;
-      default = false;
+      default = true;
       description = "Open firewall for the server port.";
     };
   };
