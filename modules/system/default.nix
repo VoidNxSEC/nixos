@@ -2,6 +2,7 @@
 { ... }:
 {
   imports = [
+    ./user-config.nix # Parameterized username + home paths
     ./aliases.nix
     ./binary-cache.nix
     ./emergency-monitor.nix
