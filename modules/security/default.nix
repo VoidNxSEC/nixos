@@ -39,5 +39,8 @@
 
     # Maintenance
     ./auto-upgrade.nix
+
+    # Security Operations Center (SOC) — IDS, EDR, SIEM, dashboards
+    ./soc
   ];
 }
