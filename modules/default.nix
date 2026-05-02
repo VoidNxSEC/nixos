@@ -20,8 +20,7 @@
     # ═══════════════════════════════════════════════════════════
     # SECURITY (imported early, overridden last via sec/hardening.nix)
     # ═══════════════════════════════════════════════════════════
-    ./security # Boot, kernel, network, SSH hardening, audit
-    ./soc # Security Operations Center (NSA-level)
+    ./security # Boot, kernel, network, SSH hardening, audit + SOC (security/soc/)
 
     # ═══════════════════════════════════════════════════════════
     # NETWORK
@@ -43,8 +42,7 @@
     # ═══════════════════════════════════════════════════════════
     ./development # Dev environments, Claude profiles, Jupyter, CI/CD
     # ./devops # DevOps tools - imported in home-manager (hosts/kernelcore/home/home.nix)
-    ./machine-learning # Machine Learning infrastructure (llama.cpp-turbo, vLLM)
-    ./ai # AI Agent Hub (event-driven automation, speech capabilities)
+    ./ml # ML infrastructure + AI agents (consolidates machine-learning/ + ai/)
 
     # CONTAINERS & VIRTUALIZATION
     # ═══════════════════════════════════════════════════════════
@@ -77,9 +75,7 @@
     ./shell # Shell aliases, GPU flags, professional alias structure
     ./secrets # SOPS config, API keys, AWS Bedrock, Tailscale secrets
 
-    # ═══════════════════════════════════════════════════════════
-    # DEBUG (optional - comment out if not needed)
-    # ═══════════════════════════════════════════════════════════
-    ./debug # Swissknife diagnostic tools
+    # NOTE: modules/debug/ kept on disk but not imported (personal scaffolding)
+    # To re-enable locally: add ./debug here
   ];
 }
