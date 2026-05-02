@@ -214,7 +214,7 @@ in
         Restart = "always";
         RestartSec = 10;
 
-        User = "kernelcore"; # Required for Docker socket access
+        User = config.system.user.username; # Required for Docker socket access
         Group = "docker";
 
         # Graceful shutdown
