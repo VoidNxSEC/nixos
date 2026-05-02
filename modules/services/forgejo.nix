@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs, # ADICIONADO PKGS AQUI
   ...
 }:
 
@@ -162,6 +163,24 @@ in
       services.forgejo.settings.service.DEFAULT_KEEP_EMAIL_PRIVATE = mkDefault true;
       services.forgejo.settings.service.DEFAULT_ORG_VISIBILITY = mkDefault "private";
       services.forgejo.settings.session.COOKIE_SECURE = mkDefault (hasPrefix "https://" publicUrl);
+
+      # ============================================
+      # CRIAÇÃO AUTOMÁTICA DO ADMIN VIA SOPS
+      # ============================================
+      systemd.services.forgejo.preStart =
+        let
+          adminCmd = "${lib.getExe config.services.forgejo.package} admin user";
+          uFile = config.sops.secrets."forgejo/admin-username".path;
+          pFile = config.sops.secrets."forgejo/admin-password".path;
+        in
+        ''
+          # Lê os segredos limpando espaços do YAML
+          USER=$(${pkgs.coreutils}/bin/cat ${uFile} | ${pkgs.coreutils}/bin/tr -d '\n')
+          PASS=$(${pkgs.coreutils}/bin/cat ${pFile} | ${pkgs.coreutils}/bin/tr -d '\n')
+
+          # Cria o admin se ele não existir
+          ${adminCmd} create --admin --email "admin@seu.com" --username "$USER" --password "$PASS" || true
+        '';
     }
 
     (mkIf (cfg.integration.database.type == "postgres") {
