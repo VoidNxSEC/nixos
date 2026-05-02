@@ -430,6 +430,7 @@
     secrets.grok.enable = true;
     secrets.gitlab.enable = true;
     secrets.api-keys.enable = true; # DeepSeek, Anthropic, Mistral, Gemini
+    secrets.forgejo.enable = true;
 
     ml.models-storage = {
       enable = true;
