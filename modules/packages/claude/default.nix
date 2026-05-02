@@ -6,7 +6,7 @@
 # Para atualizar:
 # 1. Muda `version`
 # 2. nix-prefetch-url https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/<version>/linux-x64/claude
-# 3. nix hash convert --type sha256 <hash>
+# 3 nix hash convert --to sri --hash-algo sha256 <your-hash>.
 # 4. Cola em `binaryHash`
 #
 {
@@ -19,8 +19,8 @@
 let
   cfg = config.kernelcore.packages.claude;
 
-  version = "2.1.119";
-  binaryHash = "sha256-zKQwU/BilJSVWWsRtv0bWc95ECrbE7rL5mmX5vrkHko=";
+  version = "2.1.126";
+  binaryHash = "sha256-/OlpaNJ1Fh/2WkwZ/GQ078aXPZ9tNdw5kqK6BVPKwY4=";
 
   claude-code = pkgs.stdenv.mkDerivation {
     pname = "claude-code";
