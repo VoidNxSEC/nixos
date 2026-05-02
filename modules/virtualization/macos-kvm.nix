@@ -291,7 +291,7 @@ in
 
     workDir = mkOption {
       type = types.str;
-      default = "/home/kernelcore/.macos-kvm";
+      default = "${config.system.user.homeDir}/.macos-kvm";
       description = "Directory for macOS VM files (disk, installer, OpenCore)";
     };
 

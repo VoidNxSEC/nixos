@@ -114,7 +114,7 @@ in
       };
       notebooksPath = mkOption {
         type = types.str;
-        default = "/home/kernelcore/dev/notebooks";
+        default = "${config.system.user.homeDir}/dev/notebooks";
         description = "Host path for notebooks";
       };
     };

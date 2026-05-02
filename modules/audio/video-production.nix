@@ -368,6 +368,6 @@ in
     ];
 
     # Adicionar usuário ao grupo video
-    users.groups.video.members = [ "kernelcore" ];
+    users.groups.video.members = [ config.system.user.username ];
   };
 }

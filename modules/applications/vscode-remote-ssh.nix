@@ -64,17 +64,17 @@ in
         ''
           # Install Remote SSH extension for Cursor
           ${optionalString (builtins.elem "cursor" cfg.installFor) ''
-            if [ -d "/home/kernelcore/.cursor" ] && command -v cursor >/dev/null 2>&1; then
+            if [ -d "${config.system.user.homeDir}/.cursor" ] && command -v cursor >/dev/null 2>&1; then
               echo "Installing Remote SSH extension for Cursor..."
-              su - kernelcore -c "cursor --install-extension ms-vscode-remote.remote-ssh --force" || true
+              su - ${config.system.user.username} -c "cursor --install-extension ms-vscode-remote.remote-ssh --force" || true
             fi
           ''}
 
           # Install Remote SSH extension for Windsurf
           ${optionalString (builtins.elem "windsurf" cfg.installFor) ''
-            if [ -d "/home/kernelcore/.windsurf" ] && command -v windsurf >/dev/null 2>&1; then
+            if [ -d "${config.system.user.homeDir}/.windsurf" ] && command -v windsurf >/dev/null 2>&1; then
               echo "Installing Remote SSH extension for Windsurf..."
-              su - kernelcore -c "windsurf --install-extension ms-vscode-remote.remote-ssh --force" || true
+              su - ${config.system.user.username} -c "windsurf --install-extension ms-vscode-remote.remote-ssh --force" || true
             fi
           ''}
         '';
