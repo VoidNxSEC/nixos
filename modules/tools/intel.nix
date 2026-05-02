@@ -25,7 +25,7 @@ with lib;
 let
   cfg = config.kernelcore.tools.intel;
 
-  phantomDir = "/home/kernelcore/dev/Projects/phantom";
+  phantomDir = "${config.system.user.homeDir}/dev/Projects/phantom";
 
   # Python environment with required deps
   pythonEnv = pkgs.python313.withPackages (
