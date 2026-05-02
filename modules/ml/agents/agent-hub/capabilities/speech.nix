@@ -199,7 +199,7 @@ in
 
       serviceConfig = {
         Type = "simple";
-        User = "kernelcore";
+        User = config.system.user.username;
         Group = "users";
         ExecStart = "${speech-gateway}/bin/speech-gateway";
         Restart = "on-failure";
@@ -237,7 +237,7 @@ in
 
       serviceConfig = {
         Type = "simple";
-        User = "kernelcore";
+        User = config.system.user.username;
         Group = "users";
         ExecStart = "${whisper-gateway}/bin/whisper-gateway";
         Restart = "on-failure";
