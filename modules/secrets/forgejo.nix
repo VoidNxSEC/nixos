@@ -77,6 +77,20 @@ in
           owner = "root";
           group = "root";
         };
+
+        "forgejo/admin-username" = {
+          sopsFile = secretsFile;
+          mode = "0400";
+          owner = "forgejo";
+          group = "forgejo";
+        };
+
+        "forgejo/admin-password" = {
+          sopsFile = secretsFile;
+          mode = "0400";
+          owner = "forgejo";
+          group = "forgejo";
+        };
       };
     })
 
