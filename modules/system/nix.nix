@@ -49,7 +49,7 @@ with lib;
           trusted-users = [
             "root"
             "@wheel"
-            "kernelcore"
+            config.system.user.username
           ];
 
           # Aggressive cleanup to save disk space
@@ -72,10 +72,11 @@ with lib;
 
           # Allow local git+file URIs for development (avoids restricted mode errors)
           extra-allowed-uris = [
-            "git+file:///home/kernelcore/dev/projects"
-            "path:///home/kernelcore/dev/projects"
-            "git+file:///home/kernelcore/dev/low-level"
-            "path:///home/kernelcore/dev/low-level"
+            "git+file://${config.system.user.homeDir}/dev/projects"
+            "path://${config.system.user.homeDir}/dev/projects"
+            "git+file://${config.system.user.homeDir}/dev/low-level"
+            "path://${config.system.user.homeDir}/dev/low-level"
+            "git+http://localhost:3002"
           ];
         }
       ];

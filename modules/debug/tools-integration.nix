@@ -1,6 +1,6 @@
 # Swissknife Debug Tools Integration
 # Professional debugging, monitoring, and system health tools
-# Note: Tools come from inputs.swissknife flake (git+file:///home/kernelcore/dev/projects/swissknife)
+# Note: Tools come from inputs.swissknife flake (github:voidnxsec/swissknife)
 {
   pkgs,
   lib,

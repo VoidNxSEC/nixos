@@ -114,7 +114,7 @@ let
         # ============================================================
 
         FLAKE_PATH="/etc/nixos"
-        HOST="kernelcore"
+        HOST="${config.system.user.username}"
         DEFAULT_MAX_JOBS="4"
         DEFAULT_CORES="4"
         LOG_DIR="/var/log/nixos-rebuild"

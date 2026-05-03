@@ -64,7 +64,7 @@ let
       "/etc/nix"
       "/nix/var/nix/db"
       "/nix/var/nix/profiles"
-      "/home/kernelcore/.ssh"
+      "${config.system.user.homeDir}/.ssh"
     ];
   };
 
@@ -208,7 +208,7 @@ let
   # ── Environment overrides (proper quoting via NixOS environment attr) ─────
   mkEnvOverride = name: {
     "github-runner-${name}" = {
-      environment.GIT_SSH_COMMAND = "ssh -i /home/kernelcore/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new";
+      environment.GIT_SSH_COMMAND = "ssh -i ${config.system.user.homeDir}/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new";
     };
   };
 

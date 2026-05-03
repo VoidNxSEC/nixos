@@ -74,7 +74,7 @@
       # Network Reconnaissance
       # ─────────────────────────────────────────────────────
       nmap
-      wireshark
+      # wireshark # hash mismatch upstream — re-enable after nixpkgs fix
       tcpdump
       curl
       wget

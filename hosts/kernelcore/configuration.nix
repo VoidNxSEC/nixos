@@ -1275,7 +1275,7 @@
     atop
     lsof
     tcpdump
-    wireshark
+    # wireshark # hash mismatch upstream — re-enable after nixpkgs fix
     tshark
     gemini-cli
     sqlite

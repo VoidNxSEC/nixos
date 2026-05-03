@@ -130,7 +130,7 @@ in
 
       serviceConfig = {
         Type = "simple";
-        User = "kernelcore";
+        User = config.system.user.username;
         Group = "users";
         ExecStart = "${f5-tts-gradio}/bin/f5-tts-gradio --server_name ${cfg.serviceAddress} --server_port ${toString cfg.servicePort}";
         Restart = "on-failure";

@@ -65,7 +65,7 @@ in
 
     showcaseProjectsPath = mkOption {
       type = types.str;
-      default = "/home/kernelcore/dev/projects";
+      default = "${config.system.user.homeDir}/dev/projects";
       description = "Path to showcase projects directory";
     };
 

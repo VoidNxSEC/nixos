@@ -186,7 +186,7 @@ with lib;
       iptables
       iproute2
       tcpdump
-      wireshark
+      # wireshark # hash mismatch upstream — re-enable after nixpkgs fix
     ];
   };
 }

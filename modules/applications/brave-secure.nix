@@ -187,7 +187,7 @@ in
     # Sudo rules for cgroup management (needed for wrapper script)
     security.sudo.extraRules = [
       {
-        users = [ "kernelcore" ];
+        users = [ config.system.user.username ];
         commands = [
           {
             command = "${pkgs.coreutils}/bin/mkdir";

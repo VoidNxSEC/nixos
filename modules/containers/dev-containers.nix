@@ -53,7 +53,7 @@ in
       };
       workspacePath = mkOption {
         type = types.str;
-        default = "/home/kernelcore/dev/workspace";
+        default = "${config.system.user.homeDir}/dev/workspace";
         description = "Host path for development workspace";
       };
     };
@@ -78,7 +78,7 @@ in
       };
       workspacePath = mkOption {
         type = types.str;
-        default = "/home/kernelcore/dev";
+        default = "${config.system.user.homeDir}/dev";
         description = "Host path for code workspace";
       };
       hashedPassword = mkOption {
