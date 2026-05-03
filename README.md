@@ -2,26 +2,26 @@
 
 A modular, production-grade NixOS configuration covering desktop, development, ML/AI infrastructure, and enterprise security. Designed to be forked and adapted — not tied to any single machine or user.
 
-[![NixOS](https://img.shields.io/badge/NixOS-Unstable-blue?logo=nixos&logoColor=white)](https://nixos.org)
-[![CI](https://github.com/VoidNxLabs/nixos/actions/workflows/nixos-public.yml/badge.svg)](https://github.com/VoidNxLabs/nixos/actions/workflows/nixos-public.yml)
-[![SOPS Encrypted](https://img.shields.io/badge/Secrets-SOPS%2Fage-purple)](https://github.com/getsops/sops)
-[![Cachix](https://img.shields.io/badge/Cache-Cachix-blue)](https://app.cachix.org)
+[!\[NixOS\](https://img.shields.io/badge/NixOS-Unstable-blue?logo=nixos\&logoColor=white)](https://nixos.org)
+[!\[CI\](https://github.com/VoidNxLabs/nixos/actions/workflows/nixos-public.yml/badge.svg)](https://github.com/VoidNxLabs/nixos/actions/workflows/nixos-public.yml)
+[!\[SOPS Encrypted\](https://img.shields.io/badge/Secrets-SOPS%2Fage-purple)](https://github.com/getsops/sops)
+[!\[Cachix\](https://img.shields.io/badge/Cache-Cachix-blue)](https://app.cachix.org)
 
 ---
 
 ## What's included
 
-| Domain | Highlights |
-|--------|-----------|
-| **ML / AI** | llama.cpp, vLLM, model registry, VRAM orchestration, MCP servers, AI agent ecosystem |
-| **Security** | Kernel hardening, AIDE FIM, ClamAV, AppArmor, audit rules, SSH hardening |
-| **SOC / SIEM** | Wazuh EDR, Suricata IDS/IPS, OpenSearch, Grafana, threat intelligence |
-| **Desktop** | Hyprland (Wayland), i3 (X11), PipeWire audio, Waybar, glassmorphism theming |
-| **Development** | Dev shells (Python, Rust, CUDA, infra), containers, VMs, macOS KVM |
-| **Network** | Tailscale mesh VPN, nftables zones, DNSCrypt, DNS-over-TLS, NGINX |
-| **Kubernetes** | K3s cluster, Cilium CNI, Longhorn storage |
-| **CI/CD** | BuildBot, GitHub Actions (self-hosted runner), GitLab CI |
-| **Secrets** | sops-nix with age encryption |
+| Domain          | Highlights                                                                           |
+| --------------- | ------------------------------------------------------------------------------------ |
+| **ML / AI**     | llama.cpp, vLLM, model registry, VRAM orchestration, MCP servers, AI agent ecosystem |
+| **Security**    | Kernel hardening, AIDE FIM, ClamAV, AppArmor, audit rules, SSH hardening             |
+| **SOC / SIEM**  | Wazuh EDR, Suricata IDS/IPS, OpenSearch, Grafana, threat intelligence                |
+| **Desktop**     | Hyprland (Wayland), i3 (X11), PipeWire audio, Waybar, glassmorphism theming          |
+| **Development** | Dev shells (Python, Rust, CUDA, infra), containers, VMs, macOS KVM                   |
+| **Network**     | Tailscale mesh VPN, nftables zones, DNSCrypt, DNS-over-TLS, NGINX                    |
+| **Kubernetes**  | K3s cluster, Cilium CNI, Longhorn storage                                            |
+| **CI/CD**       | BuildBot, GitHub Actions (self-hosted runner), GitLab CI                             |
+| **Secrets**     | sops-nix with age encryption                                                         |
 
 ---
 
@@ -29,7 +29,7 @@ A modular, production-grade NixOS configuration covering desktop, development, M
 
 ### Use as a template
 
-```bash
+````bash
 git clone https://github.com/VoidNxLabs/nixos.git /etc/nixos
 cd /etc/nixos
 
@@ -49,35 +49,41 @@ cat > hosts/my-machine/configuration.nix <<'EOF'
   networking.hostName = "my-machine";
   system.user.username = "myusername";   # propagates to all modules
 }
-EOF
+### Use as a template (Recommended)
 
-# Add to flake.nix nixosConfigurations, then:
-sudo nixos-rebuild switch --flake /etc/nixos#my-machine
-```
+The easiest way to start a new configuration using this framework:
 
-### Cherry-pick modules
+```bash
+# Initialize a new project in the current directory
+nix flake init -t github:VoidNxSEC/nixos
 
-Use individual modules in your own flake without taking the whole config:
+# Then follow the instructions in the generated README.md
+````
 
-```nix
+### Use as a Framework
+
+You can also use the modules directly in your own `flake.nix` without cloning this repo:
+
+```javascript
 # flake.nix
-inputs.nixos-fw.url = "github:VoidNxLabs/nixos";
+inputs.void-nixos.url = "github:VoidNxSEC/nixos";
 
-# configuration.nix
-{ inputs, ... }:
-{
-  imports = [
-    "${inputs.nixos-fw}/modules/security"
-    "${inputs.nixos-fw}/modules/ml"
-  ];
-}
+# In your nixosSystem
+modules = [
+  void-nixos.nixosModules.default # Imports all framework modules + overlays
+  ./configuration.nix
+];
 ```
+
+### Enabling features
+
+Once the framework is imported, enable features using the `kernelcore.*` (or standard `services.*`) options:
 
 ---
 
 ## Repository structure
 
-```
+```javascript
 /etc/nixos/
 ├── flake.nix                     # Entry point, inputs, host declarations
 ├── hosts/
@@ -128,7 +134,7 @@ inputs.nixos-fw.url = "github:VoidNxLabs/nixos";
 
 All modules reference `config.system.user.username` — set it once in your host:
 
-```nix
+```javascript
 # hosts/my-machine/configuration.nix
 system.user.username = "alice";   # home paths, users, Home Manager all follow
 ```
@@ -147,7 +153,7 @@ cp flakes/personal.nix.example flakes/personal.nix
 
 ### Enable optional features
 
-```nix
+```javascript
 # ML inference stack (requires GPU)
 kernelcore.ml.llama.enable = true;
 
@@ -174,6 +180,10 @@ below threshold, service priority queues, real-time monitoring.
 
 **SOC on a workstation** (`modules/security/soc/`) — full Wazuh + OpenSearch + Suricata
 stack running as NixOS services, declaratively configured.
+
+Known issues: The server needs more optimization
+
+**Tricks: try git-commit-ai for automated commits (check if you have a local gpu)&#x20;**
 
 ---
 
@@ -214,6 +224,7 @@ and cannot be weakened by other modules.
 ## Contributing
 
 Modules must:
+
 - Use `mkEnableOption` / `mkOption` with descriptions on all options
 - Avoid hardcoded usernames or absolute paths (use `config.system.user.*`)
 - Pass `nix flake check` before submission
