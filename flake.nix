@@ -37,8 +37,8 @@
     # ═══════════════════════════════════════════════════════════════
 
     # ML Offload API - Multi-backend ML orchestration
-    ml-offload-api = {
-      url = "github:VoidNxSEC/ml-offload-api";
+    ml-ops-api = {
+      url = "github:VoidNxSEC/ml-ops-api";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -130,6 +130,21 @@
       shells = import ./lib/shells.nix { inherit pkgs; };
     in
     {
+      # Export modules for other flakes to use
+      nixosModules.default = {
+        imports = [ ./modules ];
+        nixpkgs.overlays = overlays;
+        nixpkgs.config.allowUnfree = true;
+      };
+
+      templates = {
+        minimal = {
+          path = ./templates/minimal;
+          description = "Minimal NixOS configuration using this framework";
+        };
+        default = self.templates.minimal;
+      };
+
       formatter.${system} = pkgs.nixfmt;
 
       # nix develop .#python, .#cuda, .#infra, etc.
@@ -210,7 +225,7 @@
             # ═══════════════════════════════════════════════════════════
             # ALL SYSTEM MODULES (auto-imported via modules/default.nix)
             # ═══════════════════════════════════════════════════════════
-            ./modules
+            self.nixosModules.default
 
             # NOTE: Feature flags and service configuration moved to:
             #       ./hosts/kernelcore/configuration.nix (lines 400-427)
