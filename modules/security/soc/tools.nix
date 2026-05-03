@@ -226,18 +226,18 @@ let
         ID=$(date +%Y%m%d-%H%M%S)
         DIR="$INCIDENT_DIR/$ID"
         mkdir -p "$DIR"
-        
+
         echo "🚨 Creating incident: $ID"
         echo "$TITLE" > "$DIR/title.txt"
         echo "$(date -Iseconds)" > "$DIR/created.txt"
         echo "open" > "$DIR/status.txt"
-        
+
         # Auto-collect initial data
         echo "📋 Collecting initial data..."
         ps auxf > "$DIR/processes.txt" 2>/dev/null
         ss -tuln > "$DIR/network.txt" 2>/dev/null
         ausearch -ts recent > "$DIR/audit.txt" 2>/dev/null || true
-        
+
         echo "✓ Incident created: $ID"
         echo "  Location: $DIR"
         ;;
@@ -256,7 +256,7 @@ let
         SNAP_ID=$(date +%Y%m%d-%H%M%S)
         SNAP_DIR="/var/lib/soc/snapshots/$SNAP_ID"
         mkdir -p "$SNAP_DIR"
-        
+
         echo "📸 Taking system snapshot: $SNAP_ID"
         ps auxf > "$SNAP_DIR/processes.txt"
         ss -tuln > "$SNAP_DIR/network.txt"
@@ -264,7 +264,7 @@ let
         lsmod > "$SNAP_DIR/modules.txt"
         mount > "$SNAP_DIR/mounts.txt"
         ausearch -ts boot > "$SNAP_DIR/audit-boot.txt" 2>/dev/null || true
-        
+
         echo "✓ Snapshot saved: $SNAP_DIR"
         ;;
       export)
@@ -274,7 +274,7 @@ let
           echo "Incident not found: $ID"
           exit 1
         fi
-        
+
         EXPORT_FILE="/tmp/incident-$ID.tar.gz"
         tar -czf "$EXPORT_FILE" -C "$INCIDENT_DIR" "$ID"
         echo "✓ Exported to: $EXPORT_FILE"
@@ -350,7 +350,6 @@ in
       pkgs.audit
       pkgs.nmap
       pkgs.tcpdump
-      pkgs.wireshark-cli
       pkgs.jq
       pkgs.yq
     ];
