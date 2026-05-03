@@ -52,7 +52,6 @@ with lib;
       # Network analysis
       nmap
       tcpdump
-      wireshark-cli
 
       # Secrets management
       vault
