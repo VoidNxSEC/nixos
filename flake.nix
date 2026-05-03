@@ -38,20 +38,20 @@
 
     # ML Offload API - Multi-backend ML orchestration
     ml-ops-api = {
-      url = "github:VoidNxSEC/ml-ops-api";
+      url = "git+http://localhost:3002/voidnxlabs/ml-ops-api";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # SecureLLM MCP - AI Agent Hub
     securellm-mcp = {
-      url = "github:VoidNxSEC/securellm-mcp";
+      url = "git+http://localhost:3002/voidnxlabs/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.spider-nix.follows = "spider-nix";
     };
 
     # SecureLLM Bridge
     securellm-bridge = {
-      url = "github:VoidNxSEC/securellm-bridge";
+      url = "git+http://localhost:3002/voidnxlabs/securellm-bridge";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -62,30 +62,30 @@
 
     # Spider-Nix
     spider-nix = {
-      url = "github:VoidNxSEC/spider-nix";
+      url = "git+http://localhost:3002/voidnxlabs/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Arch-Analyzer
     arch-analyzer = {
-      url = "github:VoidNxSEC/arch-analyzer";
+      url = "git+http://localhost:3002/voidnxlabs/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # neoland and adr-ledger use local paths — add to flakes/personal.nix for your setup
-    neoland.url = "github:VoidNxSEC/neoland";
+    neoland.url = "git+http://localhost:3002/voidnxlabs/neoland";
     neoland.inputs.nixpkgs.follows = "nixpkgs";
 
-    adr-ledger.url = "github:VoidNxSEC/adr-ledger";
+    adr-ledger.url = "git+http://localhost:3002/voidnxlabs/adr-ledger";
     adr-ledger.inputs.nixpkgs.follows = "nixpkgs";
 
     # SpookNix
     spooknix = {
-      url = "github:VoidNxSEC/spooknix";
+      url = "git+http://localhost:3002/voidnxlabs/spooknix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Actions-TV
+    # Actions-TV (pendente migração para Forgejo)
     actions-tv = {
       url = "github:VoidNxSEC/actions-tv";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -93,7 +93,7 @@
 
     # Native OS-level monitoring agent in Rust with Hyprland integration
     ai-agent-os = {
-      url = "github:VoidNxSEC/ai-agent-os";
+      url = "git+http://localhost:3002/voidnxlabs/ai-agent-os";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -101,7 +101,7 @@
     # PHANTOM - AI Forensic Intelligence Enterprise Grade Dynamic Pipeline (AI Forensics)
     # ═══════════════════════════════════════════════════════════════
     phantom = {
-      url = "github:VoidNxSEC/phantom";
+      url = "git+http://localhost:3002/voidnxlabs/phantom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -109,7 +109,7 @@
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
     owasaka = {
-      url = "github:VoidNxSEC/O.W.A.S.A.K.A.";
+      url = "git+http://localhost:3002/voidnxlabs/owasaka";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -209,23 +209,6 @@
             broken = false;
           };
           program = "${inputs.spider-nix.packages.${system}.default}/bin/spider-nix";
-        };
-
-        # MCP-SERVER
-        mcp-server = {
-          type = "app";
-          meta = {
-            description = "MCP Server";
-            mainProgram = "mcp-server";
-            platforms = [ "x86_64-linux" ];
-            maintainers = [ pkgs.lib.maintainers.kernelcore ];
-            license = pkgs.lib.licenses.mit;
-            homepage = "https://github.com/VoidNxSEC/mcp-server";
-            source = "https://github.com/VoidNxSEC/mcp-server/archive/refs/tags/0.1.0.tar.gz";
-            version = "0.1.0";
-            broken = false;
-          };
-          program = "${inputs.mcp-server.packages.${system}.default}/bin/mcp-server";
         };
 
         # ARCH-ANALYZER
