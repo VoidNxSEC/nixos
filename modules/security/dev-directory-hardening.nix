@@ -9,8 +9,8 @@ with lib;
 
 let
   cfg = config.kernelcore.security.dev-directory;
-  userName = "kernelcore";
-  devPath = "/home/${userName}/dev";
+  userName = config.system.user.username;
+  devPath = "${config.system.user.homeDir}/dev";
 in
 {
   options.kernelcore.security.dev-directory = {

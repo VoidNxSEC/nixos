@@ -87,8 +87,8 @@
 
     # Master workspace stack with all compose profiles enabled
     "master-up" =
-      "docker compose -f /home/kernelcore/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full up -d --remove-orphans";
+      "docker compose -f ${config.system.user.homeDir}/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full up -d --remove-orphans";
     "master-down" =
-      "docker compose -f /home/kernelcore/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full down --remove-orphans";
+      "docker compose -f ${config.system.user.homeDir}/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full down --remove-orphans";
   };
 }
