@@ -28,7 +28,7 @@ let
 
   # Top-level roots to scan
   roots = [
-    "kernelcore"
+    config.system.user.username
     "services"
     "programs"
     "security"
