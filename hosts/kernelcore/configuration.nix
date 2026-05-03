@@ -952,6 +952,17 @@
       };
     };
 
+    # Forgejo settings explícitos — garante ROOT_URL correto atrás do nginx
+    services.forgejo.settings = {
+      server = {
+        ROOT_URL = "https://forgejo.voidnx.com/";
+        SSH_PORT = 22;
+        SSH_LISTEN_PORT = 2222;
+      };
+      session.COOKIE_SECURE = true;
+      security.REVERSE_PROXY_TRUSTED_PROXIES = "127.0.0.1,::1";
+    };
+
     postgresql = {
       enable = true;
       enableTCPIP = false;
