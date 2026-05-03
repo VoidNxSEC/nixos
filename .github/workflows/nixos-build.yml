@@ -1,0 +1,320 @@
+name: NixOS Build & Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy to system after build"
+        required: false
+        default: false
+        type: boolean
+      enable-tmate:
+        description: "Enable tmate debug session"
+        required: false
+        default: false
+        type: boolean
+      tmate-on-failure:
+        description: "Enable tmate only on failure"
+        required: false
+        default: true
+        type: boolean
+
+env:
+  CACHIX_CACHE_NAME: marcosfpina
+
+jobs:
+  # SOPS: Decrypt secrets first
+  setup-secrets:
+    name: Decrypt SOPS secrets
+    uses: ./.github/workflows/setup-sops.yml
+    secrets: inherit
+
+  check:
+    name: Check Nix flake
+    runs-on: [self-hosted, nixos]
+    needs: setup-secrets
+    steps:
+      - name: Ensure Nix daemon is running
+        run: systemctl is-active --quiet nix-daemon || sudo systemctl restart nix-daemon
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
+          pushFilter: "(-source$|-env$)"
+
+      - name: Check flake syntax
+        run: nix flake check --show-trace
+
+      - name: Validate flake metadata
+        run: nix flake metadata
+
+      - name: Check for eval errors
+        run: |
+          nix eval .#nixosConfigurations.kernelcore.config.system.build.toplevel.drvPath --show-trace
+
+  build:
+    name: Build NixOS configuration
+    runs-on: [self-hosted, nixos]
+    needs: [setup-secrets, check]
+    strategy:
+      matrix:
+        target: [toplevel, iso, vm-image]
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
+          pushFilter: "(-source$|-env$)"
+
+      - name: Build ${{ matrix.target }}
+        id: build
+        run: |
+          case "${{ matrix.target }}" in
+            toplevel)
+              echo "Building main system configuration..."
+              nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
+                --show-trace --print-build-logs
+              ;;
+            iso)
+              echo "Building ISO image..."
+              nix build .#packages.x86_64-linux.iso \
+                --show-trace --print-build-logs
+              ;;
+            vm-image)
+              echo "Building VM image..."
+              nix build .#packages.x86_64-linux.vm-image \
+                --show-trace --print-build-logs
+              ;;
+          esac
+
+      - name: Store build artifacts
+        if: matrix.target != 'toplevel'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nixos-${{ matrix.target }}
+          path: result/
+          retention-days: 7
+
+      - name: Check derivation closure size
+        run: |
+          nix path-info -Sh .#nixosConfigurations.kernelcore.config.system.build.toplevel
+
+  test-modules:
+    name: Test NixOS modules
+    runs-on: [self-hosted, nixos]
+    needs: [setup-secrets, check]
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
+
+      - name: Test dev shells
+        run: |
+          echo "Testing development shells..."
+          nix develop .#python --command python --version
+          nix develop .#cuda --command nvcc --version || echo "CUDA shell test skipped (no GPU in CI)"
+
+      - name: Test Docker images build
+        run: |
+          echo "Building Docker images..."
+          nix build .#packages.x86_64-linux.image-app --print-build-logs
+
+      - name: Verify systemd services syntax
+        run: |
+          echo "Checking systemd services..."
+          nix eval .#nixosConfigurations.kernelcore.config.systemd.services --apply builtins.attrNames
+
+  security:
+    name: Security checks
+    runs-on: [self-hosted, nixos]
+    needs: build
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Check for known vulnerabilities
+        run: |
+          echo "Running vulnerability scan..."
+          nix run nixpkgs#vulnix -- -w \
+            $(nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel --no-link --print-out-paths) \
+            || echo "⚠️ Vulnerabilities found, review required"
+        continue-on-error: true
+
+      - name: Audit Nix store paths
+        run: |
+          echo "Auditing derivations..."
+          nix-store --query --requisites $(nix-instantiate '<nixpkgs>' -A hello) | wc -l
+
+      - name: Check for secrets in repo
+        run: |
+          echo "Scanning for exposed secrets..."
+          if grep -r "RUNNER_TOKEN.*=" --include="*.nix" .; then
+            echo "❌ Found potential exposed secrets!"
+            exit 1
+          else
+            echo "✅ No exposed secrets found"
+          fi
+
+  format:
+    name: Check formatting
+    runs-on: [self-hosted, nixos]
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Check Nix formatting
+        run: nix fmt -- --check .
+
+  deploy:
+    name: Deploy to NixOS
+    runs-on: [self-hosted, nixos]
+    needs: [setup-secrets, build, test-modules, security, format]
+    # Deploy on:
+    # 1. Push to main (automatic)
+    # 2. Manual workflow_dispatch with deploy=true
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true')
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
+
+      - name: Build system configuration
+        run: |
+          echo "Building final system configuration..."
+          nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
+            --print-build-logs
+
+      - name: Switch to new configuration
+        run: |
+          echo "Switching to new NixOS configuration..."
+          sudo nixos-rebuild switch --flake .#kernelcore
+
+      - name: Verify system health
+        run: |
+          echo "Checking system services..."
+          systemctl --failed
+          echo "Checking journalctl for errors..."
+          journalctl -p err -n 50 --no-pager
+
+  report:
+    name: Build report
+    runs-on: [self-hosted, nixos]
+    needs: [build, test-modules, security]
+    if: always()
+    steps:
+      - name: Generate build summary
+        run: |
+          echo "## NixOS Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Status:** ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tests Status:** ${{ needs.test-modules.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Security Status:** ${{ needs.security.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### System Info" >> $GITHUB_STEP_SUMMARY
+          nix eval .#nixosConfigurations.kernelcore.config.system.nixos.version --raw >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on failure
+        if: ${{ failure() || needs.build.result == 'failure' || needs.test-modules.result == 'failure' || needs.security.result == 'failure' }}
+        run: |
+          echo "::error::CI/CD Pipeline failed! Check the logs above for details."
+          echo "### ❌ Pipeline Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "One or more jobs failed. Please review the logs." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Build: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests: ${{ needs.test-modules.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Security: ${{ needs.security.result }}" >> $GITHUB_STEP_SUMMARY

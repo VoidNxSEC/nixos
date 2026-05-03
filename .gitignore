@@ -4,10 +4,15 @@ temp/
 build/
 cache/
 node_modules/
-.claude/settings.local.json
-.claude/**
 
-logs/**
+# Binary installers / large downloads (must be fetched from upstream)
+*.deb
+*.rpm
+*.AppImage
+
+# Local databases / caches
+scripts/ssh_sessions.db
+.cache/
 
 # Nix build results
 result
@@ -116,12 +121,3 @@ modules/packages/tar-packages/storage/
 projects/cognitive-vault/core/target/debug/**
 modules/packages/js-packages/storage/
 modules/packages/deb-packages/storage
-modules/packages/storage/*.tar.gz
-modules/packages/google-chrome/*
-# SSH session databases
-ssh_sessions.db
-*.db-journal
-
-cloudflared-linux-amd64
-log.txt
-trivy-results.json

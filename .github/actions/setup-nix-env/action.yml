@@ -19,10 +19,6 @@ inputs:
     description: 'Extra nix.conf settings'
     required: false
     default: ''
-  local-cache-url:
-    description: 'Local Nix binary cache URL (e.g. http://192.168.x.x:5000)'
-    required: false
-    default: ''
 
 outputs:
   nix-version:
@@ -52,36 +48,29 @@ runs:
       shell: bash
       run: |
         echo "🔧 Configuring Nix..."
-
-        # Use per-user Nix config so the action works on self-hosted runners
-        # that don't ship sudo inside job environments.
-        USER_NIX_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/nix/nix.conf"
-        mkdir -p "$(dirname "$USER_NIX_CONF")"
+        
+        # Create nix.conf if not exists
+        sudo mkdir -p /etc/nix
         
         # Base configuration
-        SUBSTITUTERS="https://cache.nixos.org https://nix-community.cachix.org"
-        TRUSTED_SUBSTITUTERS=""
-        if [ -n "${{ inputs.local-cache-url }}" ]; then
-          SUBSTITUTERS="${{ inputs.local-cache-url }} $SUBSTITUTERS"
-          TRUSTED_SUBSTITUTERS="trusted-substituters = ${{ inputs.local-cache-url }}"
-        fi
-
-        cat > "$USER_NIX_CONF" << EOF
+        cat << 'EOF' | sudo tee -a /etc/nix/nix.conf
         # GitHub Actions optimizations
         max-jobs = auto
         cores = 0
-
+        
         # Flakes support
         experimental-features = nix-command flakes
-
+        
         # Build optimization
         keep-outputs = true
         keep-derivations = true
-
-        # Substituters
-        substituters = $SUBSTITUTERS
+        
+        # Substituters (with self-hosted cache)
+        substituters = http://192.168.15.9:5000 https://cache.nixos.org https://nix-community.cachix.org
         trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-        $TRUSTED_SUBSTITUTERS
+
+        # Allow self-hosted cache
+        trusted-substituters = http://192.168.15.9:5000
 
         # Cache connection settings
         connect-timeout = 2
@@ -90,7 +79,7 @@ runs:
         
         # Add extra config if provided
         if [ -n "${{ inputs.nix-conf-extra }}" ]; then
-          echo "${{ inputs.nix-conf-extra }}" >> "$USER_NIX_CONF"
+          echo "${{ inputs.nix-conf-extra }}" | sudo tee -a /etc/nix/nix.conf
         fi
         
         echo "✅ Nix configured"
@@ -128,7 +117,7 @@ runs:
         
         # Check flakes support
         if [ "${{ inputs.enable-flakes }}" == "true" ]; then
-          if nix flake show --help &> /dev/null; then
+          if nix flake --version &> /dev/null; then
             echo "✅ Flakes support: enabled"
           else
             echo "❌ Flakes support: disabled"
