@@ -51,7 +51,7 @@ in
     enable = lib.mkEnableOption "Enable custom glab CLI setup with aliases and API helpers";
     tokenFile = lib.mkOption {
       type = lib.types.path;
-      default = "/home/kernelcore/.local/secrets/gitlab.token";
+      default = "${config.system.user.homeDir}/.local/secrets/gitlab.token";
       description = "Caminho para o token do GitLab";
     };
     defaultNamespaceId = lib.mkOption {

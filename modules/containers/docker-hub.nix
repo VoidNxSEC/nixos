@@ -19,7 +19,7 @@ let
   cfg = config.kernelcore.containers.docker-hub;
 
   # Path to docker-hub project
-  dockerHubPath = "/home/kernelcore/arch/docker-hub/";
+  dockerHubPath = "${config.system.user.homeDir}/arch/docker-hub/";
 
   # Python script wrapper
   orchestrator = "${dockerHubPath}/main.py";
@@ -253,7 +253,7 @@ in
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        User = "kernelcore";
+        User = config.system.user.username;
         ExecStart = pkgs.writeShellScript "docker-hub-start" ''
           ${concatMapStringsSep "\n" (
             stack: "${pkgs.python313}/bin/python3 ${orchestrator} up ${stack}"
