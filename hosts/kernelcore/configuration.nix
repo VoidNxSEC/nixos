@@ -71,6 +71,9 @@
             extraDomainNames = [ "git.voidnx.com" ];
             reloadServices = [ "nginx.service" ];
           };
+          "forgejo.voidnx.com" = {
+            reloadServices = [ "nginx.service" ];
+          };
         };
       };
 
@@ -132,6 +135,13 @@
             host = "gitea.voidnx.com";
             upstreamPort = 3000;
             maxBodySize = "200M";
+          };
+          forgejo = {
+            enable = true;
+            host = "forgejo.voidnx.com";
+            upstreamPort = 3002;
+            maxBodySize = "200M";
+            enableWebSocket = true;
           };
         };
       };
@@ -926,8 +936,13 @@
       enable = true;
       integration = {
         publicDomain = "forgejo.voidnx.com";
-        publicUrl = "http://localhost:3002/";
+        publicUrl = "https://forgejo.voidnx.com/";
         listenPort = 3002;
+        integratedSsh = {
+          enable = true;
+          port = 22; # porta advertida nas URLs de clone
+          listenPort = 2222; # porta real local
+        };
         database = {
           type = "postgres";
           name = "forgejo";
