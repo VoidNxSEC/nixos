@@ -1,7 +1,12 @@
 {
-  description = "home sweet home";
+  description = "Platform-agnostic NixOS orchestrator. One config, every machine.";
+
+  # You can disable any flake by commenting it out in your way, feel free to do so...
 
   inputs = {
+    # ═══════════════════════════════════════════════════════════════
+    # CORE SYSTEM
+    # ═══════════════════════════════════════════════════════════════
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     sops-nix.url = "github:Mic92/sops-nix";
     flake-utils.url = "github:numtide/flake-utils";
@@ -14,7 +19,7 @@
     nix-colors.url = "github:misterio77/nix-colors";
 
     # ═══════════════════════════════════════════════════════════════
-    # HYPRLAND - Official Flake (replaces custom overlay)
+    # WINDOW MANAGER
     # ═══════════════════════════════════════════════════════════════
     hyprland = {
       url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
@@ -28,101 +33,67 @@
     };
 
     # ═══════════════════════════════════════════════════════════════
-    # PROJECTS - Independent flakes (local development) - Development Tools & Infrastructure
+    # AI TOOLS
     # ═══════════════════════════════════════════════════════════════
+
     # ML Offload API - Multi-backend ML orchestration
     ml-offload-api = {
-      url = "git+ssh://git@github.com/marcosfpina/ml-offload-api";
+      url = "github:VoidNxSEC/ml-offload-api";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # SecureLLM MCP - AI Agent Hub
     securellm-mcp = {
-      url = "git+ssh://git@github.com/VoidNxSEC/securellm-mcp";
+      url = "github:VoidNxSEC/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.spider-nix.follows = "spider-nix";
     };
-    securellm-bridge = {
-      url = "git+ssh://git@github.com/marcosfpina/securellm-bridge";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    #cognitive-vault = {
-    #url = "git+ssh://git@github.com/marcosfpina/cognitive-vault";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
-    #vmctl = {
-    #url = "git+ssh://git@github.com/marcosfpina/vmctl";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
-    spider-nix = {
-      url = "git+ssh://git@github.com/VoidNxSEC/spider-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # ─────────────────────────────────────────────────────────────────────
-    # CHAINSCOPE — Crypto Intelligence Platform (B300 inference pipeline)
-    # ─────────────────────────────────────────────────────────────────────
-    #chainscope = {
-    #url = "git+ssh://git@github.com/marcosfpina/chainscope";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #inputs.spider-nix.follows = "spider-nix";
-    #};
-    #i915-governor = {
-    #url = "git+ssh://git@github.com/VoidNxSEC/i915-governor";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
-    #swissknife = {
-    #url = "git+ssh://git@github.com/marcosfpina/swissknife";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
-    arch-analyzer = {
-      url = "git+ssh://git@github.com/marcosfpina/arch-analyzer";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    neoland = {
-      url = "path:/home/kernelcore/master/neoland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    adr-ledger = {
-      url = "path:/home/kernelcore/master/adr-ledger";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    spooknix = {
-      url = "git+ssh://git@github.com/marcosfpina/spooknix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    actions-tv = {
-      url = "git+ssh://git@github.com/marcosfpina/actions-tv";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    #docker-hub = {
-    #url = "path:/home/kernelcore/dev/low-level/docker-hub";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
-    # Notion → Markdown/JSON exporter for platform migration
-    #notion-exporter = {
-    #url = "git+ssh://git@github.com/marcosfpina/notion-exporter";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
-    # Declarative mini-datacenter with Docker+Nix synergy
-    #nixos-hyperlab = {
-    #url = "git+ssh://git@github.com/marcosfpina/nixos-hyperlab";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
 
-    # TUI debug pipeline with semantic filtering & LLM analysis
-    #shadow-debug-pipeline = {
-    #url = "git+file:/home/kernelcore/dev/low-level/shadow-debug-pipeline";
-    #inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    # SecureLLM Bridge
+    securellm-bridge = {
+      url = "github:VoidNxSEC/securellm-bridge";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Spider-Nix
+    spider-nix = {
+      url = "github:VoidNxSEC/spider-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Arch-Analyzer
+    arch-analyzer = {
+      url = "github:VoidNxSEC/arch-analyzer";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # neoland and adr-ledger use local paths — add to flakes/personal.nix for your setup
+    neoland.url = "github:VoidNxSEC/neoland";
+    adr-ledger.url = "github:VoidNxSEC/adr-ledger";
+
+    # SpookNix
+    spooknix = {
+      url = "github:VoidNxSEC/spooknix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Actions-TV
+    actions-tv = {
+      url = "github:VoidNxSEC/actions-tv";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Native OS-level monitoring agent in Rust with Hyprland integration
     ai-agent-os = {
-      url = "git+ssh://git@github.com/marcosfpina/ai-agent-os";
+      url = "github:VoidNxSEC/ai-agent-os";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     # ═══════════════════════════════════════════════════════════════
     # PHANTOM - AI Forensic Intelligence Enterprise Grade Dynamic Pipeline (AI Forensics)
     # ═══════════════════════════════════════════════════════════════
     phantom = {
-      url = "git+ssh://git@github.com/marcosfpina/phantom";
+      url = "github:VoidNxSEC/phantom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -130,15 +101,9 @@
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
     owasaka = {
-      url = "git+ssh://git@github.com/marcosfpina/O.W.A.S.A.K.A.";
+      url = "github:VoidNxSEC/O.W.A.S.A.K.A.";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows
-    # Commented for now, can be enabled when needed for Apple Silicon development
-    # mlx-mcp = {
-    #   url = "git+file:///home/kernelcore/dev/low-level/mlx-mcp";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
   };
 
   outputs =
@@ -196,7 +161,6 @@
         '';
         # Package builds (relatively fast)
         mcp-server = self.packages.${system}.securellm-mcp;
-        llm-bridge = self.packages.${system}.securellm-bridge;
 
         # NOTE: Heavy builds (iso, vm, docker-app) removed from checks for performance
         # These are still available via packages: nix build .#iso, .#vm-image, .#image-app
@@ -274,7 +238,7 @@
                 inputs.spooknix.homeManagerModules.default
                 inputs.actions-tv.homeManagerModules.github-actions-waybar
               ];
-              home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix;
+              home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix; # kernelcore is the actual user on this machine
               home-manager.backupFileExtension = null;
               home-manager.backupCommand = "${pkgs.coreutils}/bin/cp -a $1 $1.backup-$(date +%Y%m%d-%H%M%S)";
             }
