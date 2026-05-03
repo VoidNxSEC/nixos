@@ -931,11 +931,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1777818621,
-        "narHash": "sha256-1wbhWs6U7uyclX/DPU74qwEDhO7TWK8nenCzj857idw=",
+        "lastModified": 1777819304,
+        "narHash": "sha256-e3oqsVCYRRq+U9igffFRjuzAhUp229kufKpwmjBQUOA=",
         "ref": "refs/heads/main",
-        "rev": "c0933bffcf0394f7701ab134f6c308eaa9584bee",
-        "revCount": 7246,
+        "rev": "21fa9b2ee27227c964fdeb8090d98255edb89bec",
+        "revCount": 7247,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1741,11 +1741,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777753284,
-        "narHash": "sha256-DsiVhrNNns2qgAbgym2zPqMMPt+Y/KkXovHQIaMuOhg=",
+        "lastModified": 1777819489,
+        "narHash": "sha256-KIamjSZw1ZcFnFbIws2TSXKSUUgOnuVKe5a3CwRiEPw=",
         "owner": "VoidNxSEC",
         "repo": "O.W.A.S.A.K.A.",
-        "rev": "797499341c3e43d4b1918541b960e2bbd1892811",
+        "rev": "16432747e94aaee3b0812f620c2321a2028138bf",
         "type": "github"
       },
       "original": {
@@ -1763,11 +1763,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777813305,
-        "narHash": "sha256-nAASvIViDpzfthHDl24QSVFRoi7StIfoEiFLXu55W4w=",
+        "lastModified": 1777819489,
+        "narHash": "sha256-KIamjSZw1ZcFnFbIws2TSXKSUUgOnuVKe5a3CwRiEPw=",
         "ref": "refs/heads/main",
-        "rev": "ae79f3dba964e150c489cb5cfda9b67f85621db3",
-        "revCount": 35,
+        "rev": "16432747e94aaee3b0812f620c2321a2028138bf",
+        "revCount": 36,
         "type": "git",
         "url": "file:///home/kernelcore/master/owasaka"
       },
