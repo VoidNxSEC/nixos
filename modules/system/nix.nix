@@ -76,6 +76,7 @@ with lib;
             "path://${config.system.user.homeDir}/dev/projects"
             "git+file://${config.system.user.homeDir}/dev/low-level"
             "path://${config.system.user.homeDir}/dev/low-level"
+            "git+http://localhost:3002"
           ];
         }
       ];
