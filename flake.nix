@@ -55,6 +55,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    swissknife = {
+      url = "github:VoidNxSEC/swissknife";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Spider-Nix
     spider-nix = {
       url = "github:VoidNxSEC/spider-nix";
@@ -69,7 +74,10 @@
 
     # neoland and adr-ledger use local paths — add to flakes/personal.nix for your setup
     neoland.url = "github:VoidNxSEC/neoland";
+    neoland.inputs.nixpkgs.follows = "nixpkgs";
+
     adr-ledger.url = "github:VoidNxSEC/adr-ledger";
+    adr-ledger.inputs.nixpkgs.follows = "nixpkgs";
 
     # SpookNix
     spooknix = {
@@ -157,11 +165,152 @@
       apps.${system} = {
         securellm-mcp = {
           type = "app";
+          meta = {
+            description = "SecureLLM MCP Server";
+            mainProgram = "securellm-mcp";
+            platforms = [ "x86_64-linux" ];
+            maintainers = [ pkgs.lib.maintainers.kernelcore ];
+            license = pkgs.lib.licenses.mit;
+            homepage = "https://github.com/VoidNxSEC/securellm-mcp";
+            source = "https://github.com/VoidNxSEC/securellm-mcp/archive/refs/tags/2.1.0.tar.gz";
+            version = "2.1.0";
+            broken = false;
+          };
           program = "${inputs.securellm-mcp.packages.${system}.default}/bin/securellm-mcp";
         };
         securellm-bridge = {
           type = "app";
+          meta = {
+            description = "SecureLLM Bridge";
+            mainProgram = "securellm-bridge";
+            platforms = [ "x86_64-linux" ];
+            maintainers = [ pkgs.lib.maintainers.kernelcore ];
+            license = pkgs.lib.licenses.mit;
+            homepage = "https://github.com/VoidNxSEC/securellm-bridge";
+            source = "https://github.com/VoidNxSEC/securellm-bridge/archive/refs/tags/0.1.0.tar.gz";
+            version = "0.1.0";
+            broken = false;
+          };
           program = "${inputs.securellm-bridge.packages.${system}.default}/bin/securellm-bridge";
+        };
+
+        # SPIDER MCP
+        spider-nix = {
+          type = "app";
+          meta = {
+            description = "Spider-Nix";
+            mainProgram = "spider-nix";
+            platforms = [ "x86_64-linux" ];
+            maintainers = [ pkgs.lib.maintainers.kernelcore ];
+            license = pkgs.lib.licenses.mit;
+            homepage = "https://github.com/VoidNxSEC/spider-nix";
+            source = "https://github.com/VoidNxSEC/spider-nix/archive/refs/tags/0.1.0.tar.gz";
+            version = "0.1.0";
+            broken = false;
+          };
+          program = "${inputs.spider-nix.packages.${system}.default}/bin/spider-nix";
+        };
+
+        # MCP-SERVER
+        mcp-server = {
+          type = "app";
+          meta = {
+            description = "MCP Server";
+            mainProgram = "mcp-server";
+            platforms = [ "x86_64-linux" ];
+            maintainers = [ pkgs.lib.maintainers.kernelcore ];
+            license = pkgs.lib.licenses.mit;
+            homepage = "https://github.com/VoidNxSEC/mcp-server";
+            source = "https://github.com/VoidNxSEC/mcp-server/archive/refs/tags/0.1.0.tar.gz";
+            version = "0.1.0";
+            broken = false;
+          };
+          program = "${inputs.mcp-server.packages.${system}.default}/bin/mcp-server";
+        };
+
+        # ARCH-ANALYZER
+        arch-analyzer = {
+          type = "app";
+          meta = {
+            description = "Arch-Analyzer";
+            mainProgram = "arch-analyzer";
+            platforms = [ "x86_64-linux" ];
+            maintainers = [ pkgs.lib.maintainers.kernelcore ];
+            license = pkgs.lib.licenses.mit;
+            homepage = "https://github.com/VoidNxSEC/arch-analyzer";
+            source = "https://github.com/VoidNxSEC/arch-analyzer/archive/refs/tags/0.1.0.tar.gz";
+            version = "0.1.0";
+            broken = false;
+          };
+          program = "${inputs.arch-analyzer.packages.${system}.default}/bin/arch-analyzer";
+        };
+
+        # PHANTOM
+        phantom = {
+          type = "app";
+          meta = {
+            description = "Phantom";
+            mainProgram = "phantom";
+            platforms = [ "x86_64-linux" ];
+            maintainers = [ pkgs.lib.maintainers.kernelcore ];
+            license = pkgs.lib.licenses.mit;
+            homepage = "https://github.com/VoidNxSEC/phantom";
+            source = "https://github.com/VoidNxSEC/phantom/archive/refs/tags/0.1.0.tar.gz";
+            version = "0.1.0";
+            broken = false;
+          };
+          program = "${inputs.phantom.packages.${system}.default}/bin/phantom";
+        };
+
+        # ACTIONS-TV
+        actions-tv = {
+          type = "app";
+          meta = {
+            description = "Actions-TV";
+            mainProgram = "actions-tv";
+            platforms = [ "x86_64-linux" ];
+            maintainers = [ pkgs.lib.maintainers.kernelcore ];
+            license = pkgs.lib.licenses.mit;
+            homepage = "https://github.com/VoidNxSEC/actions-tv";
+            source = "https://github.com/VoidNxSEC/actions-tv/archive/refs/tags/0.1.0.tar.gz";
+            version = "0.1.0";
+            broken = false;
+          };
+          program = "${inputs.actions-tv.packages.${system}.default}/bin/actions-tv";
+        };
+
+        # AI-AGENT-OS
+        ai-agent-os = {
+          type = "app";
+          meta = {
+            description = "AI Agent OS";
+            mainProgram = "ai-agent-os";
+            platforms = [ "x86_64-linux" ];
+            maintainers = [ pkgs.lib.maintainers.kernelcore ];
+            license = pkgs.lib.licenses.mit;
+            homepage = "https://github.com/VoidNxSEC/ai-agent-os";
+            source = "https://github.com/VoidNxSEC/ai-agent-os/archive/refs/tags/0.1.0.tar.gz";
+            version = "0.1.0";
+            broken = false;
+          };
+          program = "${inputs.ai-agent-os.packages.${system}.default}/bin/ai-agent-os";
+        };
+
+        # SPOOKNIX
+        spooknix = {
+          type = "app";
+          meta = {
+            description = "SpookNix";
+            mainProgram = "spooknix";
+            platforms = [ "x86_64-linux" ];
+            maintainers = [ pkgs.lib.maintainers.kernelcore ];
+            license = pkgs.lib.licenses.mit;
+            homepage = "https://github.com/VoidNxSEC/spooknix";
+            source = "https://github.com/VoidNxSEC/spooknix/archive/refs/tags/0.1.0.tar.gz";
+            version = "0.1.0";
+            broken = false;
+          };
+          program = "${inputs.spooknix.packages.${system}.default}/bin/spooknix";
         };
       };
 
