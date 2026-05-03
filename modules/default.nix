@@ -49,12 +49,8 @@
     ./containers # Docker, Podman, NixOS containers
     ./virtualization # VMs, vmctl, macOS KVM
 
-    # Kubernetes Orquestration
-    # TODO: CRITICAL: Work to do
-    # ./modules/system/base.nix
-    ./containers/k3s-cluster.nix
-    ./network/cilium-cni.nix
-    ./containers/longhorn-storage.nix
+    # NOTE: K3s cluster, Cilium CNI, and Longhorn storage are imported
+    # via ./containers and ./network respectively, respecting their feature flags.
 
     # ═══════════════════════════════════════════════════════════
     # DESKTOP & APPLICATIONS
