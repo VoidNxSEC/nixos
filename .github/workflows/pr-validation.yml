@@ -1,0 +1,266 @@
+name: 'PR Validation'
+
+# Reusable workflow for PR validation
+# Usage in other repos:
+#   jobs:
+#     validate:
+#       uses: VoidNxSEC/nixos/.github/workflows/pr-validation.yml@main
+#       secrets: inherit
+
+on:
+  workflow_call:
+    inputs:
+      config-path:
+        description: 'NixOS configuration path'
+        required: false
+        type: string
+        default: '.#nixosConfigurations.kernelcore.config.system.build.toplevel'
+      skip-tests:
+        description: 'Skip test suite'
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      CACHIX_AUTH_TOKEN:
+        required: false
+      DISCORD_WEBHOOK:
+        required: false
+
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  CACHIX_NAME: kernelcore
+
+jobs:
+  format-check:
+    name: Check Formatting
+    runs-on: [self-hosted, nixos]
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Check Nix formatting
+        run: |
+          echo "🎨 Checking Nix formatting..."
+          nix fmt -- --check . || {
+            echo "❌ Formatting check failed!"
+            echo "Run 'nix fmt' to fix formatting issues"
+            exit 1
+          }
+          echo "✅ Formatting check passed"
+
+      - name: Check for trailing whitespace
+        run: |
+          echo "🔍 Checking for trailing whitespace..."
+          if git diff --check HEAD^ HEAD; then
+            echo "✅ No trailing whitespace found"
+          else
+            echo "❌ Trailing whitespace found"
+            exit 1
+          fi
+
+  flake-check:
+    name: Validate Flake
+    runs-on: [self-hosted, nixos]
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Check flake syntax
+        run: |
+          echo "🔍 Checking flake syntax..."
+          nix flake check --show-trace
+          echo "✅ Flake check passed"
+
+      - name: Validate flake metadata
+        run: |
+          echo "📋 Validating flake metadata..."
+          nix flake metadata
+          nix flake show
+
+      - name: Check for eval errors
+        run: |
+          echo "🔍 Checking for evaluation errors..."
+          nix eval ${{ inputs.config-path }} --apply 'x: "ok"' --show-trace
+          echo "✅ No evaluation errors"
+
+  build-test:
+    name: Build Test
+    runs-on: [self-hosted, nixos]
+    needs: [format-check, flake-check]
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Build configuration
+        uses: ./.github/actions/build-nixos
+        with:
+          config-path: ${{ inputs.config-path }}
+          enable-tests: ${{ !inputs.skip-tests }}
+          show-trace: true
+
+      - name: Check closure size
+        run: |
+          echo "📊 Analyzing closure size..."
+          nix path-info -Sh ${{ inputs.config-path }} | tee closure-size.txt
+
+          # Extract size and check if reasonable
+          SIZE=$(cat closure-size.txt | awk '{print $2}')
+          echo "Closure size: $SIZE"
+
+          # Warning if > 8GB (pure bash arithmetic)
+          if [[ "$SIZE" == *"G"* ]]; then
+            SIZE_NUM=$(echo $SIZE | sed 's/[^0-9.]//g')
+            SIZE_INT=$(echo $SIZE_NUM | awk '{print int($1)}')
+
+            if [[ "$SIZE_INT" -gt 8 ]]; then
+              echo "⚠️  WARNING: Large closure size detected: $SIZE"
+            fi
+          fi
+
+  security-scan:
+    name: Security Scan
+    runs-on: [self-hosted, nixos]
+    needs: build-test
+    continue-on-error: true
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Scan for vulnerabilities
+        run: |
+          echo "🔒 Scanning for known vulnerabilities..."
+          nix run nixpkgs#vulnix -- -w \
+            $(nix build ${{ inputs.config-path }} --no-link --print-out-paths) \
+            || echo "⚠️  Vulnerabilities found (non-blocking)"
+
+      - name: Check for exposed secrets
+        run: |
+          echo "🔍 Scanning for exposed secrets..."
+          
+          # Check for common secret patterns
+          if git diff --name-only origin/${{ github.base_ref }}..HEAD | \
+             xargs grep -l -E "(password|secret|token|key).*=.*['\"]" 2>/dev/null; then
+            echo "⚠️  Potential secrets found in diff"
+            echo "Please review and ensure no sensitive data is committed"
+          else
+            echo "✅ No obvious secrets found"
+          fi
+
+  summary:
+    name: PR Summary
+    runs-on: [self-hosted, nixos]
+    needs: [format-check, flake-check, build-test, security-scan]
+    if: always()
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## PR Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Format | ${{ needs.format-check.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Flake | ${{ needs.flake-check.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ${{ needs.build-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security | ${{ needs.security-scan.result == 'success' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.format-check.result }}" == "success" && \
+                "${{ needs.flake-check.result }}" == "success" && \
+                "${{ needs.build-test.result }}" == "success" ]]; then
+            echo "### ✅ All checks passed!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "This PR is ready for review and merge." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Some checks failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Please fix the issues before merging." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Notify on failure
+        if: failure()
+        uses: ./.github/actions/notify
+        with:
+          status: failure
+          title: "PR Validation Failed"
+          message: "PR #${{ github.event.pull_request.number }} validation failed"
+          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
