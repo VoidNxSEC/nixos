@@ -90,6 +90,7 @@ let
     check_forge "GitHub (Personal)" "github.com" "git" "successfully authenticated"
     check_forge "GitHub (Org)" "github.com-voidnxlabs" "git" "successfully authenticated"
     check_forge "GitLab" "gitlab.com" "git" "Welcome to GitLab"
+    check_forge "Forgejo (local)" "forgejo" "git" "successfully authenticated"
     check_forge "Codeberg" "codeberg.org" "git" "You've successfully authenticated"
     check_forge "SourceForge" "git.code.sf.net" "git" "Welcome"
 
@@ -211,6 +212,15 @@ in
           host = "vs-ssh.visualstudio.com";
           identity = cfg.keys.azure or sysSsh.personalKey;
           port = 22;
+        };
+
+        # ─────────────────────────────────────────────────────────
+        # FORGEJO (Local self-hosted)
+        # ─────────────────────────────────────────────────────────
+        "forgejo" = mkForge {
+          host = "localhost";
+          port = 2222;
+          identity = cfg.keys.forgejo or sysSsh.personalKey;
         };
 
         # ─────────────────────────────────────────────────────────

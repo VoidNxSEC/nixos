@@ -62,8 +62,10 @@
         # Show which key is being used
         show-key = "!git config user.signingkey";
 
-        # Push to all remotes (github + gitlab)
-        push-all = "!git push github \"$@\" && git push gitlab \"$@\" #";
+        # Push HEAD to every configured remote — skips offline ones silently
+        pa = "!git remote | xargs -I{} sh -c 'git push {} HEAD && echo \"✓ {}\" || echo \"✗ {} (skipped)\"'";
+        # Legacy alias kept for muscle memory
+        push-all = "!git pa";
       };
 
       # ───────────────────────────────────────────────────────
