@@ -123,20 +123,13 @@ runs:
       shell: bash
       run: |
         echo "📤 Pushing to Cachix..."
-
-        if ! command -v cachix &> /dev/null; then
+        
+        if command -v cachix &> /dev/null; then
+          cachix push $(cachix cache list | head -1) ${{ steps.build.outputs.path }}
+          echo "✅ Pushed to Cachix"
+        else
           echo "⚠️  Cachix not available, skipping push"
-          exit 0
         fi
-
-        CACHE_NAME=$(cachix cache list --json 2>/dev/null | jq -r '.[0].name // empty')
-        if [ -z "$CACHE_NAME" ]; then
-          echo "⚠️  No cachix cache found, skipping push"
-          exit 0
-        fi
-
-        cachix push "$CACHE_NAME" ${{ steps.build.outputs.path }}
-        echo "✅ Pushed to Cachix cache: $CACHE_NAME"
 
     - name: Generate build report
       shell: bash
