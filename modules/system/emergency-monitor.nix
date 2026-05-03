@@ -189,7 +189,7 @@ with lib;
 
     security.sudo.extraRules = [
       {
-        users = [ "kernelcore" ];
+        users = [ config.system.user.username ];
         commands = [
           {
             command = "/etc/nixos/scripts/nix-emergency.sh";
