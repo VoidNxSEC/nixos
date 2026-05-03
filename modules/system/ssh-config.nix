@@ -21,7 +21,7 @@ with lib;
     # User-specific SSH directory
     sshDir = mkOption {
       type = types.str;
-      default = "/home/kernelcore/.ssh";
+      default = "${config.system.user.homeDir}/.ssh";
       description = "SSH directory path";
     };
 
@@ -69,7 +69,7 @@ with lib;
 
     serverUser = mkOption {
       type = types.str;
-      default = "kernelcore";
+      default = config.system.user.username;
       description = "Username for internal server";
     };
   };
@@ -202,7 +202,7 @@ with lib;
             # ────────────────────────────────────────────────────
             "laptop" = {
               hostname = "192.168.15.9"; # IP do laptop
-              user = "kernelcore"; # Usuário do laptop
+              user = config.kernelcore.ssh.serverUser;
               identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}"; # Supondo a mesma chave, ajuste se necessário
               identitiesOnly = true;
               port = 22;
@@ -226,7 +226,7 @@ with lib;
             # Nvidia Brev Development Environments
             # ────────────────────────────────────────────────────
             "*.brev.dev" = {
-              user = "kernelcore";
+              user = config.kernelcore.ssh.serverUser;
               identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.brevKey}";
               identitiesOnly = true;
               extraOptions = {

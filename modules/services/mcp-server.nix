@@ -59,7 +59,7 @@ in
 
     user = mkOption {
       type = types.str;
-      default = "kernelcore";
+      default = config.system.user.username;
       description = "User to run the MCP server as";
     };
 

@@ -17,7 +17,7 @@ let
       osConfig.kernelcore.ssh
     else
       {
-        sshDir = "/home/kernelcore/.ssh";
+        sshDir = "${config.system.user.homeDir}/.ssh";
         personalKey = "id_ed25519";
         gitlabKey = "id_ed25519";
         brevKey = "id_rsa";
@@ -217,7 +217,7 @@ in
         # BREV.DEV (AI/ML Dev Environments)
         # ─────────────────────────────────────────────────────────
         "*.brev.dev" = {
-          user = "kernelcore"; # Brev uses specific user
+          user = sysSsh.serverUser;
           identityFile = "${sysSsh.sshDir}/${sysSsh.brevKey}";
           identitiesOnly = true;
           extraOptions = {
