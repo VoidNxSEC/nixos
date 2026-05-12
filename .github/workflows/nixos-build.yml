@@ -2,7 +2,7 @@ name: NixOS Build & Test
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, dev]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -35,7 +35,7 @@ jobs:
 
   check:
     name: Check Nix flake
-    runs-on: [self-hosted, nixos]
+    runs-on: [ubuntu-latest-m, nixos]
     needs: setup-secrets
     steps:
       - name: Ensure Nix daemon is running
@@ -75,7 +75,7 @@ jobs:
 
   build:
     name: Build NixOS configuration
-    runs-on: [self-hosted, nixos]
+    runs-on: [ubuntu-latest-m, nixos]
     needs: [setup-secrets, check]
     strategy:
       matrix:
@@ -139,7 +139,7 @@ jobs:
 
   test-modules:
     name: Test NixOS modules
-    runs-on: [self-hosted, nixos]
+    runs-on: [ubuntu-latest-m, nixos]
     needs: [setup-secrets, check]
     steps:
       - name: Setup Git LFS
@@ -182,7 +182,7 @@ jobs:
 
   security:
     name: Security checks
-    runs-on: [self-hosted, nixos]
+    runs-on: [ubuntu-latest-m, nixos]
     needs: build
     steps:
       - name: Setup Git LFS
@@ -221,7 +221,7 @@ jobs:
 
   format:
     name: Check formatting
-    runs-on: [self-hosted, nixos]
+    runs-on: [ubuntu-latest-m, nixos]
     steps:
       - name: Setup Git LFS
         run: |
@@ -239,7 +239,7 @@ jobs:
 
   deploy:
     name: Deploy to NixOS
-    runs-on: [self-hosted, nixos]
+    runs-on: [ubuntu-latest-m, nixos]
     needs: [setup-secrets, build, test-modules, security, format]
     # Deploy on:
     # 1. Push to main (automatic)
@@ -290,7 +290,7 @@ jobs:
 
   report:
     name: Build report
-    runs-on: [self-hosted, nixos]
+    runs-on: [ubuntu-latest-m, nixos]
     needs: [build, test-modules, security]
     if: always()
     steps:
