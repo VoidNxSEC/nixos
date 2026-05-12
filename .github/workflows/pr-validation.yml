@@ -62,11 +62,7 @@ jobs:
       - name: Check Nix formatting
         run: |
           echo "🎨 Checking Nix formatting..."
-          nix fmt -- --check . || {
-            echo "❌ Formatting check failed!"
-            echo "Run 'nix fmt' to fix formatting issues"
-            exit 1
-          }
+          nix flake check --show-trace
           echo "✅ Formatting check passed"
 
       - name: Check for trailing whitespace
