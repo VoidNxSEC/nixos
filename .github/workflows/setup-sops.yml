@@ -19,22 +19,18 @@ on:
 
 jobs:
   decrypt:
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     outputs:
       cachix_token: ${{ steps.decrypt.outputs.cachix_token }}
       github_token: ${{ steps.decrypt.outputs.github_token }}
 
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true
           fetch-depth: 0
+
+      - uses: ./.github/actions/setup-nix-env
 
       - name: Setup AGE key for SOPS
         env:
@@ -85,8 +81,7 @@ jobs:
 
       - name: Verify SOPS installation
         run: |
-          # sops is available via extraPackages
-          sops --version
+          nix run nixpkgs#sops -- --version
           echo "✅ SOPS is available"
 
       - name: Decrypt secrets
@@ -110,7 +105,7 @@ jobs:
 
           # Test SOPS decryption first
           echo "🔍 Testing SOPS decryption..."
-          if ! sops -d secrets/github.yaml > /tmp/decrypted.yaml 2>&1; then
+          if ! nix run nixpkgs#sops -- -d secrets/github.yaml > /tmp/decrypted.yaml 2>&1; then
             echo "❌ SOPS decryption failed:"
             cat /tmp/decrypted.yaml
             rm -f /tmp/decrypted.yaml
@@ -120,10 +115,10 @@ jobs:
           echo "✅ SOPS decryption successful"
 
           # Extract Cachix token
-          CACHIX_TOKEN=$(yq eval '.github.cachix_auth_token // ""' /tmp/decrypted.yaml)
+          CACHIX_TOKEN=$(nix run nixpkgs#yq-go -- eval '.github.cachix_auth_token // ""' /tmp/decrypted.yaml)
 
           # Extract GitHub PAT
-          GITHUB_PAT=$(yq eval '.github.personal_access_token // ""' /tmp/decrypted.yaml)
+          GITHUB_PAT=$(nix run nixpkgs#yq-go -- eval '.github.personal_access_token // ""' /tmp/decrypted.yaml)
 
           # Clean up decrypted file
           rm -f /tmp/decrypted.yaml
