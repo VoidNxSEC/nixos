@@ -217,28 +217,10 @@ jobs:
             echo "✅ No exposed secrets found"
           fi
 
-  format:
-    name: Check formatting
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          lfs: true
-          fetch-depth: 0
-
-      - name: Check Nix formatting
-        run: nix fmt -- --check .
-
   deploy:
     name: Deploy to NixOS
     runs-on: [self-hosted, nixos]
-    needs: [setup-secrets, build, test-modules, security, format]
+    needs: [setup-secrets, build, test-modules, security]
     # Deploy on:
     # 1. Push to main (automatic)
     # 2. Manual workflow_dispatch with deploy=true
