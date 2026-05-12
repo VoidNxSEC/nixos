@@ -178,8 +178,10 @@ in
       # HTTP/3 support
       #package = mkIf cfg.enableHTTP3 pkgs.nginxQuic;
 
-      # Global settings
-      appendHttpConfig = ''
+      # Global settings (must be in commonHttpConfig so log_format and
+      # limit_req_zone are declared BEFORE the server blocks that reference them;
+      # appendHttpConfig is emitted after virtualHosts and would be too late)
+      commonHttpConfig = ''
         # Connection pooling (Keepalive must be configured in upstream blocks, not global http)
         # Placeholder for future upstream block implementation
 

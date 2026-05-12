@@ -71,9 +71,6 @@
             extraDomainNames = [ "git.voidnx.com" ];
             reloadServices = [ "nginx.service" ];
           };
-          "forgejo.voidnx.com" = {
-            reloadServices = [ "nginx.service" ];
-          };
         };
       };
 
@@ -123,8 +120,15 @@
 
       proxy.nginx-tailscale = {
         enable = true;
-        hostname = "kernelcore";
+        hostname = "nx";
         tailnetDomain = "tailb3b82e.ts.net";
+        services.forgejo = {
+          enable = true;
+          subdomain = "forgejo";
+          upstreamPort = 3002;
+          maxBodySize = "200M";
+          enableWebSocket = true;
+        };
       };
 
       proxy.nginx-public = {
@@ -136,17 +140,10 @@
             upstreamPort = 3000;
             maxBodySize = "200M";
           };
-          forgejo = {
-            enable = true;
-            host = "forgejo.voidnx.com";
-            upstreamPort = 3002;
-            maxBodySize = "200M";
-            enableWebSocket = true;
-          };
         };
       };
 
-      vpn.tailscale.hostname = lib.mkForce "kernelcore";
+      vpn.tailscale.hostname = lib.mkForce "nx";
 
       security.firewall-zones = {
         enable = false;
@@ -935,13 +932,15 @@
     forgejo = {
       enable = true;
       integration = {
-        publicDomain = "forgejo.voidnx.com";
-        publicUrl = "https://forgejo.voidnx.com/";
+        publicDomain = "forgejo.nx.tailb3b82e.ts.net";
+        publicUrl = "http://forgejo.nx.tailb3b82e.ts.net/";
         listenPort = 3002;
+        proxy.enable = false;
+        tls.enable = false;
         integratedSsh = {
           enable = true;
-          port = 22; # porta advertida nas URLs de clone
-          listenPort = 2222; # porta real local
+          port = 22;
+          listenPort = 2222;
         };
         database = {
           type = "postgres";
