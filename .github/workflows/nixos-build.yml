@@ -12,16 +12,20 @@ on:
         required: false
         default: false
         type: boolean
-      enable-tmate:
-        description: "Enable tmate debug session"
+      build-iso:
+        description: "Build ISO image"
         required: false
         default: false
         type: boolean
-      tmate-on-failure:
-        description: "Enable tmate only on failure"
+      build-vm:
+        description: "Build VM image"
         required: false
-        default: true
+        default: false
         type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
   CACHIX_CACHE_NAME: marcosfpina
@@ -37,6 +41,7 @@ jobs:
     name: Check Nix flake
     runs-on: ubuntu-latest
     needs: setup-secrets
+    timeout-minutes: 20
     steps:
       - name: Setup Git LFS
         run: |
@@ -75,25 +80,12 @@ jobs:
     name: Build NixOS configuration
     runs-on: ubuntu-latest
     needs: [setup-secrets, check]
-    strategy:
-      matrix:
-        target: [toplevel, iso, vm-image]
+    timeout-minutes: 45
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true
           fetch-depth: 0
-
-      - name: Ensure Git tracking for Nix
-        run: |
-          git add -A
-          git status --short
 
       - name: Setup Cachix
         uses: cachix/cachix-action@v15
@@ -102,59 +94,45 @@ jobs:
           authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
           pushFilter: "(-source$|-env$)"
 
-      - name: Build ${{ matrix.target }}
-        id: build
+      - name: Build toplevel
         run: |
-          case "${{ matrix.target }}" in
-            toplevel)
-              echo "Building main system configuration..."
-              nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
-                --show-trace --print-build-logs
-              ;;
-            iso)
-              echo "Building ISO image..."
-              nix build .#packages.x86_64-linux.iso \
-                --show-trace --print-build-logs
-              ;;
-            vm-image)
-              echo "Building VM image..."
-              nix build .#packages.x86_64-linux.vm-image \
-                --show-trace --print-build-logs
-              ;;
-          esac
+          nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
+            --print-build-logs --no-link
 
-      - name: Store build artifacts
-        if: matrix.target != 'toplevel'
+      - name: Build ISO
+        if: github.event.inputs.build-iso == 'true'
+        run: |
+          nix build .#packages.x86_64-linux.iso --print-build-logs
+      - name: Upload ISO
+        if: github.event.inputs.build-iso == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: nixos-${{ matrix.target }}
+          name: nixos-iso
           path: result/
           retention-days: 7
 
-      - name: Check derivation closure size
+      - name: Build VM image
+        if: github.event.inputs.build-vm == 'true'
         run: |
-          nix path-info -Sh .#nixosConfigurations.kernelcore.config.system.build.toplevel
+          nix build .#packages.x86_64-linux.vm-image --print-build-logs
+      - name: Upload VM image
+        if: github.event.inputs.build-vm == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nixos-vm-image
+          path: result/
+          retention-days: 7
 
   test-modules:
     name: Test NixOS modules
     runs-on: ubuntu-latest
     needs: [setup-secrets, check]
+    timeout-minutes: 15
     steps:
-      - name: Setup Git LFS
-        run: |
-          git lfs install --force
-          git lfs version
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true
           fetch-depth: 0
-
-      - name: Ensure Git tracking for Nix
-        run: |
-          git add -A
-          git status --short
 
       - name: Setup Cachix
         uses: cachix/cachix-action@v15
@@ -162,26 +140,15 @@ jobs:
           name: ${{ env.CACHIX_CACHE_NAME }}
           authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
 
-      - name: Test dev shells
-        run: |
-          echo "Testing development shells..."
-          nix develop .#python --command python --version
-          nix develop .#cuda --command nvcc --version || echo "CUDA shell test skipped (no GPU in CI)"
-
-      - name: Test Docker images build
-        run: |
-          echo "Building Docker images..."
-          nix build .#packages.x86_64-linux.image-app --print-build-logs
-
       - name: Verify systemd services syntax
         run: |
-          echo "Checking systemd services..."
           nix eval .#nixosConfigurations.kernelcore.config.systemd.services --apply builtins.attrNames
 
   security:
     name: Security checks
     runs-on: ubuntu-latest
     needs: build
+    timeout-minutes: 15
     steps:
       - name: Setup Git LFS
         run: |
