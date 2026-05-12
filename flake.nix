@@ -23,39 +23,39 @@
     };
 
     securellm-mcp = {
-      url = "git+file:///home/kernelcore/dev/projects/securellm-mcp";
+      url = "github:VoidNxSEC/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     securellm-bridge = {
-      url = "git+file:///home/kernelcore/dev/projects/securellm-bridge";
+      url = "github:VoidNxSEC/securellm-bridge";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cognitive-vault = {
-      url = "git+file:///home/kernelcore/dev/projects/cognitive-vault";
+      url = "github:VoidNxSEC/cognitive-vault";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vmctl = {
-      url = "git+file:///home/kernelcore/dev/projects/vmctl";
+      url = "github:VoidNxSEC/vmctl";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     spider-nix = {
-      url = "git+file:///home/kernelcore/dev/projects/spider-nix";
+      url = "github:VoidNxSEC/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
-      url = "git+file:///home/kernelcore/dev/projects/i915-governor";
+      url = "github:VoidNxSEC/i915-governor";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     swissknife = {
-      url = "git+file:///home/kernelcore/dev/projects/swissknife";
+      url = "github:VoidNxSEC/swissknife";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     arch-analyzer = {
-      url = "git+file:///home/kernelcore/dev/projects/arch-analyzer";
+      url = "github:VoidNxSEC/arch-analyzer";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     docker-hub = {
-      url = "git+file:///home/kernelcore/dev/projects/docker-hub";
+      url = "github:VoidNxSEC/docker-hub";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -63,7 +63,7 @@
     # PHANTOM - AI Document Intelligence Toolkit
     # ═══════════════════════════════════════════════════════════════
     phantom = {
-      url = "git+file:///home/kernelcore/dev/projects/phantom";
+      url = "github:VoidNxSEC/phantom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -71,7 +71,7 @@
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
     owasaka = {
-      url = "git+file:///home/kernelcore/dev/projects/O.W.A.S.A.K.A.";
+      url = "github:VoidNxSEC/O.W.A.S.A.K.A.";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows
