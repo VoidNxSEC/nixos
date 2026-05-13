@@ -41,7 +41,7 @@ let
 
     # Configuration
     FLAKE_PATH="/etc/nixos"
-    HOST="kernelcore"
+    HOST="${config.system.user.username}"
     MAX_JOBS="4"
     CORES="4"
 
