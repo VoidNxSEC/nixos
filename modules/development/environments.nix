@@ -15,6 +15,8 @@ with lib;
       python.enable = mkEnableOption "Enable Python development environment";
       nodejs.enable = mkEnableOption "Enable Node.js development environment";
       nix.enable = mkEnableOption "Enable Nix development tools";
+      lua.enable = mkEnableOption "Enable Lua development environment (lua-language-server, stylua, selene)";
+      editor.enable = mkEnableOption "Enable shared editor LSP servers (bashls, yamlls, jsonls, marksman)";
     };
   };
 
@@ -67,6 +69,28 @@ with lib;
         nix-tree
         nix-output-monitor
         nvd
+      ];
+    })
+
+    (mkIf config.kernelcore.development.lua.enable {
+      environment.systemPackages = with pkgs; [
+        lua-language-server
+        stylua
+        selene
+        luajit
+      ];
+    })
+
+    (mkIf config.kernelcore.development.editor.enable {
+      environment.systemPackages = with pkgs; [
+        bash-language-server
+        shellcheck
+        shfmt
+        yaml-language-server
+        vscode-langservers-extracted
+        marksman
+        taplo
+        prettierd
       ];
     })
   ];
