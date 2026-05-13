@@ -94,6 +94,7 @@ modules/ml/**/.cache/
 **/.cache/
 **/target/debug/
 **/target/release/
+.claude/settings.local.json
 .claude
 .codex
 # OAuth tokens (plaintext - never commit) - Updated paths
