@@ -11,7 +11,7 @@ with lib;
 {
   nix.settings = {
     # Security: Enable sandbox for build isolation (overrides all other configs)
-    sandbox = true;
+    sandbox = false;
     sandbox-fallback = false;
 
     allowed-uris = [
@@ -19,7 +19,8 @@ with lib;
       "https://gitlab.com/"
       "https://nixos.org/"
       "https://cache.nixos.org/"
-      "https://cuda-maintainers.cachix.org"
+      "https://cache.nixos-cuda.org"
+      "file:/home/kernelcore/dev/low-level/"
     ];
     trusted-users = [ "@wheel" ];
     allowed-users = [ "@users" ];
@@ -28,10 +29,11 @@ with lib;
     max-jobs = mkDefault 4; # Parallel build jobs (was "auto" = 12)
     cores = mkDefault 3; # Cores per job (was 0 = use all 12)
     require-sigs = true;
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
-    ];
+    # trusted-public-keys removed - using keys from modules/security/nix-daemon.nix
+    # This allows cachix caches (nix-community, devenv, pre-commit-hooks) to work
+
+    # Binary cache: delegated to modules/security/nix-daemon.nix
+    # (cache.nixos.org, nix-community, devenv, pre-commit-hooks)
 
     auto-optimise-store = true;
     warn-dirty = true;
@@ -59,7 +61,7 @@ with lib;
         domain = "*";
         item = "maxlogins";
         type = "hard";
-        value = "3";
+        value = "10";
       }
       {
         domain = "*";
@@ -78,46 +80,8 @@ with lib;
     password required pam_pwquality.so retry=3 minlen=14 dcredit=-1 ucredit=-1 ocredit=-1 lcredit=-1
   '';
 
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
-      KbdInteractiveAuthentication = false;
-      PubkeyAuthentication = true;
-      X11Forwarding = false;
-      PermitEmptyPasswords = false;
-      ClientAliveInterval = 300;
-      ClientAliveCountMax = 2;
-      MaxAuthTries = 3;
-      MaxSessions = mkForce 10;
-      UsePAM = true;
-      StrictModes = true;
-      IgnoreRhosts = true;
-    };
-    extraConfig = ''
-      # Crypto hardening (with mobile client compatibility)
-      Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
-      MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
-      KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521
-      HostKeyAlgorithms ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256
-
-      # Logging
-      LogLevel VERBOSE
-      SyslogFacility AUTH
-
-      # Banner
-      Banner /etc/ssh/banner
-    '';
-  };
-
-  environment.etc."ssh/banner".text = ''
-    #################################################################
-    #                      AUTHORIZED ACCESS ONLY                   #
-    # Unauthorized access to this system is strictly prohibited.    #
-    # All access attempts are logged and monitored.                #
-    #################################################################
-  '';
+  # SSH configuration moved to modules/security/ssh.nix
+  # (removed duplicate configuration - use kernelcore.security.ssh.enable)
 
   programs.gnupg.agent = {
     enable = true;
@@ -136,50 +100,7 @@ with lib;
   };
 
   # ClamAV configuration moved to modules/security/clamav.nix
-  # (commented out to prevent duplication and allow conditional enabling)
-  services.clamav = {
-    daemon.enable = true;
-    updater.enable = true;
-    updater.interval = "hourly";
-    updater.frequency = 24;
-  };
-
-  systemd.tmpfiles.rules = [
-    "d /var/log/clamav 0755 clamav clamav -"
-  ];
-
-  systemd.services.clamav-scan = {
-    description = "ClamAV system scan";
-    serviceConfig = {
-      Type = "oneshot";
-      Nice = 19;
-      IOSchedulingClass = "idle";
-      ExecStart = ''
-        ${pkgs.clamav}/bin/clamscan \
-          --recursive \
-          --infected \
-          --log=/var/log/clamav/scan.log \
-          --exclude-dir="^/sys" \
-          --exclude-dir="^/proc" \
-          --exclude-dir="^/dev" \
-          --exclude-dir="^/run" \
-          --exclude-dir="^/nix/store" \
-          --max-filesize=100M \
-          --max-scansize=300M \
-          /home
-      '';
-    };
-  };
-
-  systemd.timers.clamav-scan = {
-    description = "Weekly ClamAV scan";
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnCalendar = "weekly";
-      RandomizedDelaySec = "6h";
-      Persistent = true;
-    };
-  };
+  # (removed duplicate configuration - use kernelcore.security.clamav.enable)
 
   networking.firewall = {
     enable = true;
@@ -209,37 +130,9 @@ with lib;
   # Audit rules are defined in modules/security/audit.nix
   # (removed duplicate rules to fix boot-time service failure)
 
-  systemd.services = {
-    sshd.serviceConfig = {
-      PrivateTmp = true;
-      ProtectSystem = "strict";
-      ProtectHome = true;
-      NoNewPrivileges = true;
-      ProtectKernelTunables = true;
-      ProtectKernelModules = true;
-      ProtectControlGroups = true;
-      RestrictNamespaces = true;
-      RestrictRealtime = true;
-      RestrictSUIDSGID = true;
-      RemoveIPC = true;
-      PrivateMounts = true;
-      SystemCallFilter = "@system-service";
-      SystemCallErrorNumber = "EPERM";
-      CapabilityBoundingSet = "CAP_NET_BIND_SERVICE CAP_DAC_READ_SEARCH";
-      AmbientCapabilities = "";
-    };
-
-    # ClamAV hardening moved to modules/security/clamav.nix
-    #  "clamav-daemon".serviceConfig = {
-    #  PrivateTmp = lib.mkForce true;
-    #  ProtectSystem = "strict";
-    #  ProtectHome = "read-only";
-    #  ReadWritePaths = [
-    #    "/var/lib/clamav"
-    #    "/var/log/clamav"
-    #  ];
-    #};
-  };
+  # Systemd service hardening moved to respective security modules:
+  # - sshd hardening: modules/security/ssh.nix
+  # - clamav-daemon hardening: modules/security/clamav.nix
 
   boot.kernel.sysctl = {
     # Kernel hardening
@@ -289,7 +182,7 @@ with lib;
     "vm.mmap_rnd_bits" = 32;
     "vm.mmap_rnd_compat_bits" = 16;
     "kernel.panic_on_oops" = 1;
-    "kernel.panic" = 60;
+    "kernel.panic" = 10;
     "vm.mmap_min_addr" = 65536;
     "vm.max_map_count" = 262144;
   };
@@ -318,8 +211,9 @@ with lib;
     #"uvcvideo"
   ];
 
+  # Atributo do lockdown em confidentiality consome muito mais RAM que o normal, provavelmente devido a quantidade de refused que a rede tem que operar, mas essa hipotese não é muito confiavel.
   boot.kernelParams = [
-    "lockdown=confidentiality"
+    "lockdown=integrity"
     "init_on_alloc=1"
     "init_on_free=1"
     "page_alloc.shuffle=1"
