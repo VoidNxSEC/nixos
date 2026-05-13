@@ -44,24 +44,20 @@ with lib;
       # Sintomas: freeze total ao fechar OBS, só reboot recupera
       # Ticket: https://gitlab.freedesktop.org/drm/nvidia/-/issues/
       powerManagement.finegrained = false;
+      dynamicBoost.enable = true;
       open = false;
       nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.production;
       forceFullCompositionPipeline = true;
 
       # NVIDIA Prime configuration for hybrid graphics (Intel Xe + RTX 3050)
-      prime = mkIf config.kernelcore.nvidia.prime.enable {
-        sync.enable = config.kernelcore.nvidia.prime.sync;
-        offload = mkIf config.kernelcore.nvidia.prime.offload {
+      prime = {
+        offload = {
           enable = true;
           enableOffloadCmd = true;
         };
-        intelBusId = mkIf (
-          config.kernelcore.nvidia.prime.intelBusId != ""
-        ) config.kernelcore.nvidia.prime.intelBusId;
-        nvidiaBusId = mkIf (
-          config.kernelcore.nvidia.prime.nvidiaBusId != ""
-        ) config.kernelcore.nvidia.prime.nvidiaBusId;
+        intelBusId = "PCI:0:2:0";
+        nvidiaBusId = "PCI:1:0:0";
       };
     };
 
@@ -112,7 +108,7 @@ with lib;
       '';
     };
 
-    # NVIDIA GPU monitoring service
+    # NVIDIA GPU monitoring service (Refactored)
     systemd.services.nvidia-gpu-monitor = mkIf config.kernelcore.nvidia.cudaSupport {
       description = "NVIDIA GPU monitoring and optimization";
       wantedBy = [ "multi-user.target" ];
@@ -121,21 +117,26 @@ with lib;
         Type = "simple";
         Restart = "always";
         RestartSec = "30s";
-      };
-      script = ''
-        LOG_FILE="/var/log/nvidia-monitor.log"
+        SyslogIdentifier = "nvidia-gpu-monitor";
+        ExecStart =
+          let
+            monitorScript = pkgs.writeShellScript "nvidia-gpu-monitor" ''
+              LOG_FILE="/var/log/nvidia-monitor.log"
 
-        while true; do
-          # Log GPU stats
-          if command -v nvidia-smi >/dev/null 2>&1; then
-            echo "$(date +%Y-%m-%d\ %H:%M:%S)" >> "$LOG_FILE"
-            nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,utilization.memory,power.draw,clocks.gr,clocks.mem \
-              --format=csv,noheader >> "$LOG_FILE" 2>/dev/null || true
-          fi
-          
-          sleep 60
-        done
-      '';
+              while true; do
+                # Log GPU stats
+                if command -v nvidia-smi >/dev/null 2>&1; then
+                  echo "$(date +%Y-%m-%d\ %H:%M:%S)" >> "$LOG_FILE"
+                  nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,utilization.memory,power.draw,clocks.gr,clocks.mem \
+                    --format=csv,noheader >> "$LOG_FILE" 2>/dev/null || true
+                fi
+                
+                sleep 60
+              done
+            '';
+          in
+          "${monitorScript}";
+      };
     };
 
     # VRAM optimization for 6GB configuration

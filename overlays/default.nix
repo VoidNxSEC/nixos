@@ -1,11 +1,15 @@
 # Overlays collection
 # Each overlay is imported from a separate file for better organization
 [
-  # Python package fixes (test failures, resource issues)
-  (import ./python-packages.nix)
+  # libcanberra patch URL fix (0pointer.net cgit returns HTML, use GitHub mirror)
+  #(import ./libcanberra-patch-fix.nix)
 
-  # Hyprland v0.52.0 custom build
-  (import ./hyprland.nix)
+  # weston patch hash fix (GitLab serves different content for commit patch URL)
+  #(import ./weston-patch-fix.nix)
+
+  # Python package fixes (test failures, resource issues)
+  #(import ./python-packages.nix)
+  # (import ./python-tests-fix.nix) # Merged into python-packages.nix to avoid global rebuilds
 
   # Add more overlays here as needed:
   # (import ./custom-packages.nix)

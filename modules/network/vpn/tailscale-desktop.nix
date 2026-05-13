@@ -126,11 +126,29 @@
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
+      # Add procps (sysctl) to PATH
+      Environment = "PATH=${pkgs.tailscale}/bin:${pkgs.jq}/bin:${pkgs.procps}/bin:/run/current-system/sw/bin";
       ExecStart = pkgs.writeShellScript "tailscale-subnet-check" ''
         #!/usr/bin/env bash
+        set -euo pipefail
 
-        # Wait for Tailscale to be ready
-        sleep 10
+        # Smart wait for Tailscale - poll every 0.5s up to 3 seconds
+        MAX_WAIT=6  # 6 iterations of 0.5s = 3 seconds max
+        WAIT_COUNT=0
+
+        echo "🔍 Waiting for Tailscale to be ready..."
+        while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
+          if ${pkgs.tailscale}/bin/tailscale status --json >/dev/null 2>&1; then
+            echo "✅ Tailscale is ready"
+            break
+          fi
+          sleep 0.5
+          WAIT_COUNT=$((WAIT_COUNT + 1))
+        done
+
+        if [ $WAIT_COUNT -ge $MAX_WAIT ]; then
+          echo "⚠️  Tailscale not ready after 3 seconds, proceeding anyway..."
+        fi
 
         # Check if routes are advertised
         echo "🔍 Checking Tailscale subnet router configuration..."
