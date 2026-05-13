@@ -137,7 +137,7 @@ google_cloud_api_key: "AIzaSy_REPLACE_WITH_YOUR_KEY"
 
 # Version Control
 github_api_token: "ghp_REPLACE_WITH_YOUR_TOKEN"
-gitlab_api_token: "<YOUR_GITLAB_TOKEN_HERE>"
+gitlab_api_token: "glpat-REPLACE_WITH_YOUR_TOKEN"
 
 # Environment variables format (optional)
 env:
