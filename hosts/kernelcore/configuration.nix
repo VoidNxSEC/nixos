@@ -530,7 +530,7 @@
         coder = {
           modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 42;
+          gpuLayers = 36;
           contextSize = 8192;
         };
 
@@ -915,7 +915,7 @@
     };
 
     gitea-showcase = {
-      enable = false;
+      enable = true;
       domain = "gitea.voidnx.com";
       rootUrl = "https://gitea.voidnx.com/";
       listenAddress = "127.0.0.1";

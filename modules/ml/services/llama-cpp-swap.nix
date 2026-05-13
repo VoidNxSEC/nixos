@@ -94,7 +94,7 @@ in
 
     n_gpu_layers = lib.mkOption {
       type = lib.types.int;
-      default = 37;
+      default = 36;
       description = ''
         Number of model layers to offload to GPU.
         Recommended: 30 for ~4GB VRAM (8B Q4), 40+ for 8GB+ VRAM.
