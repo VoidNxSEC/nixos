@@ -154,7 +154,7 @@ in
         background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.blue "0.25"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
         border-color: ${colors.hexToRgba colors.accent.blue "0.6"};
         box-shadow: 0 0 35px ${colors.hexToRgba colors.accent.blue "0.3"};
-        color: #60a5fa;
+        color: ${colors.accent.blue};
       }
 
       /* Hibernate - Green */
@@ -167,7 +167,7 @@ in
         background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.green "0.25"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
         border-color: ${colors.hexToRgba colors.accent.green "0.6"};
         box-shadow: 0 0 35px ${colors.hexToRgba colors.accent.green "0.3"};
-        color: #4ade80;
+        color: ${colors.accent.green};
       }
 
       /* Reboot - Yellow/Orange */
@@ -180,7 +180,7 @@ in
         background: linear-gradient(135deg, ${colors.hexToRgba colors.accent.yellow "0.25"}, ${colors.hexToRgba colors.base.bg1 "0.7"});
         border-color: ${colors.hexToRgba colors.accent.yellow "0.6"};
         box-shadow: 0 0 35px ${colors.hexToRgba colors.accent.yellow "0.3"};
-        color: #facc15;
+        color: ${colors.accent.yellow};
       }
 
       /* Shutdown - Magenta/Red */
