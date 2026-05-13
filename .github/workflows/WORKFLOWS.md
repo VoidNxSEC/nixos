@@ -1,5 +1,10 @@
 # GitHub Actions Workflows - NixOS Repository
 
+> Renamed from `README.md` to `WORKFLOWS.md` so GitHub's directory rendering
+> does not shadow the repository root `README.md`. See the root
+> [README.md](../../README.md) and [.github/CI-CD.md](../CI-CD.md) for catalog
+> and quick start.
+
 ## Workflows Disponíveis
 
 ### 1. `ci-observability.yml` - Observabilidade e Debug Completo
