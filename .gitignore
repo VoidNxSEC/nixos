@@ -128,3 +128,6 @@ modules/packages/deb-packages/storage
 modules/packages/google-chrome/
 scripts/ssh_sessions.db
 secrets/*.backup-*
+
+# Archived modules (local-only, not tracked)
+modules/_archive/
