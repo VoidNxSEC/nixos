@@ -123,3 +123,8 @@ modules/packages/tar-packages/storage/
 projects/cognitive-vault/core/target/debug/**
 modules/packages/js-packages/storage/
 modules/packages/deb-packages/storage
+
+# Local artifacts
+modules/packages/google-chrome/
+scripts/ssh_sessions.db
+secrets/*.backup-*
