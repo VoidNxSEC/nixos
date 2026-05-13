@@ -383,7 +383,7 @@ in
                 ${colors.hexToRgba colors.base.bg1 "0.74"}
               );
               color: ${colors.base.fg1};
-              border-radius: 22px;
+              border-radius: 14px;
               border: 1px solid ${colors.hexToRgba colors.base.fg0 "0.08"};
               box-shadow: 0 18px 42px ${colors.shadow.dark},
                           inset 0 1px 0 ${colors.hexToRgba colors.base.fg0 "0.08"},
@@ -541,9 +541,9 @@ in
             }
 
             #window {
-              min-width: 260px;
-              padding-left: 18px;
-              padding-right: 20px;
+              min-width: 120px;
+              padding-left: 14px;
+              padding-right: 14px;
               color: ${colors.base.fg2};
               background: linear-gradient(
                 120deg,
@@ -560,8 +560,8 @@ in
             }
 
             #clock {
-              min-width: 232px;
-              padding: 0 24px;
+              min-width: 180px;
+              padding: 0 18px;
               color: ${colors.base.fg0};
               font-size: 15px;
               font-weight: 700;
@@ -1171,8 +1171,8 @@ in
             fi
 
             # Format display
-            local text="󰻠 ''${cpu_usage}% · 󰍛 ''${mem_percent}%"
-            [[ $cpu_temp -gt 0 ]] && text+=" · 󰔏 ''${cpu_temp}°"
+            local text="󰻠''${cpu_usage}% 󰍛''${mem_percent}%"
+            [[ $cpu_temp -gt 0 ]] && text+=" 󰔏''${cpu_temp}°"
 
             # Build tooltip
             local tooltip="System Resources\n━━━━━━━━━━━━━━━━━━━━━━\n"
@@ -1327,7 +1327,7 @@ in
             fi
 
             # Format output
-            local text="󰢮 ''${temp}° · ''${util}%"
+            local text="󰢮''${temp}° ''${util}%"
 
             local tooltip="NVIDIA GPU Status\n━━━━━━━━━━━━━━━━━━━━━━\n"
             tooltip+="󰔏 Temperature: ''${temp}°C\n"

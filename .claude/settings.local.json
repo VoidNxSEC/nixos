@@ -38,7 +38,10 @@
       "Bash(readlink:*)",
       "Bash(top:*)",
       "WebSearch",
-      "Bash(nix flake *)"
+      "Bash(nix flake *)",
+      "Bash(curl -sI http://127.0.0.1:3002/ -H \"Host: forgejo.nx.tailb3b82e.ts.net\")",
+      "Bash(curl -sI http://127.0.0.1:3002/)",
+      "Bash(hyprctl monitors *)"
     ],
     "deny": [],
     "ask": []
