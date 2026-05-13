@@ -1,0 +1,25 @@
+name: PR to Staging
+
+on:
+  pull_request:
+    branches: [staging]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    name: Validate Staging PR
+    if: github.event.pull_request.draft == false
+    uses: ./.github/workflows/pr-validation.yml
+    with:
+      config-path: '.#nixosConfigurations.kernelcore.config.system.build.toplevel'
+      skip-tests: false
+    secrets: inherit
