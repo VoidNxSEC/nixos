@@ -31,8 +31,8 @@ with lib;
       # Memory optimization - OPTIMIZED for Electron apps + builds
       "vm.swappiness" = 10; # Prioritize RAM over SWAP
       "vm.vfs_cache_pressure" = 50; # Keep cache longer
-      "vm.dirty_ratio" = 30; # Larger buffer for 16GB RAM
-      "vm.dirty_background_ratio" = 20; # Background writes at 3GB
+      "vm.dirty_ratio" = 20; # Larger buffer for 16GB RAM
+      "vm.dirty_background_ratio" = 10; # Background writes at 3GB
 
       # Overcommit: 0=heuristic (safer than strict=2, allows flexibility)
       "vm.overcommit_memory" = 1;
@@ -44,9 +44,9 @@ with lib;
 
       # inotify — dev tools (Vite, VS Code, Tailscale, udev) + Python .venv
       # + node_modules exhaust the default 8192/524288 limits quickly
-      "fs.inotify.max_user_watches" = 1048576;
-      "fs.inotify.max_user_instances" = 1024;
-      "fs.inotify.max_queued_events" = 32768;
+      "fs.inotify.max_user_watches" = 500000;
+      "fs.inotify.max_user_instances" = 100000;
+      "fs.inotify.max_queued_events" = 100000;
     };
 
     # ============================================
