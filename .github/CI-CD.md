@@ -2,6 +2,10 @@
 
 CI/CD infrastructure for the NixOS configuration repository with composite actions, reusable workflows, and observability.
 
+> This file is intentionally **not** named `README.md` so it does not shadow the
+> repository root `README.md` when GitHub renders the `.github/` directory.
+> See the root [README.md](../README.md) for the project overview.
+
 ## Composite Actions
 
 ### `setup-nix-env`
@@ -51,12 +55,23 @@ Triggered on push and pull requests. Runs `nix flake check` then builds the `ker
 
 ### `pr-validation.yml` — PR Validation (reusable)
 Reusable workflow for PR checks: formatting, flake check, build, and security scans.
+Triggers directly on PRs to `main` and `dev`; for `staging` see `pr-staging.yml`.
 
 ```yaml
 jobs:
   validate:
     uses: ./.github/workflows/pr-validation.yml
     secrets: inherit
+```
+
+### `pr-staging.yml` — Staging PR gate
+Thin wrapper that fires on PRs to the `staging` branch and delegates to
+`pr-validation.yml`. Skips draft PRs and cancels superseded runs via concurrency.
+
+```yaml
+on:
+  pull_request:
+    branches: [staging]
 ```
 
 ### `nixos-build.yml` — NixOS Build & Test
