@@ -749,7 +749,7 @@ To regenerate this report:
 For more information:
   • Repository: $REPO_ROOT
   • Documentation: $REPO_ROOT/docs/
-  • Issues: https://github.com/yourusername/nixos-config/issues
+  • Issues: https://github.com/VoidNxSEC/nixos/issues
 
 ═══════════════════════════════════════════════════════════════════════════
 EOF
@@ -1129,6 +1129,7 @@ main() {
   # Create snapshot
   log "Creating versioned snapshot..."
   cp "$OUTPUT_REPORT_TXT" "$SNAPSHOT_FILE"
+  chmod 644 "$SNAPSHOT_FILE"  # Ensure readable permissions
   success "Snapshot: $SNAPSHOT_FILE"
 
   # Phase 4: AI-Powered Analysis
@@ -1137,9 +1138,9 @@ main() {
     log "Running LLM-powered analysis with model: $LLM_MODEL"
 
     # Check if Ollama is running
-    if ! curl -s "http://localhost:11434/api/tags" >/dev/null 2>&1; then
+    if ! curl -s "http://localhost:8080/v1" >/dev/null 2>&1; then
       warning "Ollama not available. Skipping AI analysis."
-      warning "Start Ollama with: systemctl start ollama"
+      warning "Start llamacpp with: systemctl start llamacpp"
     else
       # Get script directory
       SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

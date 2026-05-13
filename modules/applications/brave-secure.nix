@@ -31,9 +31,12 @@ in
       default = [
         "--enable-features=VaapiVideoDecoder"
         "--disable-features=UseChromeOSDirectVideoDecoder"
-        "--ignore-gpu-blocklist"
-        "--enable-gpu-rasterization"
-        "--enable-zero-copy"
+        "--ozone-platform-hint=auto"
+        #"--ignore-gpu-blocklist"
+        "--disable-gpu-rasterization"
+        # "--enable-zero-copy" # DISABLED: NVIDIA+Wayland issues
+        "--use-gl=egl"
+        # "--disable-gpu-driver-bug-workarounds"
       ];
       description = "Custom Chromium flags for Brave";
     };
@@ -97,7 +100,7 @@ in
       blacklist /media
       blacklist /mnt
       blacklist /selinux
-      blacklist /sys
+      # blacklist /sys  # DISABLED: Breaks Wayland/Hyprland GPU/DRM access
       blacklist /proc/kcore
     '';
 
@@ -184,7 +187,7 @@ in
     # Sudo rules for cgroup management (needed for wrapper script)
     security.sudo.extraRules = [
       {
-        users = [ "kernelcore" ];
+        users = [ config.system.user.username ];
         commands = [
           {
             command = "${pkgs.coreutils}/bin/mkdir";
@@ -202,7 +205,7 @@ in
     environment.sessionVariables = {
       # Force Brave to respect GPU memory limits
       BRAVE_GPU_MEMORY_BUFFER_SIZE = "256";
-      BRAVE_DISABLE_GPU_DRIVER_BUG_WORKAROUNDS = "1";
+      #BRAVE_DISABLE_GPU_DRIVER_BUG_WORKAROUNDS = "1";
     };
   };
 }

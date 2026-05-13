@@ -52,7 +52,6 @@ with lib;
       # Network analysis
       nmap
       tcpdump
-      wireshark-cli
 
       # Secrets management
       vault
@@ -73,7 +72,7 @@ with lib;
       # Uncomment if needed:
       # chkrootkit | >> Deprecated package
       # rkhunter | >> Not exists anymore
-      wireshark
+      # wireshark # hash mismatch upstream — re-enable after nixpkgs fix
       # tripwire | >> Not exists anymore
       htop
       iotop

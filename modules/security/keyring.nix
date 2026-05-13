@@ -56,9 +56,9 @@ in
     security.pam.services = mkIf cfg.autoUnlock {
       login.enableGnomeKeyring = true;
       gdm.enableGnomeKeyring = true;
+      gdm-password.enableGnomeKeyring = true;
+      sddm.enableGnomeKeyring = true;
       lightdm.enableGnomeKeyring = true;
-      # For any display manager
-      greetd.enableGnomeKeyring = true;
     };
 
     # ========================================================================
@@ -88,13 +88,9 @@ in
       description = "GNOME Keyring daemon";
       documentation = [ "man:gnome-keyring-daemon(1)" ];
 
-      # Start after graphical session is ready
+      # Start after graphical session prerequisites
       wantedBy = [ "graphical-session.target" ];
-      wants = [ "graphical-session.target" ];
-      after = [ "graphical-session.target" ];
-
-      # Start before applications that might need it
-      before = [ "graphical-session-pre.target" ];
+      after = [ "graphical-session-pre.target" ];
 
       partOf = [ "graphical-session.target" ];
 
@@ -120,14 +116,14 @@ in
     # These ensure applications can find the Secret Service API
     # ========================================================================
 
-    environment.sessionVariables = {
-      # Secret Service API location
-      GNOME_KEYRING_CONTROL = "/run/user/$UID/keyring";
+    #environment.sessionVariables = {
+    # Secret Service API location
+    #GNOME_KEYRING_CONTROL = "/run/user/$UID/keyring";
 
-      # SSH agent socket (gnome-keyring provides SSH agent)
-      # Note: If you prefer gpg-agent for SSH, comment this out
-      SSH_AUTH_SOCK = "/run/user/$UID/keyring/ssh";
-    };
+    # SSH agent socket (gnome-keyring provides SSH agent)
+    # Note: If you prefer gpg-agent for SSH, comment this out
+    # SSH_AUTH_SOCK = "/run/user/$UID/keyring/ssh";
+    # };
 
     # ========================================================================
     # KEEPASSXC CONFIGURATION

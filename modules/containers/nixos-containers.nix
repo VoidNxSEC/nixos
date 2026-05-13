@@ -169,7 +169,7 @@ with lib;
           ];
 
           nixpkgs.config.allowUnfree = true;
-          system.stateVersion = "25.05";
+          system.stateVersion = "26.05";
         };
     };
 
@@ -186,7 +186,7 @@ with lib;
       iptables
       iproute2
       tcpdump
-      wireshark
+      # wireshark # hash mismatch upstream — re-enable after nixpkgs fix
     ];
   };
 }

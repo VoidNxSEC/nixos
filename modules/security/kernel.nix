@@ -71,8 +71,18 @@ with lib;
       "kernel.unprivileged_bpf_disabled" = mkDefault 1;
       "kernel.yama.ptrace_scope" = mkDefault 2;
       "kernel.kexec_load_disabled" = mkDefault 1;
-      "kernel.unprivileged_userns_clone" = mkDefault 0;
+
+      # kernel.unprivileged_userns_clone: removido — sysctl não existe no kernel 6.18+
+      # (era do patch Debian/Ubuntu; upstream sempre usou kernel.unprivileged_userns_clone=1)
+      # No kernel 6.18 user namespaces são controlados via unprivileged_userns no kernel config.
+
       "kernel.perf_event_paranoid" = mkDefault 3;
+
+      # Fixar sample rate máximo do perf para evitar cascata de auto-throttle.
+      # O kernel reduz automaticamente quando interrupts demoram >N μs, podendo chegar
+      # a valores tão baixos quanto 32000 após ~1h de uso. 50000 é um valor conservador
+      # que mantém fidelidade de profiling sem sobrecarregar o interrupt handler.
+      "kernel.perf_event_max_sample_rate" = mkDefault 50000;
       "kernel.core_uses_pid" = mkDefault 1;
       "kernel.randomize_va_space" = mkDefault 2;
       "kernel.panic_on_oops" = mkDefault 1;

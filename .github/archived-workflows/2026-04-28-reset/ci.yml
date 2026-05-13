@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Deploy to production'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+env:
+  CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
+
+jobs:
+  fmt:
+    name: Format
+    runs-on: [self-hosted, nixos]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: nixfmt check
+        run: nix fmt -- --check .
+
+  flake-check:
+    name: Flake Check
+    runs-on: [self-hosted, nixos]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: nix flake check
+        run: nix flake check --show-trace
+
+  build:
+    name: Build
+    runs-on: [self-hosted, nixos]
+    needs: [fmt, flake-check]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Build kernelcore (dry-run)
+        run: |
+          nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
+            --dry-run \
+            --show-trace
+
+  deploy:
+    name: Deploy to Production
+    runs-on: [self-hosted, nixos]
+    needs: [build]
+    if: >
+      github.event_name == 'workflow_dispatch' &&
+      inputs.deploy == true &&
+      github.ref == 'refs/heads/main'
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Setup SOPS age key
+        run: |
+          mkdir -p ~/.config/sops/age
+          echo "${{ secrets.AGE_SECRET_KEY }}" > ~/.config/sops/age/keys.txt
+          chmod 600 ~/.config/sops/age/keys.txt
+
+      - name: Build & switch
+        run: |
+          if command -v sudo >/dev/null 2>&1; then
+            sudo nixos-rebuild switch --flake .#kernelcore --show-trace
+          else
+            nixos-rebuild switch --flake .#kernelcore --show-trace
+          fi
+
+      - name: Verify system health
+        run: systemctl is-system-running --wait
+
+      - name: Cleanup SOPS key
+        if: always()
+        run: rm -f ~/.config/sops/age/keys.txt

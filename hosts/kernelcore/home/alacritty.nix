@@ -2,7 +2,7 @@
 # Alacritty Terminal Configuration
 # ============================================
 # Declarative configuration for Alacritty terminal emulator
-# - Optimized for Zellij integration
+# - Optimized for standalone terminal use
 # - Glassmorphism Dark theme with electric accents
 # - Performance tuning for modern systems
 # - URL hints and clipboard integration
@@ -15,6 +15,9 @@
   ...
 }:
 
+let
+  shellProgram = "${pkgs.zsh}/bin/zsh";
+in
 {
   programs.alacritty = {
     enable = true;
@@ -35,6 +38,7 @@
         TERM = "alacritty";
         # Enable better color support
         COLORTERM = "truecolor";
+        TERM_PROGRAM = "Alacritty";
       };
 
       # ============================================
@@ -42,15 +46,15 @@
       # ============================================
       window = {
         padding = {
-          x = 14;
-          y = 16;
+          x = 16;
+          y = 14;
         };
         dynamic_padding = true;
         decorations = "None";
         opacity = 0.94;
         blur = true; # Enable background blur (Wayland/compositor dependent)
         startup_mode = "Maximized";
-        title = "Alacritty + Zellij";
+        title = "Alacritty";
         dynamic_title = true;
 
         # Window class for WM integration
@@ -67,8 +71,8 @@
       # SCROLLING CONFIGURATION
       # ============================================
       scrolling = {
-        history = 50000; # Large history for Zellij scrollback
-        multiplier = 3;
+        history = 50000; # Large history for terminal scrollback
+        multiplier = 4;
       };
 
       # ============================================
@@ -136,7 +140,7 @@
       # ============================================
       selection = {
         save_to_clipboard = true;
-        semantic_escape_chars = ",│`|:\"' ()[]{}<>\\t";
+        semantic_escape_chars = ",│`|:\"' ()[]{}<>\\t=,;";
       };
 
       # ============================================
@@ -258,9 +262,10 @@
         # Full OSC52 support for clipboard
         osc52 = "CopyPaste";
 
-        # Shell configuration - use user's default shell
-        # Zellij is launched via Hyprland keybindings, not auto-started
-        # This keeps alacritty as a standalone terminal emulator
+        shell = {
+          program = shellProgram;
+          args = [ "-l" ];
+        };
       };
 
       # ============================================
@@ -406,11 +411,11 @@
         enabled = [
           {
             # URL detection and opening
-            # Fixed: Removed Unicode ranges to be compatible with Alacritty's DFA regex engine
-            regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\\\\s<>\"{}|\\\\\\\\^`]+";
+            # Fixed: Improved regex to handle localhost ports correctly
+            regex = ''(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\\s<>"{}|\\\\^`\\[\\]]+'';
             hyperlinks = true;
             post_processing = true;
-            command = "Copy";
+            command = "xdg-open";
 
             mouse = {
               enabled = true;
@@ -451,6 +456,21 @@
 
             binding = {
               key = "P";
+              mods = "Control|Shift";
+            };
+          }
+          {
+            # Git commit hashes - useful in coding and incident response flows
+            regex = "[0-9a-f]{7,40}";
+            command = "Copy";
+
+            mouse = {
+              enabled = true;
+              mods = "Alt";
+            };
+
+            binding = {
+              key = "G";
               mods = "Control|Shift";
             };
           }

@@ -17,11 +17,21 @@
 
     # Active packages - each is completely self-contained
     ./zellij
-    ./gemini-cli
+    ./claude
     ./lynis
+    ./appflowy
+    ./antigravity
 
-    # Legacy support - will be migrated
-    # TODO: Migrate remaining packages from old structure
-    ./appflowy.nix
+    # Extension based | Bwrap rules applied | Hardened
+    ./gemini
+
+    # Custom user-defined packages (Gemini/Antigravity custom builds)
+    ./custom
+
+    # Time tracking
+    ./hubstaff
+
+    # Music production and video tools
+    ./f5-tts
   ];
 }

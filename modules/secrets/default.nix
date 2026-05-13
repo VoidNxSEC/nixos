@@ -1,10 +1,25 @@
 # Secrets Module Aggregator
+# Each module reads from its corresponding SOPS file in /etc/nixos/secrets/
 { ... }:
 {
   imports = [
-    ./api-keys.nix
-    ./aws-bedrock.nix
+    # SOPS configuration (must be first)
     ./sops-config.nix
-    ./tailscale.nix
+
+    # API Keys and credentials (alphabetical)
+    ./api-keys.nix # reads api-keys.yaml
+    ./anthropic.nix # reads anthropic.yaml (if exists)
+    ./aws-bedrock.nix # reads aws.yaml
+    ./blockchain.nix # reads blockchain.yaml (Ethereum, IPFS, Arweave)
+    ./certificates.nix # reads certificates.yaml
+    ./ci.nix # reads ci.yaml
+    ./forgejo.nix # reads forgejo.yaml
+    ./gcp-ml.nix # reads gcp-ml.yaml
+    ./gitea.nix # reads gitea.yaml
+    ./github.nix # reads github.yaml
+    ./gitlab.nix # reads gitlab.yaml
+    ./grok.nix # reads grok.yaml
+    ./k8s.nix # reads k8s.yaml
+    ./tailscale.nix # reads tailscale.yaml
   ];
 }

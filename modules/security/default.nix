@@ -19,11 +19,15 @@
     # Compiler hardening (currently disabled - Nix 2.18+ compatibility)
     ./compiler-hardening.nix
 
+    # Dev directory hardening
+    ./dev-directory-hardening.nix
+
     # System hardening
     ./hardening.nix
     ./network.nix
     ./pam.nix
     ./ssh.nix
+    ./tls.nix
     ./nix-daemon.nix
     ./packages.nix
     ./keyring.nix
@@ -35,5 +39,8 @@
 
     # Maintenance
     ./auto-upgrade.nix
+
+    # Security Operations Center (SOC) — IDS, EDR, SIEM, dashboards
+    ./soc
   ];
 }

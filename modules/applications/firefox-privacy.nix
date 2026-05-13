@@ -74,6 +74,9 @@ in
     # 2. CONFIGURAÇÃO DECLARATIVA DO FIREFOX (Policies & Preferences)
     # -------------------------------------------------------------------------
 
+    # Habilita suporte a smartcards/tokens físicos (Yubikey) para Proton Pass
+    services.pcscd.enable = true;
+
     programs.firefox = {
       enable = true;
 
@@ -95,6 +98,16 @@ in
           Locked = true;
         };
 
+        # Desativa todas as features de IA generativa (Firefox 144+)
+        # Locked = true impede reativação pelo usuário
+        GenerativeAI = {
+          Enabled = false;
+          Chatbot = false;
+          LinkPreviews = false;
+          TabGroups = false;
+          Locked = true;
+        };
+
         # Hardening de Extensões
         ExtensionSettings = {
           "uBlock0@raymondhill.net" = {
@@ -110,6 +123,11 @@ in
             # Skip Redirect (Evita rastreamento via redirecionamento)
             installation_mode = "force_installed";
             install_url = "https://addons.mozilla.org/firefox/downloads/latest/skip-redirect/latest.xpi";
+          };
+          "7827c764-a9b1-4244-baef-30291d07317d" = {
+            # Proton Pass - Gerenciador de senhas privado e criptografado
+            installation_mode = "force_installed";
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/proton-pass/latest.xpi";
           };
         };
       };

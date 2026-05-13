@@ -21,14 +21,14 @@ with lib;
     # User-specific SSH directory
     sshDir = mkOption {
       type = types.str;
-      default = "/home/kernelcore/.ssh";
+      default = "${config.system.user.homeDir}/.ssh";
       description = "SSH directory path";
     };
 
     # Personal identity
     personalKey = mkOption {
       type = types.str;
-      default = "id_ed25519_marcos";
+      default = "id_ed25519";
       description = "Personal SSH key filename";
     };
 
@@ -49,8 +49,15 @@ with lib;
     # GitLab identity
     gitlabKey = mkOption {
       type = types.str;
-      default = "id_ed25519_gitlab";
-      description = "GitLab SSH key filename";
+      default = "id_ed25519_voidnx";
+      description = "GitLab SSH key filename (voidnx@gitlab.com)";
+    };
+
+    # Nvidia Brev identity
+    brevKey = mkOption {
+      type = types.str;
+      default = "id_rsa_brev";
+      description = "Nvidia Brev SSH key filename";
     };
 
     # Internal server details
@@ -62,7 +69,7 @@ with lib;
 
     serverUser = mkOption {
       type = types.str;
-      default = "kernelcore";
+      default = config.system.user.username;
       description = "Username for internal server";
     };
   };
@@ -195,7 +202,7 @@ with lib;
             # ────────────────────────────────────────────────────
             "laptop" = {
               hostname = "192.168.15.9"; # IP do laptop
-              user = "kernelcore"; # Usuário do laptop
+              user = config.kernelcore.ssh.serverUser;
               identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}"; # Supondo a mesma chave, ajuste se necessário
               identitiesOnly = true;
               port = 22;
@@ -212,6 +219,19 @@ with lib;
               extraOptions = {
                 StrictHostKeyChecking = "no";  # Only for CI
                 UserKnownHostsFile = "/dev/null";
+              };
+            };
+
+            # ────────────────────────────────────────────────────
+            # Nvidia Brev Development Environments
+            # ────────────────────────────────────────────────────
+            "*.brev.dev" = {
+              user = config.kernelcore.ssh.serverUser;
+              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.brevKey}";
+              identitiesOnly = true;
+              extraOptions = {
+                StrictHostKeyChecking = "accept-new";
+                AddKeysToAgent = "yes";
               };
             };
           };
@@ -272,6 +292,7 @@ with lib;
         - Org: ~/.ssh/${config.kernelcore.ssh.orgKey}
         - Server: ~/.ssh/${config.kernelcore.ssh.serverKey}
         - GitLab: ~/.ssh/${config.kernelcore.ssh.gitlabKey}
+        - Nvidia Brev: ~/.ssh/${config.kernelcore.ssh.brevKey}
 
         ## Usage Examples
 

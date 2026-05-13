@@ -6,8 +6,10 @@
 }:
 
 {
-  networking.hostName = "nx";
+  networking.hostName = lib.mkForce "nx";
   networking.networkmanager.enable = true;
+  # Don't wait for network startup (faster boot)
+  systemd.services.NetworkManager-wait-online.enable = false;
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
@@ -46,6 +48,6 @@
       "br-+"
     ];
     # Comandos adicionais para limpar as regras do iptables antes de aplicar novas
-    extraCommands = '''';
+    extraCommands = "";
   };
 }

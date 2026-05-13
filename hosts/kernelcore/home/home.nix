@@ -2,6 +2,8 @@
   config,
   pkgs,
   lib,
+  osConfig,
+  inputs,
   ...
 }:
 
@@ -12,16 +14,22 @@
   imports = [
     ./shell # Modern shell configuration with zsh + powerlevel10k
     ./yazi.nix # Yazi file manager configuration
-    ./alacritty.nix # Alacritty terminal emulator (Zellij integration)
-    ./hyprland.nix # Hyprland config (bindings + defaults)
+    ./alacritty.nix # Alacritty terminal emulator
     ./git.nix # Git configuration
     ./tmux.nix # Tmux configuration
     ./flameshot.nix # Screenshot tool (legacy - swappy preferred)
     ./glassmorphism # Glassmorphism design system (replaces theme.nix)
     ./brave.nix # Brave browser configuration
-    ./electron-config.nix # Electron app performance optimization
+    ./electron-apps.nix # Per-app Electron configuration
     ./firefox.nix # Self-hosted Firefox (extensions in Nix store)
-  ];
+    ../../../modules/development/git-forge-tools.nix # Unified Git Forges CLI Tools
+    ../../../modules/development/ssh-git-forges.nix # Advanced Git Forges SSH Configuration
+  ]
+  ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland.nix;
+  # Niri config temporarily disabled - focus on Hyprland first
+  # ++ lib.optional (osConfig.programs.niri.enable) inputs.niri.homeModules.niri
+  # ++ lib.optional (osConfig.programs.niri.enable) ./niri/niri.nix
+  # ++ lib.optional (osConfig.programs.niri.enable) ./niri/waybar-niri.nix;
 
   # ============================================================
   # SHELL CONFIGURATION
@@ -48,7 +56,7 @@
       # ─────────────────────────────────────────────────────
       # Terminal & System Intelligence
       # ─────────────────────────────────────────────────────
-      neofetch
+      fastfetch
       htop
       btop
       tree
@@ -66,12 +74,11 @@
       # Network Reconnaissance
       # ─────────────────────────────────────────────────────
       nmap
-      wireshark
+      # wireshark # hash mismatch upstream — re-enable after nixpkgs fix
       tcpdump
       curl
       wget
       dig
-      busybox
       netcat
 
       # ─────────────────────────────────────────────────────
@@ -80,7 +87,7 @@
       # git (configured in git.nix)
       git-lfs
 
-      qwen-code
+      # qwen-code # npm cache issues
 
       caddy
       python313Packages.meson
@@ -168,7 +175,6 @@
       # Browser Fleet
       # ─────────────────────────────────────────────────────
       vivaldi
-      chromium
 
       # ─────────────────────────────────────────────────────
       # Communication Channels
@@ -236,6 +242,12 @@
   # ============================================================
   programs = {
     # ========================================================
+    # Intelligent SSH Configuration
+    # ========================================================
+    ssh.gitForges.enable = true;
+    git-forge-tools.enable = true;
+
+    # ========================================================
     # Home Manager
     # ========================================================
     home-manager.enable = true;
@@ -251,6 +263,33 @@
         "--smart-case"
         "--hidden"
         "--glob=!.git/*"
+      ];
+    };
+
+    # ── Spooknix — STT systray GUI ──────────────────────────────────────────
+    spooknix = {
+      enable = true;
+      serverUrl = "http://localhost:8000";
+      sourcePath = "/home/kernelcore/master/spooknix";
+      model = "large-v3";
+      hyprland = {
+        enable = true;
+        keybind = "SUPER, R";
+      };
+      waybar.enable = true;
+    };
+
+    actionsTv = {
+      enable = false;
+      pollInterval = 30;
+      waybar.enable = true;
+      ui.terminalCommand = "${pkgs.alacritty}/bin/alacritty -e";
+      projects = [
+        {
+          name = "spooknix";
+          repo = "VoidNxSEC/spooknix";
+          maxRuns = 5;
+        }
       ];
     };
   };
@@ -346,8 +385,8 @@
 
     #'';
 
-    ".config/nvim".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/nvim.rescue";
+    #".config/nvim".source =
+    #config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/neovim";
 
     # Desktop entry
     ".local/share/applications/htop.desktop".text = ''
@@ -389,19 +428,11 @@
     BROWSER = "firefox";
     TERMINAL = "alacritty";
 
-    # Python/Pipx
-    #PIPX_HOME = "${config.home.homeDirectory}/.local/share/pipx";
-    #PIPX_BIN_DIR = "${config.home.homeDirectory}/.local/bin";
-    #PIPX_MAN_DIR = "${config.home.homeDirectory}/.local/share/man";
-
     # Development
     GOPATH = "${config.home.homeDirectory}/go";
 
     # Security
     GNUPGHOME = "${config.home.homeDirectory}/.gnupg";
-
-    # Anthropic
-    ANTHROPIC_MODEL = "claude-sonnet-4-5-20250929";
 
     # XDG compliance
     XDG_CONFIG_HOME = "${config.home.homeDirectory}/.config";

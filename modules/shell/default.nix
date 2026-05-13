@@ -18,6 +18,7 @@
     ./aliases
     ./training-logger.nix
     ./cli-helpers.nix # rebuild, dbg, nix-debug, audit-system, lynis-report
+    ./nix-ops.nix # unified system operations tool
   ];
 
   # ============================================================
@@ -83,8 +84,8 @@
       nvidia-docker
 
       # Python para scripts
-      python3
-      python3Packages.pip
+      python313
+      python313Packages.pip
 
       # Utilitários
       jq
@@ -129,6 +130,15 @@
       model-remove = "python3 /etc/nixos-shell/scripts/model_manager.py remove";
       model-cache-info = "python3 /etc/nixos-shell/scripts/model_manager.py cache-info";
       model-cache-clean = "python3 /etc/nixos-shell/scripts/model_manager.py cache-clean";
+
+      # ============================================================
+      # SYSTEM OPS - Replaced by nix-ops (see nix-ops.nix)
+      # Legacy aliases kept for muscle memory
+      # ============================================================
+      killnix = "sudo nix-ops kill";
+      cooldown = "sudo nix-ops cooldown";
+      cleanup = "sudo nix-ops gc --aggressive";
+      nixgc = "sudo nix-ops gc";
     };
 
     # ============================================================
@@ -170,6 +180,16 @@
         ╔════════════════════════════════════════════════════════╗
         ║           NixOS Shell Commands                         ║
         ╚════════════════════════════════════════════════════════╝
+
+        🔧 SYSTEM OPS (nix-ops):
+          nix-ops status      - Quick system health check
+          nix-ops audit       - Full disk audit with breakdown
+          nix-ops gc          - Nix GC (add --aggressive for deep clean)
+          nix-ops gc --dry-run - Preview what gc would clean
+          nix-ops kill        - Kill nix builds (add --heavy for more)
+          nix-ops cooldown    - CPU powersave + kill builds
+          nix-ops monitor     - Live dashboard with auto-intervention
+          killnix / cooldown / cleanup / nixgc - Quick aliases
 
         🐳 DOCKER BUILD & RUN:
           dbuild              - Docker build with cache

@@ -15,6 +15,11 @@
   ...
 }:
 
+let
+  colors = config.glassmorphism.colors;
+  shellProgram = "${pkgs.zsh}/bin/zsh --login";
+  kittySocket = "unix:/tmp/kitty-${config.home.username}.sock";
+in
 {
   programs.kitty = {
     enable = true;
@@ -36,16 +41,19 @@
       # APPEARANCE - Glassmorphism
       # ==========================================
       # Background with transparency for glass effect
-      background_opacity = "0.92";
-      background_blur = 10;
+      background_opacity = "0.93";
+      background_blur = 12;
       dynamic_background_opacity = true;
 
       # Dim inactive windows
-      dim_opacity = "0.85";
+      dim_opacity = "0.82";
       inactive_text_alpha = "0.9";
 
       # Window padding for breathing room
-      window_padding_width = 14;
+      window_padding_width = 16;
+      window_margin_width = 6;
+      single_window_margin_width = 10;
+      placement_strategy = "center";
 
       # Decorations
       hide_window_decorations = true;
@@ -58,18 +66,22 @@
       # ==========================================
       # CURSOR - Electric Cyan
       # ==========================================
-      cursor = "#00d4ff";
-      cursor_text_color = "#0a0a0f";
+      cursor = colors.accent.cyan;
+      cursor_text_color = colors.base.bg0;
       cursor_shape = "beam";
-      cursor_beam_thickness = "1.5";
+      cursor_beam_thickness = "1.6";
       cursor_blink_interval = "0.75";
       cursor_stop_blinking_after = 0;
+      cursor_trail = 1;
+      cursor_trail_decay = "0.08 0.24";
+      cursor_trail_start_threshold = 1;
 
       # ==========================================
       # SCROLLBACK
       # ==========================================
       scrollback_lines = 50000;
       scrollback_pager_history_size = 100;
+      scrollback_fill_enlarged_window = true;
       wheel_scroll_multiplier = 3;
       wheel_scroll_min_lines = 1;
       touch_scroll_multiplier = 3;
@@ -78,10 +90,11 @@
       # MOUSE
       # ==========================================
       mouse_hide_wait = 3;
-      url_color = "#00d4ff";
+      url_color = colors.accent.cyan;
       url_style = "curly";
       open_url_with = "default";
       url_prefixes = "file ftp ftps gemini git gopher http https irc ircs kitty mailto news sftp ssh";
+      url_excluded_characters = "\"'`()[]{}<>";
       detect_urls = true;
       show_hyperlink_targets = true;
       copy_on_select = "clipboard";
@@ -116,9 +129,9 @@
       window_resize_step_lines = 2;
 
       # Active window border - cyan glow
-      active_border_color = "#00d4ff";
-      inactive_border_color = "#22222e";
-      bell_border_color = "#ff00aa";
+      active_border_color = colors.accent.cyan;
+      inactive_border_color = colors.base.bg3;
+      bell_border_color = colors.accent.magenta;
 
       # ==========================================
       # TAB BAR - Glassmorphism Style
@@ -127,6 +140,8 @@
       tab_bar_style = "powerline";
       tab_powerline_style = "slanted";
       tab_bar_align = "left";
+      tab_bar_margin_height = "6.0 0.0";
+      tab_bar_margin_width = "10.0";
       tab_bar_min_tabs = 2;
       tab_switch_strategy = "previous";
       tab_fade = "0.25 0.5 0.75 1";
@@ -139,18 +154,19 @@
       active_tab_title_template = "{fmt.fg._00d4ff}{bell_symbol}{activity_symbol}{fmt.fg.tab}{index}: {title}";
 
       # Tab colors
-      active_tab_foreground = "#ffffff";
-      active_tab_background = "#12121a";
+      active_tab_foreground = colors.base.fg0;
+      active_tab_background = colors.base.bg1;
       active_tab_font_style = "bold";
-      inactive_tab_foreground = "#71717a";
-      inactive_tab_background = "#0a0a0f";
+      inactive_tab_foreground = colors.base.fg3;
+      inactive_tab_background = colors.base.bg0;
       inactive_tab_font_style = "normal";
-      tab_bar_background = "#0a0a0f";
-      tab_bar_margin_color = "#0a0a0f";
+      tab_bar_background = colors.base.bg0;
+      tab_bar_margin_color = colors.base.bg0;
 
       # ==========================================
       # ADVANCED
       # ==========================================
+      shell = shellProgram;
       shell_integration = "enabled";
       allow_hyperlinks = true;
       term = "xterm-kitty";
@@ -161,7 +177,7 @@
 
       # Allow remote control (for scripts)
       allow_remote_control = "socket-only";
-      listen_on = "unix:/tmp/kitty-socket";
+      listen_on = kittySocket;
 
       # Clipboard
       clipboard_control = "write-clipboard write-primary read-clipboard-ask read-primary-ask";
@@ -186,77 +202,77 @@
       # PRIMARY COLORS
       # ==========================================
       foreground #e4e4e7
-      background #0a0a0f
-      selection_foreground #ffffff
-      selection_background #7c3aed
+      background ${colors.base.bg0}
+      selection_foreground ${colors.base.fg0}
+      selection_background ${colors.accent.violet}
 
       # ==========================================
       # CURSOR COLORS (defined in settings too)
       # ==========================================
-      cursor #00d4ff
-      cursor_text_color #0a0a0f
+      cursor ${colors.accent.cyan}
+      cursor_text_color ${colors.base.bg0}
 
       # ==========================================
       # URL UNDERLINE COLOR
       # ==========================================
-      url_color #00d4ff
+      url_color ${colors.accent.cyan}
 
       # ==========================================
       # KITTY WINDOW BORDER COLORS
       # ==========================================
-      active_border_color #00d4ff
-      inactive_border_color #22222e
-      bell_border_color #ff00aa
+      active_border_color ${colors.accent.cyan}
+      inactive_border_color ${colors.base.bg3}
+      bell_border_color ${colors.accent.magenta}
 
       # ==========================================
       # TITLE BAR COLORS
       # ==========================================
-      wayland_titlebar_color #0a0a0f
+      wayland_titlebar_color ${colors.base.bg0}
 
       # ==========================================
       # MARK COLORS (for marked text)
       # ==========================================
-      mark1_foreground #0a0a0f
-      mark1_background #00d4ff
-      mark2_foreground #0a0a0f
-      mark2_background #7c3aed
-      mark3_foreground #0a0a0f
-      mark3_background #ff00aa
+      mark1_foreground ${colors.base.bg0}
+      mark1_background ${colors.accent.cyan}
+      mark2_foreground ${colors.base.bg0}
+      mark2_background ${colors.accent.violet}
+      mark3_foreground ${colors.base.bg0}
+      mark3_background ${colors.accent.magenta}
 
       # ==========================================
       # STANDARD COLORS - Glassmorphism Palette
       # ==========================================
       # Black (dark surfaces)
-      color0 #1a1a24
-      color8 #22222e
+      color0 ${colors.base.bg2}
+      color8 ${colors.base.bg3}
 
       # Red (magenta for errors/danger)
-      color1 #ff00aa
-      color9 #f472b6
+      color1 ${colors.accent.magenta}
+      color9 ${colors.accent.magentaLight}
 
       # Green (success)
-      color2 #22c55e
+      color2 ${colors.accent.green}
       color10 #4ade80
 
       # Yellow (warning)
-      color3 #eab308
+      color3 ${colors.accent.yellow}
       color11 #facc15
 
       # Blue (info)
-      color4 #3b82f6
+      color4 ${colors.accent.blue}
       color12 #60a5fa
 
       # Magenta (violet accent)
-      color5 #7c3aed
-      color13 #a78bfa
+      color5 ${colors.accent.violet}
+      color13 ${colors.accent.violetLight}
 
       # Cyan (primary electric cyan)
-      color6 #00d4ff
-      color14 #67e8f9
+      color6 ${colors.accent.cyan}
+      color14 ${colors.accent.cyanLight}
 
       # White (text)
-      color7 #a1a1aa
-      color15 #ffffff
+      color7 ${colors.base.fg2}
+      color15 ${colors.base.fg0}
     '';
 
     # ============================================

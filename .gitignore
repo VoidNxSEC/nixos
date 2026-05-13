@@ -5,6 +5,15 @@ build/
 cache/
 node_modules/
 
+# Binary installers / large downloads (must be fetched from upstream)
+*.deb
+*.rpm
+*.AppImage
+
+# Local databases / caches
+scripts/ssh_sessions.db
+.cache/
+
 # Nix build results
 result
 result-*
@@ -85,7 +94,9 @@ modules/ml/**/.cache/
 **/.cache/
 **/target/debug/
 **/target/release/
-
+.claude/settings.local.json
+.claude
+.codex
 # OAuth tokens (plaintext - never commit) - Updated paths
 modules/ml/integrations/mcp/server/secrets/oauth/*.token.json
 modules/ml/integrations/mcp/server/secrets/oauth/*.dev.json

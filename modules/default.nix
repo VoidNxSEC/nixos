@@ -20,8 +20,7 @@
     # ═══════════════════════════════════════════════════════════
     # SECURITY (imported early, overridden last via sec/hardening.nix)
     # ═══════════════════════════════════════════════════════════
-    ./security # Boot, kernel, network, SSH hardening, audit
-    ./soc # Security Operations Center (NSA-level)
+    ./security # Boot, kernel, network, SSH hardening, audit + SOC (security/soc/)
 
     # ═══════════════════════════════════════════════════════════
     # NETWORK
@@ -34,16 +33,24 @@
     ./services # Offload, users, GPU orchestration, Mosh, mobile workspace, MCP server
 
     # ═══════════════════════════════════════════════════════════
+    # BLOCKCHAIN & CRYPTO INTELLIGENCE
+    # ═══════════════════════════════════════════════════════════
+    ./blockchain # Algorand dev env, CHAINSCOPE crypto research pipeline
+
+    # ═══════════════════════════════════════════════════════════
     # DEVELOPMENT & ML
     # ═══════════════════════════════════════════════════════════
     ./development # Dev environments, Claude profiles, Jupyter, CI/CD
-    ./machine-learning # Machine Learning infrastructure (llama.cpp-turbo, vLLM)
+    # ./devops # DevOps tools - imported in home-manager (hosts/kernelcore/home/home.nix)
+    ./ml # ML infrastructure + AI agents (consolidates machine-learning/ + ai/)
 
-    # ═══════════════════════════════════════════════════════════
     # CONTAINERS & VIRTUALIZATION
     # ═══════════════════════════════════════════════════════════
     ./containers # Docker, Podman, NixOS containers
     ./virtualization # VMs, vmctl, macOS KVM
+
+    # NOTE: K3s cluster, Cilium CNI, and Longhorn storage are imported
+    # via ./containers and ./network respectively, respecting their feature flags.
 
     # ═══════════════════════════════════════════════════════════
     # DESKTOP & APPLICATIONS
@@ -64,9 +71,7 @@
     ./shell # Shell aliases, GPU flags, professional alias structure
     ./secrets # SOPS config, API keys, AWS Bedrock, Tailscale secrets
 
-    # ═══════════════════════════════════════════════════════════
-    # DEBUG (optional - comment out if not needed)
-    # ═══════════════════════════════════════════════════════════
-    ./debug # Swissknife diagnostic tools
+    # NOTE: modules/debug/ kept on disk but not imported (personal scaffolding)
+    # To re-enable locally: add ./debug here
   ];
 }

@@ -28,7 +28,7 @@ let
 
   # Top-level roots to scan
   roots = [
-    "kernelcore"
+    config.system.user.username
     "services"
     "programs"
     "security"
@@ -85,7 +85,7 @@ let
 
   auditScript = pkgs.writeScriptBin "config-audit" ''
 
-    #!${pkgs.python3}/bin/python3
+    #!${pkgs.python313}/bin/python3
 
     import json
 

@@ -16,7 +16,7 @@ let
     version = "2.0.0";
     format = "pyproject";
 
-    src = /home/kernelcore/dev/Projects/phantom;
+    src = cfg.srcPath;
 
     nativeBuildInputs = with pkgs.python3Packages; [ hatchling ];
 
@@ -45,7 +45,7 @@ let
     version = "2.0.0";
     format = "other";
 
-    src = /home/kernelcore/dev/Projects/phantom;
+    src = cfg.srcPath;
 
     nativeBuildInputs = [
       pkgs.wrapGAppsHook4
@@ -72,7 +72,7 @@ let
 
       cat > $out/bin/phantom-desktop << EOF
       #!/usr/bin/env bash
-      exec ${pkgs.python3}/bin/python3 $out/share/phantom/phantom-desktop.py "\$@"
+      exec ${pkgs.python313}/bin/python3 $out/share/phantom/phantom-desktop.py "\$@"
       EOF
       chmod +x $out/bin/phantom-desktop
 
@@ -92,6 +92,12 @@ in
 {
   options.programs.phantom = {
     enable = lib.mkEnableOption "Phantom AI toolkit";
+
+    srcPath = lib.mkOption {
+      type = lib.types.path;
+      default = "${config.system.user.homeDir}/dev/Projects/phantom";
+      description = "Path to the Phantom source directory on the local filesystem.";
+    };
 
     desktop.enable = lib.mkEnableOption "Phantom GTK4 desktop application";
 
