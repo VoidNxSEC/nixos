@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+env:
+  CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Show flake metadata
+        run: nix flake metadata
+
+      - name: Flake check
+        run: nix flake check --show-trace
+
+  build:
+    name: Build kernelcore
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Build system closure
+        run: |
+          nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
+            --show-trace \
+            --print-build-logs \
+            --no-link

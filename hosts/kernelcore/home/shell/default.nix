@@ -17,6 +17,7 @@
     ./options.nix
     ./zsh.nix
     ./bash.nix
+    ./git-deploy.nix
   ];
 
   config = lib.mkIf config.myShell.enable {

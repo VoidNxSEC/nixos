@@ -61,7 +61,7 @@ with lib;
           "glab"
           # Development tools
           "python"
-          "python3"
+          "python313"
           "node"
           "npm"
           "cargo"
@@ -145,7 +145,7 @@ with lib;
         eza
 
         # Development
-        python3
+        python313
         nodejs
         rustup
 

@@ -108,7 +108,7 @@ async def interactive_gemini_chat(
                 SafetySetting(category=HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold=SafetySetting.HarmBlockThreshold.BLOCK_NONE),
                 SafetySetting(category=HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold=SafetySetting.HarmBlockThreshold.BLOCK_NONE),
                 SafetySetting(category=HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold=SafetySetting.HarmBlockThreshold.BLOCK_NONE),
-                              ]
+            ]
         except (AttributeError, TypeError) as e:
             # Se não conseguirmos configurar usando a abordagem padrão, tente o método alternativo
             try:
@@ -119,9 +119,10 @@ async def interactive_gemini_chat(
                     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
                     {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
                     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+                ]
             except Exception as e2:
                 # Configurar um dicionário para safety_settings com valores numéricos extremamente baixos
-             try:
+                try:
                     print("Tentando configuração com valores numéricos mínimos para contornar filtros...")
                     # Tente usar valores numéricos extremamente baixos (0) para todas as categorias possíveis
                     safety_dict = {}
@@ -130,52 +131,46 @@ async def interactive_gemini_chat(
                         safety_dict[i] = 0
                     # Tente aplicar como um dicionário direto
                     safety_settings = safety_dict
-             except Exception as e3:
+                except Exception as e3:
                     print(f"Também falhou a configuração numérica: {e3}")
                     safety_settings = None
                     # Forçar que o safety_thresholds seja o valor mínimo possível (tenta diretamente com um dicionário)
                     # Isto é um último recurso, tenta passar um dicionário/objeto que desative as restrições independente do formato exato
 
                     try:
-
-                    model.safety_settings = {"harassment": "none", "hate_speech": "none", "sexually_explicit": "none", "dangerous": "none"}
-
+                        model.safety_settings = {"harassment": "none", "hate_speech": "none", "sexually_explicit": "none", "dangerous": "none"}
                     except:
-
-                    pass
-
+                        pass
 
                     # Outra tentativa: criar um objeto com os atributos necessários
-
                     class MinimalSafetyFilter:
-
-                    def __init__(self):
-
-                    self.enabled = False
-
-                    self.threshold = 0
-
-                    self.block_none = True
-
-                    self.value = 0
-
+                        def __init__(self):
+                            self.enabled = False
+                            self.threshold = 0
+                            self.block_none = True
+                            self.value = 0
 
                     try:
-
-                    # Tenta criar filtros mínimos
-
-                    safety_obj = {"threshold": MinimalSafetyFilter()}
-
-                    # Tenta atribuir de diferentes formas
-                    try: model.safety_settings = safety_obj
-                    except: pass
-                    try: model.safety = safety_obj
-                    except: pass
-                    try: model.safety_filters = safety_obj
-                    except: pass
-                except:
-                    pass # Tentar definir a temperatura no máximo possível se disponível
-                try:
+                        # Tenta criar filtros mínimos
+                        safety_obj = {"threshold": MinimalSafetyFilter()}
+                        # Tenta atribuir de diferentes formas
+                        try:
+                            model.safety_settings = safety_obj
+                        except:
+                            pass
+                        try:
+                            model.safety = safety_obj
+                        except:
+                            pass
+                        try:
+                            model.safety_filters = safety_obj
+                        except:
+                            pass
+                    except:
+                        pass
+        
+        # Tentar definir a temperatura no máximo possível se disponível
+        try:
             if hasattr(generation_config, 'temperature'):
                 generation_config.temperature = 2.0  # Valor máximo
                 print("Temperatura configurada no máximo possível (2.0)")
@@ -186,14 +181,13 @@ async def interactive_gemini_chat(
             print(f"Não foi possível maximizar a temperatura: {e}")
 
         # Tentar maximizar a criatividade
-         try:
-             if hasattr(generation_config, 'top_p'):
+        try:
+            if hasattr(generation_config, 'top_p'):
                 generation_config.top_p = 0.99  # Valor quase máximo
-             if hasattr(generation_config, 'top_k'):
+            if hasattr(generation_config, 'top_k'):
                 generation_config.top_k = 100   # Valor alto
-         except Exception as e:
-
-        print(f"Não foi possível maximizar parâmetros de criatividade: {e}")
+        except Exception as e:
+            print(f"Não foi possível maximizar parâmetros de criatividade: {e}")
         print("\nConfigurações de Geração Ativas:")
         print(f"  Modelo: {model_name}")
 
@@ -347,25 +341,25 @@ async def interactive_gemini_chat(
 
                 processing_time = time.time() - processing_start
 
-                    # Se tiver o atributo text
-                    if hasattr(response, 'text'):
-                        response_text = response.text
-                    # Muitos modelos usam candidates[0].content.parts[0].text
-                    elif hasattr(response, 'candidates'):
+                # Se tiver o atributo text
+                if hasattr(response, 'text'):
+                    response_text = response.text
+                # Muitos modelos usam candidates[0].content.parts[0].text
+                elif hasattr(response, 'candidates'):
+                    try:
+                        response_text = response.candidates[0].content.parts[0].text
+                    except (AttributeError, IndexError):
+                        # Tenta outras estruturas comuns
                         try:
-                            response_text = response.candidates[0].content.parts[0].text
+                            response_text = response.candidates[0].content
                         except (AttributeError, IndexError):
-                            # Tenta outras estruturas comuns
                             try:
-                                response_text = response.candidates[0].content
+                                response_text = response.candidates[0].text
                             except (AttributeError, IndexError):
-                                try:
-                                    response_text = response.candidates[0].text
-                                except (AttributeError, IndexError):
-                                    response_text = str(response)
-                    else:
-                        # Último recurso - converte para string
-                        response_text = str(response)
+                                response_text = str(response)
+                else:
+                    # Último recurso - converte para string
+                    response_text = str(response)
 
                 # Exibir a resposta
                 print(f"\n{model_name}: {response_text}")
