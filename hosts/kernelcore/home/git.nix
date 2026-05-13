@@ -1,18 +1,81 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
+  # ═══════════════════════════════════════════════════════════
+  # Activation Script: Clean Local Git Config Conflicts
+  # ═══════════════════════════════════════════════════════════
+  # Remove imperative git configs that override declarative settings
+  # All signing/identity must come from home-manager (git.nix) via includeIf conditionals
+  home.activation.cleanNixosGitConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [ -f /etc/nixos/.git/config ]; then
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset user.name 2>/dev/null || true
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset user.email 2>/dev/null || true
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset user.signingkey 2>/dev/null || true
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset commit.gpgsign 2>/dev/null || true
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset commit.template 2>/dev/null || true
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C /etc/nixos config --local --unset tag.gpgsign 2>/dev/null || true
+    fi
+  '';
+
   programs.git = {
     enable = true;
+
+    # Default GPG key (GitHub)
+    signing = {
+      key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnxlabs.com>
+      signByDefault = true;
+    };
+
+    # ═══════════════════════════════════════════════════════════
+    # All Configuration via settings
+    # ═══════════════════════════════════════════════════════════
     settings = {
-      user.name = "marcosfpina";
-      user.email = "sec@voidnxlabs.com";
+      # ───────────────────────────────────────────────────────
+      # User Configuration (GitHub default)
+      # ───────────────────────────────────────────────────────
+      user = {
+        name = "marcosfpina";
+        email = "sec@voidnxlabs.com";
+      };
+
+      # ───────────────────────────────────────────────────────
+      # Aliases
+      # ───────────────────────────────────────────────────────
+      alias = {
+        st = "status";
+        co = "checkout";
+        br = "branch";
+        ci = "commit";
+        df = "diff";
+        lg = "log --oneline --graph --decorate --all";
+        lol = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+        unstage = "reset HEAD --";
+        last = "log -1 HEAD";
+        amend = "commit --amend --no-edit";
+        undo = "reset --soft HEAD^";
+
+        # Show which key is being used
+        show-key = "!git config user.signingkey";
+
+        # Push HEAD to every configured remote — skips offline ones silently
+        pa = "!git remote | xargs -I{} sh -c 'git push {} HEAD && echo \"✓ {}\" || echo \"✗ {} (skipped)\"'";
+        # Legacy alias kept for muscle memory
+        push-all = "!git pa";
+      };
+
+      # ───────────────────────────────────────────────────────
+      # General Configuration
+      # ───────────────────────────────────────────────────────
       init.defaultBranch = "main";
       core.editor = "nvim";
       pull.rebase = false;
 
-      # Security configurations
-      user.signingkey = "5606AB430E95F5AD";
-      commit.gpgsign = true;
+      # NOTE: commit.gpgsign and tag.gpgsign are handled by signing.signByDefault above
 
       # Performance optimizations
       core.preloadindex = true;
@@ -28,20 +91,43 @@
       # Hooks configuration
       core.hooksPath = ".githooks";
 
-      alias = {
-        st = "status";
-        co = "checkout";
-        br = "branch";
-        ci = "commit";
-        df = "diff";
-        lg = "log --oneline --graph --decorate --all";
-        lol = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-        unstage = "reset HEAD --";
-        last = "log -1 HEAD";
-        amend = "commit --amend --no-edit";
-        undo = "reset --soft HEAD^";
-      };
+      # URL rewrites
+      url."git@gitlab.com:".insteadOf = "https://gitlab.com/";
+      url."git@github.com:".insteadOf = "https://github.com/";
+
+      # Push configuration
+      push.autoSetupRemote = true;
+      push.default = "current";
     };
+
+    # ═══════════════════════════════════════════════════════════
+    # Conditional Includes (por diretório/repositório)
+    # ═══════════════════════════════════════════════════════════
+    includes = [
+      # NixOS Configuration Repository (GitHub: marcosfpina/nixos + GitLab: entropynix/nixos)
+      {
+        condition = "gitdir:/etc/nixos/";
+        contents = {
+          user = {
+            name = "VoidNxLabs";
+            email = "sec@voidnxlabs.com";
+            signingkey = "82FBA1A53A3FFA8B"; # VoidNxLabs <sec@voidnxlabs.com>
+          };
+        };
+      }
+      # OLD KEY - Only for legacy GitHub repos that still need it
+      {
+        condition = "gitdir:~/github-legacy/";
+        contents = {
+          user = {
+            name = "marcosfpina";
+            email = "sec@voidnxlabs.com";
+            signingkey = "5606AB430E95F5AD"; # marcos (gh) <sec@voidnxlabs.com>
+          };
+        };
+      }
+      # Add more conditional includes as needed
+    ];
 
     lfs.enable = true;
   };

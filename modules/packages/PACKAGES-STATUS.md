@@ -1,4 +1,4 @@
-# Package Management Status
+# Package Management Status /* TODO: Deprecated */
 
 This document tracks the status of custom packages managed through the declarative package system in `modules/packages/*`.
 

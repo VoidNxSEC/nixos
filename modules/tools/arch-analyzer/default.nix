@@ -8,6 +8,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -16,13 +17,8 @@ with lib;
 let
   cfg = config.kernelcore.tools.arch-analyzer;
 
-  # Use arch-analyzer from overlay (set by flake.nix)
-  archAnalyzerPkg =
-    pkgs.arch-analyzer or (pkgs.writeScriptBin "arch-analyze" ''
-      #!/usr/bin/env bash
-      echo "Error: arch-analyzer not available. Check flake inputs."
-      exit 1
-    '');
+  # Use arch-analyzer from flake input directly
+  archAnalyzerPkg = inputs.arch-analyzer.packages.${pkgs.system}.default;
 
   # nix-tools integration wrapper
   archToolsWrapper = pkgs.writeScriptBin "arch" ''

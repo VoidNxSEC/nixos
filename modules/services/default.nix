@@ -10,7 +10,6 @@
 {
   imports = [
     # User Management
-    ./users
 
     # Offload & Build Services
     ./offload-server.nix
@@ -25,7 +24,13 @@
     ./mobile-workspace.nix
 
     # Development & AI
+    ./buildbot-local.nix
     ./mcp-server.nix
+    ./github-runner.nix
+    ./gitlab-duo/default.nix
+    ./forgejo.nix
+    ./gitea-showcase.nix # Self-hosted Git with auto-mirror for showcase projects
+    # ./firefox-self-hosted.nix
 
     # Utilities
     ./config-auditor.nix
@@ -33,13 +38,15 @@
   ];
 
   # Monitoring Services (Prometheus + Grafana)
+  # Disabled by default to save resources on laptop.
+  # Enable in host config or use 'monitor-on' alias if needed.
   config = {
     services.prometheus = {
-      enable = true;
+      enable = false;
       port = 9090;
       exporters = {
         node = {
-          enable = true;
+          enable = false;
           port = 9100;
         };
       };
@@ -52,7 +59,7 @@
     };
 
     services.grafana = {
-      enable = true;
+      enable = false;
       settings = {
         server = {
           domain = "localhost";
