@@ -112,7 +112,7 @@ jobs:
   # Job 2: Main Build with Debug Support
   build-with-observability:
     name: Build with Observability
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     needs: setup-observability
     env:
       JOB_ID: ${{ needs.setup-observability.outputs.job-id }}
