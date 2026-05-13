@@ -1,66 +1,39 @@
 # GitHub Actions CI/CD for NixOS
 
-Professional CI/CD infrastructure for NixOS projects with reusable actions, workflows, and templates.
+CI/CD infrastructure for the NixOS configuration repository with composite actions, reusable workflows, and observability.
 
-## 🚀 Quick Start
+## Composite Actions
 
-### For This Repository
-
-Workflows are automatically triggered on push/PR. No setup required!
-
-### For Other Projects
-
-Use our reusable workflows:
+### `setup-nix-env`
+Configures Nix with flakes, Cachix, and build optimizations.
 
 ```yaml
-# .github/workflows/ci.yml
-name: CI
-on: [push, pull_request]
-
-jobs:
-  validate:
-    uses: VoidNxSEC/nixos/.github/workflows/pr-validation.yml@main
-    secrets: inherit
-```
-
-## 📋 Available Composite Actions
-
-### 1. setup-nix-env
-Configure Nix with flakes, cachix, and optimizations.
-
-```yaml
-- uses: VoidNxSEC/nixos/.github/actions/setup-nix-env@main
+- uses: ./.github/actions/setup-nix-env
   with:
     cachix-name: 'my-cache'
     cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-    enable-flakes: true
 ```
 
-**Outputs**:
-- `nix-version`: Installed Nix version
-- `cache-hit`: Whether cache was hit
+**Outputs**: `nix-version`, `cache-hit`
 
-### 2. build-nixos
-Build NixOS configuration with validation.
+### `build-nixos`
+Builds a NixOS configuration with validation and optional Cachix push.
 
 ```yaml
-- uses: VoidNxSEC/nixos/.github/actions/build-nixos@main
+- uses: ./.github/actions/build-nixos
   with:
-    config-path: '.#nixosConfigurations.myhost.config.system.build.toplevel'
+    config-path: '.#nixosConfigurations.kernelcore.config.system.build.toplevel'
     enable-tests: true
     cachix-push: true
 ```
 
-**Outputs**:
-- `build-path`: Path to build result
-- `closure-size`: Closure size in MB
-- `build-time`: Build time in seconds
+**Outputs**: `build-path`, `closure-size`, `build-time`
 
-### 3. notify
-Send notifications to Discord, Slack, or GitHub issues.
+### `notify`
+Sends notifications to Discord, Slack, or GitHub Issues.
 
 ```yaml
-- uses: VoidNxSEC/nixos/.github/actions/notify@main
+- uses: ./.github/actions/notify
   with:
     status: 'failure'
     title: 'Build Failed'
@@ -69,295 +42,126 @@ Send notifications to Discord, Slack, or GitHub issues.
     create-issue-on-failure: true
 ```
 
-## 🔄 Available Workflows
+---
 
-### PR Validation
-Validates pull requests with formatting, flake checks, builds, and security scans.
+## Workflows
+
+### `ci.yml` — Main CI
+Triggered on push and pull requests. Runs `nix flake check` then builds the `kernelcore` system closure. This is the primary workflow that must pass before merging.
+
+### `pr-validation.yml` — PR Validation (reusable)
+Reusable workflow for PR checks: formatting, flake check, build, and security scans.
 
 ```yaml
 jobs:
   validate:
-    uses: VoidNxSEC/nixos/.github/workflows/pr-validation.yml@main
-    with:
-      config-path: '.#nixosConfigurations.myhost.config.system.build.toplevel'
-      skip-tests: false
+    uses: ./.github/workflows/pr-validation.yml
     secrets: inherit
 ```
 
-### Rollback System
-Manual workflow for system rollback with health checks.
+### `nixos-build.yml` — NixOS Build & Test
+Builds and tests the NixOS configuration. Supports optional tmate debug sessions.
 
 ```yaml
-# Trigger manually via GitHub UI or gh CLI:
+jobs:
+  build:
+    uses: ./.github/workflows/nixos-build.yml
+    with:
+      enable-tmate: false
+      tmate-on-failure: true
+    secrets: inherit
+```
+
+### `ci-observability.yml` — Observability & Debug (reusable)
+Reusable workflow with full build observability: structured metrics, JSON reports, Discord/Telegram/Slack notifications, and tmate remote debug.
+
+```yaml
+jobs:
+  my-build:
+    uses: ./.github/workflows/ci-observability.yml
+    with:
+      enable-tmate: false
+      tmate-on-failure: true
+    secrets:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+```
+
+### `deploy.yml` — Deploy (manual)
+Manual workflow for deploying to a host. Requires `workflow_dispatch`. Runs on the target host directly.
+
+```bash
+gh workflow run deploy.yml -f host=kernelcore
+```
+
+### `rollback.yml` — Rollback System (manual)
+Manual workflow to roll back to a previous NixOS generation with optional team notification.
+
+```bash
 gh workflow run rollback.yml \
   -f generation="" \
-  -f reason="Critical bug in latest deployment" \
+  -f reason="Regression in latest deployment" \
   -f notify-team=true
 ```
 
-### SOPS Setup
-Reusable workflow for decrypting SOPS secrets.
+### `setup-sops.yml` — SOPS Secrets (reusable)
+Reusable workflow that decrypts SOPS-encrypted secrets for use in dependent jobs.
 
 ```yaml
 jobs:
   secrets:
-    uses: VoidNxSEC/nixos/.github/workflows/setup-sops.yml@main
-    secrets: inherit
-  
-  build:
-    needs: secrets
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ${{ needs.secrets.outputs.cachix_token }}
-```
-
-## 🎨 Templates
-
-### Basic NixOS CI
-
-```yaml
-# .github/workflows/ci.yml
-name: CI
-on:
-  push:
-    branches: [main]
-  pull_request:
-
-jobs:
-  validate:
-    uses: VoidNxSEC/nixos/.github/workflows/pr-validation.yml@main
+    uses: ./.github/workflows/setup-sops.yml
     secrets: inherit
 ```
 
-### Full CI/CD with Deploy
-
-```yaml
-# .github/workflows/ci-cd.yml
-name: CI/CD
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-
-env:
-  CACHIX_NAME: my-cache
-
-jobs:
-  # PR Validation
-  pr-check:
-    if: github.event_name == 'pull_request'
-    uses: VoidNxSEC/nixos/.github/workflows/pr-validation.yml@main
-    secrets: inherit
-
-  # Main branch deployment
-  deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: [self-hosted, nixos]
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Nix
-        uses: VoidNxSEC/nixos/.github/actions/setup-nix-env@main
-        with:
-          cachix-name: ${{ env.CACHIX_NAME }}
-          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      
-      - name: Build
-        uses: VoidNxSEC/nixos/.github/actions/build-nixos@main
-        with:
-          config-path: '.#nixosConfigurations.prod.config.system.build.toplevel'
-      
-      - name: Deploy
-        run: sudo nixos-rebuild switch --flake .#prod
-      
-      - name: Notify Success
-        if: success()
-        uses: VoidNxSEC/nixos/.github/actions/notify@main
-        with:
-          status: success
-          title: "Deployment Successful"
-          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
-```
-
-## 🔐 Required Secrets
-
-Configure in repository settings → Secrets and variables → Actions:
-
-### Essential
-- `AGE_SECRET_KEY`: Age key for SOPS decryption
-- `CACHIX_AUTH_TOKEN`: Cachix authentication token
-
-### Optional
-- `DISCORD_WEBHOOK`: Discord webhook URL for notifications
-- `SLACK_WEBHOOK`: Slack webhook URL for notifications
-- `GITHUB_TOKEN`: Automatically provided, used for creating issues
-
-### Setup Commands
-
-```bash
-# Generate AGE key
-age-keygen -o age.key
-
-# Add to GitHub secrets
-gh secret set AGE_SECRET_KEY < age.key
-
-# Add Cachix token
-gh secret set CACHIX_AUTH_TOKEN
-
-# Add Discord webhook (optional)
-gh secret set DISCORD_WEBHOOK
-```
-
-## 🛠️ Local Development
-
-### Test Actions Locally
-
-Use [act](https://github.com/nektos/act) to test workflows locally:
-
-```bash
-# Install act
-nix-env -iA nixpkgs.act
-
-# List available workflows
-act -l
-
-# Run PR validation workflow
-act pull_request -W .github/workflows/pr-validation.yml
-
-# Run with secrets
-act -s CACHIX_AUTH_TOKEN=your-token
-```
-
-### Validate Workflow Syntax
-
-```bash
-# Using actionlint
-nix-shell -p actionlint --run "actionlint .github/workflows/*.yml"
-
-# Using GitHub CLI
-gh workflow list
-gh workflow view pr-validation.yml
-```
-
-## 📊 Monitoring
-
-### View Workflow Runs
-
-```bash
-# List recent runs
-gh run list
-
-# Watch a specific run
-gh run watch
-
-# View logs
-gh run view --log
-```
-
-### Build Reports
-
-All workflows generate detailed summaries in the GitHub Actions UI:
-- Build times and closure sizes
-- Test results
-- Security scan findings
-- Health check status
-
-## 🎯 Best Practices
-
-### Commits
-- ✅ Small, focused commits
-- ✅ Descriptive commit messages
-- ✅ Test locally before pushing
-
-### Pull Requests
-- ✅ Always create PR before merging to main
-- ✅ Wait for CI checks to pass
-- ✅ Review security scan results
-- ✅ Address all feedback
-
-### Deployment
-- ✅ Deploy only from main branch
-- ✅ Use rollback workflow if issues occur
-- ✅ Monitor system health after deployment
-- ✅ Keep backups of working configurations
-
-### Caching
-- ✅ Use Cachix for Nix builds
-- ✅ Push successful builds to cache
-- ✅ Configure cache retention policies
-- ✅ Monitor cache hit rates
-
-## 🔧 Troubleshooting
-
-### Workflow Not Triggering
-
-```bash
-# Check workflow syntax
-actionlint .github/workflows/your-workflow.yml
-
-# Check GitHub Actions tab for errors
-gh run list --limit 5
-```
-
-### Build Failing
-
-```bash
-# Replicate locally
-nix build .#nixosConfigurations.yourhost.config.system.build.toplevel --show-trace
-
-# Check logs
-gh run view --log
-
-# Check cache
-cachix watch-exec your-cache -- nix build
-```
-
-### Secrets Not Working
-
-```bash
-# List configured secrets
-gh secret list
-
-# Update secret
-gh secret set SECRET_NAME
-
-# Verify SOPS configuration
-sops -d secrets/github.yaml
-```
-
-## 📚 Additional Resources
-
-- [Architecture Documentation](../docs/CI-CD-ARCHITECTURE.md)
-- [GitHub Actions Runner Setup](../docs/GITHUB-ACTIONS-RUNNER-FIX.md)
-- [Runner Configuration Examples](../docs/GITHUB-ACTIONS-RUNNER-CONFIG-EXAMPLES.md)
-
-## 🤝 Contributing
-
-### Adding New Actions
-
-1. Create directory: `.github/actions/your-action/`
-2. Add `action.yml` with metadata and steps
-3. Document inputs/outputs
-4. Test with act or in PR
-5. Update this README
-
-### Adding New Workflows
-
-1. Create `.github/workflows/your-workflow.yml`
-2. Follow existing patterns
-3. Use reusable workflows when possible
-4. Document in this README
-5. Test thoroughly
-
-## 📝 License
-
-MIT License - See repository LICENSE file
-
-## 👥 Maintainers
-
-- [@VoidNxSEC](https://github.com/VoidNxSEC)
+### `update-lock.yml` — Update Flake Lock
+Runs every Monday at 06:00 UTC (or manually) to update `flake.lock` and open a PR with the changes.
 
 ---
 
-**Last Updated**: 2025-11-28  
-**Version**: 1.0.0
+## Required Secrets
+
+| Secret | Purpose | Required |
+|--------|---------|----------|
+| `AGE_SECRET_KEY` | Age key for SOPS decryption | Yes |
+| `CACHIX_AUTH_TOKEN` | Cachix binary cache auth | Yes |
+| `DISCORD_WEBHOOK` | Discord notifications | No |
+| `TELEGRAM_BOT_TOKEN` | Telegram notifications | No |
+| `TELEGRAM_CHAT_ID` | Telegram chat target | No |
+| `SLACK_WEBHOOK` | Slack notifications | No |
+
+```bash
+# Set secrets via gh CLI
+gh secret set AGE_SECRET_KEY < age.key
+gh secret set CACHIX_AUTH_TOKEN
+gh secret set DISCORD_WEBHOOK
+```
+
+---
+
+## Local Testing
+
+```bash
+# Validate workflow syntax
+nix-shell -p actionlint --run "actionlint .github/workflows/*.yml"
+
+# Test with act
+nix-shell -p act --run "act pull_request -W .github/workflows/pr-validation.yml"
+
+# Monitor recent runs
+gh run list --limit 10
+gh run watch
+gh run view --log
+```
+
+---
+
+## Archived Workflows
+
+Previously removed workflows are preserved in `.github/archived-workflows/` for reference.
+
+---
+
+**Last Updated**: 2026-05-13
+**Maintained by**: kernelcore
