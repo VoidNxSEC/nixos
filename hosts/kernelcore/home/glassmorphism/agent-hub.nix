@@ -20,8 +20,8 @@ let
   # API Configuration - uses your local llama.cpp server
   llamaCppApi = {
     host = "127.0.0.1";
-    port = 8080;
-    model = "local"; # Name for display
+    port = 8081;
+    model = "current-model"; # Name for display
   };
 
   # Color palette for agents
@@ -74,6 +74,11 @@ in
         send_message() {
           local prompt="$1"
           local response
+          local thinking_file="/tmp/agent-hub-thinking"
+
+          touch "$thinking_file"
+          # Ensure file is removed on exit or error
+          trap "rm -f $thinking_file" EXIT
 
           response=$(curl -s "$API_URL" \
             -H "Content-Type: application/json" \
@@ -87,6 +92,9 @@ in
               \"max_tokens\": 2048,
               \"stream\": false
             }" 2>/dev/null)
+
+          rm -f "$thinking_file"
+          trap - EXIT
 
           if [[ -n "$response" ]]; then
             echo "$response" | ${pkgs.jq}/bin/jq -r '.choices[0].message.content // .error.message // "No response"'
@@ -182,6 +190,7 @@ in
         󰧑 Codex - CLI Agent
         󰊤 Gemini - Google AI
         󰜈 Antigravity (Gemini CLI)
+        󰜈 Neoland - AI Agent
         ━━━━━━━━━━━━━━━━━━━━━━━━
         󰁖 Agent Status
         󰁔 Open Chat Terminal"
@@ -205,6 +214,9 @@ in
                     ;;
                   "󰜈 Antigravity (Gemini CLI)")
                     alacritty --class="agent-hub-antigravity" -e gemini &
+                    ;;
+                  "󰜈 Neoland - AI Agent")
+                    alacritty --class="neoland-client" -e neoland client --ml-api-url http://${llamaCppApi.host}:${toString llamaCppApi.port} &
                     ;;
                   "󰁖 Agent Status")
                     "$HOME/.config/agent-hub/agent-status.sh" | wofi --dmenu --prompt="Status" --width=500 --height=400 --cache-file=/dev/null
@@ -280,11 +292,19 @@ in
           echo "󰊤 Gemini CLI: ❌ Not installed"
         fi
 
-        # Antigravity (gemini command)
         if command -v gemini &> /dev/null; then
           echo "󰜈 Antigravity: ✅ Available"
         else
           echo "󰜈 Antigravity: ❌ Not installed"
+        fi
+
+        # Neoland
+        if pgrep -f "neoland server" &> /dev/null; then
+          echo "󰜈 Neoland: ✅ Active"
+        elif command -v neoland &> /dev/null; then
+           echo "󰜈 Neoland: ⚠️  Installed but Stopped"
+        else
+           echo "󰜈 Neoland: ❌ Not installed"
         fi
 
         # VSCode with Roo
@@ -299,46 +319,68 @@ in
       '';
     };
 
-    # Waybar module with API status
+    # Waybar module with API status (OPTIMIZED)
     ".config/agent-hub/waybar-module.sh" = {
       executable = true;
       text = ''
         #!/usr/bin/env bash
         # ============================================
-        # Agent Hub - Waybar Module
+        # Agent Hub - Waybar Module (OPTIMIZED)
         # JSON output for waybar custom module
+        # Optimizations:
+        # - Reduced timeout for API check
+        # - Efficient process checking
+        # - Single pgrep call for all agents
         # ============================================
 
+        CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/agent-hub"
+        mkdir -p "$CACHE_DIR"
+        THINKING_FILE="/tmp/agent-hub-thinking"
+
         ACTIVE=0
+        STATUS="inactive"
         TOOLTIP="󰚩 AI Agent Hub\n━━━━━━━━━━━━━━━━━━━━━━"
 
-        # Check LLaMA.cpp API
-        if curl -s --connect-timeout 1 "http://${llamaCppApi.host}:${toString llamaCppApi.port}/health" > /dev/null 2>&1; then
+        # Check if thinking
+        if [[ -f "$THINKING_FILE" ]]; then
+          STATUS="thinking"
+          TOOLTIP+="\n󰋼 AI is thinking..."
+        fi
+
+        # Check LLaMA.cpp API (short timeout)
+        if timeout 0.5s bash -c "exec 3<>/dev/tcp/${llamaCppApi.host}/${toString llamaCppApi.port}" 2>/dev/null; then
           ((ACTIVE++))
           TOOLTIP+="\n󰊤 LLaMA.cpp: Online"
+          [[ "$STATUS" == "inactive" ]] && STATUS="active"
         else
           TOOLTIP+="\n󰊤 LLaMA.cpp: Offline"
         fi
 
-        # Check active agents
-        if pgrep -f "codex" &> /dev/null; then
+        # Check active agents with single pgrep
+        agents=$(pgrep -af "codex|gemini|neoland" 2>/dev/null || true)
+
+        if echo "$agents" | grep -q "codex"; then
           ((ACTIVE++))
           TOOLTIP+="\n󰧑 Codex: Active"
+          [[ "$STATUS" == "inactive" ]] && STATUS="active"
         fi
 
-        if pgrep -f "gemini" &> /dev/null; then
+        if echo "$agents" | grep -q "gemini"; then
           ((ACTIVE++))
           TOOLTIP+="\n󰊤 Gemini: Active"
+          [[ "$STATUS" == "inactive" ]] && STATUS="active"
+        fi
+
+        if echo "$agents" | grep -q "neoland"; then
+          ((ACTIVE++))
+          TOOLTIP+="\n󰜈 Neoland: Active"
+          [[ "$STATUS" == "inactive" ]] && STATUS="active"
         fi
 
         TOOLTIP+="\n\nClick: Open Agent Hub\nRight-click: Quick Prompt"
 
         # Output JSON
-        if [[ $ACTIVE -gt 0 ]]; then
-          echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"active\", \"alt\": \"$ACTIVE\"}"
-        else
-          echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"inactive\", \"alt\": \"0\"}"
-        fi
+        echo "{\"text\": \"󰚩\", \"tooltip\": \"$TOOLTIP\", \"class\": \"$STATUS\", \"alt\": \"$ACTIVE\"}"
       '';
     };
   };
