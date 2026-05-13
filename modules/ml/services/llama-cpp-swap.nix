@@ -24,6 +24,171 @@
 
 let
   cfg = config.services.llamacpp-swap;
+
+  boolToShell = value: if value then "true" else "false";
+
+  memoryEquilibriumScript = pkgs.writeShellScript "llamacpp-swap-memory-equilibrium" ''
+    set -euo pipefail
+
+    mem_available_kb=$(${pkgs.gawk}/bin/awk '/^MemAvailable:/ {print $2}' /proc/meminfo)
+    swap_total_kb=$(${pkgs.gawk}/bin/awk '/^SwapTotal:/ {print $2}' /proc/meminfo)
+    swap_free_kb=$(${pkgs.gawk}/bin/awk '/^SwapFree:/ {print $2}' /proc/meminfo)
+    swap_used_kb=$((swap_total_kb - swap_free_kb))
+    reserve_kb=$((${toString cfg.memoryEquilibrium.reserveMemoryMiB} * 1024))
+
+    echo "llamacpp-swap memory equilibrium: available=$((mem_available_kb / 1024))MiB swap_used=$((swap_used_kb / 1024))MiB reserve=${toString cfg.memoryEquilibrium.reserveMemoryMiB}MiB"
+
+    if [ "$swap_used_kb" -gt 0 ]; then
+      required_kb=$((swap_used_kb + reserve_kb))
+
+      if [ "$mem_available_kb" -gt "$required_kb" ]; then
+        echo "llamacpp-swap memory equilibrium: flushing swap back to RAM before inference"
+        if ${pkgs.util-linux}/bin/swapoff -a; then
+          ${pkgs.util-linux}/bin/swapon -a
+          echo "llamacpp-swap memory equilibrium: swap flush complete"
+        else
+          echo "llamacpp-swap memory equilibrium: swapoff failed, restoring swap and continuing" >&2
+          ${pkgs.util-linux}/bin/swapon -a || true
+        fi
+      else
+        echo "llamacpp-swap memory equilibrium: keeping swap online; RAM cannot safely absorb used swap plus reserve" >&2
+      fi
+    fi
+
+    ${lib.optionalString cfg.memoryEquilibrium.compactMemory ''
+      echo 1 > /proc/sys/vm/compact_memory || true
+    ''}
+
+    ${lib.optionalString cfg.memoryEquilibrium.dropCaches ''
+      echo 3 > /proc/sys/vm/drop_caches || true
+    ''}
+  '';
+
+  launchScript = pkgs.writeShellScript "llamacpp-swap-launch" ''
+    set -euo pipefail
+
+    SWAP_DIR="/var/lib/llamacpp-swap"
+    PROFILES_JSON="$SWAP_DIR/profiles.json"
+    CURRENT_PROFILE_FILE="$SWAP_DIR/current-profile"
+    CURRENT_PROFILE="$(${pkgs.coreutils}/bin/cat "$CURRENT_PROFILE_FILE" 2>/dev/null || true)"
+
+    profile_value() {
+      local key="$1"
+      if [ -z "$CURRENT_PROFILE" ] || [ ! -f "$PROFILES_JSON" ]; then
+        return 0
+      fi
+
+      ${pkgs.jq}/bin/jq -r --arg profile "$CURRENT_PROFILE" --arg key "$key" '.[$profile][$key] // empty' "$PROFILES_JSON" 2>/dev/null || true
+    }
+
+    profile_int() {
+      local key="$1"
+      local default="$2"
+      local value
+      value="$(profile_value "$key")"
+
+      if [[ "$value" =~ ^[0-9]+$ ]]; then
+        printf '%s\n' "$value"
+      else
+        printf '%s\n' "$default"
+      fi
+    }
+
+    profile_bool() {
+      local key="$1"
+      local default="$2"
+      local value
+      value="$(profile_value "$key")"
+
+      case "$value" in
+        true|false) printf '%s\n' "$value" ;;
+        *) printf '%s\n' "$default" ;;
+      esac
+    }
+
+    MODEL_PATH="$(profile_value modelPath)"
+    if [ -z "$MODEL_PATH" ]; then
+      MODEL_PATH="${cfg.model}"
+    fi
+
+    if [ ! -e "$MODEL_PATH" ] && [ ! -L "$MODEL_PATH" ]; then
+      echo "llamacpp-swap: model path is missing: $MODEL_PATH" >&2
+      exit 1
+    fi
+
+    GPU_LAYERS="$(profile_int gpuLayers "${toString cfg.n_gpu_layers}")"
+    CTX_SIZE="$(profile_int contextSize "${toString cfg.n_ctx}")"
+    BATCH_SIZE="$(profile_int batchSize "${toString cfg.n_batch}")"
+    UBATCH_SIZE="$(profile_int ubatchSize "${toString cfg.n_ubatch}")"
+    PARALLEL="$(profile_int parallel "${toString cfg.n_parallel}")"
+    THREADS="$(profile_int threads "${toString cfg.n_threads}")"
+    THREADS_BATCH="$(profile_int threadsBatch "${toString cfg.n_threads_batch}")"
+    NO_KV_OFFLOAD="$(profile_bool noKvOffload "${boolToShell cfg.noKvOffload}")"
+    MLOCK="$(profile_bool mlock "${boolToShell cfg.mlock}")"
+
+    echo "llamacpp-swap: launching profile=''${CURRENT_PROFILE:-none} model=$MODEL_PATH gpu_layers=$GPU_LAYERS ctx=$CTX_SIZE batch=$BATCH_SIZE ubatch=$UBATCH_SIZE parallel=$PARALLEL"
+
+    args=(
+      --host "${cfg.host}"
+      --port "${toString cfg.port}"
+      --model "$MODEL_PATH"
+      --threads "$THREADS"
+      --threads-batch "$THREADS_BATCH"
+      --gpu-layers "$GPU_LAYERS"
+      --main-gpu "${toString cfg.mainGpu}"
+      --parallel "$PARALLEL"
+      --ctx-size "$CTX_SIZE"
+      --batch-size "$BATCH_SIZE"
+      --ubatch-size "$UBATCH_SIZE"
+    )
+
+    ${lib.optionalString cfg.flashAttention ''
+      args+=(--flash-attn on)
+    ''}
+    ${lib.optionalString (!cfg.mmap) ''
+      args+=(--no-mmap)
+    ''}
+
+    if [ "$MLOCK" = "true" ]; then
+      args+=(--mlock)
+    fi
+
+    if [ "$NO_KV_OFFLOAD" = "true" ]; then
+      args+=(--no-kv-offload)
+    fi
+
+    ${lib.optionalString (cfg.speculativeDecoding.enable && cfg.speculativeDecoding.draftModel != null)
+      ''
+        args+=(
+          --model-draft "${cfg.speculativeDecoding.draftModel}"
+          --gpu-layers-draft "${toString cfg.speculativeDecoding.draftGpuLayers}"
+          --draft-max "${toString cfg.speculativeDecoding.draftMax}"
+          --draft-min "${toString cfg.speculativeDecoding.draftMin}"
+          --draft-p-min "${toString cfg.speculativeDecoding.draftPMin}"
+        )
+      ''
+    }
+    ${lib.optionalString cfg.continuousBatching ''
+      args+=(--cont-batching)
+    ''}
+    ${lib.optionalString (cfg.chatTemplate != null) ''
+      args+=(--chat-template ${lib.escapeShellArg cfg.chatTemplate})
+    ''}
+    ${lib.optionalString (cfg.apiKey != null) ''
+      args+=(--api-key ${lib.escapeShellArg cfg.apiKey})
+    ''}
+    ${lib.optionalString cfg.metricsEndpoint ''
+      args+=(--metrics)
+    ''}
+    ${lib.optionalString cfg.embeddings ''
+      args+=(--embeddings)
+    ''}
+    ${lib.optionalString (cfg.extraFlags != [ ]) ''
+      args+=(${lib.escapeShellArgs cfg.extraFlags})
+    ''}
+
+    exec ${lib.getExe' cfg.package "llama-server"} "''${args[@]}"
+  '';
 in
 {
   options.services.llamacpp-swap = {
@@ -308,6 +473,76 @@ in
       default = true;
       description = "Open firewall for the server port.";
     };
+
+    memoryHigh = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = ''
+        Optional soft cgroup memory pressure point. Leave null for maximum
+        throughput because memory.high can throttle llama.cpp under pressure.
+      '';
+    };
+
+    memoryMax = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = ''
+        Optional hard cgroup memory ceiling. Leave null for maximum throughput.
+      '';
+    };
+
+    memoryLow = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = ''
+        Optional protected memory for LlamaSwap. This improves performance under
+        pressure without throttling the process.
+      '';
+    };
+
+    memoryEquilibrium = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = ''
+          Run a startup preflight that safely flushes used swap back into RAM
+          before starting llama.cpp.
+        '';
+      };
+
+      reserveMemoryMiB = lib.mkOption {
+        type = lib.types.int;
+        default = 2048;
+        description = ''
+          Free RAM reserve kept after swap flushing. Swap is only recycled when
+          MemAvailable can absorb used swap plus this reserve.
+        '';
+      };
+
+      compactMemory = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Compact memory before launching llama.cpp.";
+      };
+
+      dropCaches = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = ''
+          Drop page cache before launching. Disabled by default so mmap-backed
+          model pages can stay hot across restarts.
+        '';
+      };
+
+      disableServiceSwap = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = ''
+          Set MemorySwapMax=0 for the llama.cpp service so inference pages do
+          not migrate to swap after startup.
+        '';
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -344,54 +579,15 @@ in
 
       serviceConfig = {
         Type = "exec";
-        ExecStart = lib.concatStringsSep " " (
-          [
-            "${lib.getExe' cfg.package "llama-server"}"
-            "--host ${cfg.host}"
-            "--port ${toString cfg.port}"
-            "--model ${cfg.model}"
-            "--threads ${toString cfg.n_threads}"
-            "--threads-batch ${toString cfg.n_threads_batch}"
-            "--gpu-layers ${toString cfg.n_gpu_layers}"
-            "--main-gpu ${toString cfg.mainGpu}"
-            "--parallel ${toString cfg.n_parallel}"
-            "--ctx-size ${toString cfg.n_ctx}"
-            "--batch-size ${toString cfg.n_batch}"
-            "--ubatch-size ${toString cfg.n_ubatch}"
-          ]
-          # CUDA Graphs (no explicit flag needed in recent versions, enabled by default for bs=1)
-          # Flash Attention
-          ++ lib.optionals cfg.flashAttention [ "--flash-attn on" ]
-          # Memory options
-          ++ lib.optionals (!cfg.mmap) [ "--no-mmap" ]
-          ++ lib.optionals cfg.mlock [ "--mlock" ]
-          ++ lib.optionals cfg.noKvOffload [ "--no-kv-offload" ]
-          # Speculative decoding
-          ++ lib.optionals (cfg.speculativeDecoding.enable && cfg.speculativeDecoding.draftModel != null) [
-            "--model-draft ${cfg.speculativeDecoding.draftModel}"
-            "--gpu-layers-draft ${toString cfg.speculativeDecoding.draftGpuLayers}"
-            "--draft-max ${toString cfg.speculativeDecoding.draftMax}"
-            "--draft-min ${toString cfg.speculativeDecoding.draftMin}"
-            "--draft-p-min ${toString cfg.speculativeDecoding.draftPMin}"
-          ]
-          # Continuous batching
-          ++ lib.optionals cfg.continuousBatching [ "--cont-batching" ]
-          # Chat template
-          ++ lib.optionals (cfg.chatTemplate != null) [ "--chat-template ${cfg.chatTemplate}" ]
-          # API key
-          ++ lib.optionals (cfg.apiKey != null) [ "--api-key ${cfg.apiKey}" ]
-          # Metrics
-          ++ lib.optionals cfg.metricsEndpoint [ "--metrics" ]
-          # Embeddings
-          ++ lib.optionals cfg.embeddings [ "--embeddings" ]
-          # Extra flags
-          ++ cfg.extraFlags
-        );
+        ExecStart = "${launchScript}";
 
         Restart = "always";
         RestartSec = 5;
-        MemoryHigh = "7G";
-        MemoryMax = "10G";
+        MemoryAccounting = true;
+        OOMScoreAdjust = -500;
+        ManagedOOMPreference = "avoid";
+        Slice = "ml.slice";
+        LimitMEMLOCK = "infinity";
 
         # Use dedicated user
         DynamicUser = lib.mkForce false;
@@ -456,6 +652,21 @@ in
 
         # Writable for symlink management (needed for service startup)
         ReadWritePaths = [ ];
+      }
+      // lib.optionalAttrs (cfg.memoryLow != null) {
+        MemoryLow = cfg.memoryLow;
+      }
+      // lib.optionalAttrs (cfg.memoryHigh != null) {
+        MemoryHigh = cfg.memoryHigh;
+      }
+      // lib.optionalAttrs (cfg.memoryMax != null) {
+        MemoryMax = cfg.memoryMax;
+      }
+      // lib.optionalAttrs cfg.memoryEquilibrium.enable {
+        ExecStartPre = "+${memoryEquilibriumScript}";
+      }
+      // lib.optionalAttrs cfg.memoryEquilibrium.disableServiceSwap {
+        MemorySwapMax = "0";
       };
     };
 

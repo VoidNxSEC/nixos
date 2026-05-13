@@ -22,6 +22,13 @@ let
       inherit (profile) modelPath displayName;
       gpuLayers = profile.gpuLayers;
       contextSize = profile.contextSize;
+      batchSize = profile.batchSize;
+      ubatchSize = profile.ubatchSize;
+      parallel = profile.parallel;
+      threads = profile.threads;
+      threadsBatch = profile.threadsBatch;
+      noKvOffload = profile.noKvOffload;
+      mlock = profile.mlock;
       # Add file size if model exists
       modelExists = builtins.pathExists profile.modelPath;
     }) cfg.profiles
@@ -62,6 +69,69 @@ in
               description = ''
                 Context window size for this model.
                 If null, uses service default.
+              '';
+            };
+
+            batchSize = mkOption {
+              type = types.nullOr types.int;
+              default = null;
+              description = ''
+                Prompt processing batch size for this model.
+                If null, uses service default.
+              '';
+            };
+
+            ubatchSize = mkOption {
+              type = types.nullOr types.int;
+              default = null;
+              description = ''
+                GPU micro-batch size for this model.
+                If null, uses service default.
+              '';
+            };
+
+            parallel = mkOption {
+              type = types.nullOr types.int;
+              default = null;
+              description = ''
+                Number of parallel sequences for this model.
+                If null, uses service default.
+              '';
+            };
+
+            threads = mkOption {
+              type = types.nullOr types.int;
+              default = null;
+              description = ''
+                Generation thread count for this model.
+                If null, uses service default.
+              '';
+            };
+
+            threadsBatch = mkOption {
+              type = types.nullOr types.int;
+              default = null;
+              description = ''
+                Batch processing thread count for this model.
+                If null, uses service default.
+              '';
+            };
+
+            noKvOffload = mkOption {
+              type = types.nullOr types.bool;
+              default = null;
+              description = ''
+                Disable GPU KV-cache offload for this profile.
+                Set false for maximum GPU inference performance when VRAM allows.
+              '';
+            };
+
+            mlock = mkOption {
+              type = types.nullOr types.bool;
+              default = null;
+              description = ''
+                Lock model pages in RAM for this profile.
+                Set true for maximum performance when host RAM allows it.
               '';
             };
           };
