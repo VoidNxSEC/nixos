@@ -46,6 +46,18 @@
     securellm-mcp = {
       url = "github:VoidNxSEC/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    securellm-bridge = {
+      url = "github:VoidNxSEC/securellm-bridge";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    cognitive-vault = {
+      url = "github:VoidNxSEC/cognitive-vault";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    vmctl = {
+      url = "github:VoidNxSEC/vmctl";
+      inputs.nixpkgs.follows = "nixpkgs";
       inputs.spider-nix.follows = "spider-nix";
     };
 
@@ -63,6 +75,14 @@
     # Spider-Nix
     spider-nix = {
       url = "github:VoidNxSEC/spider-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    i915-governor = {
+      url = "github:VoidNxSEC/i915-governor";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    swissknife = {
+      url = "github:VoidNxSEC/swissknife";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -108,6 +128,13 @@
     # ═══════════════════════════════════════════════════════════════
     # SECURITY & SIEM TOOLS
     # ═══════════════════════════════════════════════════════════════
+    # Note: mlx-mcp uses rust-overlay which conflicts with nixpkgs.follows
+    # Commented for now, can be enabled when needed for Apple Silicon development
+    # mlx-mcp = {
+    #   url = "git+file:///home/kernelcore/dev/projects/mlx-mcp";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+
     #owasaka = {
     #url = "github:VoidNxSEC/O.W.A.S.A.K.A.";
     #inputs.nixpkgs.follows = "nixpkgs";
