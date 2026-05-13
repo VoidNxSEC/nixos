@@ -252,7 +252,7 @@ CI runs on GitHub Actions (primary) with a GitLab CI mirror. The main `ci.yml` w
 
 A Cachix binary cache (`marcosfpina`) is populated by CI so local rebuilds pull pre-built closures when available.
 
-For the full workflow catalog, composite actions, required secrets, and reusable-workflow examples, see [.github/README.md](.github/README.md). The GitLab pipeline is defined in [`.gitlab-ci.yml`](./.gitlab-ci.yml).
+For the full workflow catalog, composite actions, required secrets, and reusable-workflow examples, see [.github/CI-CD.md](.github/CI-CD.md). The GitLab pipeline is defined in [`.gitlab-ci.yml`](./.gitlab-ci.yml).
 
 ---
 
@@ -260,8 +260,8 @@ For the full workflow catalog, composite actions, required secrets, and reusable
 
 - [Technical Overview](docs/TECHNICAL-OVERVIEW.md)
 - [CI/CD Architecture](docs/CI-CD-ARCHITECTURE.md)
-- [GitHub Actions reference](.github/README.md) — composite actions, workflow catalog, secrets
-- [Workflow debugging guide](.github/workflows/README.md) — tmate, observability, notifications
+- [GitHub Actions reference](.github/CI-CD.md) — composite actions, workflow catalog, secrets
+- [Workflow debugging guide](.github/workflows/WORKFLOWS.md) — tmate, observability, notifications
 
 ---
 
