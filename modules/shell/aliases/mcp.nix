@@ -66,6 +66,23 @@
     "mcpc" = "bash /etc/nixos/scripts/mcp-helper.sh config";
 
     # ========================================
+    # MCP Context Switching (Dynamic Projects)
+    # ========================================
+
+    # Switch to specific project profile
+    "mcp-nixos" = "mcp-context profile nixos";
+    "mcp-dev" = "mcp-context profile dev";
+    "mcp-gemini" = "mcp-context profile gemini";
+    "mcp-codex" = "mcp-context profile codex";
+
+    # Auto-detect context from current directory
+    "mcp-auto" = "mcp-context auto";
+    "mcpa" = "mcp-context auto";
+
+    # Switch to custom path
+    "mcp-switch" = "mcp-context switch";
+
+    # ========================================
     # MCP Help & Documentation
     # ========================================
 

@@ -30,44 +30,51 @@
       # === Cache & IO Optimizations ===
       "--disk-cache-size=104857600" # 100MB disk cache limit
       "--media-cache-size=52428800" # 50MB media cache limit
-      "--disable-software-rasterizer" # Force GPU rasterization
+      # "--disable-software-rasterizer" # Force GPU rasterization
 
       # === GPU Acceleration (reduce CPU/IO) ===
-      "--enable-gpu-rasterization" # Use GPU for rendering
-      "--enable-zero-copy" # Zero-copy video decode
-      "--enable-hardware-overlays" # Hardware video overlays
-      "--ignore-gpu-blocklist" # Force GPU even if blocklisted
+      # "--enable-gpu-rasterization" # Use GPU for rendering
+      # "--enable-zero-copy" # Zero-copy video decode
+      # "--enable-hardware-overlays" # Hardware video overlays
+      # "--ignore-gpu-blocklist" # Force GPU even if blocklisted
 
       # === Network & Preloading ===
       "--disable-backgrounding-occluded-windows" # Don't throttle background tabs
       "--disable-background-timer-throttling" # Keep timers running
 
       # === Stability & Performance ===
-      "--no-sandbox" # Disable sandbox (already sandboxed by Firejail)
-      "--disable-gpu-sandbox" # Disable GPU sandbox
-      "--disable-seccomp-filter-sandbox" # Disable seccomp
+      # "--no-sandbox" # Disable sandbox (already sandboxed by Firejail)
+      # "--disable-gpu-sandbox" # Disable GPU sandbox
+      # "--disable-seccomp-filter-sandbox" # Disable seccomp
     ];
   };
 
-  # Overlay to wrap Antigravity with optimized flags
+  # ═══════════════════════════════════════════════════════════════
+  # ANTIGRAVITY OVERLAY - MIGRATED to modules/packages/antigravity/
+  # ═══════════════════════════════════════════════════════════════
+  # This overlay has been replaced by modular architecture:
+  #   - modules/packages/antigravity/tuning.nix (argv.json method)
+  #   - modules/packages/antigravity/security.nix (sandboxing)
+  # Kept here for reference only (not active)
+  # ═══════════════════════════════════════════════════════════════
+
   nixpkgs.overlays = [
     (final: prev: {
-      # Only override if antigravity package exists
-      antigravity =
-        if prev ? antigravity then
-          prev.antigravity.overrideAttrs (old: {
-            # Wrap the binary with performance flags
-            postFixup = (old.postFixup or "") + ''
-              wrapProgram $out/bin/antigravity \
-                --add-flags "--ozone-platform-hint=auto" \
-                --add-flags "--enable-features=WaylandWindowDecorations,VaapiVideoDecodeLinuxGL" \
-                --add-flags "--disable-features=UseChromeOSDirectVideoDecoder" \
-                --add-flags "$CHROMIUM_FLAGS" \
-                --set ELECTRON_OZONE_PLATFORM_HINT "auto"
-            '';
-          })
-        else
-          prev.antigravity;
+      # ANTIGRAVITY: Migrated to modules/packages/antigravity/
+      # antigravity =
+      #   if prev ? antigravity then
+      #     prev.antigravity.overrideAttrs (old: {
+      #       postFixup = (old.postFixup or "") + ''
+      #         wrapProgram $out/bin/antigravity \
+      #           --add-flags "--ozone-platform-hint=auto" \
+      #           --add-flags "--enable-features=WaylandWindowDecorations,VaapiVideoDecodeLinuxGL" \
+      #           --add-flags "--disable-features=UseChromeOSDirectVideoDecoder" \
+      #           --add-flags "$CHROMIUM_FLAGS" \
+      #           --set ELECTRON_OZONE_PLATFORM_HINT "auto"
+      #       '';
+      #     })
+      #   else
+      #     prev.antigravity;
 
       # Also optimize Brave if present
       brave =

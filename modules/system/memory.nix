@@ -35,12 +35,18 @@ with lib;
       "vm.dirty_background_ratio" = 20; # Background writes at 3GB
 
       # Overcommit: 0=heuristic (safer than strict=2, allows flexibility)
-      "vm.overcommit_memory" = 0;
+      "vm.overcommit_memory" = 1;
 
       # Additional build optimizations
       "vm.min_free_kbytes" = 131072; # Keep 128MB free for emergencies
       "vm.watermark_scale_factor" = 200; # More aggressive reclaim
       "vm.admin_reserve_kbytes" = 131072; # 128MB reserved for admin recovery
+
+      # inotify — dev tools (Vite, VS Code, Tailscale, udev) + Python .venv
+      # + node_modules exhaust the default 8192/524288 limits quickly
+      "fs.inotify.max_user_watches" = 1048576;
+      "fs.inotify.max_user_instances" = 1024;
+      "fs.inotify.max_queued_events" = 32768;
     };
 
     # ============================================
@@ -81,20 +87,36 @@ with lib;
       };
     };
 
-    # Early OOM killer - TUNED for heavy workloads
-    services.earlyoom = {
+    # ============================================
+    # SYSTEMD-OOMD - Modern Userspace OOM Killer
+    # ============================================
+    systemd.oomd = {
       enable = true;
-      freeMemThreshold = 3; # Kill processes when <3% RAM free
-      freeSwapThreshold = 5; # Kill when <5% swap free
-      enableNotifications = true;
-      extraArgs = [
-        "-g" # Kill entire process group
-        "--prefer"
-        "(cc1|rustc|ld|cargo|nix-build)" # Prefer killing build processes
-        "--avoid"
-        "(X|plasma|gnome|firefox|chrome|hyprland|waybar)" # Avoid killing desktop
-      ];
+      enableRootSlice = true;
+      enableUserSlices = true;
+      settings.OOM = {
+        DefaultMemoryPressureLimit = "60%";
+        DefaultMemoryPressureDurationSec = "20";
+      };
     };
+
+    # Disable EarlyOOM (superseded by systemd-oomd)
+    services.earlyoom.enable = false;
+
+    # Configure OOMD policies for top-level slices
+    systemd.slices."system".sliceConfig = {
+      ManagedOOMMemoryPressure = "kill";
+      ManagedOOMMemoryPressureLimit = "80%";
+    };
+
+    systemd.slices."user".sliceConfig = {
+      ManagedOOMMemoryPressure = "kill";
+      ManagedOOMMemoryPressureLimit = "80%";
+    };
+
+    # Protect critical services from OOM kill
+    systemd.services.nix-daemon.serviceConfig.ManagedOOMPreference = "avoid";
+    systemd.services.dbus.serviceConfig.ManagedOOMPreference = "avoid";
 
     # ZRAM swap - Enhanced for heavy compilation
     zramSwap = mkIf config.kernelcore.system.memory.zram.enable {
@@ -104,11 +126,11 @@ with lib;
       priority = 10; # Higher priority than disk swap
     };
 
-    # Traditional swap file
+    # Traditional swap file - Emergency fallback only
     swapDevices = [
       {
         device = "/swapfile";
-        size = 32768;
+        size = 4096; # 4GB - reduced from 32GB (was excessive for 16GB RAM)
         priority = 5;
       }
     ];
