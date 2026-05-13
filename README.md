@@ -248,30 +248,11 @@ sudo nixos-rebuild switch --flake .#kernelcore
 
 ## CI/CD
 
-### GitHub Actions
+CI runs on GitHub Actions (primary) with a GitLab CI mirror. The main `ci.yml` workflow runs `nix flake check` and builds the `kernelcore` closure on every push; additional workflows handle observability/debug (tmate), deployment, rollback, SOPS secret setup, and weekly `flake.lock` updates.
 
-The repository uses several workflows under [`.github/workflows/`](.github/workflows/):
+A Cachix binary cache (`marcosfpina`) is populated by CI so local rebuilds pull pre-built closures when available.
 
-| Workflow                | Purpose                                              |
-| ----------------------- | ---------------------------------------------------- |
-| `ci.yml`                | Main CI: flake check + kernelcore closure build      |
-| `pr-validation.yml`     | Reusable PR validation (format, build, security)     |
-| `nixos-build.yml`       | Build & test with optional tmate debug               |
-| `ci-observability.yml`  | Reusable observability/debug with Discord/Telegram   |
-| `deploy.yml`            | Manual deploy via `workflow_dispatch`                |
-| `rollback.yml`          | Manual rollback with health checks                   |
-| `setup-sops.yml`        | Reusable SOPS secret decryption                      |
-| `update-lock.yml`       | Weekly `flake.lock` updates (Mondays 06:00 UTC)      |
-
-See [.github/README.md](.github/README.md) for composite actions and usage details.
-
-### GitLab CI
-
-[`.gitlab-ci.yml`](./.gitlab-ci.yml) provides a 4-stage pipeline (check, build, test, security) with Vulnix + Trivy scans and Pages-published reports.
-
-### Binary Cache
-
-Cachix (`marcosfpina`) is populated by CI; local rebuilds pull pre-built closures when available.
+For the full workflow catalog, composite actions, required secrets, and reusable-workflow examples, see [.github/README.md](.github/README.md). The GitLab pipeline is defined in [`.gitlab-ci.yml`](./.gitlab-ci.yml).
 
 ---
 
@@ -279,8 +260,8 @@ Cachix (`marcosfpina`) is populated by CI; local rebuilds pull pre-built closure
 
 - [Technical Overview](docs/TECHNICAL-OVERVIEW.md)
 - [CI/CD Architecture](docs/CI-CD-ARCHITECTURE.md)
-- [GitHub Actions guide](.github/README.md)
-- [Workflows guide](.github/workflows/README.md)
+- [GitHub Actions reference](.github/README.md) — composite actions, workflow catalog, secrets
+- [Workflow debugging guide](.github/workflows/README.md) — tmate, observability, notifications
 
 ---
 
