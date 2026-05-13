@@ -27,7 +27,7 @@ on:
         required: false
 
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
 
 env:
   CACHIX_NAME: kernelcore
@@ -35,7 +35,7 @@ env:
 jobs:
   format-check:
     name: Check Formatting
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     steps:
       - name: Setup Git LFS
         run: |
@@ -62,11 +62,7 @@ jobs:
       - name: Check Nix formatting
         run: |
           echo "🎨 Checking Nix formatting..."
-          nix fmt -- --check . || {
-            echo "❌ Formatting check failed!"
-            echo "Run 'nix fmt' to fix formatting issues"
-            exit 1
-          }
+          nix flake check --show-trace
           echo "✅ Formatting check passed"
 
       - name: Check for trailing whitespace
@@ -81,7 +77,7 @@ jobs:
 
   flake-check:
     name: Validate Flake
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     steps:
       - name: Setup Git LFS
         run: |
@@ -125,7 +121,7 @@ jobs:
 
   build-test:
     name: Build Test
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     needs: [format-check, flake-check]
     steps:
       - name: Setup Git LFS
@@ -178,7 +174,7 @@ jobs:
 
   security-scan:
     name: Security Scan
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     needs: build-test
     continue-on-error: true
     steps:
@@ -226,7 +222,7 @@ jobs:
 
   summary:
     name: PR Summary
-    runs-on: [self-hosted, nixos]
+    runs-on: ubuntu-latest
     needs: [format-check, flake-check, build-test, security-scan]
     if: always()
     steps:

@@ -13,7 +13,7 @@ with lib;
     kernelcore.virtualization.virt-manager = mkEnableOption "Enable virt-manager GUI";
     kernelcore.virtualization.libvirtdGroup = mkOption {
       type = types.listOf types.str;
-      default = [ "kernelcore" ];
+      default = [ config.system.user.username ];
       description = "Users to add to the libvirtd group for VM management";
     };
     kernelcore.virtualization.virtiofs.enable = mkEnableOption "Enable VirtioFS for easy host-guest file sharing";

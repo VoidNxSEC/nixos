@@ -1,13 +1,17 @@
 # Swissknife Debug Tools Integration
 # Professional debugging, monitoring, and system health tools
-# Note: Tools come from inputs.swissknife flake (git+file:///home/kernelcore/dev/projects/swissknife)
+# Note: Tools come from inputs.swissknife flake (github:voidnxsec/swissknife)
 {
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }:
 
+let
+  swissknife-tools = inputs.swissknife.packages.${pkgs.system};
+in
 {
   options.kernelcore.swissknife = {
     enable = lib.mkEnableOption "Swissknife Debug Tools";
@@ -20,10 +24,9 @@
   };
 
   config = lib.mkIf config.kernelcore.swissknife.enable {
-    # Install swissknife tools from flake input
-    # pkgs.swissknife-tools is defined in flake.nix via overlay
+    # Install swissknife tools from flake input directly
     environment.systemPackages =
-      with pkgs.swissknife-tools;
+      with swissknife-tools;
       [
         swiss-rebuild
         swiss-doctor

@@ -1,3 +1,4 @@
+# TODO: This script are marked as deprecated,
 # Secrets Management Module
 #
 # SOPS and secrets management tools

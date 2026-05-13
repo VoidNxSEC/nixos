@@ -24,7 +24,7 @@ let
     set -euo pipefail
 
     SCRIPTS_DIR="/etc/nixos/scripts"
-    MCP_DIR="/home/kernelcore/dev/Projects/secure-llm-bridge/mcp-server"
+    MCP_DIR="${config.system.user.homeDir}/master/securellm-mcp"
     CYAN="\033[0;36m"
     GREEN="\033[0;32m"
     RED="\033[0;31m"
