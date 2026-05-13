@@ -210,6 +210,8 @@
       python.enable = true;
       nodejs.enable = true;
       nix.enable = true;
+      lua.enable = true;
+      editor.enable = true;
       jupyter = {
         enable = true;
         kernels = {
@@ -913,7 +915,7 @@
     };
 
     gitea-showcase = {
-      enable = true;
+      enable = false;
       domain = "gitea.voidnx.com";
       rootUrl = "https://gitea.voidnx.com/";
       listenAddress = "127.0.0.1";
