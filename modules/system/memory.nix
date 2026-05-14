@@ -42,11 +42,11 @@ with lib;
       "vm.watermark_scale_factor" = 200; # More aggressive reclaim
       "vm.admin_reserve_kbytes" = 131072; # 128MB reserved for admin recovery
 
-      # inotify — dev tools (Vite, VS Code, Tailscale, udev) + Python .venv
-      # + node_modules exhaust the default 8192/524288 limits quickly
-      "fs.inotify.max_user_watches" = 500000;
-      "fs.inotify.max_user_instances" = 100000;
-      "fs.inotify.max_queued_events" = 100000;
+      # inotify - enough watches for Chromium/Electron + VS Code + Vite
+      # monorepos, without allowing runaway watcher instances to pin kernel RAM.
+      "fs.inotify.max_user_watches" = 524288;
+      "fs.inotify.max_user_instances" = 1024;
+      "fs.inotify.max_queued_events" = 32768;
     };
 
     # ============================================

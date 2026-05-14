@@ -21,6 +21,7 @@
     ./lynis
     ./appflowy
     ./antigravity
+    ./brev-cli
 
     # Extension based | Bwrap rules applied | Hardened
     ./gemini
