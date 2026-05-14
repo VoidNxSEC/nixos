@@ -175,6 +175,7 @@
     packages.claude.enable = true;
     packages.zellij.enable = false;
     packages.lynis.enable = true;
+    packages."brev-cli".enable = true;
     packages.js.enable = false;
     packages.f5-tts.enable = lib.mkForce false;
     packages.hubstaff.enable = false;
@@ -1144,12 +1145,13 @@
         #!/usr/bin/env bash
 
         # Original brev binary path
-        BREV_BIN="${pkgs.brev-cli}/bin/brev"
+        BREV_BIN="${config.kernelcore.packages."brev-cli".package}/bin/brev"
 
         # Real paths
         REAL_HOME="$HOME"
         BREV_HOME="$REAL_HOME/.brev"
         NIX_BREV_CONFIG="$REAL_HOME/.ssh/brev_config"
+        export BREV_NO_ANALYTICS="''${BREV_NO_ANALYTICS:-1}"
 
         # Usar um cache persistente para não matar processos em background (ex: Fleet IDE)
         FAKE_HOME="$REAL_HOME/.cache/brev_fake_home"
@@ -1164,9 +1166,9 @@
 
         # Função para extrair o config de forma limpa
         sync_config() {
-            echo "[NixOS] Sincronizando o estado declarativo do Brev..."
+            echo "[NixOS] Sincronizando o estado declarativo do Brev..." >&2
             # Rodamos um refresh silencioso no Fake Home para forçar a escrita do arquivo
-            HOME="$FAKE_HOME" "$BREV_BIN" refresh > /dev/null 2>&1
+            HOME="$FAKE_HOME" "$BREV_BIN" refresh < /dev/null > /dev/null 2>&1
 
             if [ -f "$BREV_HOME/ssh_config" ]; then
                 # Substitui o caminho do cache persistente pelo real e gera o arquivo final
@@ -1176,23 +1178,28 @@
         }
 
         # Lógica de Roteamento
-        if [[ "$1" == "login" ]] || [[ "$1" == "start" ]] || [[ "$1" == "refresh" ]]; then
+        case "$1" in
+          login|start|create|provision|delete|reset|refresh|register|deregister|enable-ssh|grant-ssh|revoke-ssh|scale)
             # Executa o comando na sandbox, depois sincroniza os configs
             HOME="$FAKE_HOME" "$BREV_BIN" "$@" || EXIT_CODE=$?
             sync_config
             exit ''${EXIT_CODE:-0}
+            ;;
 
-        elif [[ "$1" == "open" ]] || [[ "$1" == "shell" ]]; then
-            # Pulo do Gato: Sincroniza o estado ANTES de abrir a IDE/Shell
+          open|shell|ssh|exec|copy|cp|scp|port-forward)
+            # Sincroniza o estado antes de comandos que dependem do SSH gerado pelo Brev
             sync_config
 
-            # Executa o shell/IDE passando o FAKE_HOME persistente,
-            # garantindo que o Fleet não perca o File Descriptor depois.
+            # Executa o acesso remoto passando o FAKE_HOME persistente,
+            # garantindo que IDEs não percam o File Descriptor depois.
             exec env HOME="$FAKE_HOME" "$BREV_BIN" "$@"
-        else
+            ;;
+
+          *)
             # Comandos read-only passam direto
             exec "$BREV_BIN" "$@"
-        fi
+            ;;
+        esac
       '')
       slack
       zoom
