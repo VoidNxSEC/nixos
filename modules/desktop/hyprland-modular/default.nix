@@ -603,6 +603,9 @@ in
     wayland.windowManager.hyprland = {
       enable = true;
       package = pkgs.hyprland;
+      # Keep the active Hyprland config on hyprland.conf. Home Manager 26.05
+      # defaults to Lua, but Hyprland still prefers an existing .conf first.
+      configType = "hyprlang";
       xwayland.enable = true;
       systemd.enable = true;
 
@@ -791,6 +794,8 @@ in
 
       extraConfig = cfg.extraConfig;
     };
+
+    xdg.configFile."hypr/hyprland.conf".force = true;
 
     # Hypridle configuration
     services.hypridle = lib.mkIf cfg.features.idleManagement {
