@@ -204,12 +204,8 @@ jobs:
 
   deploy:
     name: Deploy to NixOS
-    runs-on: [ubuntu-latest-m, nixos]
-    needs: [setup-secrets, build, test-modules, security, format]
-  deploy:
-    name: Deploy to NixOS
     runs-on: [self-hosted, nixos]
-    needs: [setup-secrets, build, test-modules, security]
+    needs: [setup-secrets, build, test-modules, security, format]
     # Deploy on:
     # 1. Push to main (automatic)
     # 2. Manual workflow_dispatch with deploy=true
