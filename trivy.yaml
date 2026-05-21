@@ -1,4 +1,0 @@
-# Trivy Configuration for NixOS Repo
-exit-code: 0
-severity: ["HIGH", "CRITICAL"]
-ignore-unfixed: true
