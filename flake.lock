@@ -1067,11 +1067,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779160702,
-        "narHash": "sha256-frUihZLlBLdcFN95mq5QiQmxF2M16nxtmw1GH4rhZmg=",
+        "lastModified": 1779247103,
+        "narHash": "sha256-DwltBoBl9a7fCzlKi3xnNha1NHbfvawwkNdnTXEyfFQ=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "8cd592658d4448c57326aaa819e1c2f91086eb40",
+        "rev": "86dbfb70dc1c2967245d87ed6d07d2c8bda305e3",
         "type": "github"
       },
       "original": {
@@ -1112,11 +1112,11 @@
         "spider-nix": "spider-nix"
       },
       "locked": {
-        "lastModified": 1779246899,
-        "narHash": "sha256-BGa6uqSzvlxX0J4sNwafONzUyDEwv9TF4Ma3ar8Orec=",
+        "lastModified": 1779327874,
+        "narHash": "sha256-fvkzuoV6CA6WAZuL4u+KjsrAMpbwO2KuhLOFPLMSNCM=",
         "owner": "VoidNxSEC",
         "repo": "securellm-mcp",
-        "rev": "264fba7f1c78c7a77f8c247d6f8b212f6c507521",
+        "rev": "f3e90fbf4b129eb174606010199b2a7baf7ac54e",
         "type": "github"
       },
       "original": {
@@ -1173,11 +1173,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779088385,
-        "narHash": "sha256-849KfRhAn5PPtHG1PbN7pjo+qPFY+7BJ5CDxGK04Bs4=",
+        "lastModified": 1779266441,
+        "narHash": "sha256-mLC6dKx4GvVXu28i58D0t7k8Qj5WJ0lia+WoeUwlJPI=",
         "ref": "refs/heads/main",
-        "rev": "7b7867d5c5de81d18350548cd7daeed7faf9c1c3",
-        "revCount": 31,
+        "rev": "04254f2578787fd6c31d0b52f350109afc6cda7c",
+        "revCount": 36,
         "type": "git",
         "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
       },
