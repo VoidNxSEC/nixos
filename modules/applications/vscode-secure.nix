@@ -22,7 +22,7 @@ in
 
     allowNetworking = mkOption {
       type = types.bool;
-      default = true;
+      default = false;
       description = "Allow network access (required for extensions and remote development)";
     };
 
