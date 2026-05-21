@@ -2,9 +2,15 @@ name: NixOS Build & Test
 
 on:
   push:
+
     branches: [main, dev, staging]
   pull_request:
     branches: [staging]
+
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
   workflow_dispatch:
     inputs:
       deploy:
@@ -12,6 +18,7 @@ on:
         required: false
         default: false
         type: boolean
+
       build-iso:
         description: "Build ISO image"
         required: false
@@ -27,6 +34,19 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+
+      enable-tmate:
+        description: "Enable tmate debug session"
+        required: false
+        default: false
+        type: boolean
+      tmate-on-failure:
+        description: "Enable tmate only on failure"
+        required: false
+        default: true
+        type: boolean
+
+
 env:
   CACHIX_CACHE_NAME: marcosfpina
 
@@ -39,10 +59,14 @@ jobs:
 
   check:
     name: Check Nix flake
+
     runs-on: ubuntu-latest
     needs: setup-secrets
     timeout-minutes: 20
     steps:
+      - name: Ensure Nix daemon is running
+        run: systemctl is-active --quiet nix-daemon || sudo systemctl restart nix-daemon
+
       - name: Setup Git LFS
         run: |
           git lfs install --force
@@ -86,6 +110,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+    strategy:
+      matrix:
+        target: [toplevel, iso, vm-image]
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
 
       - name: Setup Cachix
         uses: cachix/cachix-action@v15
@@ -134,6 +178,60 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Build ${{ matrix.target }}
+        id: build
+        run: |
+          case "${{ matrix.target }}" in
+            toplevel)
+              echo "Building main system configuration..."
+              nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
+                --show-trace --print-build-logs
+              ;;
+            iso)
+              echo "Building ISO image..."
+              nix build .#packages.x86_64-linux.iso \
+                --show-trace --print-build-logs
+              ;;
+            vm-image)
+              echo "Building VM image..."
+              nix build .#packages.x86_64-linux.vm-image \
+                --show-trace --print-build-logs
+              ;;
+          esac
+
+      - name: Store build artifacts
+        if: matrix.target != 'toplevel'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nixos-${{ matrix.target }}
+          path: result/
+          retention-days: 7
+
+      - name: Check derivation closure size
+        run: |
+          nix path-info -Sh .#nixosConfigurations.kernelcore.config.system.build.toplevel
+
+  test-modules:
+    name: Test NixOS modules
+    runs-on: ubuntu-latest
+    needs: [setup-secrets, check]
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Ensure Git tracking for Nix
+        run: |
+          git add -A
+          git status --short
+
       - name: Setup Cachix
         uses: cachix/cachix-action@v15
         with:
@@ -142,6 +240,20 @@ jobs:
 
       - name: Verify systemd services syntax
         run: |
+      - name: Test dev shells
+        run: |
+          echo "Testing development shells..."
+          nix develop .#python --command python --version
+          nix develop .#cuda --command nvcc --version || echo "CUDA shell test skipped (no GPU in CI)"
+
+      - name: Test Docker images build
+        run: |
+          echo "Building Docker images..."
+          nix build .#packages.x86_64-linux.image-app --print-build-logs
+
+      - name: Verify systemd services syntax
+        run: |
+          echo "Checking systemd services..."
           nix eval .#nixosConfigurations.kernelcore.config.systemd.services --apply builtins.attrNames
 
   security:
@@ -149,7 +261,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     timeout-minutes: 15
-    steps:
+    needs: build   steps:
       - name: Setup Git LFS
         run: |
           git lfs install --force
