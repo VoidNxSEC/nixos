@@ -376,12 +376,11 @@
         docker-buildx
         podman
         podman-compose
-        python3
-        python3Packages.pip
+        python313
+        python313Packages.pip
         pipx
         nodejs
         bun
-        trivy
         syft
         semgrep
       ];
@@ -1133,7 +1132,7 @@
       #koboldcpp
       #sillytavern
       alacritty
-      opencode
+      #opencode
       xclip
       glab
       gh
@@ -1335,6 +1334,9 @@
   ];
 
   programs.zsh.enable = true;
+  programs.vscode-secure = {
+    enable = true;
+  };
 
   # Enable Remote SSH extension for VSCode-like editors
   programs.vscode-remote-ssh = {
