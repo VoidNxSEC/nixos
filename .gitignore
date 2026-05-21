@@ -5,6 +5,7 @@ build/
 cache/
 node_modules/
 
+
 # Binary installers / large downloads (must be fetched from upstream)
 *.deb
 *.rpm
@@ -124,6 +125,7 @@ projects/cognitive-vault/core/target/debug/**
 modules/packages/js-packages/storage/
 modules/packages/deb-packages/storage
 
+
 # Local artifacts
 modules/packages/google-chrome/
 scripts/ssh_sessions.db
@@ -131,3 +133,4 @@ secrets/*.backup-*
 
 # Archived modules (local-only, not tracked)
 modules/_archive/
+
