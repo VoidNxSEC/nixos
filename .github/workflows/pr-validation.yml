@@ -27,6 +27,7 @@ on:
         required: false
 
   pull_request:
+
     branches: [ main, dev ]
 
 env:
@@ -63,6 +64,11 @@ jobs:
         run: |
           echo "🎨 Checking Nix formatting..."
           nix flake check --show-trace
+          nix fmt -- --check . || {
+            echo "❌ Formatting check failed!"
+            echo "Run 'nix fmt' to fix formatting issues"
+            exit 1
+          }
           echo "✅ Formatting check passed"
 
       - name: Check for trailing whitespace
@@ -78,7 +84,6 @@ jobs:
   flake-check:
     name: Validate Flake
     runs-on: ubuntu-latest
-    steps:
       - name: Setup Git LFS
         run: |
           git lfs install --force
@@ -210,7 +215,7 @@ jobs:
       - name: Check for exposed secrets
         run: |
           echo "🔍 Scanning for exposed secrets..."
-          
+
           # Check for common secret patterns
           if git diff --name-only origin/${{ github.base_ref }}..HEAD | \
              xargs grep -l -E "(password|secret|token|key).*=.*['\"]" 2>/dev/null; then
@@ -239,7 +244,7 @@ jobs:
           echo "| Build | ${{ needs.build-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security | ${{ needs.security-scan.result == 'success' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           if [[ "${{ needs.format-check.result }}" == "success" && \
                 "${{ needs.flake-check.result }}" == "success" && \
                 "${{ needs.build-test.result }}" == "success" ]]; then
