@@ -746,7 +746,6 @@ in
             disable_splash_rendering = true;
             mouse_move_enables_dpms = true;
             key_press_enables_dpms = true;
-            vfr = true;
             focus_on_activate = true;
             animate_manual_resizes = true;
             animate_mouse_windowdragging = true;
@@ -766,10 +765,10 @@ in
           debug = {
             disable_logs = true;
             disable_time = true;
+            vfr = true;
           };
 
           dwindle = {
-            pseudotile = true;
             preserve_split = true;
             force_split = 2;
             smart_split = true;

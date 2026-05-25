@@ -104,8 +104,8 @@ rec {
       [
         "${mainMod}, V, togglefloating"
         "${mainMod}, P, pseudo"
-        "${mainMod}, J, togglesplit"
-        "${mainMod}, Z, togglesplit"
+        "${mainMod}, J, layoutmsg, togglesplit"
+        "${mainMod}, Z, layoutmsg, togglesplit"
       ]
 
       # Window groups
