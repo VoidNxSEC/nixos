@@ -124,6 +124,7 @@ modules/packages/tar-packages/storage/
 projects/cognitive-vault/core/target/debug/**
 modules/packages/js-packages/storage/
 modules/packages/deb-packages/storage
+modules/packages/_archive/
 
 
 # Local artifacts
