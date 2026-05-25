@@ -108,6 +108,7 @@
       {
         condition = "gitdir:/etc/nixos/";
         contents = {
+          core.fileMode = false;
           user = {
             name = "VoidNxLabs";
             email = "sec@voidnxlabs.com";
