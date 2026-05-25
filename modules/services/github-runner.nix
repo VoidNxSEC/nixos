@@ -156,7 +156,7 @@ let
         "linux"
       ]
       ++ labels;
-      package = pkgs.github-runner;
+      nodeRuntimes = [ "node24" ];
       extraPackages = defaultPackages ++ cfg.extraPackages;
       serviceOverrides = commonServiceOverrides;
     };
