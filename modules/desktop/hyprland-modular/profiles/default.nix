@@ -67,9 +67,12 @@ in
 
       # Performance misc settings
       misc = {
-        vfr = false; # Disable VFR for consistent frame timing
         vrr = 2; # Fullscreen only VRR
         no_direct_scanout = false;
+      };
+
+      debug = {
+        vfr = false; # Disable VFR for consistent frame timing
       };
 
       # Render optimizations
@@ -161,10 +164,13 @@ in
       };
 
       misc = {
-        vfr = true; # Save power when idle
         vrr = 0; # No VRR
         animate_manual_resizes = false;
         animate_mouse_windowdragging = false;
+      };
+
+      debug = {
+        vfr = true; # Save power when idle
       };
     };
   };
@@ -313,6 +319,9 @@ in
 
       misc = {
         vrr = 0; # Disable VRR for consistent capture
+      };
+
+      debug = {
         vfr = false; # Consistent frame timing for OBS
       };
     };
