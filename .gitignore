@@ -126,6 +126,14 @@ modules/packages/js-packages/storage/
 modules/packages/deb-packages/storage
 modules/packages/_archive/
 
+# Model Languages
+.claude
+.codex
+.mcp.json
+
+# SOPS defaults
+secrets
+sec/*.asc
 
 # Local artifacts
 modules/packages/google-chrome/
@@ -134,4 +142,3 @@ secrets/*.backup-*
 
 # Archived modules (local-only, not tracked)
 modules/_archive/
-
