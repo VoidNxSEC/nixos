@@ -189,7 +189,7 @@
         # WINDOW MANAGEMENT ENHANCEMENTS
         # ========================================
         # Toggle split direction
-        "$mainMod, Z, togglesplit"
+        "$mainMod, Z, layoutmsg, togglesplit"
         # Pin window (keep on all workspaces)
         "$mainMod, X, pin"
         # NOTE: centerwindow conflicts with clipboard (SUPER+C)
@@ -355,7 +355,6 @@
         mouse_move_enables_dpms = true;
         key_press_enables_dpms = true;
         vrr = 1; # Always on VRR (0=off, 1=fullscreen only, 2=always)
-        vfr = true; # Variable Frame Rate for power saving
         force_default_wallpaper = 0;
         focus_on_activate = true;
         animate_manual_resizes = true;
@@ -378,11 +377,11 @@
       debug = {
         disable_logs = true;
         disable_time = true;
+        vfr = true; # Variable Frame Rate for power saving
       };
 
       # Dwindle layout
       dwindle = {
-        pseudotile = true;
         preserve_split = true;
         force_split = 2;
         smart_split = true;

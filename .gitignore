@@ -129,7 +129,7 @@ modules/packages/_archive/
 # Model Languages
 .claude
 .codex
-.mcp.json
+#.mcp.json
 
 # SOPS defaults
 secrets

@@ -20,7 +20,7 @@ in
     uv
     setuptools
     wheel
-    pipx
+    #pipx
     pip-tools
   ];
 
