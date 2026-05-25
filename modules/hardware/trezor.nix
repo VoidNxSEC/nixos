@@ -27,11 +27,11 @@ in
       with pkgs;
       [
         trezor-suite
-        trezor_agent
+        python313Packages.trezor
       ]
       ++ optionals cfg.enableSSHAgent [
-        libagent
         pinentry
+        #python313Packages.libagent
       ];
 
     # Trezor udev rules

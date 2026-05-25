@@ -2,7 +2,7 @@ name: Test Self-Hosted Runner
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch: # Permite executar manualmente
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
         with:
           lfs: true
           fetch-depth: 0
-      
+
       - name: System Information
         run: |
           echo "🎉 Self-Hosted Runner is working!"
@@ -42,14 +42,14 @@ jobs:
           echo ""
           echo "🧠 Memory:"
           free -h | grep Mem
-      
+
       - name: Test Nix
         run: |
           echo "🔧 Testing Nix installation..."
           nix --version
           echo ""
           echo "✅ Nix is working!"
-      
+
       - name: Test Git
         run: |
           echo "🔧 Testing Git..."
@@ -57,7 +57,7 @@ jobs:
           echo "Git branch: $(git branch --show-current)"
           echo ""
           echo "✅ Git is working!"
-      
+
       - name: Test Available Tools
         run: |
           echo "🛠️ Available tools:"
@@ -66,7 +66,7 @@ jobs:
           echo "- bash: $BASH_VERSION"
           echo ""
           echo "✅ All tools available!"
-      
+
       - name: Success Report
         run: |
           echo ""
@@ -79,3 +79,4 @@ jobs:
           echo "║   Host: $(hostname)                    ║"
           echo "║                                        ║"
           echo "╚════════════════════════════════════════╝"
+
