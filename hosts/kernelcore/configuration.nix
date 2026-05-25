@@ -378,8 +378,8 @@
         podman-compose
         python313
         python313Packages.pip
-        pipx
-        nodejs
+        #pipx
+        nodejs_24
         bun
         syft
         semgrep
@@ -710,10 +710,10 @@
     };
 
     displayManager = {
-      gdm = {
-        enable = false;
-        wayland = true;
-      };
+      # gdm = {
+      #enable = false;
+      # wayland = true;
+      #};
       sddm = {
         enable = true;
         wayland.enable = true;
@@ -1082,6 +1082,7 @@
       "kvm"
       "mcp-shared"
       "input"
+      "plugdev"
     ];
     hashedPasswordFile = "/etc/nixos/sec/user-password";
     openssh.authorizedKeys.keys = [
@@ -1129,10 +1130,7 @@
       codex
       qbittorrent
       # vllm # FIXME: upstream nixpkgs broken patch for llama-cpp-python (406)
-      #koboldcpp
-      #sillytavern
       alacritty
-      #opencode
       xclip
       glab
       gh
