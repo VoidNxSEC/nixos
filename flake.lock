@@ -472,6 +472,13 @@
         "ref": "refs/heads/main",
         "rev": "864dc89c9595095b5368a890fb39afbc75f590ca",
         "revCount": 7368,
+
+        "lastModified": 1779729308,
+        "narHash": "sha256-tMt7oeAahwHGDgSIf5XKZoUXenOvlxjI0KBPku97tzM=",
+        "ref": "refs/heads/main",
+        "rev": "bb3353f864be97e9236cfafca68ce71d7cf590dc",
+        "revCount": 7364,
+
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1456,11 +1463,12 @@
     "xwayland-satellite-unstable": {
       "flake": false,
       "locked": {
+
         "lastModified": 1779745227,
         "narHash": "sha256-yqY7RtEJGJiENzR0GwL6q69tSAy6xAAmAcLuIhLjPf8=",
         "owner": "Supreeeme",
         "repo": "xwayland-satellite",
-        "rev": "5d1efbc9dc3ab1c10160b656e0247f3325daf0f2",
+        "rev": "5d1efbc9dc3ab1c10160b656e0247f3325daf0f2",        
         "type": "github"
       },
       "original": {
