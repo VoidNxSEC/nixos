@@ -378,9 +378,10 @@
         podman-compose
         python313
         python313Packages.pip
-        #pipx
+        pipx
         nodejs_24
         bun
+        trivy
         syft
         semgrep
       ];
@@ -530,7 +531,7 @@
         coder = {
           modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 999;
+          gpuLayers = 42;
           contextSize = 8192;
         };
 
@@ -915,7 +916,7 @@
     };
 
     gitea-showcase = {
-      enable = true;
+      enable = false;
       domain = "gitea.voidnx.com";
       rootUrl = "https://gitea.voidnx.com/";
       listenAddress = "127.0.0.1";
@@ -1130,6 +1131,8 @@
       codex
       qbittorrent
       # vllm # FIXME: upstream nixpkgs broken patch for llama-cpp-python (406)
+      #koboldcpp
+      #sillytavern
       alacritty
       xclip
       glab
