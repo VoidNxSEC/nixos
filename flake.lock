@@ -1175,11 +1175,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779767318,
-        "narHash": "sha256-IPpzCuMGfmUDNyJXE7EazB+AXnBI+PI0kb3ZjD6spmk=",
+        "lastModified": 1779770466,
+        "narHash": "sha256-XmdTQUWbdq0uN0ALvWxDl5xsZkUJj5SICsUwRZsm5nQ=",
         "owner": "VoidNxSEC",
         "repo": "spider-nix",
-        "rev": "8a7b64c82474b629d0bd73f6464c4c42a07afa5f",
+        "rev": "a381559da98eb2219f85e0874eed4fcca5c5a849",
         "type": "github"
       },
       "original": {

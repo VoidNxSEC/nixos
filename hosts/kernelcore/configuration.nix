@@ -1115,7 +1115,7 @@
       python313Packages.numpy
       google-chrome
       awscli
-      #cemu
+      cemu
       onlyoffice-desktopeditors
       google-cloud-sdk
       minikube
