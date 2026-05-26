@@ -55,11 +55,11 @@
       url = "github:VoidNxSEC/cognitive-vault";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    vmctl = {
-      url = "github:VoidNxSEC/vmctl";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.spider-nix.follows = "spider-nix";
-    };
+    #vmctl = {
+    #url = "github:VoidNxSEC/vmctl";
+    #inputs.nixpkgs.follows = "nixpkgs";
+    #inputs.spider-nix.follows = "spider-nix";
+    #};
 
     # SecureLLM Bridge
     #securellm-bridge = {
