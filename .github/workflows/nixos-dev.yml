@@ -1,8 +1,9 @@
-name: NixOS Config Validation
+name: NixOS Dev
 
 on:
   pull_request:
-    branches: [main, dev]
+    branches: [dev]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - "flake.nix"
       - "flake.lock"
@@ -14,9 +15,9 @@ on:
       - "nix/**"
       - "lib/**"
       - ".github/actions/setup-nix-env/**"
-      - ".github/workflows/nixos-config-validation.yml"
+      - ".github/workflows/nixos-dev.yml"
   push:
-    branches: [main, dev]
+    branches: [dev]
     paths:
       - "flake.nix"
       - "flake.lock"
@@ -28,12 +29,12 @@ on:
       - "nix/**"
       - "lib/**"
       - ".github/actions/setup-nix-env/**"
-      - ".github/workflows/nixos-config-validation.yml"
+      - ".github/workflows/nixos-dev.yml"
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -42,10 +43,11 @@ env:
   CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
 
 jobs:
-  flake:
-    name: Flake checks
+  quick-validation:
+    name: Quick validation
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
 
     steps:
       - name: Checkout
@@ -65,14 +67,14 @@ jobs:
       - name: Show flake metadata
         run: nix flake metadata --no-write-lock-file
 
-      - name: Run flake check
+      - name: Evaluate flake outputs
         run: nix flake check --show-trace --no-build
 
   evaluate-hosts:
     name: Evaluate ${{ matrix.host }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    needs: flake
+    needs: quick-validation
     strategy:
       fail-fast: false
       matrix:
@@ -99,32 +101,10 @@ jobs:
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath" \
             --show-trace
 
-      - name: Check systemd unit evaluation
+      - name: Evaluate systemd unit set
         run: |
           nix eval \
             ".#nixosConfigurations.${{ matrix.host }}.config.systemd.units" \
             --apply builtins.attrNames \
             --json \
             --show-trace
-
-  summarize:
-    name: Validation summary
-    runs-on: ubuntu-latest
-    needs:
-      - flake
-      - evaluate-hosts
-    if: always()
-    steps:
-      - name: Write summary
-        run: |
-          cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
-          ## NixOS config validation
-
-          - Flake formatting, metadata and checks ran for the repository.
-          - NixOS host toplevel derivations were evaluated without building them.
-          - Systemd unit sets were evaluated for each configured host.
-          SUMMARY
-
-          if [ "${{ needs.flake.result }}" != "success" ] || [ "${{ needs.evaluate-hosts.result }}" != "success" ]; then
-            exit 1
-          fi
