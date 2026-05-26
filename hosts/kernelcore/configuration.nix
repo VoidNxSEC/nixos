@@ -1111,12 +1111,9 @@
       waybackurls
       hakrawler
       python313Packages.pyyaml
-      python313Packages.langchain
-      python313Packages.huggingface-hub_0
-      python313Packages.numpy
       google-chrome
       awscli
-      #cemu
+      cemu
       onlyoffice-desktopeditors
       google-cloud-sdk
       minikube
@@ -1205,7 +1202,8 @@
       zoom
       gnome-console
       zed-editor
-      code-cursor
+      cinnamon
+      gnome-disk-utility
       rust-analyzer
       rustup
       terraform-providers.carlpett_sops
@@ -1231,7 +1229,7 @@
     cognitive-vault.enable = true;
 
     vscodium-secure = {
-      enable = false;
+      enable = true;
       enableGitLabDuo = true;
       extensions = with pkgs.vscode-extensions; [
         rooveterinaryinc.roo-cline
@@ -1306,6 +1304,7 @@
     incus
     sillytavern
     koboldcpp
+    cinnamon
     # antigravity # Replaced by custom build
   ];
 
