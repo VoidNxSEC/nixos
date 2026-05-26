@@ -464,6 +464,7 @@ in
         "0.7"
         "--top-p"
         "0.9"
+        "--tools"
       ];
       description = "Additional flags passed to llama-server.";
     };
@@ -630,7 +631,7 @@ in
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
         ProtectSystem = "strict";
-        MemoryDenyWriteExecute = false; # Required for CUDA JIT
+        MemoryDenyWriteExecute = false;
         LockPersonality = true;
         RemoveIPC = true;
         RestrictNamespaces = true;
