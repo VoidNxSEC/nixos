@@ -47,7 +47,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
@@ -71,7 +71,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
@@ -100,7 +100,7 @@ jobs:
 
       - name: Upload VM image
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.build-vm }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: nixos-vm-image
           path: result/
@@ -113,7 +113,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
@@ -144,7 +144,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
@@ -170,7 +170,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
@@ -189,7 +189,7 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.deploy)
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
@@ -215,7 +215,7 @@ jobs:
     if: always()
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
