@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
@@ -78,7 +78,7 @@ jobs:
     if: ${{ !inputs.skip-tests }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
@@ -104,7 +104,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix-env
