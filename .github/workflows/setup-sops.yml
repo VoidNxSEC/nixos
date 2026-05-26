@@ -20,15 +20,14 @@ on:
 jobs:
   decrypt:
     runs-on: ubuntu-latest
+
     outputs:
       cachix_token: ${{ steps.decrypt.outputs.cachix_token }}
       github_token: ${{ steps.decrypt.outputs.github_token }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v5
 
       - uses: ./.github/actions/setup-nix-env
 
@@ -81,7 +80,12 @@ jobs:
 
       - name: Verify SOPS installation
         run: |
+
           nix run nixpkgs#sops -- --version
+
+          # sops is available via extraPackages
+          sops --version
+
           echo "✅ SOPS is available"
 
       - name: Decrypt secrets
@@ -105,9 +109,14 @@ jobs:
 
           # Test SOPS decryption first
           echo "🔍 Testing SOPS decryption..."
-          if ! nix run nixpkgs#sops -- -d secrets/github.yaml > /tmp/decrypted.yaml 2>&1; then
+
+          if command -v sops >/dev/null 2>&1; then
+            sops -d secrets/github.yaml > /tmp/decrypted.yaml
+          elif nix run nixpkgs#sops -- -d secrets/github.yaml > /tmp/decrypted.yaml; then
+            :
+          else
             echo "❌ SOPS decryption failed:"
-            cat /tmp/decrypted.yaml
+            cat /tmp/decrypted.yaml || true
             rm -f /tmp/decrypted.yaml
             exit 1
           fi
@@ -115,10 +124,13 @@ jobs:
           echo "✅ SOPS decryption successful"
 
           # Extract Cachix token
-          CACHIX_TOKEN=$(nix run nixpkgs#yq-go -- eval '.github.cachix_auth_token // ""' /tmp/decrypted.yaml)
-
-          # Extract GitHub PAT
-          GITHUB_PAT=$(nix run nixpkgs#yq-go -- eval '.github.personal_access_token // ""' /tmp/decrypted.yaml)
+          if command -v yq >/dev/null 2>&1; then
+            CACHIX_TOKEN=$(yq eval '.github.cachix_auth_token // ""' /tmp/decrypted.yaml)
+            GITHUB_PAT=$(yq eval '.github.personal_access_token // ""' /tmp/decrypted.yaml)
+          else
+            CACHIX_TOKEN=$(nix run nixpkgs#yq-go -- eval '.github.cachix_auth_token // ""' /tmp/decrypted.yaml)
+            GITHUB_PAT=$(nix run nixpkgs#yq-go -- eval '.github.personal_access_token // ""' /tmp/decrypted.yaml)
+          fi
 
           # Clean up decrypted file
           rm -f /tmp/decrypted.yaml
@@ -126,7 +138,7 @@ jobs:
           # Set outputs (masked)
           if [[ -n "$CACHIX_TOKEN" ]]; then
             echo "::add-mask::$CACHIX_TOKEN"
-            echo "cachix_token=$CACHIX_TOKEN" >> $GITHUB_OUTPUT
+            echo "cachix_token=$CACHIX_TOKEN" >> "$GITHUB_OUTPUT"
             echo "✅ Cachix token extracted (${#CACHIX_TOKEN} chars)"
           else
             echo "⚠️  Cachix token not found or empty"
@@ -134,7 +146,7 @@ jobs:
 
           if [[ -n "$GITHUB_PAT" ]]; then
             echo "::add-mask::$GITHUB_PAT"
-            echo "github_token=$GITHUB_PAT" >> $GITHUB_OUTPUT
+            echo "github_token=$GITHUB_PAT" >> "$GITHUB_OUTPUT"
             echo "✅ GitHub PAT extracted (${#GITHUB_PAT} chars)"
           else
             echo "⚠️  GitHub PAT not found or empty"
