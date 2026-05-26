@@ -467,11 +467,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1779729308,
-        "narHash": "sha256-tMt7oeAahwHGDgSIf5XKZoUXenOvlxjI0KBPku97tzM=",
+        "lastModified": 1779801868,
+        "narHash": "sha256-qLEUYPaxWezxcRttqLiU1/1YwrAiF0jfVyLePdpOKSs=",
         "ref": "refs/heads/main",
-        "rev": "bb3353f864be97e9236cfafca68ce71d7cf590dc",
-        "revCount": 7364,
+        "rev": "864dc89c9595095b5368a890fb39afbc75f590ca",
+        "revCount": 7368,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -746,11 +746,11 @@
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
       },
       "locked": {
-        "lastModified": 1779727848,
-        "narHash": "sha256-SzwGYf4N1l2TK3FWqgpa1446XjZq3/rF04xdX1vA9MU=",
+        "lastModified": 1779748545,
+        "narHash": "sha256-AbRQrrpcNTBUoIf7Kc1qsdhsRLtZ0DDw+udm+8NWlJk=",
         "owner": "sodiboo",
         "repo": "niri-flake",
-        "rev": "6a2b708460b3e3387f37bb870b4f1ad22cf293f8",
+        "rev": "3754a033e05c750ef46fe4f078d79b826c4f9287",
         "type": "github"
       },
       "original": {
@@ -1070,11 +1070,11 @@
         "rust-overlay": "rust-overlay_3"
       },
       "locked": {
-        "lastModified": 1779090331,
-        "narHash": "sha256-p9BhzosrInB9WakbSUk+D2z0agExEj55/lAeFrEb/F0=",
+        "lastModified": 1779797573,
+        "narHash": "sha256-36o9+2EY15muVQ7XBvVRIraIha4vZct1fI32Jp6etf0=",
         "owner": "VoidNxSEC",
         "repo": "securellm-bridge",
-        "rev": "e9d46f13b2ef77f5ccc2e725632913d595f3f394",
+        "rev": "a87411c65eec7357763dd68852c4ba718f41caa2",
         "type": "github"
       },
       "original": {
@@ -1175,17 +1175,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1779266441,
-        "narHash": "sha256-mLC6dKx4GvVXu28i58D0t7k8Qj5WJ0lia+WoeUwlJPI=",
-        "ref": "refs/heads/main",
-        "rev": "04254f2578787fd6c31d0b52f350109afc6cda7c",
-        "revCount": 36,
-        "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
+        "lastModified": 1779770466,
+        "narHash": "sha256-XmdTQUWbdq0uN0ALvWxDl5xsZkUJj5SICsUwRZsm5nQ=",
+        "owner": "VoidNxSEC",
+        "repo": "spider-nix",
+        "rev": "a381559da98eb2219f85e0874eed4fcca5c5a849",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
+        "owner": "VoidNxSEC",
+        "repo": "spider-nix",
+        "type": "github"
       }
     },
     "spooknix": {
@@ -1456,11 +1456,11 @@
     "xwayland-satellite-unstable": {
       "flake": false,
       "locked": {
-        "lastModified": 1779591853,
-        "narHash": "sha256-osTG6d7BfV5CchHjETh3jcmZwDYrHpNcpAIyh1KyIs0=",
+        "lastModified": 1779745227,
+        "narHash": "sha256-yqY7RtEJGJiENzR0GwL6q69tSAy6xAAmAcLuIhLjPf8=",
         "owner": "Supreeeme",
         "repo": "xwayland-satellite",
-        "rev": "3273a0fccd71da21c6362c74f3b1d1c0a89ff3ba",
+        "rev": "5d1efbc9dc3ab1c10160b656e0247f3325daf0f2",
         "type": "github"
       },
       "original": {

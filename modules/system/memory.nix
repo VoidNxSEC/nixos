@@ -42,9 +42,8 @@ with lib;
       "vm.watermark_scale_factor" = 200; # More aggressive reclaim
       "vm.admin_reserve_kbytes" = 131072; # 128MB reserved for admin recovery
 
-      # inotify - enough watches for Chromium/Electron + VS Code + Vite
-      # monorepos, without allowing runaway watcher instances to pin kernel RAM.
-      "fs.inotify.max_user_watches" = 524288;
+      # inotify - dev tools and monorepos can exhaust the default watcher limits.
+      "fs.inotify.max_user_watches" = 1048576;
       "fs.inotify.max_user_instances" = 1024;
       "fs.inotify.max_queued_events" = 32768;
     };
