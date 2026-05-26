@@ -86,7 +86,9 @@ with lib;
       ]
       ++ optionals config.kernelcore.development.cicd.platforms.github [
         gh # GitHub CLI
-        github-runner
+        (github-runner.override {
+          nodeRuntimes = [ "node24" ];
+        })
       ]
       ++ optionals config.kernelcore.development.cicd.platforms.gitlab [
         glab # GitLab CLI
