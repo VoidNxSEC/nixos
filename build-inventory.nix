@@ -37,7 +37,6 @@ let
     cudaPackages.libnpp
 
     # Python ML packages (heavy dependencies)
-    # python312Packages.vllm  # If available
     python313Packages.torch
     python313Packages.numpy
     python313Packages.transformers
