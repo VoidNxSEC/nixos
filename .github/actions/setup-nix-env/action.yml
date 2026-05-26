@@ -112,7 +112,7 @@ runs:
 
         # Install cachix if not available
         if ! command -v cachix &> /dev/null; then
-          nix-env -iA nixpkgs.cachix
+          nix profile install nixpkgs#cachix
         fi
 
         # Configure cachix
@@ -122,7 +122,9 @@ runs:
         fi
 
         # Use cache
-        cachix use ${{ inputs.cachix-name }}
+        if ! cachix use ${{ inputs.cachix-name }}; then
+          echo "⚠️  Cachix cache '${{ inputs.cachix-name }}' is unavailable; continuing without it"
+        fi
 
         echo "✅ Cachix configured"
 
@@ -160,4 +162,3 @@ runs:
       run: |
         echo "📋 Nix Configuration:"
         nix show-config | grep -E "(experimental-features|substituters|max-jobs|cores)" || true
-
