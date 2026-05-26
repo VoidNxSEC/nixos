@@ -10,12 +10,12 @@ on:
   workflow_call:
     inputs:
       enable-tmate:
-        description: 'Enable tmate debug session'
+        description: "Enable tmate debug session"
         required: false
         type: boolean
         default: false
       tmate-on-failure:
-        description: 'Enable tmate only on failure'
+        description: "Enable tmate only on failure"
         required: false
         type: boolean
         default: true
@@ -32,15 +32,20 @@ on:
   workflow_dispatch:
     inputs:
       enable-tmate:
-        description: 'Enable tmate debug session'
+        description: "Enable tmate debug session"
         required: false
         type: boolean
         default: false
       test-notifications:
-        description: 'Test notification system'
+        description: "Test notification system"
         required: false
         type: boolean
         default: false
+      tmate-on-failure:
+        description: "Enable tmate only on failure"
+        required: false
+        type: boolean
+        default: true
 
 env:
   # Workflow metadata
@@ -94,6 +99,7 @@ jobs:
 
           # Telegram notification
           if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+
             MESSAGE="🚀 *CI Started*"$'\n\n'
             MESSAGE+="*Workflow*: ${GITHUB_WORKFLOW}"$'\n'
             MESSAGE+="*Trigger*: ${GITHUB_EVENT_NAME}"$'\n'
@@ -101,6 +107,16 @@ jobs:
             MESSAGE+="*Commit*: [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})"$'\n'
             MESSAGE+="*Actor*: ${GITHUB_ACTOR}"$'\n'
             MESSAGE+="*Run*: [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
+
+            MESSAGE="🚀 *CI Started*
+
+            *Workflow*: ${GITHUB_WORKFLOW}
+            *Trigger*: ${GITHUB_EVENT_NAME}
+            *Branch*: ${GITHUB_REF_NAME}
+            *Commit*: [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})
+            *Actor*: ${GITHUB_ACTOR}
+            *Run*: [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
+
 
             curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
               -d "chat_id=${TELEGRAM_CHAT_ID}" \
@@ -112,14 +128,15 @@ jobs:
   # Job 2: Main Build with Debug Support
   build-with-observability:
     name: Build with Observability
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nixos]
+
     needs: setup-observability
     env:
       JOB_ID: ${{ needs.setup-observability.outputs.job-id }}
       START_TIME: ${{ needs.setup-observability.outputs.start-time }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -272,6 +289,7 @@ jobs:
 
           # Telegram success
           if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+
             MESSAGE="✅ *CI Passed*"$'\n\n'
             MESSAGE+="*Branch*: ${GITHUB_REF_NAME}"$'\n'
             MESSAGE+="*Commit*: [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})"$'\n'
@@ -279,6 +297,13 @@ jobs:
             MESSAGE+="*Total Time*: ${TOTAL_DURATION}s"$'\n'
             MESSAGE+="*Run*: [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
 
+            MESSAGE="✅ *CI Passed*
+
+            *Branch*: ${GITHUB_REF_NAME}
+            *Commit*: [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})
+            *Build Time*: ${BUILD_DURATION}s
+            *Total Time*: ${TOTAL_DURATION}s
+            *Run*: [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
             curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
               -d "chat_id=${TELEGRAM_CHAT_ID}" \
               -d "text=${MESSAGE}" \
@@ -346,7 +371,7 @@ jobs:
     if: always()
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: build-artifacts-${{ github.run_number }}
 
@@ -397,7 +422,7 @@ jobs:
           EOF
 
       - name: Upload Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: observability-report-${{ github.run_number }}
           path: report.html
