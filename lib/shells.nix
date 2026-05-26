@@ -234,7 +234,7 @@ in
     packages =
       commonPkgs
       ++ (with pkgs; [
-        nodejs_20
+        nodejs_24
         pnpm
         yarn
         typescript
