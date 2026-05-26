@@ -184,28 +184,32 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       run: |
         echo "📝 Creating GitHub issue..."
-        
+
+        cat > issue-body.md <<'EOF'
+        ## Failure Details
+
+        **Status**: ${{ inputs.status }}
+        **Message**: ${{ steps.prepare.outputs.message }}
+
+        **Build Information**:
+        - **Repository**: ${{ github.repository }}
+        - **Branch**: ${{ github.ref_name }}
+        - **Commit**: ${{ github.sha }}
+        - **Author**: ${{ github.actor }}
+        - **Workflow**: ${{ github.workflow }}
+        - **Run**: ${{ github.run_id }}
+
+        [View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+        **Action Required**: Please investigate and fix the issue.
+
+        ---
+        *Auto-created by GitHub Actions*
+        EOF
+
         gh issue create \
           --title "🚨 CI/CD Failure: ${{ inputs.title }}" \
-          --body "## Failure Details
-
-**Status**: ${{ inputs.status }}
-**Message**: ${{ steps.prepare.outputs.message }}
-
-**Build Information**:
-- **Repository**: ${{ github.repository }}
-- **Branch**: ${{ github.ref_name }}
-- **Commit**: ${{ github.sha }}
-- **Author**: ${{ github.actor }}
-- **Workflow**: ${{ github.workflow }}
-- **Run**: ${{ github.run_id }}
-
-[View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-**Action Required**: Please investigate and fix the issue.
-
----
-*Auto-created by GitHub Actions*" \
+          --body-file issue-body.md \
           --label "ci/cd,bug" || echo "⚠️  Failed to create issue"
         
         echo "✅ Issue created"
