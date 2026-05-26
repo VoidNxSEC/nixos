@@ -5,6 +5,7 @@ build/
 cache/
 node_modules/
 
+
 # Binary installers / large downloads (must be fetched from upstream)
 *.deb
 *.rpm
@@ -123,6 +124,18 @@ modules/packages/tar-packages/storage/
 projects/cognitive-vault/core/target/debug/**
 modules/packages/js-packages/storage/
 modules/packages/deb-packages/storage
+modules/packages/_archive/
+
+# Model Languages
+.claude
+.codex
+#.mcp.json
+
+**/.deb
+
+# SOPS defaults
+secrets
+sec/*.asc
 
 # Local artifacts
 modules/packages/google-chrome/
