@@ -668,6 +668,247 @@
         };
       };
     };
+
+    secrets.github.enable = true;
+    secrets.ci.enable = true;
+    secrets.certificates.enable = true;
+    secrets.gcp-ml.enable = true;
+    secrets.aws-bedrock.enable = true;
+    secrets.blockchain.enable = true; # Ethereum, IPFS, Arweave secrets
+    secrets.k8s.enable = true;
+    secrets.grok.enable = true;
+    secrets.gitlab.enable = true;
+    secrets.api-keys.enable = true; # DeepSeek, Anthropic, Mistral, Gemini
+    secrets.forgejo.enable = true;
+
+    ml.models-storage = {
+      enable = true;
+      baseDirectory = "/var/lib/ml-models";
+    };
+
+    ci = {
+      enable = false; # Substituído pelo GitHub Actions self-hosted runner
+    };
+
+    ml.mcp = {
+      enable = true;
+      knowledgeDbPath = "/var/lib/mcp-knowledge/knowledge.db";
+      agents = {
+        roo = {
+          enable = false;
+          projectRoot = "/home/kernelcore/master";
+          configPath = "/home/kernelcore/.roo/mcp.json";
+          user = "kernelcore";
+        };
+
+        # -----------------------------------------------------------
+        # AGENTES MCP
+        # -----------------------------------------------------------
+        codex = {
+          enable = false;
+          projectRoot = "/var/lib/codex";
+          configPath = "/home/kernelcore/.codex/mcp_config.json";
+          user = "kernelcore";
+        };
+
+        gemini = {
+          enable = false;
+          projectRoot = "/var/lib/gemini";
+          configPath = "/home/kernelcore/.gemini/mcp_config.json";
+          user = "kernelcore";
+        };
+
+        antigravity = {
+          enable = false;
+          projectRoot = "/var/lib/antigravity";
+          configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
+          user = "kernelcore";
+        };
+
+        zed-editor = {
+          enable = true;
+          projectRoot = "/var/lib/zed";
+          configPath = "/home/kernelcore/.config/zed/mcp_config.json";
+          user = "kernelcore";
+        };
+      };
+    };
+
+    # ═══════════════════════════════════════════════════════════
+    # AI AGENT HUB - Event-Driven Automation with Speech
+    # ═══════════════════════════════════════════════════════════
+    ai.agent-hub = {
+      # Infrastructure (Nomad orchestrator + Redpanda/Kafka)
+      # Disabled: eating too much RAM; re-enable when needed
+      infra = {
+        enable = false;
+        orchestrator = "nomad";
+      };
+
+      # Speech Capabilities (F5-TTS + Whisper STT)
+      capabilities.speech = {
+        enable = true;
+        enableTTS = false; # TODO: f5-tts wheel checa deps na instalação, falta propagatedBuildInputs completo
+        enableSTT = true; # Whisper speech-to-text
+
+        # Whisper model: tiny, base, small, medium, large
+        # base = good balance between speed and accuracy
+        whisperModel = "base";
+
+        # Voice cloning reference (opcional - deixar default por enquanto)
+        referenceText = "Olá, eu sou o assistente inteligente do Agent Hub.";
+      };
+    };
+
+    system.ml-gpu-users.enable = true;
+
+    # LlamaSwap - Hot Model Reloading Configuration
+    llama-swap = {
+      enable = true;
+
+      profiles = {
+        coder = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
+          displayName = "Qwen 2.5 Coder 7B (Q4)";
+          gpuLayers = 42;
+          contextSize = 8192;
+        };
+
+        reasoning = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
+          displayName = "DeepSeek-R1 8B (Q4)";
+          gpuLayers = 36;
+          contextSize = 8192;
+        };
+
+        thinking = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/Llama3.3-8B-Instruct-Thinking-Claude-4.5-Opus-High-Reasoning.i1-Q4_K_M.gguf";
+          displayName = "Llama 3.3 Thinking 8B (Q4)";
+          gpuLayers = 42;
+          contextSize = 8192;
+        };
+
+        fast = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/qwen3-vl:2b";
+          displayName = "Qwen3 VL 2B (Fast)";
+          gpuLayers = 999; # Full offload for small model
+          contextSize = 4096;
+        };
+      };
+
+      defaultProfile = "coder";
+    };
+
+    # Shell control scripts
+    shell = {
+      serviceControl.enable = true; # GPU/ML service control & RAM optimization
+      llamaSwapControl.enable = true; # LlamaSwap hot model reloading control
+    };
+  }; # FIM DO BLOCO KERNELCORE
+
+  # ============================================================================
+  # QUICK START HELPERS
+  # ============================================================================
+
+  environment.etc."k8s-quickstart.sh" = {
+    text = ''
+      #!/usr/bin/env bash
+      # Quick K8s cluster operations
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+      case "$1" in
+        status)
+          echo "=== Cluster Status ==="
+          kubectl get nodes -o wide
+          echo -e "\n=== System Pods ==="
+          kubectl get pods -A
+          ;;
+        ui)
+          echo "Opening Hubble UI: http://localhost:12000"
+          echo "Opening Longhorn UI: http://localhost:8000"
+          ;;
+        logs)
+          stern -n kube-system "$2"
+          ;;
+        top)
+          kubectl top nodes
+          kubectl top pods -A
+          ;;
+        test)
+          echo "Deploying test application..."
+          kubectl apply -f /etc/longhorn/test-pvc.yaml
+          ;;
+        *)
+          echo "Usage: k8s-quickstart.sh {status|ui|logs|top|test}"
+          ;;
+      esac
+    '';
+    mode = "0755";
+  };
+
+  environment.shellAliases = {
+    k = "kubectl";
+    kns = "kubens";
+    kctx = "kubectx";
+    kgp = "kubectl get pods";
+    kgs = "kubectl get svc";
+    kdp = "kubectl describe pod";
+    klf = "kubectl logs -f";
+  };
+
+  environment.shellInit = ''
+    export PATH="$HOME/.local/bin:$PATH"
+    if [ -e ~/.nix-profile/etc/profile.d/nix.sh ]; then
+      source ~/.nix-profile/etc/profile.d/nix.sh
+    fi
+  '';
+
+  # ═══════════════════════════════════════════════════════════
+  # FEATURE FLAGS
+  # ═══════════════════════════════════════════════════════════
+
+  services.securellm-mcp = {
+    enable = true;
+    daemon.enable = true;
+    daemon.logLevel = "INFO";
+
+    # Dynamic project profiles - switch with: mcp-context profile <name>
+    profiles = {
+      nixos = {
+        workdir = "/etc/nixos";
+        environment = "production";
+        env = {
+          PROJECT_NAME = "NixOS Configuration";
+          PROJECT_TYPE = "infrastructure";
+        };
+      };
+
+      dev = {
+        workdir = "/home/kernelcore/arch";
+        environment = "development";
+        env = {
+          PROJECT_NAME = "Development";
+          PROJECT_TYPE = "general";
+        };
+      };
+
+      gemini = {
+        workdir = "/var/lib/gemini";
+        environment = "development";
+        env = {
+          PROJECT_NAME = "Gemini Agent";
+          PROJECT_TYPE = "ai-agent";
+        };
+      };
+
+      codex = {
+        workdir = "/var/lib/codex";
+        environment = "development";
+        env = {
+          PROJECT_NAME = "Codex";
+          PROJECT_TYPE = "ai-agent";
+        };
+      };
+    };
   };
 
   kernelcore.tools = {
@@ -1109,12 +1350,9 @@
       waybackurls
       hakrawler
       python313Packages.pyyaml
-      python313Packages.langchain
-      python313Packages.huggingface-hub_0
-      python313Packages.numpy
       google-chrome
       awscli
-      #cemu
+      cemu
       onlyoffice-desktopeditors
       google-cloud-sdk
       minikube
@@ -1203,7 +1441,8 @@
       zoom
       gnome-console
       zed-editor
-      code-cursor
+      cinnamon
+      gnome-disk-utility
       rust-analyzer
       rustup
       terraform-providers.carlpett_sops
@@ -1229,7 +1468,7 @@
     cognitive-vault.enable = true;
 
     vscodium-secure = {
-      enable = false;
+      enable = true;
       enableGitLabDuo = true;
       extensions = with pkgs.vscode-extensions; [
         rooveterinaryinc.roo-cline
@@ -1304,6 +1543,7 @@
     incus
     sillytavern
     koboldcpp
+    cinnamon
     # antigravity # Replaced by custom build
   ];
 
