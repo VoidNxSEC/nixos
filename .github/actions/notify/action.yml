@@ -1,37 +1,37 @@
-name: 'Send Notification'
-description: 'Send notifications to Discord, Slack or other services'
-author: 'VoidNxSEC'
+name: "Send Notification"
+description: "Send notifications to Discord, Slack or other services"
+author: "VoidNxSEC"
 
 inputs:
   status:
-    description: 'Status: success, failure, warning, info'
+    description: "Status: success, failure, warning, info"
     required: true
   title:
-    description: 'Notification title'
+    description: "Notification title"
     required: true
   message:
-    description: 'Notification message'
+    description: "Notification message"
     required: false
-    default: ''
+    default: ""
   discord-webhook:
-    description: 'Discord webhook URL'
+    description: "Discord webhook URL"
     required: false
-    default: ''
+    default: ""
   slack-webhook:
-    description: 'Slack webhook URL'
+    description: "Slack webhook URL"
     required: false
-    default: ''
+    default: ""
   github-token:
-    description: 'GitHub token for creating issues/comments'
+    description: "GitHub token for creating issues/comments"
     required: false
-    default: ''
+    default: ""
   create-issue-on-failure:
-    description: 'Create GitHub issue on failure'
+    description: "Create GitHub issue on failure"
     required: false
-    default: 'false'
+    default: "false"
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Prepare notification
       id: prepare
@@ -60,10 +60,10 @@ runs:
             EMOJI="📋"
             ;;
         esac
-        
+
         echo "color=$COLOR" >> $GITHUB_OUTPUT
         echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
-        
+
         # Build message
         MESSAGE="${{ inputs.message }}"
         if [ -z "$MESSAGE" ]; then
@@ -76,7 +76,7 @@ runs:
       shell: bash
       run: |
         echo "📤 Sending Discord notification..."
-        
+
         PAYLOAD=$(cat <<EOF
         {
           "embeds": [{
@@ -113,12 +113,12 @@ runs:
         }
         EOF
         )
-        
+
         curl -H "Content-Type: application/json" \
              -X POST \
              -d "$PAYLOAD" \
              "${{ inputs.discord-webhook }}" || echo "⚠️  Discord notification failed"
-        
+
         echo "✅ Discord notification sent"
 
     - name: Send Slack notification
@@ -126,7 +126,7 @@ runs:
       shell: bash
       run: |
         echo "📤 Sending Slack notification..."
-        
+
         PAYLOAD=$(cat <<EOF
         {
           "blocks": [
@@ -169,12 +169,12 @@ runs:
         }
         EOF
         )
-        
+
         curl -H "Content-Type: application/json" \
              -X POST \
              -d "$PAYLOAD" \
              "${{ inputs.slack-webhook }}" || echo "⚠️  Slack notification failed"
-        
+
         echo "✅ Slack notification sent"
 
     - name: Create GitHub issue on failure
@@ -184,30 +184,34 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       run: |
         echo "📝 Creating GitHub issue..."
-        
+
+        cat > issue-body.md <<'EOF'
+        ## Failure Details
+
+        **Status**: ${{ inputs.status }}
+        **Message**: ${{ steps.prepare.outputs.message }}
+
+        **Build Information**:
+        - **Repository**: ${{ github.repository }}
+        - **Branch**: ${{ github.ref_name }}
+        - **Commit**: ${{ github.sha }}
+        - **Author**: ${{ github.actor }}
+        - **Workflow**: ${{ github.workflow }}
+        - **Run**: ${{ github.run_id }}
+
+        [View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+        **Action Required**: Please investigate and fix the issue.
+
+        ---
+        *Auto-created by GitHub Actions*
+        EOF
+
         gh issue create \
           --title "🚨 CI/CD Failure: ${{ inputs.title }}" \
-          --body "## Failure Details
-
-**Status**: ${{ inputs.status }}
-**Message**: ${{ steps.prepare.outputs.message }}
-
-**Build Information**:
-- **Repository**: ${{ github.repository }}
-- **Branch**: ${{ github.ref_name }}
-- **Commit**: ${{ github.sha }}
-- **Author**: ${{ github.actor }}
-- **Workflow**: ${{ github.workflow }}
-- **Run**: ${{ github.run_id }}
-
-[View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-**Action Required**: Please investigate and fix the issue.
-
----
-*Auto-created by GitHub Actions*" \
+          --body-file issue-body.md \
           --label "ci/cd,bug" || echo "⚠️  Failed to create issue"
-        
+
         echo "✅ Issue created"
 
     - name: Log notification
