@@ -74,7 +74,7 @@
 
     # Spider-Nix
     spider-nix = {
-      url = "git+ssh://git@github.com/VoidNxSEC/spider-nix";
+      url = "github:VoidNxSEC/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
