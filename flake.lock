@@ -1175,17 +1175,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1779266441,
-        "narHash": "sha256-mLC6dKx4GvVXu28i58D0t7k8Qj5WJ0lia+WoeUwlJPI=",
-        "ref": "refs/heads/main",
-        "rev": "04254f2578787fd6c31d0b52f350109afc6cda7c",
-        "revCount": 36,
-        "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
+        "lastModified": 1779767318,
+        "narHash": "sha256-IPpzCuMGfmUDNyJXE7EazB+AXnBI+PI0kb3ZjD6spmk=",
+        "owner": "VoidNxSEC",
+        "repo": "spider-nix",
+        "rev": "8a7b64c82474b629d0bd73f6464c4c42a07afa5f",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
+        "owner": "VoidNxSEC",
+        "repo": "spider-nix",
+        "type": "github"
       }
     },
     "spooknix": {
