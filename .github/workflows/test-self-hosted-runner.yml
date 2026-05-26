@@ -10,16 +10,8 @@ jobs:
     runs-on: [self-hosted, nixos]
 
     steps:
-      - name: Setup Git LFS
-        run: |
-          # Force LFS setup to overwrite existing hooks
-          git lfs install --force
-
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          lfs: true
-          fetch-depth: 0
 
       - name: System Information
         run: |
@@ -79,4 +71,3 @@ jobs:
           echo "║   Host: $(hostname)                    ║"
           echo "║                                        ║"
           echo "╚════════════════════════════════════════╝"
-

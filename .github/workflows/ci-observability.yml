@@ -41,6 +41,11 @@ on:
         required: false
         type: boolean
         default: false
+      tmate-on-failure:
+        description: 'Enable tmate only on failure'
+        required: false
+        type: boolean
+        default: true
 
 env:
   # Workflow metadata
@@ -123,9 +128,6 @@ jobs:
   # Job 2: Main Build with Debug Support
   build-with-observability:
     name: Build with Observability
-
-    runs-on: ubuntu-latest
-
     runs-on: [self-hosted, nixos]
 
     needs: setup-observability
@@ -343,7 +345,6 @@ jobs:
           if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
             TMATE_INFO=""
             if [ "${{ inputs.tmate-on-failure }}" == "true" ] || [ "${{ inputs.enable-tmate }}" == "true" ]; then
-
               TMATE_INFO=$'\n🐛 *tmate session active* - check Actions logs for SSH connection'
             fi
 
@@ -354,21 +355,7 @@ jobs:
             MESSAGE+="*Run*: [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})${TMATE_INFO}"$'\n\n'
             MESSAGE+="\`\`\`"$'\n'
             MESSAGE+="${ERROR_SNIPPET:0:400}"$'\n'
-          TMATE_INFO="
-🐛 *tmate session active* - check Actions logs for SSH connection"
-            fi
-
-            MESSAGE="❌ *CI Failed*
-
-*Branch*: ${GITHUB_REF_NAME}
-*Commit*: [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})
-*Errors*: ${ERROR_COUNT}
-*Run*: [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})${TMATE_INFO}
-
-\`\`\`
-${ERROR_SNIPPET:0:400}
-\`\`\`"
-
+            MESSAGE+="\`\`\`"
 
             curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
               -d "chat_id=${TELEGRAM_CHAT_ID}" \
