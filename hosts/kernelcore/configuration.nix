@@ -460,100 +460,101 @@
           user = "kernelcore";
         };
 
-    # AGENTES MCP
-    # -----------------------------------------------------------
-    codex = {
-           enable = false;
-           projectRoot = "/var/lib/codex";
-           configPath = "/home/kernelcore/.codex/mcp_config.json";
-           user = "kernelcore";
-           };
-       gemini = {
-           enable = false;
-           projectRoot = "/var/lib/gemini";
-           configPath = "/home/kernelcore/.gemini/mcp_config.json";
-           user = "kernelcore";
-           };
-       antigravity = {
-           enable = false;
-           projectRoot = "/var/lib/antigravity";
-           configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
-           user = "kernelcore";
-           };
-   
-       zed-editor = {
-           enable = true;
-           projectRoot = "/var/lib/zed";
-           configPath = "/home/kernelcore/.config/zed/mcp_config.json";
-           user = "kernelcore";
-           };
-       };
+        # AGENTES MCP
+        # -----------------------------------------------------------
+        codex = {
+          enable = false;
+          projectRoot = "/var/lib/codex";
+          configPath = "/home/kernelcore/.codex/mcp_config.json";
+          user = "kernelcore";
+        };
+        gemini = {
+          enable = false;
+          projectRoot = "/var/lib/gemini";
+          configPath = "/home/kernelcore/.gemini/mcp_config.json";
+          user = "kernelcore";
+        };
+        antigravity = {
+          enable = false;
+          projectRoot = "/var/lib/antigravity";
+          configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
+          user = "kernelcore";
+        };
+
+        zed-editor = {
+          enable = true;
+          projectRoot = "/var/lib/zed";
+          configPath = "/home/kernelcore/.config/zed/mcp_config.json";
+          user = "kernelcore";
+        };
+      };
     };
     # ═══════════════════════════════════════════════════════════
-     # AI AGENT HUB - Event-Driven Automation with Speech
-     # ═══════════════════════════════════════════════════════════
+    # AI AGENT HUB - Event-Driven Automation with Speech
+    # ═══════════════════════════════════════════════════════════
     ai.agent-hub = {
-       # Infrastructure (Nomad orchestrator + Redpanda/Kafka)
-       # Disabled: eating too much RAM; re-enable when needed
-       infra = {
-       enable = false;
-       orchestrator = "nomad";
-       };
-    # Speech Capabilities (F5-TTS + Whisper STT)
-    capabilities.speech = {
-           enable = true;
-           enableTTS = false; # TODO: f5-tts wheel checa deps na instalação, falta propagatedBuildInputs completo
-           enableSTT = true; # Whisper speech-to-text
-     # Whisper model: tiny, base, small, medium, large
-     # base = good balance between speed and accuracy
-    whisperModel = "base";
-    
-    # Voice cloning reference (opcional - deixar default por enquanto)
-    referenceText = "Olá, eu sou o assistente inteligente do Agent Hub.";
+      # Infrastructure (Nomad orchestrator + Redpanda/Kafka)
+      # Disabled: eating too much RAM; re-enable when needed
+      infra = {
+        enable = false;
+        orchestrator = "nomad";
+      };
+      # Speech Capabilities (F5-TTS + Whisper STT)
+      capabilities.speech = {
+        enable = true;
+        enableTTS = false; # TODO: f5-tts wheel checa deps na instalação, falta propagatedBuildInputs completo
+        enableSTT = true; # Whisper speech-to-text
+        # Whisper model: tiny, base, small, medium, large
+        # base = good balance between speed and accuracy
+        whisperModel = "base";
+
+        # Voice cloning reference (opcional - deixar default por enquanto)
+        referenceText = "Olá, eu sou o assistente inteligente do Agent Hub.";
+      };
     };
-    };
-    
+
     system.ml-gpu-users.enable = true;
-    
+
     # LlamaSwap - Hot Model Reloading Configuration
     llama-swap = {
       enable = true;
       profiles = {
-      coder = {
-      modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf
+        coder = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf
          ";
-           displayName = "Qwen 2.5 Coder 7B (Q4)";
-           gpuLayers = 42;
-           contextSize = 8192;
-           };
-   
-       reasoning = {
-           modelPath = "/var/lib/ml-models/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
-           displayName = "DeepSeek-R1 8B (Q4)";
-           gpuLayers = 36;
-           contextSize = 8192;
-           };
-   
-       thinking = {
-            modelPath = "/var/lib/ml-models/llamacpp/models/Llama3.3-8B-Instruct-Thinking-Claude-4.5-Opus-High-Reasoning.i1-Q4_K_M.gguf";
-             displayName = "Llama 3.3 Thinking 8B (Q4)";
-           gpuLayers = 42;
-             contextSize = 8192;
-   
-       fast = {
-           modelPath = "/var/lib/ml-models/llamacpp/models/qwen3-vl:2b";
-           displayName = "Qwen3 VL 2B (Fast)";
-           gpuLayers = 999; # Full offload for small model
-           contextSize = 4096;
-           };
+          displayName = "Qwen 2.5 Coder 7B (Q4)";
+          gpuLayers = 42;
+          contextSize = 8192;
+        };
+
+        reasoning = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf";
+          displayName = "DeepSeek-R1 8B (Q4)";
+          gpuLayers = 36;
+          contextSize = 8192;
+        };
+
+        thinking = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/Llama3.3-8B-Instruct-Thinking-Claude-4.5-Opus-High-Reasoning.i1-Q4_K_M.gguf";
+          displayName = "Llama 3.3 Thinking 8B (Q4)";
+          gpuLayers = 42;
+          contextSize = 8192;
+        };
+
+        fast = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/qwen3-vl:2b";
+          displayName = "Qwen3 VL 2B (Fast)";
+          gpuLayers = 999; # Full offload for small model
+          contextSize = 4096;
+        };
+      };
+      defaultProfile = "coder";
     };
-    defaultProfile = "coder";
-    };
-    
+
     # Shell control scripts
     shell = {
-    serviceControl.enable = true; # GPU/ML service control & RAM optimization
-    llamaSwapControl.enable = true; # LlamaSwap hot model reloading control
+      serviceControl.enable = true; # GPU/ML service control & RAM optimization
+      llamaSwapControl.enable = true; # LlamaSwap hot model reloading control
     };
   };
 
@@ -1003,7 +1004,7 @@
       device = "cuda";
       port = 8000;
     };
-  }; 
+  };
 
   programs.niri.enable = false;
 
