@@ -378,10 +378,8 @@
         podman-compose
         python313
         python313Packages.pip
-        pipx
         nodejs_24
         bun
-        trivy
         syft
         semgrep
       ];
