@@ -28,7 +28,7 @@ with lib;
         internalInterfaces = [ "ve-+" ]; # ← wildcard pra todos ve-*
 
         # Interface "externa" (lado internet)
-        externalInterface = "wlp62s0"; # ← tua WiFi
+        externalInterface = "wlp62s0";
 
         # OPCIONAL: Se quiser rotear ATRAVÉS do NordVPN quando conectado
         # externalInterface = "wgnord";
@@ -163,7 +163,7 @@ with lib;
             git
             htop
             iftop
-            tcpdump # ← debug de rede
+            tcpdump
             gemini-cli
             google-cloud-sdk
           ];
@@ -186,7 +186,7 @@ with lib;
       iptables
       iproute2
       tcpdump
-      # wireshark # hash mismatch upstream — re-enable after nixpkgs fix
+      wireshark
     ];
   };
 }
