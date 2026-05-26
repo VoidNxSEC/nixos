@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: 'Deploy after build'
+        description: "Deploy after build"
         required: false
         default: false
         type: boolean
@@ -19,9 +19,9 @@ on:
 env:
   # CUSTOMIZE: Set your cachix cache name
   CACHIX_NAME: your-cache-name
-  
+
   # CUSTOMIZE: Set your NixOS configuration path
-  CONFIG_PATH: '.#nixosConfigurations.yourhost.config.system.build.toplevel'
+  CONFIG_PATH: ".#nixosConfigurations.yourhost.config.system.build.toplevel"
 
 jobs:
   # ============================================================================
@@ -30,11 +30,11 @@ jobs:
   pr-validation:
     name: Validate Pull Request
     if: github.event_name == 'pull_request'
-    runs-on: [self-hosted, nixos]  # Or ubuntu-latest if using GitHub runners
-    
+    runs-on: [self-hosted, nixos] # Or ubuntu-latest if using GitHub runners
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix Environment
         uses: VoidNxSEC/nixos/.github/actions/setup-nix-env@main
@@ -61,14 +61,14 @@ jobs:
     name: Build Configuration
     if: github.event_name == 'push'
     runs-on: [self-hosted, nixos]
-    
+
     outputs:
       build-path: ${{ steps.build.outputs.build-path }}
       closure-size: ${{ steps.build.outputs.closure-size }}
-    
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nix Environment
         uses: VoidNxSEC/nixos/.github/actions/setup-nix-env@main
@@ -91,14 +91,13 @@ jobs:
     name: Deploy to Production
     needs: build
     if: |
-      github.event_name == 'push' && 
+      github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       (github.event.inputs.deploy == 'true' || github.event_name == 'workflow_dispatch')
     runs-on: [self-hosted, nixos]
-    
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Deploy Configuration
         run: |
@@ -144,11 +143,11 @@ jobs:
 #
 # 3. Add required secrets to your repository:
 #    Settings → Secrets and variables → Actions → New repository secret
-#    
+#
 #    Required:
 #    - CACHIX_AUTH_TOKEN: Your cachix authentication token
 #    - AGE_SECRET_KEY: Your age secret key for SOPS (if using secrets)
-#    
+#
 #    Optional:
 #    - DISCORD_WEBHOOK: Discord webhook URL for notifications
 #    - SLACK_WEBHOOK: Slack webhook URL for notifications
@@ -167,3 +166,4 @@ jobs:
 #    - Push to main to trigger build + deploy (with approval)
 #
 # ==============================================================================
+
