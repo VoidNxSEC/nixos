@@ -2,7 +2,7 @@ name: Update Flake Lock
 
 on:
   schedule:
-    - cron: '0 6 * * 1'
+    - cron: "0 6 * * 1"
   workflow_dispatch:
 
 concurrency:
@@ -21,7 +21,7 @@ jobs:
     name: Update flake.lock
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -50,8 +50,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: chore/update-flake-lock
-          commit-message: 'chore(flake): update flake.lock'
-          title: 'chore(flake): weekly flake.lock update'
+          commit-message: "chore(flake): update flake.lock"
+          title: "chore(flake): weekly flake.lock update"
           body: |
             Automated weekly update of `flake.lock`.
 
