@@ -10,12 +10,12 @@ on:
   workflow_call:
     inputs:
       enable-tmate:
-        description: 'Enable tmate debug session'
+        description: "Enable tmate debug session"
         required: false
         type: boolean
         default: false
       tmate-on-failure:
-        description: 'Enable tmate only on failure'
+        description: "Enable tmate only on failure"
         required: false
         type: boolean
         default: true
@@ -32,17 +32,17 @@ on:
   workflow_dispatch:
     inputs:
       enable-tmate:
-        description: 'Enable tmate debug session'
+        description: "Enable tmate debug session"
         required: false
         type: boolean
         default: false
       test-notifications:
-        description: 'Test notification system'
+        description: "Test notification system"
         required: false
         type: boolean
         default: false
       tmate-on-failure:
-        description: 'Enable tmate only on failure'
+        description: "Enable tmate only on failure"
         required: false
         type: boolean
         default: true
@@ -136,7 +136,7 @@ jobs:
       START_TIME: ${{ needs.setup-observability.outputs.start-time }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -371,7 +371,7 @@ jobs:
     if: always()
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: build-artifacts-${{ github.run_number }}
 
@@ -422,7 +422,7 @@ jobs:
           EOF
 
       - name: Upload Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: observability-report-${{ github.run_number }}
           path: report.html
