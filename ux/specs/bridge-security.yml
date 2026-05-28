@@ -1,0 +1,204 @@
+# SecureLLM Bridge — Security Dashboard UX Specification
+name: bridge-security
+version: 0.1.0
+extends: bridge-gateway
+
+philosophy:
+  tone: "forensic precision + operational clarity"
+  purpose: "Monitor and manage TLS, rate-limiting, sandboxing, and audit trails across the LLM gateway"
+  memorable_element: "Live rate-limit token bucket visualization with draining/refilling animation"
+  target_audience:
+    - "Security engineers auditing provider access"
+    - "DevOps teams monitoring rate limits"
+    - "Compliance officers reviewing audit trails"
+
+typography:
+  display_font: "Space Grotesk"
+  mono_font: "JetBrains Mono"
+  body_font: "Inter Variable"
+  scale_ratio: 1.25
+  weights: [400, 500, 600, 700]
+  rules:
+    - "Monospace for all certificates, hashes, rate counters"
+    - "Space Grotesk for section headers only"
+    - "Audit log entries in mono at 0.8rem"
+
+color_system:
+  mode: "dark"
+  base:
+    bg_primary: "#0A0E1A"
+    bg_secondary: "#111827"
+    bg_tertiary: "#1A2236"
+  text:
+    primary: "#E2E8F0"
+    secondary: "#94A3B8"
+    tertiary: "#64748B"
+  accents:
+    primary: "#6366F1"
+    secondary: "#06B6D4"
+    highlight: "#A855F7"
+  semantic:
+    healthy: "#22C55E"
+    warning: "#F59E0B"
+    critical: "#EF4444"
+    neutral: "#3B82F6"
+  security_levels:
+    low: "#22C55E"
+    medium: "#F59E0B"
+    high: "#F97316"
+    critical: "#EF4444"
+  usage_rules:
+    - "Critical alerts must pulse with red glow"
+    - "Rate limit breaches: full-row red flash"
+    - "TLS certificate expiry < 7 days: amber warning banner"
+    - "Audit log entries: alternating row backgrounds"
+
+layout_rules:
+  grid:
+    columns: 12
+    gutter: "24px"
+  asymmetry: true
+  direction: "left-heavy"
+  spacing:
+    section_margin: "2.5rem"
+    card_padding: "1.25rem"
+    element_gap: "1rem"
+    micro_gap: "0.5rem"
+
+animation:
+  page_load:
+    strategy: "staggered_reveal"
+    base_delay: 0.15
+    stagger: 0.06
+  interactions:
+    hover_duration: 150
+    hover_effect: "subtle border highlight"
+  alerts:
+    critical: "pulse animation (1s cycle) + red glow"
+    warning: "gentle pulse (2s cycle) + amber glow"
+    resolved: "fade to dim (500ms)"
+  rate_limits:
+    bucket_drain: "smooth CSS transition on width"
+    breach: "flash red background (300ms) then return"
+
+constraints:
+  framework: "React 18+"
+  styling: "Tailwind CSS v3+"
+  animation_lib: "Framer Motion"
+  state: "Zustand"
+  icons: "Lucide React"
+  performance:
+    bundle_js: "< 120kb gzipped"
+    fcp: "< 1s"
+  accessibility: "WCAG AA"
+  browsers: ["Chrome 120+", "Firefox 120+"]
+
+anti_patterns:
+  - "Ignoring certificate expiry warnings"
+  - "Low contrast on audit log entries"
+  - "Rate limit info buried in submenus"
+  - "No visual distinction between severity levels"
+  - "Animation distracting from alert content"
+
+components:
+  tls_status_card:
+    description: "TLS certificate status with expiry countdown"
+    structure: |
+      ┌──────────────────────────────────┐
+      │ 🔒 TLS Configuration         [OK]│
+      │                                  │
+      │ Server cert: *.bridge.local      │
+      │ Expires in: 89 days              │
+      │ ████████████████░░ 82% valid    │
+      │                                  │
+      │ Client CA: Loaded (3 clients)    │
+      │ mTLS: Enforced                   │
+      │                                  │
+      │ [View] [Rotate] [Export]         │
+      └──────────────────────────────────┘
+    states:
+      healthy: "Green left border, status OK badge"
+      expiring_soon: "Amber left border, 'Renew' CTA highlighted"
+      expired: "Red left border, pulse animation, blocking overlay"
+
+  rate_limit_bucket:
+    description: "Per-provider token bucket visualization"
+    structure: |
+      ┌──────────────────────────────────┐
+      │ openai              ████████░░ 80%│
+      │ 48/60 req/min     Burst: 8/10    │
+      │ Next refill: 12s                  │
+      ├──────────────────────────────────┤
+      │ deepseek            ██████████ 98%│
+      │ 59/60 req/min     Burst: 10/10   │
+      │ ⚠️ Near limit                    │
+      ├──────────────────────────────────┤
+      │ anthropic           ████░░░░░ 42%│
+      │ 21/50 req/min     Burst: 4/5     │
+      │ Next refill: 8s                   │
+      └──────────────────────────────────┘
+    animation:
+      drain: "Bar width animates with real request count"
+      refill: "Bar resets on window boundary"
+      near_limit: "> 90%: bar turns amber, pulsing"
+      breached: "Bar turns red, full-width, flash"
+
+  audit_log:
+    description: "Real-time scrolling audit log with filters"
+    structure: |
+      ┌──────────────────────────────────────────┐
+      │ Audit Log                    [Filter ▾]  │
+      │━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━│
+      │ 14:32:01  openai    gpt-4    234ms  200  │
+      │ 14:32:00  deepseek  chat     512ms  200  │
+      │ 14:31:58  openai    gpt-4    189ms  429  │  ← Rate limited
+      │ 14:31:55  anthropic claude   890ms  200  │
+      │ 14:31:52  ollama    llama3   45ms   200  │
+      │━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━│
+      │ Auto-scroll: ON  [Pause] [Export]        │
+      └──────────────────────────────────────────┘
+    columns:
+      - timestamp: "HH:MM:SS, mono, 0.8rem"
+      - provider: "Color-coded badge"
+      - model: "Mono"
+      - latency: "ms value, green < 500ms, amber < 1s, red > 1s"
+      - status: "200 green, 429 amber, 5xx red"
+    filters:
+      - provider
+      - status_code
+      - time_range
+
+  sandbox_status:
+    description: "Active sandbox overview"
+    structure: |
+      ┌──────────────────────────────────┐
+      │ 📦 Sandboxes                    │
+      │                                  │
+      │ Active: 3    Max: 10             │
+      │                                  │
+      │ agent-01   CPU: 12%  MEM: 256MB │
+      │ agent-02   CPU: 8%   MEM: 128MB │
+      │ agent-03   CPU: 45%  MEM: 512MB │
+      │                                  │
+      │ [View All] [Terminate]           │
+      └──────────────────────────────────┘
+
+  security_metrics_row:
+    description: "Top-level security KPIs"
+    layout: "Horizontal stat cards, 4 across"
+    metrics:
+      - tls_health: "Certificate status with days remaining"
+      - rate_limit_breaches: "Count of 429s in last hour"
+      - active_sandboxes: "Number with resource usage"
+      - audit_events_today: "Total with severity breakdown"
+
+validation_checklist:
+  - "TLS status card renders all three states correctly"
+  - "Rate limit buckets animate drain/refill smoothly"
+  - "Audit log auto-scrolls and filters work"
+  - "Security alerts pulse with correct severity colors"
+  - "All sections respond to live data updates"
+  - "Certificate expiry warnings trigger at 30/14/7 days"
+  - "Rate limit > 90% triggers visual warning"
+  - "Performance budgets met"
+  - "WCAG AA compliant"
