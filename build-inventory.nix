@@ -37,10 +37,9 @@ let
     cudaPackages.libnpp
 
     # Python ML packages (heavy dependencies)
-    # python312Packages.vllm  # If available
-    python312Packages.torch
-    python312Packages.numpy
-    python312Packages.transformers
+    python313Packages.torch
+    python313Packages.numpy
+    python313Packages.transformers
 
     # Hyprland (compositor)
     hyprland
@@ -112,13 +111,13 @@ let
     bat
 
     # Python
-    python312Full
-    python312Packages.pip
-    python312Packages.poetry-core
-    python312Packages.virtualenv
+    python313Full
+    python313Packages.pip
+    python313Packages.poetry-core
+    python313Packages.virtualenv
 
     # Node.js
-    nodejs_22
+    nodejs_24
     nodePackages.npm
     nodePackages.pnpm
     nodePackages.yarn
