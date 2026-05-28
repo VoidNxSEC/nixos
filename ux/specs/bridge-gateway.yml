@@ -1,0 +1,221 @@
+# SecureLLM Bridge — Gateway Dashboard UX Specification
+name: bridge-gateway-dashboard
+version: 0.1.0
+extends: null
+
+philosophy:
+  tone: "industrial precision + terminal-native elegance"
+  purpose: "Universal LLM provider gateway — manage, monitor, and route across multiple AI providers"
+  memorable_element: "Live provider topology graph with real-time token flow animation"
+  target_audience:
+    - "AI engineers managing multi-provider deployments"
+    - "DevOps teams monitoring LLM API usage"
+    - "Security engineers auditing provider access"
+
+typography:
+  display_font: "Space Grotesk"
+  mono_font: "JetBrains Mono"
+  body_font: "Inter Variable"
+  scale_ratio: 1.25
+  weights: [400, 500, 600, 700]
+  rules:
+    - "Monospace for all metrics, tokens, latencies"
+    - "Space Grotesk for navigation and section headers"
+    - "Never center-align data or code blocks"
+    - "Line height: 1.5 body, 1.2 headings, 1.6 code"
+
+color_system:
+  mode: "dark"
+  base:
+    bg_primary: "#0A0E1A"       # Deep navy — main background
+    bg_secondary: "#111827"     # Panel backgrounds
+    bg_tertiary: "#1A2236"      # Cards and modals
+  text:
+    primary: "#E2E8F0"          # Near-white with cool tint
+    secondary: "#94A3B8"        # Muted for secondary info
+    tertiary: "#64748B"         # Disabled / placeholder
+  accents:
+    primary: "#6366F1"          # Indigo — Bridge brand
+    secondary: "#06B6D4"        # Cyan — active states
+    highlight: "#A855F7"        # Violet — special highlights
+  semantic:
+    online: "#22C55E"           # Provider online
+    degraded: "#F59E0B"         # Provider degraded / rate-limited
+    offline: "#EF4444"          # Provider offline
+    neutral: "#3B82F6"          # Informational
+    tokens: "#8B5CF6"           # Token metrics
+  provider_brands:
+    deepseek: "#4F46E5"
+    openai: "#10A37F"
+    anthropic: "#D97706"
+    gemini: "#4285F4"
+    groq: "#F97316"
+    nvidia: "#76B900"
+    ollama: "#FFFFFF"
+    llamacpp: "#EAB308"
+    mlops: "#EC4899"
+  usage_rules:
+    - "Background must always be dark (#0A0E1A base)"
+    - "Accent colors used sparingly (< 10% of UI surface)"
+    - "Provider brand colors only for provider-specific badges and indicators"
+    - "Semantic colors strictly for their purpose"
+    - "Glow effects on interactive elements using box-shadow only"
+
+layout_rules:
+  grid:
+    columns: 12
+    gutter: "24px"
+    breakpoints:
+      mobile: "480px"
+      tablet: "768px"
+      desktop: "1024px"
+      wide: "1440px"
+  asymmetry: true
+  direction: "left-heavy"
+  overlap: false
+  spacing:
+    section_margin: "3rem"
+    card_padding: "1.5rem"
+    element_gap: "1rem"
+    micro_gap: "0.5rem"
+
+animation:
+  page_load:
+    strategy: "staggered_reveal"
+    base_delay: 0.2
+    stagger: 0.08
+  interactions:
+    hover_duration: 200
+    hover_effect: "glow + scale(1.01)"
+    click_duration: 100
+  data_updates:
+    number_transition: "countup"
+    token_counter: "rolling digits"
+    latency_sparkline: "live append"
+  provider_status:
+    online: "gentle pulse (3s cycle)"
+    degraded: "warning pulse (1.5s cycle)"
+    offline: "static dim"
+  topology_graph:
+    node_enter: "elastic bounce (400ms)"
+    edge_flow: "marching ants on active connections"
+    token_particles: "flowing dots along edges"
+
+constraints:
+  framework: "React 18+"
+  styling: "Tailwind CSS v3+"
+  animation_lib: "Framer Motion"
+  canvas: "D3.js (2D topology)"
+  state: "Zustand"
+  charts: "Recharts"
+  icons: "Lucide React"
+  performance:
+    bundle_js: "< 160kb gzipped"
+    bundle_css: "< 40kb"
+    fcp: "< 1.2s"
+    tti: "< 2.5s"
+  accessibility: "WCAG AA"
+  browsers: ["Chrome 120+", "Firefox 120+", "Safari 17+"]
+  deployment: "Vite + Nginx reverse proxy"
+
+anti_patterns:
+  - "purple gradients on white backgrounds"
+  - "Inter/Roboto as display font"
+  - "centered hero sections"
+  - "generic card grids without hierarchy"
+  - "excessive drop shadows"
+  - "rainbow gradients everywhere"
+  - "low-contrast color schemes"
+  - "inline styles (use Tailwind classes)"
+  - "massive component files (> 300 lines)"
+  - "no component reusability"
+
+# ── Component Definitions ───────────────────────────────────────────
+
+components:
+  provider_card:
+    description: "Status card for a single LLM provider"
+    layout:
+      width: "320px"
+      height: "auto"
+      padding: "1.25rem"
+      border_radius: "10px"
+    structure: |
+      ┌──────────────────────────────┐
+      │ [ICON] Provider Name  [STATUS]│
+      │ model-name (mono, 0.8rem)    │
+      │                               │
+      │ Tokens: 12.4k  |  Lat: 234ms │
+      │ ████████████░░  82% healthy  │
+      │                               │
+      │ [Test] [Config] [Disable]     │
+      └──────────────────────────────┘
+    states:
+      online: "left border 3px var(--semantic-online)"
+      degraded: "left border 3px var(--semantic-degraded)"
+      offline: "left border 3px var(--semantic-offline) grayscale(50%)"
+    animation:
+      hover: "scale(1.02) + glow 0 0 15px rgba(99,102,241,0.15)"
+
+  topology_graph:
+    description: "Live force-directed graph showing provider connections and token flow"
+    technology: "D3.js force simulation"
+    nodes:
+      center: "SecureLLM Bridge (larger, branded indigo)"
+      providers: "Color-coded by provider_brands, size by throughput"
+      clients: "Smaller nodes, muted color"
+    edges:
+      active: "Solid line with marching ants, width by request rate"
+      idle: "Dashed line, dimmed"
+    particles:
+      tokens: "Small dots flowing from clients → bridge → providers"
+      errors: "Red flashes on failed requests"
+    interaction:
+      drag: "Reposition nodes"
+      hover: "Show provider tooltip with stats"
+      click: "Open provider detail panel"
+
+  metrics_panel:
+    description: "Aggregate metrics display"
+    layout: "Horizontal row of stat cards"
+    metrics:
+      - total_requests: "CountUp, 2rem mono"
+      - total_tokens: "CountUp with K/M suffix"
+      - avg_latency: "Sparkline + current value"
+      - active_providers: "Count with status dots"
+      - error_rate: "Percentage with threshold coloring"
+
+  request_log:
+    description: "Real-time scrolling log of API requests"
+    layout: "Full-width table, auto-scroll to bottom"
+    columns: [timestamp, provider, model, tokens, latency, status]
+    style: "Mono font, compact rows, alternating row backgrounds"
+    filters: "By provider, status, time range"
+
+  config_panel:
+    description: "Provider configuration editor"
+    layout: "Split panel — config tree left, JSON editor right"
+    editor: "CodeMirror with JSON schema validation"
+    actions: "Validate, Apply, Reset"
+
+  security_dashboard:
+    description: "TLS, rate-limit, and audit overview"
+    sections:
+      - tls_status: "Certificate validity, mTLS status"
+      - rate_limits: "Per-provider token bucket visualization"
+      - audit_feed: "Recent security events with severity"
+      - sandbox_status: "Active sandboxes, resource usage"
+
+validation_checklist:
+  - "Aesthetic is distinctive (not generic AI slop)"
+  - "Typography uses Space Grotesk + JetBrains Mono"
+  - "Color system matches specification exactly"
+  - "Provider brand colors used correctly"
+  - "Topology graph is the memorable element"
+  - "All provider states render correctly (online/degraded/offline)"
+  - "Animations feel polished, not janky"
+  - "Performance budgets met"
+  - "WCAG AA compliant"
+  - "Mobile responsive at all breakpoints"
+  - "Dark theme consistent throughout"
+  - "Code is production-ready"
