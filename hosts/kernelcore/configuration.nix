@@ -378,7 +378,6 @@
         podman-compose
         python313
         python313Packages.pip
-        #pipx
         nodejs_24
         bun
         syft
@@ -461,7 +460,6 @@
           user = "kernelcore";
         };
 
-        # -----------------------------------------------------------
         # AGENTES MCP
         # -----------------------------------------------------------
         codex = {
@@ -470,14 +468,12 @@
           configPath = "/home/kernelcore/.codex/mcp_config.json";
           user = "kernelcore";
         };
-
         gemini = {
           enable = false;
           projectRoot = "/var/lib/gemini";
           configPath = "/home/kernelcore/.gemini/mcp_config.json";
           user = "kernelcore";
         };
-
         antigravity = {
           enable = false;
           projectRoot = "/var/lib/antigravity";
@@ -493,7 +489,6 @@
         };
       };
     };
-
     # ═══════════════════════════════════════════════════════════
     # AI AGENT HUB - Event-Driven Automation with Speech
     # ═══════════════════════════════════════════════════════════
@@ -504,13 +499,11 @@
         enable = false;
         orchestrator = "nomad";
       };
-
       # Speech Capabilities (F5-TTS + Whisper STT)
       capabilities.speech = {
         enable = true;
         enableTTS = false; # TODO: f5-tts wheel checa deps na instalação, falta propagatedBuildInputs completo
         enableSTT = true; # Whisper speech-to-text
-
         # Whisper model: tiny, base, small, medium, large
         # base = good balance between speed and accuracy
         whisperModel = "base";
@@ -525,12 +518,12 @@
     # LlamaSwap - Hot Model Reloading Configuration
     llama-swap = {
       enable = true;
-
       profiles = {
         coder = {
-          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
+          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf
+         ";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 999;
+          gpuLayers = 42;
           contextSize = 8192;
         };
 
@@ -555,7 +548,6 @@
           contextSize = 4096;
         };
       };
-
       defaultProfile = "coder";
     };
 
@@ -564,7 +556,7 @@
       serviceControl.enable = true; # GPU/ML service control & RAM optimization
       llamaSwapControl.enable = true; # LlamaSwap hot model reloading control
     };
-  }; # FIM DO BLOCO KERNELCORE
+  };
 
   # ============================================================================
   # QUICK START HELPERS
@@ -634,7 +626,7 @@
     # Dynamic project profiles - switch with: mcp-context profile <name>
     profiles = {
       nixos = {
-        workdir = "/etc/nixos";
+        workdir = "/srv/nixos-config";
         environment = "production";
         env = {
           PROJECT_NAME = "NixOS Configuration";
@@ -915,7 +907,7 @@
     };
 
     gitea-showcase = {
-      enable = true;
+      enable = false;
       domain = "gitea.voidnx.com";
       rootUrl = "https://gitea.voidnx.com/";
       listenAddress = "127.0.0.1";
@@ -1012,7 +1004,7 @@
       device = "cuda";
       port = 8000;
     };
-  }; # FIM DO BLOCO SERVICES
+  };
 
   programs.niri.enable = false;
 
@@ -1127,6 +1119,8 @@
       codex
       qbittorrent
       # vllm # FIXME: upstream nixpkgs broken patch for llama-cpp-python (406)
+      #koboldcpp
+      #sillytavern
       alacritty
       xclip
       glab
