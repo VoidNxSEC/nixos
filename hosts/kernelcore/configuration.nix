@@ -113,7 +113,7 @@
       };
 
       spider-network-proxy = {
-        enable = true;
+        enable = false;
         setSystemProxy = false;
       };
 
@@ -684,8 +684,9 @@
     llm.enable = true;
     mcp.enable = true;
     arch-analyzer.enable = true;
-    #swissknife.enable = true;
   };
+
+  kernelcore.swissknife.enable = true;
 
   # ═══════════════════════════════════════════════════════════
   # MAIN SERVICES BLOCK
