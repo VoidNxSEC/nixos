@@ -107,6 +107,11 @@
         cacheTTL = 3600;
       };
 
+      dns-proxy = {
+        enable = true;
+        setAsSystemResolver = true;
+      };
+
       bridge = {
         enable = true;
         ipv6.enable = false;
@@ -1227,7 +1232,7 @@
         rooveterinaryinc.roo-cline
       ];
     };
-    brave-secure.enable = false;
+    brave-secure.enable = true;
     firefox-privacy.enable = true;
     git.lfs.enable = true;
     nemo.enable = true;
