@@ -17,7 +17,7 @@
   zramSwap = lib.mkForce {
     enable = true;
     priority = 1000; # Max priority to ensure ZRAM is used first
-    memoryPercent = 50; # Use up to 50% of RAM
+    memoryPercent = 75; # Use up to 50% of RAM
     algorithm = "zstd";
   };
 
@@ -34,7 +34,7 @@
   boot.kernel.sysctl = lib.mkForce {
     # Swappiness: Reduce preference for swapping.
     # Default 60 -> 10. Only swap when RAM is actually full.
-    "vm.swappiness" = 10;
+    "vm.swappiness" = 20;
 
     # Dirty Pages: Optimized for 16GB RAM + interactive workloads
     # Higher values reduce I/O spikes and stuttering in Wayland compositors
