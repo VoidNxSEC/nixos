@@ -75,8 +75,11 @@ with lib;
       "kernel.yama.ptrace_scope" = mkDefault 2;
       "kernel.kexec_load_disabled" = mkDefault 1;
 
-      # ⚠️ Hardening Máximo: Desativa o carregamento automático de QUALQUER módulo na RAM pós-boot.
+      # ⚠️ Hardening Máximo: Desativa o carregamento automático de QUALQUER módulo pós-boot.
       # Impede que exploits invoquem chamadas de socket que forcem o Kernel a carregar módulos ocultos.
+      # ATENÇÃO OPERACIONAL: aplica imediatamente via activation script no próximo nixos-rebuild switch.
+      # Após aplicado, nenhum módulo novo carrega até o próximo reboot — hotplug de hardware quebra.
+      # Para desabilitar: setar mkForce 0 em sec/hardening.nix.
       "kernel.modules_disabled" = mkDefault 1;
 
       # kernel.unprivileged_userns_clone: removido — sysctl não existe no kernel 6.18+

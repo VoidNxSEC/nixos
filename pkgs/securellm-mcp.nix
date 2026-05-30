@@ -21,7 +21,7 @@ let
       ]);
   };
 
-  spiderNixPkg = inputs.spider-nix.packages.${pkgs.system}.default;
+  spiderNixPkg = inputs.spider-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 pkgs.buildNpmPackage {
   pname = "securellm-mcp";
@@ -34,7 +34,7 @@ pkgs.buildNpmPackage {
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "1";
   };
 
-  npmDepsHash = lib.fakeHash; # TODO: replace with actual hash after build
+  npmDepsHash = "sha256-uA78xn4dzPgLTivGSpapPIVtqzEyOPEAkRYGxzZPusY="; # TODO: replace with actual hash after build
 
   buildPhase = ''
     npm run build
