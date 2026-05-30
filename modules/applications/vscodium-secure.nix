@@ -282,7 +282,7 @@ in
       kernelcore = {
         programs.vscode = {
           enable = true;
-          extensions =
+          profiles.default.extensions =
             cfg.extensions
             ++ (if cfg.enableGitLabDuo then [ pkgs.vscode-extensions.gitlab.gitlab-workflow ] else [ ]);
         };
