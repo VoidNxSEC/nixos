@@ -23,7 +23,7 @@ let
         brevKey = "id_rsa";
       };
 
-  # Helper to create standard forge config
+  # Helper to create standard forge config (programs.ssh.settings format)
   mkForge =
     {
       host,
@@ -33,27 +33,24 @@ let
       extra ? { },
     }:
     {
-      hostname = host;
-      inherit user port;
-      identityFile =
+      HostName = host;
+      User = user;
+      IdentityFile =
         if identity != null then
           "${sysSsh.sshDir}/${identity}"
         else
           "${sysSsh.sshDir}/${sysSsh.personalKey}";
-      identitiesOnly = true;
-      # Advanced options for stability and speed
-      compression = true;
-      serverAliveInterval = 60;
-      serverAliveCountMax = 3;
-      extraOptions = {
-        PreferredAuthentications = "publickey";
-        # Multiplexing for faster git operations
-        ControlMaster = "auto";
-        ControlPath = "~/.ssh/control-%r@%h:%p";
-        ControlPersist = "10m";
-      }
-      // extra;
-    };
+      IdentitiesOnly = "yes";
+      Compression = "yes";
+      ServerAliveInterval = 60;
+      ServerAliveCountMax = 3;
+      PreferredAuthentications = "publickey";
+      ControlMaster = "auto";
+      ControlPath = "~/.ssh/control-%r@%h:%p";
+      ControlPersist = "10m";
+    }
+    // (lib.optionalAttrs (port != 22) { Port = port; })
+    // extra;
 
   # ─────────────────────────────────────────────────────────
   # DIAGNOSTIC TOOL
@@ -132,108 +129,66 @@ in
 
     programs.ssh = {
       enable = true;
-      enableDefaultConfig = false; # We manually configure defaults in matchBlocks."*"
 
-      # Permite que o Brev CLI escreva no brev_config sem tocar no config
-      # gerenciado pelo Nix (read-only). O Include é processado antes dos
-      # matchBlocks, então entradas do brev_config têm precedência.
+      # Permite que o Brev CLI escreva no brev_config sem tocar no config gerenciado pelo Nix.
       includes = [ "~/.ssh/brev_config" ];
 
-      # ═══════════════════════════════════════════════════════════
-      # INTELLIGENT FORGE CONFIGURATIONS
-      # ═══════════════════════════════════════════════════════════
-      matchBlocks = {
-
-        # ─────────────────────────────────────────────────────────
-        # GITHUB (Primary)
-        # ─────────────────────────────────────────────────────────
+      settings = {
         "github.com" = mkForge {
           host = "github.com";
           identity = cfg.keys.github or sysSsh.personalKey;
         };
 
-        # GitHub (VoidNxLabs Org) - Intelligent Alias
         "github.com-voidnxlabs" = mkForge {
           host = "github.com";
           identity = sysSsh.orgKey or "id_ed25519_voidnxlabs";
         };
 
-        # ─────────────────────────────────────────────────────────
-        # GITLAB
-        # ─────────────────────────────────────────────────────────
         "gitlab.com" = mkForge {
           host = "gitlab.com";
           identity = cfg.keys.gitlab or sysSsh.gitlabKey;
         };
 
-        # ─────────────────────────────────────────────────────────
-        # CODEBERG (Forgejo)
-        # ─────────────────────────────────────────────────────────
         "codeberg.org" = mkForge {
           host = "codeberg.org";
-          # Usually uses same key as GitHub or personal
           identity = cfg.keys.codeberg or sysSsh.personalKey;
         };
 
-        # ─────────────────────────────────────────────────────────
-        # SOURCEFORGE
-        # ─────────────────────────────────────────────────────────
         "git.code.sf.net" = mkForge {
           host = "git.code.sf.net";
           identity = cfg.keys.sourceforge or sysSsh.personalKey;
-          # Sourceforge often has legacy algo requirements, but we enforce modern first
-          extra = {
-            PubkeyAcceptedKeyTypes = "+ssh-rsa"; # Fallback for older SF servers if needed
-          };
+          extra.PubkeyAcceptedKeyTypes = "+ssh-rsa";
         };
-        # Alias for easier usage
+
         "sourceforge" = mkForge {
           host = "git.code.sf.net";
           identity = cfg.keys.sourceforge or sysSsh.personalKey;
-          extra = {
-            PubkeyAcceptedKeyTypes = "+ssh-rsa";
-          };
+          extra.PubkeyAcceptedKeyTypes = "+ssh-rsa";
         };
 
-        # ─────────────────────────────────────────────────────────
-        # AZURE DEVOPS
-        # ─────────────────────────────────────────────────────────
         "ssh.dev.azure.com" = mkForge {
           host = "ssh.dev.azure.com";
           identity = cfg.keys.azure or sysSsh.personalKey;
-          port = 22;
-          extra = {
-            # Azure sometimes requires rsa-sha2
-            PubkeyAcceptedKeyTypes = "+ssh-rsa";
-          };
+          extra.PubkeyAcceptedKeyTypes = "+ssh-rsa";
         };
-        # Visual Studio SSH
+
         "vs-ssh.visualstudio.com" = mkForge {
           host = "vs-ssh.visualstudio.com";
           identity = cfg.keys.azure or sysSsh.personalKey;
-          port = 22;
         };
 
-        # ─────────────────────────────────────────────────────────
-        # FORGEJO (Local self-hosted)
-        # ─────────────────────────────────────────────────────────
         "forgejo" = mkForge {
           host = "localhost";
           port = 2222;
           identity = cfg.keys.forgejo or sysSsh.personalKey;
         };
 
-        # ─────────────────────────────────────────────────────────
-        # BREV.DEV (AI/ML Dev Environments)
-        # ─────────────────────────────────────────────────────────
         "*.brev.dev" = {
-          user = sysSsh.serverUser;
-          identityFile = "${sysSsh.sshDir}/${sysSsh.brevKey}";
-          identitiesOnly = true;
-          extraOptions = {
-            StrictHostKeyChecking = "accept-new"; # Ephemeral envs
-            AddKeysToAgent = "yes";
-          };
+          User = sysSsh.serverUser;
+          IdentityFile = "${sysSsh.sshDir}/${sysSsh.brevKey}";
+          IdentitiesOnly = "yes";
+          StrictHostKeyChecking = "accept-new";
+          AddKeysToAgent = "yes";
         };
       };
     };
