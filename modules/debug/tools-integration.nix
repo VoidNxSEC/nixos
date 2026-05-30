@@ -10,7 +10,7 @@
 }:
 
 let
-  swissknife-tools = inputs.swissknife.packages.${pkgs.system};
+  swissknife-tools = inputs.swissknife.packages.${pkgs.stdenv.hostPlatform.system};
 in
 {
   options.kernelcore.swissknife = {

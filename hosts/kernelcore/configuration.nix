@@ -112,6 +112,11 @@
         setAsSystemResolver = true;
       };
 
+      spider-network-proxy = {
+        enable = true;
+        setSystemProxy = false;
+      };
+
       bridge = {
         enable = true;
         ipv6.enable = false;
