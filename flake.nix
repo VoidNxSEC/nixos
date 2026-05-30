@@ -46,6 +46,7 @@
     securellm-mcp = {
       url = "github:VoidNxSEC/securellm-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.spider-nix.follows = "spider-nix-network";
     };
     securellm-bridge = {
       url = "github:VoidNxSEC/securellm-bridge";
@@ -67,16 +68,11 @@
     #inputs.nixpkgs.follows = "nixpkgs";
     #};
 
-    #swissknife = {
-    #url = "github:VoidNxSEC/swissknife";
+    # Spider-Nix
+    #spider-nix = {
+    #url = "github:VoidNxSEC/spider-network";
     #inputs.nixpkgs.follows = "nixpkgs";
     #};
-
-    # Spider-Nix
-    spider-nix = {
-      url = "github:VoidNxSEC/spider-network";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     i915-governor = {
       url = "github:VoidNxSEC/i915-governor";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -142,9 +138,11 @@
 
     # Spider Network Proxy - uTLS anti-detection HTTP/SOCKS5 proxy
     spider-nix-network = {
-      url = "git+file:///home/kernelcore/master/spider-nix-network";
+      url = "github:VoidNxSEC/spider-network";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Alias so `inputs.spider-nix` (used by pkgs/securellm-mcp.nix) resolves to spider-nix-network
+    spider-nix.follows = "spider-nix-network";
   };
 
   outputs =
