@@ -60,7 +60,7 @@ let
 
     def approval_program() -> Expr:
         """Main approval program for DAO governance."""
-        
+
         # ============================================
         # INITIALIZATION
         # ============================================
@@ -77,7 +77,7 @@ let
             App.globalPut(ADMIN, Txn.sender()),
             Approve(),
         ])
-        
+
         # ============================================
         # OPT-IN (Register voter)
         # ============================================
@@ -87,7 +87,7 @@ let
             App.localPut(Txn.sender(), DELEGATED_TO, Global.zero_address()),
             Approve(),
         ])
-        
+
         # ============================================
         # STAKE TOKENS (Update voting power)
         # ============================================
@@ -97,7 +97,7 @@ let
             return Seq([
                 # Get token balance
                 (balance := AssetHolding.balance(
-                    account, 
+                    account,
                     App.globalGet(GOVERNANCE_TOKEN)
                 )),
                 # Update local voting power
@@ -107,24 +107,24 @@ let
                     App.localPut(account, VOTING_POWER, Int(0)),
                 ),
             ])
-        
+
         # ============================================
         # CREATE PROPOSAL
         # ============================================
         create_proposal = Seq([
             # Require minimum voting power to create proposal
             Assert(App.localGet(Txn.sender(), VOTING_POWER) > Int(0)),
-            
+
             # Increment proposal counter
             (new_id := ScratchVar(TealType.uint64)),
             new_id.store(App.globalGet(PROPOSAL_COUNT) + Int(1)),
             App.globalPut(PROPOSAL_COUNT, new_id.load()),
-            
+
             # Create proposal box
             # Args: [1] = title, [2] = description
             (box_name := ScratchVar(TealType.bytes)),
             box_name.store(Concat(Bytes("prop_"), Itob(new_id.load()))),
-            
+
             # Store proposal data
             # Format: creator(32) | yes_votes(8) | no_votes(8) | start_round(8) | end_round(8) | executed(1)
             App.box_create(box_name.load(), Int(65)),
@@ -133,17 +133,17 @@ let
             App.box_replace(box_name.load(), Int(40), Itob(Int(0))),  # no_votes
             App.box_replace(box_name.load(), Int(48), Itob(Global.round())),  # start
             App.box_replace(
-                box_name.load(), 
-                Int(56), 
+                box_name.load(),
+                Int(56),
                 Itob(Global.round() + App.globalGet(VOTING_PERIOD))
             ),  # end
             App.box_replace(box_name.load(), Int(64), Bytes("base16", "00")),  # not executed
-            
+
             # Log proposal creation
             Log(Concat(Bytes("proposal_created:"), Itob(new_id.load()))),
             Approve(),
         ])
-        
+
         # ============================================
         # CAST VOTE
         # ============================================
@@ -151,26 +151,26 @@ let
             # Args: [1] = proposal_id, [2] = vote (1=yes, 0=no)
             (prop_id := ScratchVar(TealType.uint64)),
             prop_id.store(Btoi(Txn.application_args[1])),
-            
+
             (vote_yes := ScratchVar(TealType.uint64)),
             vote_yes.store(Btoi(Txn.application_args[2])),
-            
+
             (box_name := ScratchVar(TealType.bytes)),
             box_name.store(Concat(Bytes("prop_"), Itob(prop_id.load()))),
-            
+
             # Verify proposal exists and voting is open
             (box_contents := App.box_get(box_name.load())),
             Assert(box_contents.hasValue()),
-            
+
             (end_round := ScratchVar(TealType.uint64)),
             end_round.store(Btoi(Extract(box_contents.value(), Int(56), Int(8)))),
             Assert(Global.round() <= end_round.load()),
-            
+
             # Get voter power (including delegations)
             (vote_power := ScratchVar(TealType.uint64)),
             vote_power.store(App.localGet(Txn.sender(), VOTING_POWER)),
             Assert(vote_power.load() > Int(0)),
-            
+
             # Update vote counts
             If(
                 vote_yes.load() == Int(1),
@@ -195,11 +195,11 @@ let
                     ),
                 ]),
             ),
-            
+
             Log(Concat(Bytes("vote_cast:"), Itob(prop_id.load()))),
             Approve(),
         ])
-        
+
         # ============================================
         # EXECUTE PROPOSAL
         # ============================================
@@ -207,37 +207,37 @@ let
             # Args: [1] = proposal_id
             (prop_id := ScratchVar(TealType.uint64)),
             prop_id.store(Btoi(Txn.application_args[1])),
-            
+
             (box_name := ScratchVar(TealType.bytes)),
             box_name.store(Concat(Bytes("prop_"), Itob(prop_id.load()))),
-            
+
             # Get proposal data
             (box_contents := App.box_get(box_name.load())),
             Assert(box_contents.hasValue()),
-            
+
             # Verify voting period ended
             (end_round := ScratchVar(TealType.uint64)),
             end_round.store(Btoi(Extract(box_contents.value(), Int(56), Int(8)))),
             Assert(Global.round() > end_round.load()),
-            
+
             # Verify not already executed
             Assert(Extract(box_contents.value(), Int(64), Int(1)) == Bytes("base16", "00")),
-            
+
             # Check quorum and majority
             (yes_votes := ScratchVar(TealType.uint64)),
             yes_votes.store(Btoi(Extract(box_contents.value(), Int(32), Int(8)))),
             (no_votes := ScratchVar(TealType.uint64)),
             no_votes.store(Btoi(Extract(box_contents.value(), Int(40), Int(8)))),
-            
+
             Assert(yes_votes.load() > no_votes.load()),  # Majority
-            
+
             # Mark as executed
             App.box_replace(box_name.load(), Int(64), Bytes("base16", "01")),
-            
+
             Log(Concat(Bytes("proposal_executed:"), Itob(prop_id.load()))),
             Approve(),
         ])
-        
+
         # ============================================
         # ROUTER
         # ============================================
@@ -245,17 +245,17 @@ let
             [Txn.application_id() == Int(0), on_create],
             [Txn.on_completion() == OnComplete.OptIn, on_opt_in],
             [Txn.on_completion() == OnComplete.CloseOut, Approve()],
-            [Txn.on_completion() == OnComplete.UpdateApplication, 
+            [Txn.on_completion() == OnComplete.UpdateApplication,
              Return(Txn.sender() == App.globalGet(ADMIN))],
             [Txn.on_completion() == OnComplete.DeleteApplication,
              Return(Txn.sender() == App.globalGet(ADMIN))],
             [Txn.application_args[0] == Bytes("create_proposal"), create_proposal],
             [Txn.application_args[0] == Bytes("vote"), cast_vote],
             [Txn.application_args[0] == Bytes("execute"), execute_proposal],
-            [Txn.application_args[0] == Bytes("update_power"), 
+            [Txn.application_args[0] == Bytes("update_power"),
              Seq([update_voting_power(Txn.sender()), Approve()])],
         )
-        
+
         return program
 
 
@@ -267,26 +267,26 @@ let
     if __name__ == "__main__":
         import os
         from pyteal import compileTeal, Mode
-        
+
         # Compile to TEAL
         approval_teal = compileTeal(
-            approval_program(), 
-            mode=Mode.Application, 
+            approval_program(),
+            mode=Mode.Application,
             version=8
         )
         clear_teal = compileTeal(
-            clear_state_program(), 
-            mode=Mode.Application, 
+            clear_state_program(),
+            mode=Mode.Application,
             version=8
         )
-        
+
         # Write to files
         os.makedirs("build", exist_ok=True)
         with open("build/governance_approval.teal", "w") as f:
             f.write(approval_teal)
         with open("build/governance_clear.teal", "w") as f:
             f.write(clear_teal)
-        
+
         print("Compiled governance contracts to build/")
   '';
 
