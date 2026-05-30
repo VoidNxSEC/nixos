@@ -19,6 +19,7 @@
     ./training-logger.nix
     ./cli-helpers.nix # rebuild, dbg, nix-debug, audit-system, lynis-report
     ./nix-ops.nix # unified system operations tool
+    ./config-audit.nix # kernelcore.* cross-reference auditor
   ];
 
   # ============================================================
