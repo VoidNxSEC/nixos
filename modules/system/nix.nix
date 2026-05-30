@@ -72,10 +72,10 @@ with lib;
 
           # Allow local git+file URIs for development (avoids restricted mode errors)
           extra-allowed-uris = [
-            "git+file://${config.system.user.homeDir}/dev/projects"
-            "path://${config.system.user.homeDir}/dev/projects"
-            "git+file://${config.system.user.homeDir}/dev/low-level"
-            "path://${config.system.user.homeDir}/dev/low-level"
+            "git+file://${config.system.user.homeDir}/master/"
+            "path://${config.system.user.homeDir}/master/"
+            "git+file://${config.system.user.homeDir}/master/"
+            "path://${config.system.user.homeDir}/master/"
             "git+http://localhost:3002"
           ];
         }
