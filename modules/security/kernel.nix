@@ -34,6 +34,9 @@ with lib;
 
     # Blacklist insecure/unused protocols and modules
     boot.blacklistedKernelModules = [
+      # ⚠️ Mitigação do Copy Fail (CVE-2026-31431)
+      "algif_aead"
+
       # Obscure network protocols
       "dccp"
       "sctp"
@@ -71,6 +74,10 @@ with lib;
       "kernel.unprivileged_bpf_disabled" = mkDefault 1;
       "kernel.yama.ptrace_scope" = mkDefault 2;
       "kernel.kexec_load_disabled" = mkDefault 1;
+
+      # ⚠️ Hardening Máximo: Desativa o carregamento automático de QUALQUER módulo na RAM pós-boot.
+      # Impede que exploits invoquem chamadas de socket que forcem o Kernel a carregar módulos ocultos.
+      "kernel.modules_disabled" = mkDefault 1;
 
       # kernel.unprivileged_userns_clone: removido — sysctl não existe no kernel 6.18+
       # (era do patch Debian/Ubuntu; upstream sempre usou kernel.unprivileged_userns_clone=1)
