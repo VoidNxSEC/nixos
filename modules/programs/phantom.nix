@@ -11,16 +11,16 @@ let
   cfg = config.programs.phantom;
 
   # Build phantom from local source
-  phantomPkg = pkgs.python3Packages.buildPythonApplication {
+  phantomPkg = pkgs.python313Packages.buildPythonApplication {
     pname = "phantom";
-    version = "2.0.0";
+    version = "0.0.1";
     format = "pyproject";
 
     src = cfg.srcPath;
 
-    nativeBuildInputs = with pkgs.python3Packages; [ hatchling ];
+    nativeBuildInputs = with pkgs.python313Packages; [ hatchling ];
 
-    propagatedBuildInputs = with pkgs.python3Packages; [
+    propagatedBuildInputs = with pkgs.python313Packages; [
       pydantic
       rich
       typer
@@ -40,9 +40,9 @@ let
   };
 
   # GTK4 desktop application
-  phantomDesktop = pkgs.python3Packages.buildPythonApplication {
+  phantomDesktop = pkgs.python313Packages.buildPythonApplication {
     pname = "phantom-desktop";
-    version = "2.0.0";
+    version = "0.0.2";
     format = "other";
 
     src = cfg.srcPath;

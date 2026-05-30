@@ -232,7 +232,7 @@ in
     org = {
       enable = mkOption {
         type = types.bool;
-        default = false;
+        default = true;
         description = "Register a single org-level runner (serves all repos).";
       };
 
@@ -244,13 +244,16 @@ in
 
       name = mkOption {
         type = types.str;
-        default = "kernelcore-org";
+        default = "voidnxlabs";
         description = "Runner display name shown in GitHub UI.";
       };
 
       labels = mkOption {
         type = types.listOf types.str;
-        default = [ "gpu" ];
+        default = [
+          "gpu"
+          "nixos"
+        ];
         description = "Extra labels appended to the common set [nixos, nix, linux].";
       };
     };
