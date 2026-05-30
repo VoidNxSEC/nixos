@@ -520,10 +520,9 @@
       enable = true;
       profiles = {
         coder = {
-          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf
-         ";
+          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-          gpuLayers = 42;
+          gpuLayers = 38;
           contextSize = 8192;
         };
 
@@ -849,7 +848,7 @@
       port = 8081;
       n_threads = 12;
       n_threads_batch = 12;
-      n_gpu_layers = 40;
+      n_gpu_layers = 38;
       mainGpu = 1;
       n_parallel = 1;
       n_ctx = 8192;
@@ -858,7 +857,7 @@
       cudaGraphs = true;
       flashAttention = true;
       mmap = true;
-      mlock = false;
+      mlock = true;
       continuousBatching = true;
       speculativeDecoding.enable = false;
       metricsEndpoint = true;
@@ -1296,6 +1295,7 @@
     sillytavern
     koboldcpp
     cinnamon
+    evince
     # antigravity # Replaced by custom build
   ];
 
