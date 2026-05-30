@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["id", "title", "status", "date", "project", "classification"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ADR-\\d{4}$" },
+    "title": { "type": "string" },
+    "status": { "type": "string", "enum": ["proposed", "accepted", "rejected", "superseded", "deprecated"] },
+    "date": { "type": "string" },
+    "project": { "type": "string" },
+    "classification": { "type": "string", "enum": ["critical", "major", "minor", "patch"] },
+    "supersedes": { "type": "array", "items": { "type": "string" } },
+    "superseded_by": { "type": "string" },
+    "related_to": { "type": "array", "items": { "type": "string" } }
+  }
+}

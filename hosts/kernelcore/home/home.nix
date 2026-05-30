@@ -47,7 +47,7 @@
   home = {
     username = "kernelcore";
     homeDirectory = "/home/kernelcore";
-    stateVersion = "26.05";
+    stateVersion = "26.11";
 
     # ========================================================
     # OPERATIONAL PACKAGES
@@ -206,17 +206,6 @@
       # Machine Learning
       # ─────────────────────────────────────────────────────
       llama-cpp
-      #python313Packages.vllm
-      #python313Packages.hf-xet
-      #python313Packages.llama-index-embeddings-huggingface
-      #python313Packages.kernels
-      #python313Packages.huggingface-hub
-      #python313Packages.langchain-huggingface
-      #python313Packages.litellm
-      # python313Packages.uv
-      #python313Packages.pip
-      #python313Packages.python-lsp-server
-
       # ─────────────────────────────────────────────────────
       # Nerd Fonts
       # ─────────────────────────────────────────────────────
