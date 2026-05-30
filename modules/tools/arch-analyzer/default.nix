@@ -18,7 +18,7 @@ let
   cfg = config.kernelcore.tools.arch-analyzer;
 
   # Use arch-analyzer from flake input directly
-  archAnalyzerPkg = inputs.arch-analyzer.packages.${pkgs.system}.default;
+  archAnalyzerPkg = inputs.arch-analyzer.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
   # nix-tools integration wrapper
   archToolsWrapper = pkgs.writeScriptBin "arch" ''
