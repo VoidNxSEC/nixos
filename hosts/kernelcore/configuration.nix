@@ -76,7 +76,7 @@
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
       aide.enable = true;
-      clamav.enable = false;
+      clamav.enable = true;
       ssh.enable = true;
       kernel.enable = true;
       pam.enable = true;
@@ -554,6 +554,7 @@
     shell = {
       serviceControl.enable = true; # GPU/ML service control & RAM optimization
       llamaSwapControl.enable = true; # LlamaSwap hot model reloading control
+      config-audit.enable = true; # kernelcore.* cross-reference auditor + aliases
     };
   };
 
@@ -1200,6 +1201,7 @@
       terraform-providers.hashicorp_vault
       anytype
       antigravity
+      evince
     ];
   };
 
@@ -1339,5 +1341,5 @@
     ];
   };
 
-  system.stateVersion = "26.05";
+  system.stateVersion = "26.11";
 }
