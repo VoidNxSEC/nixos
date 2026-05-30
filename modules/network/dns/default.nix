@@ -17,7 +17,7 @@ let
 
     src = ./.;
 
-    vendorHash = "sha256-IfjC6xc3q9nQpsMB6ccqqBKZnU4rTL+8oeqbUN9U/tg=";
+    vendorHash = "sha256-f9j0KRpWmIPnPAXZpNqiMFng5zlcmzmem2R8Mst8kdU=";
 
     meta = with lib; {
       description = "Fast DNS proxy with caching for improved resolution";
@@ -142,6 +142,6 @@ in
 
     # Optional: disable systemd-resolved if we're replacing it
     # Uncomment if you want to fully replace systemd-resolved
-    # services.resolved.enable = mkIf cfg.setAsSystemResolver false;
+    #services.resolved.enable = mkIf cfg.setAsSystemResolver false;
   };
 }

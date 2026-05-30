@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"os/signal"
 	"sync"
@@ -172,7 +171,7 @@ func (p *DNSProxy) makeKey(q dns.Question) string {
 func (p *DNSProxy) queryUpstream(msg *dns.Msg) (*dns.Msg, error) {
 	var lastErr error
 
-	for i, upstream := range config.Upstreams {
+	for i, upstream := range p.config.Upstreams {
 		client := p.upstreams[i]
 		response, _, err := client.Exchange(msg, upstream)
 		if err == nil && response != nil {
