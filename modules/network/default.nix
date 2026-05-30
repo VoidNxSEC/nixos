@@ -31,6 +31,9 @@
     # Network Infrastructure
     ./bridge.nix
 
+    # Anti-detection proxy
+    ./spider-network-proxy.nix
+
     # Kubernetes CNI
     ./cilium-cni.nix
   ];

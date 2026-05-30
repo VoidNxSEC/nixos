@@ -74,7 +74,7 @@
 
     # Spider-Nix
     spider-nix = {
-      url = "github:VoidNxSEC/spider-nix";
+      url = "github:VoidNxSEC/spider-network";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
@@ -139,6 +139,12 @@
     #url = "github:VoidNxSEC/O.W.A.S.A.K.A.";
     #inputs.nixpkgs.follows = "nixpkgs";
     #};
+
+    # Spider Network Proxy - uTLS anti-detection HTTP/SOCKS5 proxy
+    spider-nix-network = {
+      url = "git+file:///home/kernelcore/master/spider-nix-network";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
