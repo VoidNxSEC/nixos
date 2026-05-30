@@ -272,7 +272,7 @@ in
     # REMOVIDO: dns-health-monitor - causava conflitos de concorrência com serviços de rede
     # Para monitoramento manual, use: dns-diag ou dns-test
 
-    # Criar link simbólico para /etc/resolv.conf
-    environment.etc."resolv.conf".source = "/run/systemd/resolve/stub-resolv.conf";
+    # resolv.conf é gerenciado pelo dns-proxy (networking.nameservers) quando setAsSystemResolver=true.
+    # Não definir environment.etc."resolv.conf".source aqui evita conflito de definição.
   };
 }
