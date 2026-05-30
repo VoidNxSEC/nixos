@@ -24,7 +24,7 @@ import "${pkgs.path}/nixos/tests/make-test-python.nix" (
 
           networking.useDHCP = false;
           networking.interfaces.eth0.useDHCP = true;
-          networking.hostName = "network-test";
+          networking.hostName = "nx";
         };
     };
 
