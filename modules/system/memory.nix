@@ -140,7 +140,7 @@ with lib;
     # ============================================
 
     # Kill all user processes on logout (no Node/Chrome orphans)
-    services.logind.killUserProcesses = true;
+    services.logind.settings.Login.KillUserProcesses = true;
 
     # Subreaper: systemd --user adopts orphaned child processes
     systemd.services."user@".serviceConfig.Subreaper = true;
