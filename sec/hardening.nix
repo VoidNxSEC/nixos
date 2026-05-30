@@ -142,7 +142,7 @@ with lib;
     "kernel.unprivileged_bpf_disabled" = 1;
     "kernel.yama.ptrace_scope" = 2;
     "kernel.kexec_load_disabled" = 1;
-    "kernel.unprivileged_userns_clone" = 0;
+    # kernel.unprivileged_userns_clone removido: sysctl não existe no kernel 6.18+ upstream.
     "kernel.perf_event_paranoid" = 3;
     "kernel.core_uses_pid" = 1;
 
