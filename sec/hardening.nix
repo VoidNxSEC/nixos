@@ -213,7 +213,7 @@ with lib;
 
   # Atributo do lockdown em confidentiality consome muito mais RAM que o normal, provavelmente devido a quantidade de refused que a rede tem que operar, mas essa hipotese não é muito confiavel.
   boot.kernelParams = [
-    "lockdown=integrity"
+    "lockdown=confidentiality"
     "init_on_alloc=1"
     "init_on_free=1"
     "page_alloc.shuffle=1"

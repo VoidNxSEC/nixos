@@ -25,7 +25,7 @@ let
 in
 pkgs.buildNpmPackage {
   pname = "securellm-mcp";
-  version = "2.1.0";
+  version = "0.0.1";
 
   inherit src;
 
@@ -61,6 +61,6 @@ pkgs.buildNpmPackage {
   meta = with lib; {
     description = "MCP server for SecureLLM Bridge IDE integration";
     license = licenses.mit;
-    maintainers = [ "kernelcore" ];
+    maintainers = [ "marcosfpina" ];
   };
 }
