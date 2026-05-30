@@ -114,7 +114,7 @@ in
     # ── Pacotes disponíveis no sistema ───────────────────────────
     environment.systemPackages = [
       chainscopePython
-      inputs.chainscope.packages.${pkgs.system}.default # CLI entry points do projeto
+      inputs.chainscope.packages.${pkgs.stdenv.hostPlatform.system}.default # CLI entry points do projeto
       pkgs.docker-compose # para `chainscope-infra up`
     ];
 
