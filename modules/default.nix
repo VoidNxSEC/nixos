@@ -71,7 +71,6 @@
     ./shell # Shell aliases, GPU flags, professional alias structure
     ./secrets # SOPS config, API keys, AWS Bedrock, Tailscale secrets
 
-    # NOTE: modules/debug/ kept on disk but not imported (personal scaffolding)
-    # To re-enable locally: add ./debug here
+    ./debug # Swissknife debug tools, io-monitor, debug-init
   ];
 }
