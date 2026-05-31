@@ -976,10 +976,7 @@
         "securellm-bridge": "securellm-bridge",
         "securellm-mcp": "securellm-mcp",
         "sops-nix": "sops-nix",
-        "spider-nix": [
-          "spider-nix-network"
-        ],
-        "spider-nix-network": "spider-nix-network",
+        "spider-nix": "spider-nix",
         "spooknix": "spooknix",
         "swissknife": "swissknife"
       }
@@ -1092,7 +1089,7 @@
         ],
         "rust-overlay": "rust-overlay_4",
         "spider-nix": [
-          "spider-nix-network"
+          "spider-nix"
         ]
       },
       "locked": {
@@ -1148,7 +1145,7 @@
         "type": "github"
       }
     },
-    "spider-nix-network": {
+    "spider-nix": {
       "inputs": {
         "flake-utils": "flake-utils_8",
         "nixpkgs": [
@@ -1156,16 +1153,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1780177032,
-        "narHash": "sha256-jatw2VfCDs+VDRM/EPTSHriih9WzH9Q71USIVBLc5UU=",
+        "lastModified": 1779770466,
+        "narHash": "sha256-XmdTQUWbdq0uN0ALvWxDl5xsZkUJj5SICsUwRZsm5nQ=",
         "owner": "VoidNxSEC",
-        "repo": "spider-network",
-        "rev": "4e70df702b018f1913ef1f4a8510b5085a1725b9",
+        "repo": "spider-nix",
+        "rev": "a381559da98eb2219f85e0874eed4fcca5c5a849",
         "type": "github"
       },
       "original": {
         "owner": "VoidNxSEC",
-        "repo": "spider-network",
+        "repo": "spider-nix",
         "type": "github"
       }
     },

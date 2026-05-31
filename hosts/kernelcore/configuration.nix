@@ -112,10 +112,10 @@
         setAsSystemResolver = true;
       };
 
-      spider-network-proxy = {
-        enable = false;
-        setSystemProxy = false;
-      };
+      # spider-network-proxy = {
+      #   enable = false;
+      #   setSystemProxy = false;
+      # };
 
       bridge = {
         enable = true;
