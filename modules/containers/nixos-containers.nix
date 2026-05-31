@@ -186,7 +186,6 @@ with lib;
       iptables
       iproute2
       tcpdump
-      wireshark
     ];
   };
 }
