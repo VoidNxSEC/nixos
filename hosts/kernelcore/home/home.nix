@@ -233,7 +233,10 @@
     # ========================================================
     # Intelligent SSH Configuration
     # ========================================================
-    ssh.gitForges.enable = true;
+    ssh.gitForges = {
+      enable = true;
+      keys.gitlab = "glab";
+    };
     git-forge-tools.enable = true;
 
     # ========================================================
