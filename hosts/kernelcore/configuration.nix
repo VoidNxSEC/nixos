@@ -76,7 +76,7 @@
 
       # HIGH PRIORITY SECURITY ENHANCEMENTS
       aide.enable = true;
-      clamav.enable = true;
+      clamav.enable = false;
       ssh.enable = true;
       kernel.enable = true;
       pam.enable = true;
@@ -258,7 +258,7 @@
         dockerCompat = false;
         enableNvidia = true;
       };
-      nixos.enable = true;
+      nixos.enable = false;
 
       # ML/AI Containers
       ml = {
@@ -1353,5 +1353,5 @@
     ];
   };
 
-  system.stateVersion = "26.11";
+  system.stateVersion = "26.05";
 }
