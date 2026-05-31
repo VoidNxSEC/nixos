@@ -127,6 +127,17 @@
           };
         };
       }
+      # GitLab (voidchain account — kernelcore@voidnxlabs.com)
+      {
+        condition = "hasconfig:remote.*.url:git@gitlab.com:*";
+        contents = {
+          user = {
+            name = "kernelcore";
+            email = "kernelcore@voidnxlabs.com";
+            signingkey = "9FB7AA435F215D30"; # marcos (glab) <kernelcore@voidnxlabs.com>
+          };
+        };
+      }
       # Add more conditional includes as needed
     ];
 

@@ -1090,6 +1090,7 @@
     hashedPasswordFile = "/etc/nixos/sec/user-password";
     openssh.authorizedKeys.keys = [
       "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG5StF4nUzkEsUei88BstktP/Q/g8BvlHeWnEDD+ii/jB7Fs4v4imG05tJU/jC8/ax2FFRSwoBRt7tH6RDp4Dys= user@iphone"
+      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDF4VaIRhsoZGJKZK7/6RdPyq7XNvyuvLQp+cPG4AueJ4SdLCAW7cob9cgDhTFb4bBG00LOdxcl9hqYcqA8KxkOwnoT+OuHKjBAgsEVdWw2U2p0tD/9UUMFEMt2xYEIucjXDczk/U4TYpi6h233QfdLaqJegOTUNLD7klL/d9uaQJr4q+g80+uKjKRqePLw7KfgMtGk5hDrz2lkv+vjD37vbZADZAp2WGpIz9m26vmzEj35m/54Bv714c9v4RczaD/Rww08P+gyRwH9G15kxZoEnVwxikZXnwXRARc3YU+zlzqJq3CHvbrXjc6yvapPnJ3Avbyl3dZ735nkaGos3HbRLqgx1el0zpuJcteXIrlwnch9agTusiZ4O2gdqAW3ptetdPFhJrH2FbZxD5zsouYw4b+OlVCCjY/tHK6M5jjD7P4hcZ96wamb56t5Qu/pKTI2KcagWZa6hZ4DZi/l55ATY04tEiEPfIOrL0ylWwRMpEKchFHbxz3Nm8jGAqFyDwT+vEGDB5nIy519crNo36Gq1Yl0T8rYPQxGe2eKxkSNkFp9kFsGhvjIcXdo/3MhwLX4GCPUmhXzg8hZJbgScJRlBYTMlTW7EBKVsX4FkeKOe1evRUZNf0kM2Fij5/U4YbYdYEMUoAezP6AAHGFt3Yn8EEof2rN61bWhNw8G8BI3fQ== glab"
     ];
     packages = with pkgs; [
       obsidian
