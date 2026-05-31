@@ -70,15 +70,6 @@ in
 
       settings = {
         Resolve = {
-          # "allow-downgrade": valida DNSSEC quando disponível, não quebra em redes sem suporte (ex: hotspot)
-          # "yes": strict, falha se servidor não suportar DNSSEC
-          # "no": desabilita validação
-          DNSSEC = lib.mkForce (if cfg.enableDNSSEC then "allow-downgrade" else "no");
-
-          # "opportunistic": tenta TLS, degrada graciosamente para UDP se não suportado
-          # "yes": exige TLS, falha se não disponível (não use em hotspot)
-          DNSOverTLS = "opportunistic";
-
           # DNS global — NÃO sobrescrito pelo DHCP do hotspot/router
           DNS =
             if cfg.enableDNSCrypt then
@@ -86,14 +77,13 @@ in
             else
               cfg.preferredServers;
 
-          # Fallback caso DNS global falhe
-          FallbackDNS = [
-            "9.9.9.9"
-            "149.112.112.112"
-          ];
+          # Desabilita DoT por padrão — evita cascade de downgrades (TLS→EDNS0→UDP→TCP)
+          # para cada servidor. Habilitar apenas com enableDNSCrypt (dnscrypt-proxy já faz TLS).
+          DNSOverTLS = if cfg.enableDNSCrypt then "opportunistic" else "no";
 
-          # Resolver como autoritativo para todos os domínios
-          Domains = "~.";
+          # LLMNR e mDNS não são necessários — reduz superfície de ataque e log noise
+          LLMNR = "no";
+          MulticastDNS = "no";
         };
       };
     };
@@ -158,7 +148,10 @@ in
     systemd.services.systemd-resolved = {
       serviceConfig = {
         PrivateTmp = true;
-        ProtectSystem = "strict";
+        # "full" em vez de "strict": evita EPERM nos paths /usr/local/lib/ que
+        # o resolved escaneia no startup (em NixOS esses dirs não existem mas
+        # ProtectSystem=strict gera Permission denied em vez de ENOENT).
+        ProtectSystem = "full";
         ProtectHome = true;
         NoNewPrivileges = true;
         ProtectKernelTunables = true;
