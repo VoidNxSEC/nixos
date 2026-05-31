@@ -70,16 +70,30 @@ in
 
       settings = {
         Resolve = {
-          DNSSEC = if cfg.enableDNSSEC then "true" else "false";
+          # "allow-downgrade": valida DNSSEC quando disponível, não quebra em redes sem suporte (ex: hotspot)
+          # "yes": strict, falha se servidor não suportar DNSSEC
+          # "no": desabilita validação
+          DNSSEC = lib.mkForce (if cfg.enableDNSSEC then "allow-downgrade" else "no");
+
+          # "opportunistic": tenta TLS, degrada graciosamente para UDP se não suportado
+          # "yes": exige TLS, falha se não disponível (não use em hotspot)
           DNSOverTLS = "opportunistic";
 
-          # Se DNSCrypt estiver ativo, usar ele como upstream
-          # Senão, usar os servidores preferidos
-          FallbackDNS =
+          # DNS global — NÃO sobrescrito pelo DHCP do hotspot/router
+          DNS =
             if cfg.enableDNSCrypt then
               [ "127.0.0.2" ] # DNSCrypt rodando em porta alternativa
             else
               cfg.preferredServers;
+
+          # Fallback caso DNS global falhe
+          FallbackDNS = [
+            "9.9.9.9"
+            "149.112.112.112"
+          ];
+
+          # Resolver como autoritativo para todos os domínios
+          Domains = "~.";
         };
       };
     };
@@ -124,7 +138,7 @@ in
     # Network configuration - NÃO setar nameservers quando resolved está ativo
     networking = {
       # REMOVIDO: nameservers (conflita com systemd-resolved)
-      # O systemd-resolved gerencia isso através do fallbackDns
+      # O systemd-resolved gerencia isso através do DNS global no resolved.conf
 
       # Firewall: permitir porta do dnscrypt se habilitado
       firewall.allowedUDPPorts = mkIf cfg.enableDNSCrypt [ 53 ];
@@ -133,6 +147,11 @@ in
         # Permitir que systemd-resolved gerencie DNS
         nohook resolv.conf
       '';
+
+      # Impede que o NetworkManager sobrescreva o DNS via DHCP do hotspot/router.
+      # Com "systemd-resolved", o NM delega o gerenciamento de DNS inteiramente
+      # ao resolved, que usa o DNS global configurado acima (ignorando DHCP DNS).
+      networkmanager.dns = "systemd-resolved";
     };
 
     # Hardening do systemd-resolved
@@ -193,6 +212,17 @@ in
         echo "==================================="
         echo ""
 
+        # 0. Gateway / rota padrão
+        GW=$(ip route show default 2>/dev/null | awk '/default/ {print $3; exit}')
+        IFACE=$(ip route show default 2>/dev/null | awk '/default/ {print $5; exit}')
+        echo "🔌 [0/7] Default gateway: $GW via $IFACE"
+        if [ -n "$GW" ] && ${pkgs.iputils}/bin/ping -c 1 -W 2 "$GW" > /dev/null 2>&1; then
+          echo "✅ Gateway reachável ($GW)"
+        else
+          echo "❌ Gateway INACESSÍVEL — problema de L2/L3, não DNS"
+        fi
+        echo ""
+
         # 1. Status do systemd-resolved
         echo "📡 [1/7] Systemd-resolved status:"
         systemctl status systemd-resolved --no-pager | head -n 5
@@ -200,22 +230,23 @@ in
 
         # 2. Configuração atual
         echo "⚙️  [2/7] Current DNS configuration:"
-        ${pkgs.systemd}/bin/resolvectl status | grep "DNS Servers" -A 5
+        ${pkgs.systemd}/bin/resolvectl status | grep -E "(DNS Servers|Current DNS|Fallback DNS)" -A 2 | head -20
         echo ""
 
-        # 3. Testar resolução local
-        echo "🔍 [3/7] Testing local resolver (127.0.0.53):"
-        if ${pkgs.bind}/bin/dig +short +time=3 @127.0.0.53 google.com > /dev/null 2>&1; then
+        # 3. Testar resolução local via resolvectl (mais preciso que dig @127.0.0.53)
+        echo "🔍 [3/7] Testing local resolver (resolvectl):"
+        if ${pkgs.systemd}/bin/resolvectl query google.com > /dev/null 2>&1; then
           echo "✅ Local resolver OK"
-          ${pkgs.bind}/bin/dig +short @127.0.0.53 google.com | head -n 1
+          ${pkgs.systemd}/bin/resolvectl query google.com 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1
         else
           echo "❌ Local resolver FAILED"
+          echo "   Tip: tente 'resolvectl query google.com' para ver o erro completo"
         fi
         echo ""
 
-        # 4. Testar Cloudflare
+        # 4. Testar Cloudflare (UDP direto, sem TLS)
         echo "☁️  [4/7] Testing Cloudflare (1.1.1.1):"
-        if ${pkgs.bind}/bin/dig +short +time=3 @1.1.1.1 google.com > /dev/null 2>&1; then
+        if ${pkgs.bind}/bin/dig +short +time=5 +tries=2 +notcp @1.1.1.1 google.com > /dev/null 2>&1; then
           echo "✅ Cloudflare OK"
         else
           echo "❌ Cloudflare FAILED"
@@ -224,7 +255,7 @@ in
 
         # 5. Testar Google DNS
         echo "🔎 [5/7] Testing Google DNS (8.8.8.8):"
-        if ${pkgs.bind}/bin/dig +short +time=3 @8.8.8.8 google.com > /dev/null 2>&1; then
+        if ${pkgs.bind}/bin/dig +short +time=5 +tries=2 +notcp @8.8.8.8 google.com > /dev/null 2>&1; then
           echo "✅ Google DNS OK"
         else
           echo "❌ Google DNS FAILED"
@@ -236,7 +267,7 @@ in
           echo "🔐 [6/7] DNSCrypt-proxy status:"
           if systemctl is-active dnscrypt-proxy2 > /dev/null 2>&1; then
             echo "✅ DNSCrypt running"
-            if ${pkgs.bind}/bin/dig +short +time=3 @127.0.0.2 google.com > /dev/null 2>&1; then
+            if ${pkgs.bind}/bin/dig +short +time=5 +notcp @127.0.0.2 google.com > /dev/null 2>&1; then
               echo "✅ DNSCrypt resolver OK"
             else
               echo "❌ DNSCrypt resolver FAILED"
@@ -247,10 +278,13 @@ in
           echo ""
         ''}
 
-        # 7. Verificar conectividade geral
+        # 7. Verificar conectividade geral (HTTP, não HTTPS — evita falha de cert em IP raw)
         echo "🌐 [7/7] Internet connectivity:"
-        if ${pkgs.curl}/bin/curl -s --max-time 5 https://1.1.1.1 > /dev/null 2>&1; then
-          echo "✅ Internet connectivity OK"
+        HTTP_CODE=$(${pkgs.curl}/bin/curl -s --max-time 5 -o /dev/null -w "%{http_code}" http://1.1.1.1 2>/dev/null)
+        if [ "$HTTP_CODE" -ge 200 ] 2>/dev/null && [ "$HTTP_CODE" -lt 600 ] 2>/dev/null; then
+          echo "✅ Internet OK (HTTP $HTTP_CODE)"
+        elif ${pkgs.iputils}/bin/ping -c 1 -W 3 8.8.8.8 > /dev/null 2>&1; then
+          echo "✅ Internet OK (ping 8.8.8.8 — HTTP bloqueado)"
         else
           echo "❌ Internet connectivity FAILED"
         fi
