@@ -108,8 +108,8 @@
       };
 
       dns-proxy = {
-        enable = true;
-        setAsSystemResolver = true;
+        enable = false;
+        setAsSystemResolver = false;
       };
 
       # spider-network-proxy = {
