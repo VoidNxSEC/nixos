@@ -88,7 +88,7 @@ in
 
     setAsSystemResolver = mkOption {
       type = types.bool;
-      default = true;
+      default = false;
       description = "Set this proxy as the system DNS resolver";
     };
   };
