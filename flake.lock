@@ -1195,11 +1195,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774783924,
-        "narHash": "sha256-Xpa132tB+cvT+z9SS4liJLMEuKc5wwt9X9HAB3SwutQ=",
+        "lastModified": 1780235687,
+        "narHash": "sha256-tiOX/Pgz+ntDBB3OSjRCJbYb2uHXMeNuDMarVpV1XpI=",
         "owner": "VoidNxSEC",
         "repo": "swissknife",
-        "rev": "4c7bd4b33adc341fc9454b314839f18096567585",
+        "rev": "38ac5dc06464b10abba9960713062d4503d71d09",
         "type": "github"
       },
       "original": {
