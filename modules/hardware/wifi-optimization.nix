@@ -72,8 +72,8 @@ with lib;
         Resolve = {
           DNSSEC = "false"; # DNSSEC can add latency
 
-          # DNS-over-TLS for privacy without sacrificing too much performance
-          DNSOverTLS = "opportunistic";
+          # DNS-over-TLS — mkDefault permite que dns-resolver.nix sobrescreva
+          DNSOverTLS = lib.mkDefault "opportunistic";
 
           # Fallback DNS servers
           FallbackDNS = [
