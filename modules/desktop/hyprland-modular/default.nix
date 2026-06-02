@@ -694,9 +694,6 @@ in
             # Notifications
             (lib.optional cfg.features.notifications "mako")
 
-            # Polkit
-            "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
-
             # Network applet
             "nm-applet --indicator"
 

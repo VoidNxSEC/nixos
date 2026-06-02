@@ -108,7 +108,7 @@
       };
 
       dns-proxy = {
-        enable = false;
+        enable = true;
         setAsSystemResolver = false;
       };
 
@@ -1202,7 +1202,6 @@
         esac
       '')
       slack
-      zoom
       gnome-console
       zed-editor
       cinnamon
