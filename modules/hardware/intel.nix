@@ -21,7 +21,7 @@ in
         "balanced"
         "performance"
       ];
-      default = "balanced";
+      default = "performance";
       description = ''
         Power profile for thermal and performance management.
       '';

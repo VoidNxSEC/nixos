@@ -123,6 +123,10 @@ in
     # ============================================
     security.polkit.enable = true;
 
+    # Prevent polkit from being stopped during nixos-rebuild switch,
+    # which would kill the graphical session mid-activation.
+    systemd.services.polkit.stopIfChanged = false;
+
     systemd.user.services.polkit-gnome-authentication-agent-1 = {
       description = "polkit-gnome-authentication-agent-1";
       wantedBy = [ "graphical-session.target" ];
