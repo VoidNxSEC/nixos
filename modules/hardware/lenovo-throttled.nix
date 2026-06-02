@@ -42,7 +42,7 @@ in
         "balanced"
         "performance"
       ];
-      default = "balanced";
+      default = "performance";
       description = ''
         Power profile for thermal management:
         - silent: 35W PL1, low noise
