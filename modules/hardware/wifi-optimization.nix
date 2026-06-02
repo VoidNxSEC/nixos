@@ -42,17 +42,16 @@ with lib;
       scanRandMacAddress = false;
     };
 
+    # iwd as WiFi backend — avoids wpa_supplicant AF_PACKET dependency,
+    # uses nl80211 CONTROL_PORT_OVER_NL80211 for WPA handshake (confirmed on phy0).
+    # This NixOS option also disables the standalone wpa_supplicant service.
+    networking.networkmanager.wifi.backend = "iwd";
+
     # NetworkManager connection settings
     networking.networkmanager.settings = {
       connection = {
-        # Reduce connection timeout (in seconds)
         "ipv4.dhcp-timeout" = "20";
         "ipv6.dhcp-timeout" = "20";
-      };
-
-      device = {
-        # Use wpa_supplicant backend for better performance
-        "wifi.backend" = "wpa_supplicant";
       };
     };
 
@@ -116,20 +115,8 @@ with lib;
       iw # WiFi configuration utility
       wirelesstools # iwconfig, iwlist, etc.
       wavemon # WiFi monitoring tool
+      iproute2
     ];
-
-    # Systemd service to monitor and log WiFi signal quality
-    systemd.services.wifi-monitor = {
-      description = "WiFi Signal Quality Monitor";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = "${pkgs.coreutils}/bin/true";
-      };
-    };
 
     # Create a helper script for WiFi diagnostics
     environment.etc."wifi-diagnostics.sh" = {

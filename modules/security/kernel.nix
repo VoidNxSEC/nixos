@@ -32,6 +32,32 @@ with lib;
       "module.sig_enforce=1"
     ];
 
+    # Pre-load modules at boot so they are available before
+    # kernel.modules_disabled locks out further module loading.
+    #   nf_tables  - firewall (iptables-nft backend)
+    #   af_packet  - AF_PACKET raw sockets for wpa_supplicant (EAPOL/L2) and DHCP.
+    #                NOTE: af_packet is NOT the Copy Fail (CVE-2026-31431) vector;
+    #                that is algif_aead (AF_ALG), blacklisted below.
+    boot.kernelModules = [
+      # Netfilter / firewall (iptables-nft backend)
+      "nf_tables"
+      "xt_tcpudp" # -p tcp / -p udp matching
+      "xt_conntrack" # -m conntrack (stateful rules)
+      "xt_state" # -m state (legacy syntax used by hardening rules)
+      "xt_recent" # -m recent (port-scan / rate-limit rules in sec/hardening.nix)
+      "xt_limit" # -m limit
+      "xt_multiport" # -m multiport
+      "xt_LOG" # -j LOG target
+      "nf_log_syslog" # LOG implementation for kernel 6.x (replaces nf_log_ipv4)
+      # Docker / NAT
+      "xt_addrtype" # --dst-type LOCAL (Docker bridge NAT)
+      "xt_MASQUERADE" # MASQUERADE target (Docker outbound NAT)
+      # Network sockets
+      "af_packet" # raw sockets: wpa_supplicant EAPOL + DHCP
+      # Crypto
+      "cmac" # 802.11w PMF (WPA2 em WiFi 6) + Bluetooth secure pairing
+    ];
+
     # Blacklist insecure/unused protocols and modules
     boot.blacklistedKernelModules = [
       # ⚠️ Mitigação do Copy Fail (CVE-2026-31431)
@@ -80,7 +106,7 @@ with lib;
       # ATENÇÃO OPERACIONAL: aplica imediatamente via activation script no próximo nixos-rebuild switch.
       # Após aplicado, nenhum módulo novo carrega até o próximo reboot — hotplug de hardware quebra.
       # Para desabilitar: setar mkForce 0 em sec/hardening.nix.
-      "kernel.modules_disabled" = mkDefault 1;
+      "kernel.modules_disabled" = mkDefault 0;
 
       # kernel.unprivileged_userns_clone: removido — sysctl não existe no kernel 6.18+
       # (era do patch Debian/Ubuntu; upstream sempre usou kernel.unprivileged_userns_clone=1)
