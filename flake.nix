@@ -184,7 +184,7 @@
         default = self.templates.minimal;
       };
 
-      formatter.${system} = pkgs.nixfmt;
+      formatter.${system} = pkgs.nixfmt-tree;
 
       # nix develop .#python, .#cuda, .#infra, etc.
       devShells.${system} = shells;
