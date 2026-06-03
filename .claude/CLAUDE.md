@@ -1,5 +1,44 @@
 # NixOS Configuration - Claude Instructions
 
+## Build & Environment
+**All shell, build, and test commands MUST run inside the nix dev environment:**
+```bash
+nix develop --command <cmd>
+# or
+nix develop -c <cmd>
+```
+Never run `cargo`, `rustc`, `npm`, `python`, or any toolchain binary directly on the host. If a command fails outside the dev shell, enter it first — never work around it.
+
+## Diagnosis Principles
+1. **Verify root cause against actual source code before acting.** Read the file, grep the error, check the real build log.
+2. **Trust source code over markdown docs, ROADMAPs, and ADRs.** Docs rot; code is truth.
+3. **Never make unverified claims** about kernel options, security flags, CVE numbers, or package versions. Check nixpkgs source or the actual config file first.
+4. **State the root cause and evidence before proposing a fix.** If uncertain, say so and ask.
+
+## Testing & Debugging
+- **Never add mocks, stubs, or `fakeHash`** to make tests or builds pass. Fix the real root cause.
+- **Never weaken a test** to make it green. If a test can't pass, stop and explain why.
+- **Never dismiss a build error as pre-existing** without confirming it was there before the current change.
+- Trace `fakeHash` / hash mismatch errors to the actual broken upstream source or vendor dir — not the hash itself.
+
+## Safety / Network
+- **Never run a command that could drop the active connection** (WiFi, hotspot, SSH) without:
+  1. Explicitly warning what it risks
+  2. Waiting for user confirmation
+- Prefer reversible, rollback-capable changes for network/firewall config.
+- If in doubt about connectivity impact, ask before running.
+
+## File Safety
+- **Never overwrite `MEMORY.md`** or any user-maintained context/index file. Append new entries or ask first.
+- When adding memory entries: write the individual `.md` file first, then append one line to `MEMORY.md`.
+
+## Editing Conventions
+- **Prefer additive fixes.** Do not remove features, options, or modules to resolve a build error unless explicitly asked.
+- When a build breaks after adding something, fix the addition — don't delete it.
+- Use Edit for existing files, Write only for new files.
+
+---
+
 ## Environment Context
 - **System**: NixOS (declarative Linux distribution)
 - **Config Location**: `/etc/nixos`
