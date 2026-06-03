@@ -260,7 +260,7 @@
 
     # ── Spooknix — STT systray GUI ──────────────────────────────────────────
     spooknix = {
-      enable = true;
+      enable = false;
       serverUrl = "http://localhost:8000";
       sourcePath = "/home/kernelcore/master/spooknix";
       model = "large-v3";
@@ -417,7 +417,7 @@
     # Editor & Browser
     EDITOR = "nvim";
     VISUAL = "nvim";
-    BROWSER = "firefox";
+    BROWSER = "vivaldi";
     TERMINAL = "alacritty";
 
     # Development
