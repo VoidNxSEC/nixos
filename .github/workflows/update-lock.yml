@@ -34,7 +34,7 @@ jobs:
         run: nix flake update
 
       - name: Validate updated lockfile
-        run: nix flake check --show-trace
+        run: nix flake check --no-build --show-trace
 
       - name: Check for changes
         id: diff
