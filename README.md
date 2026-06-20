@@ -238,7 +238,19 @@ Full Wazuh + OpenSearch + Suricata deployment running on a workstation-class mac
 │   ├── network/             # Networking (16)
 │   ├── secrets/             # SOPS secret wiring (16)
 │   ├── services/            # System services (15)
-│   └── ...                  # 13 more categories
+│   ├── applications/        # Hardened browsers, Electron tuning (14)
+│   ├── desktop/             # Hyprland, i3, Waybar, theming (12)
+│   ├── hardware/            # Laptop defense, NVIDIA, thermal (12)
+│   ├── system/              # Core system configuration (11)
+│   ├── containers/          # Docker, Podman, k3s (10)
+│   ├── tools/               # Unified CLI suite (10)
+│   ├── development/         # Dev environments, CI/CD (7)
+│   ├── debug/               # Swissknife diagnostics (5)
+│   ├── blockchain/          # Algorand node/DAO, chainscope (4)
+│   ├── programs/            # phantom, vmctl, cognitive-vault (4)
+│   ├── virtualization/      # vmctl, QEMU/libvirt (4)
+│   ├── audio/               # Production audio stack (3)
+│   └── devops/              # GitLab CLI tooling (2)
 ├── hosts/kernelcore/        # Host configuration
 ├── overlays/                # Package overlays
 ├── lib/                     # Reusable functions
@@ -354,6 +366,6 @@ Built on:
 ---
 
 **Maintained by**: [@VoidNxSEC](https://github.com/VoidNxSEC)
-**Hardware**: Lenovo ThinkPad + NVIDIA GPU
+**Hardware**: Acer laptop (Lenovo-compatible tuning profiles) + NVIDIA GPU
 **Channel**: nixos-unstable
 **Status**: production (daily driver)
