@@ -31,17 +31,17 @@ jobs:
     timeout-minutes: 15
     if: github.event.pull_request.draft == false || github.event_name != 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: DeterminateSystems/nix-installer-action@v15
+      - uses: DeterminateSystems/nix-installer-action@v22
         with:
           extra-conf: |
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@v14
 
-      - uses: cachix/cachix-action@v15
+      - uses: cachix/cachix-action@v17
         if: vars.CACHIX_CACHE_NAME != ''
         with:
           name: ${{ vars.CACHIX_CACHE_NAME }}
@@ -66,17 +66,17 @@ jobs:
           - kernelcore-iso
           - k8s-node
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: DeterminateSystems/nix-installer-action@v15
+      - uses: DeterminateSystems/nix-installer-action@v22
         with:
           extra-conf: |
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@v14
 
-      - uses: cachix/cachix-action@v15
+      - uses: cachix/cachix-action@v17
         if: vars.CACHIX_CACHE_NAME != ''
         with:
           name: ${{ vars.CACHIX_CACHE_NAME }}
