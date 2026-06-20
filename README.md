@@ -13,13 +13,38 @@ A modular, hardened NixOS configuration covering ML infrastructure, defense-in-d
 
 ## Overview
 
-This repository contains the declarative configuration for a production NixOS workstation. It is structured as a Nix flake with 278 modules across 20 categories. Notable features:
+This repository contains the declarative configuration for a production NixOS workstation. It is structured as a Nix flake with 281 modules across 20 categories (48,439 lines of Nix). Notable features:
 
 - **ML Infrastructure** — GPU orchestration with llama.cpp, vLLM, and TabbyAPI backends.
 - **Defense-in-Depth Security** — Kernel hardening, AIDE, ClamAV, AppArmor, and a full SOC stack (Wazuh, OpenSearch, Suricata).
 - **Custom Package System** — Sandboxed package builders with Firejail/Bubblewrap isolation and audit trails.
 - **Developer Tooling** — SecureLLM Bridge, MCP servers, AI-assisted CLI utilities.
 - **Observability** — Prometheus, Grafana, Vector, and structured logging across the stack.
+
+---
+
+## System Inventory
+
+A snapshot of the framework's scale, derived directly from the tracked sources:
+
+| Metric                                | Value            |
+| ------------------------------------- | ---------------- |
+| Nix modules                           | 281              |
+| Module categories                     | 20               |
+| Lines of Nix (modules / repo-wide)    | 48,439 / 74,645  |
+| Configurable options (`mkOption`)     | 1,020            |
+| Feature toggles (`mkEnableOption`)    | 230              |
+| `kernelcore.*` option modules         | 97               |
+| systemd services defined              | 95               |
+| systemd timers                        | 15               |
+| Development shells                    | 6                |
+| Utility scripts                       | 165              |
+| Package overlays                      | 5                |
+| Documentation files                   | 237              |
+
+Configuration surface is namespaced under `kernelcore.*`, with the densest option trees in
+`security` (66), `services` (60), `ssh` (42), `secrets` (36), `virtualization` (34),
+`network` / `development` (33 each), and `soc` (29).
 
 ---
 
@@ -67,17 +92,31 @@ graph TB
 
 ### Module Distribution
 
-| Category       | Modules | Notes                                     |
-| -------------- | ------- | ----------------------------------------- |
-| Security + SOC | 39      | AIDE, ClamAV, Wazuh, Suricata, hardening  |
-| ML             | 36      | llama.cpp, vLLM, TabbyAPI, model registry |
-| Packages       | 36      | Sandboxed package builders                |
-| Shell          | 35      | Aliases, rebuild system, utilities        |
-| Services       | 16      | GPU orchestration, MCP servers            |
-| Network        | 12      | Tailscale, VPN, DNS, firewall zones       |
-| Hardware       | 12      | Thermal forensics, NVIDIA tuning          |
+The configuration spans **281 modules across 20 categories**, totaling **48,439 lines of Nix** (74,645 LOC repository-wide). Categories ordered by footprint:
 
-**Totals**: 20 categories, 278 modules, ~48k lines of Nix.
+| Category         | Modules |    LOC | Focus                                          |
+| ---------------- | ------: | -----: | ---------------------------------------------- |
+| `shell`          |      40 |  7,063 | Aliases, rebuild system, service control       |
+| `security`       |      39 |  5,842 | Hardening, AIDE, ClamAV, Wazuh/Suricata (SOC)  |
+| `ml`             |      36 |  4,710 | llama.cpp, vLLM, TabbyAPI, model registry      |
+| `desktop`        |      12 |  4,101 | Hyprland, i3, Waybar, theming                  |
+| `services`       |      15 |  3,767 | GPU orchestration, MCP servers                 |
+| `network`        |      16 |  3,493 | Tailscale, VPN, DNS, firewall zones            |
+| `hardware`       |      12 |  2,701 | Laptop defense, NVIDIA tuning, thermal         |
+| `applications`   |      14 |  2,599 | Hardened browsers, Electron tuning             |
+| `containers`     |      10 |  2,363 | Docker, Podman, k3s, NixOS containers          |
+| `packages`       |      21 |  2,185 | Sandboxed package builders                     |
+| `virtualization` |       4 |  1,971 | vmctl, QEMU/libvirt                            |
+| `system`         |      11 |  1,374 | Core system (nix, memory, I/O, binary cache)   |
+| `development`    |       7 |  1,300 | Dev environments, CI/CD, git forges, Jupyter   |
+| `tools`          |      10 |  1,244 | Unified CLI suite (nix-utils, diagnostics)     |
+| `secrets`        |      16 |  1,181 | SOPS/age secret wiring                         |
+| `audio`          |       3 |  1,027 | Production audio stack                         |
+| `blockchain`     |       4 |    754 | Algorand node/DAO, chainscope                  |
+| `debug`          |       5 |    368 | Swissknife diagnostics                         |
+| `programs`       |       4 |    300 | phantom, vmctl, cognitive-vault                |
+| `devops`         |       2 |     96 | GitLab CLI tooling                             |
+| **Total**        | **281** | **48,439** |                                            |
 
 ---
 
@@ -136,10 +175,12 @@ kernelcore.swissknife.enable = true;
 Dev shells:
 
 ```bash
-nix develop .#python    # Python with ML libs
-nix develop .#cuda      # CUDA toolchain
-nix develop .#rust      # Rust toolchain
-nix develop .#infra     # Infrastructure tools
+nix develop            # base shell (default)
+nix develop .#python   # Python with ML libs
+nix develop .#cuda     # CUDA toolchain
+nix develop .#rust     # Rust toolchain
+nix develop .#node     # Node.js toolchain
+nix develop .#infra    # Infrastructure tools
 ```
 
 ### Network Security
@@ -189,14 +230,14 @@ Full Wazuh + OpenSearch + Suricata deployment running on a workstation-class mac
 ```
 /etc/nixos/
 ├── flake.nix                # Flake entry point
-├── modules/                 # 278 modules / 20 categories
-│   ├── ml/                  # ML infrastructure (36)
+├── modules/                 # 281 modules / 20 categories
+│   ├── shell/               # Shell configuration (40)
 │   ├── security/            # Security + SOC (39)
-│   ├── packages/            # Custom packages (36)
-│   ├── shell/               # Shell configuration (35)
-│   ├── services/            # System services (16)
-│   ├── network/             # Networking (12)
-│   ├── hardware/            # Hardware tuning (12)
+│   ├── ml/                  # ML infrastructure (36)
+│   ├── packages/            # Custom packages (21)
+│   ├── network/             # Networking (16)
+│   ├── secrets/             # SOPS secret wiring (16)
+│   ├── services/            # System services (15)
 │   └── ...                  # 13 more categories
 ├── hosts/kernelcore/        # Host configuration
 ├── overlays/                # Package overlays
@@ -278,18 +319,20 @@ Sensitive material (API keys, SSH keys, certificates) lives encrypted in `secret
 
 ## Stats
 
-- **Modules**: 278 across 20 categories
-- **Nix lines**: ~47,800
+- **Modules**: 281 across 20 categories
+- **Nix lines**: 48,439 (modules) / 74,645 (repository-wide)
+- **Shell modules**: 40
 - **Security + SOC modules**: 39
 - **ML modules**: 36
-- **Custom packages**: 36
-- **Shell modules**: 35
+- **Custom packages**: 21
 
 Largest modules:
 
-1. `vmctl` — 959 lines (VM orchestration CLI)
-2. `thermal-forensics` — 760 lines (hardware evidence collection)
-3. `rebuild-advanced` — 674 lines (safe rebuild system)
+1. `virtualization/vmctl` — 959 lines (VM orchestration CLI)
+2. `desktop/hyprland-modular` — 852 lines (Wayland desktop)
+3. `hardware/laptop-defense` — 760 lines (thermal forensics / evidence collection)
+4. `ml/services/llama-cpp-swap` — 682 lines (model swap backend)
+5. `shell/aliases/nix/rebuild-advanced` — 674 lines (safe rebuild system)
 
 ---
 
@@ -314,92 +357,3 @@ Built on:
 **Hardware**: Lenovo ThinkPad + NVIDIA GPU
 **Channel**: nixos-unstable
 **Status**: production (daily driver)
-
-# NIXOS SYSTEM CONFIGURATION
-
-## LEGAL NOTICE AND DISCLAIMER
-
-**PROPRIETARY SYSTEM CONFIGURATION**
-
-This repository contains proprietary system configuration files for production infrastructure. Unauthorized access, use, modification, or distribution of this configuration is strictly prohibited and may constitute a violation of applicable laws.
-
-### TERMS OF USE
-
-1. **Access Restrictions**: Access to this repository is restricted to authorized personnel only.
-
-2. **Confidentiality**: All configuration files, scripts, and documentation contained herein are confidential and proprietary information.
-
-3. **No Warranty**: This configuration is provided "AS IS" without warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, or non-infringement.
-
-4. **Limitation of Liability**: In no event shall the authors or copyright holders be liable for any claim, damages, or other liability arising from the use of this configuration.
-
-5. **Security Compliance**: This system implements security hardening measures. Any attempt to circumvent, disable, or compromise these security measures is prohibited.
-
-6. **Data Protection**: This configuration handles sensitive data and cryptographic material. Unauthorized access or disclosure may result in legal action.
-
-### SYSTEM CLASSIFICATION
-
-- **Environment**: Production
-- **Security Level**: Hardened
-- **Data Sensitivity**: High
-- **Compliance**: Security-first architecture
-
-### AUTHORIZED OPERATIONS
-
-System operations are restricted to:
-
-- Authorized system administrators
-- Pre-approved maintenance procedures
-- Security-audited modifications
-- Documented change management processes
-
-### PROHIBITED ACTIVITIES
-
-The following activities are expressly prohibited:
-
-- Unauthorized access or attempted access
-- Modification without proper authorization
-- Distribution or copying of configuration files
-- Circumvention of security controls
-- Extraction of sensitive information
-- Reverse engineering of security mechanisms
-
-### CRYPTOGRAPHIC NOTICE
-
-This system employs cryptographic technologies for data protection. Export, re-export, or transfer of cryptographic materials may be subject to export control regulations.
-
-### MONITORING AND AUDIT
-
-All system access and modifications are logged and monitored. Security audits are conducted regularly. Unauthorized activities will be investigated and may result in legal prosecution.
-
-### INTELLECTUAL PROPERTY
-
-All configuration code, scripts, modules, and documentation are the exclusive property of the system owner. No license or right is granted except as explicitly stated.
-
-### THIRD-PARTY COMPONENTS
-
-This system incorporates third-party software components, each subject to their respective licenses. Use of this configuration does not grant rights beyond those specified in the applicable licenses.
-
-### CONTACT
-
-For authorized access requests or security concerns:
-
-- **Administrative Contact**: sec@voidnxlabs.com
-- **Security Incidents**: Report through established security channels only
-
-### JURISDICTION
-
-This notice is governed by applicable international, federal, and state laws. By accessing this repository, you agree to comply with all applicable legal requirements.
-
----
-
-**EFFECTIVE DATE**: 2025-11-10
-**DOCUMENT VERSION**: 1.0
-**CLASSIFICATION**: RESTRICTED
-**DISTRIBUTION**: AUTHORIZED PERSONNEL ONLY
-
----
-
-© 2025 VoidNxLabs. All rights reserved.
-
-**WARNING**: Unauthorized access to this system is prohibited and may be prosecuted under applicable computer crime laws including but not limited to the Computer Fraud and Abuse Act (18 U.S.C. § 1030) and equivalent international statutes.
