@@ -134,7 +134,7 @@ modules/packages/_archive/
 **/.deb
 
 # SOPS defaults
-secrets
+#secrets
 sec/*.asc
 
 # Local artifacts

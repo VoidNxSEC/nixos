@@ -439,7 +439,7 @@
     };
 
     secrets.github.enable = true;
-    secrets.ci.enable = true;
+    secrets.ci.enable = false; # buildbot not operational; ci.yaml missing, keys absent from github.yaml
     secrets.certificates.enable = true;
     secrets.gcp-ml.enable = true;
     secrets.aws-bedrock.enable = true;
@@ -1310,6 +1310,10 @@
     cinnamon
     evince
     # antigravity # Replaced by custom build
+    pcsx2
+    steam
+    postman
+    bruno
   ];
 
   kernelcore.shell.cli-helpers = {
