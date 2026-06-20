@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main, staging, dev]
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "hosts/**"
+      - "modules/**"
+      - "overlays/**"
+      - "sec/**"
+      - "lib/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [main, staging, dev]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event.pull_request.draft == false || github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v15
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: DeterminateSystems/magic-nix-cache-action@v7
+
+      - uses: cachix/cachix-action@v15
+        if: vars.CACHIX_CACHE_NAME != ''
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Check formatting
+        run: nix fmt -- --check .
+
+      - name: Evaluate flake
+        run: nix flake check --no-build --show-trace
+
+  evaluate:
+    name: Evaluate ${{ matrix.host }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+          - kernelcore
+          - kernelcore-iso
+          - k8s-node
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v15
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: DeterminateSystems/magic-nix-cache-action@v7
+
+      - uses: cachix/cachix-action@v15
+        if: vars.CACHIX_CACHE_NAME != ''
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Evaluate ${{ matrix.host }}
+        run: |
+          nix eval \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath" \
+            --show-trace
