@@ -39,8 +39,6 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v14
-
       - uses: cachix/cachix-action@v17
         if: vars.CACHIX_CACHE_NAME != ''
         with:
@@ -75,8 +73,6 @@ jobs:
           extra-conf: |
             experimental-features = nix-command flakes
             accept-flake-config = true
-
-      - uses: DeterminateSystems/magic-nix-cache-action@v14
 
       - uses: cachix/cachix-action@v17
         if: vars.CACHIX_CACHE_NAME != ''
