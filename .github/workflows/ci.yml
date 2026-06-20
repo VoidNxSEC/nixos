@@ -48,7 +48,9 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Check formatting
-        run: nix fmt -- --check .
+        run: |
+          nix fmt .
+          git diff --exit-code
 
       - name: Evaluate flake
         run: nix flake check --no-build --show-trace
