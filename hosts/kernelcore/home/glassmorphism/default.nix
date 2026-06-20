@@ -194,7 +194,6 @@ in
     GTK_THEME = "Adwaita:dark";
 
     # Qt
-    QT_QPA_PLATFORMTHEME = "gtk2";
     QT_STYLE_OVERRIDE = "kvantum";
 
     # Cursor
