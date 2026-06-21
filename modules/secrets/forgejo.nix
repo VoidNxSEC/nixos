@@ -4,6 +4,7 @@
 {
   config,
   lib,
+  inputs,
   ...
 }:
 
@@ -11,7 +12,7 @@ with lib;
 
 let
   cfg = config.kernelcore.secrets.forgejo;
-  secretsFile = ../../secrets/forgejo.yaml;
+  secretsFile = "${inputs.venus}/secrets/forgejo.yaml";
   secretsFileExists = pathExists secretsFile;
 in
 {
@@ -96,7 +97,7 @@ in
 
     (mkIf (cfg.enable && !secretsFileExists) {
       warnings = [
-        "kernelcore.secrets.forgejo.enable is true but /etc/nixos/secrets/forgejo.yaml does not exist yet."
+        "kernelcore.secrets.forgejo.enable is true but ${secretsFile} does not exist yet."
       ];
     })
   ];

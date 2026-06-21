@@ -4,6 +4,7 @@
 {
   config,
   lib,
+  inputs,
   ...
 }:
 
@@ -11,7 +12,7 @@ with lib;
 
 let
   cfg = config.kernelcore.secrets.certificates;
-  legacyCloudflareSecretsFile = ../../secrets/gitea.yaml;
+  legacyCloudflareSecretsFile = "${inputs.venus}/secrets/gitea.yaml";
 in
 {
   options.kernelcore.secrets.certificates = {
@@ -19,7 +20,7 @@ in
 
     secretsFile = mkOption {
       type = types.str;
-      default = "/etc/nixos/secrets/certificates.yaml";
+      default = "${inputs.venus}/secrets/certificates.yaml";
       description = "Path to the SOPS-encrypted certificates secrets file.";
     };
 

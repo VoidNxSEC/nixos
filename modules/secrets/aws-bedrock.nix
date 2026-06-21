@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -20,7 +21,7 @@ in
     sops.secrets = {
       # AWS Access Key ID
       "aws_access_key_id" = {
-        sopsFile = ../../secrets/aws.yaml;
+        sopsFile = "${inputs.venus}/secrets/aws.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -28,7 +29,7 @@ in
 
       # AWS Secret Access Key
       "aws_secret_access_key" = {
-        sopsFile = ../../secrets/aws.yaml;
+        sopsFile = "${inputs.venus}/secrets/aws.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -36,7 +37,7 @@ in
 
       # AWS Region
       "aws_region" = {
-        sopsFile = ../../secrets/aws.yaml;
+        sopsFile = "${inputs.venus}/secrets/aws.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
