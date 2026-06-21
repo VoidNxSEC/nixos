@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  inputs,
   ...
 }:
 
@@ -15,7 +16,7 @@ in
 
     secretsFile = mkOption {
       type = types.path;
-      default = ../../secrets/github.yaml;
+      default = "${inputs.venus}/secrets/github.yaml";
       description = "Path to the SOPS-encrypted CI secrets file.";
     };
   };

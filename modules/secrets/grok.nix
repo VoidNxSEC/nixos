@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -20,7 +21,7 @@ in
     sops.secrets = {
       # Grok API Key
       "api_key_grok" = {
-        sopsFile = ../../secrets/grok.yaml;
+        sopsFile = "${inputs.venus}/secrets/grok.yaml";
         mode = "0400";
         owner = "root";
         group = "root";
