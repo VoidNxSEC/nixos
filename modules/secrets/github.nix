@@ -5,6 +5,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -23,7 +24,7 @@ in
     sops.secrets = {
       # GitHub Personal Access Token
       "github_token" = {
-        sopsFile = ../../secrets/github.yaml;
+        sopsFile = "${inputs.venus}/secrets/github.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";

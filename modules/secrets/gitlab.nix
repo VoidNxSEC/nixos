@@ -5,6 +5,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -23,7 +24,7 @@ in
     sops.secrets = {
       # GitLab Personal Access Token
       "gitlab_token" = {
-        sopsFile = ../../secrets/gitlab.yaml;
+        sopsFile = "${inputs.venus}/secrets/gitlab.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -31,7 +32,7 @@ in
 
       # GitLab username (optional, for automation)
       "gitlab_username" = {
-        sopsFile = ../../secrets/gitlab.yaml;
+        sopsFile = "${inputs.venus}/secrets/gitlab.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -39,7 +40,7 @@ in
 
       # GitLab email (optional, for automation)
       "gitlab_email" = {
-        sopsFile = ../../secrets/gitlab.yaml;
+        sopsFile = "${inputs.venus}/secrets/gitlab.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
