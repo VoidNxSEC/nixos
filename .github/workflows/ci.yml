@@ -53,6 +53,38 @@ jobs:
       - name: Evaluate flake
         run: nix flake check --no-build --show-trace
 
+  decrypt-secrets:
+    name: Decrypt SOPS Secrets
+    uses: ./.github/workflows/setup-sops.yml
+    secrets: inherit
+
+  verify-pat-scope:
+    name: Verify GitHub PAT org scope
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: decrypt-secrets
+    steps:
+      - name: Check PAT can manage org self-hosted runners
+        env:
+          GH_TOKEN: ${{ needs.decrypt-secrets.outputs.github_token }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo "::error::github_token output is empty — check secrets/github.yaml"
+            exit 1
+          fi
+          STATUS=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+            -X POST \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/orgs/VoidNxSEC/actions/runners/registration-token)
+          cat /tmp/resp.json
+          if [[ "$STATUS" != "201" ]]; then
+            echo "::error::PAT lacks org runner-management scope (HTTP $STATUS) — rotate github_token with admin:org / 'Self-hosted runners: write'"
+            exit 1
+          fi
+          echo "PAT has sufficient scope for org runner registration"
+
   evaluate:
     name: Evaluate ${{ matrix.host }}
     runs-on: ubuntu-latest

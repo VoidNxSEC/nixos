@@ -5,6 +5,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -23,7 +24,7 @@ in
     sops.secrets = {
       # Anthropic (Claude)
       "anthropic_api_key" = {
-        sopsFile = ../../secrets/api-keys.yaml;
+        sopsFile = "${inputs.venus}/secrets/api-keys.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -31,7 +32,7 @@ in
 
       # OpenRouter
       "openrouter_api_key" = {
-        sopsFile = ../../secrets/api-keys.yaml;
+        sopsFile = "${inputs.venus}/secrets/api-keys.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -39,7 +40,7 @@ in
 
       # Google Gemini
       "gemini_api_key" = {
-        sopsFile = ../../secrets/api-keys.yaml;
+        sopsFile = "${inputs.venus}/secrets/api-keys.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -47,7 +48,7 @@ in
 
       # Mistral AI
       "mistralai_api_key" = {
-        sopsFile = ../../secrets/api-keys.yaml;
+        sopsFile = "${inputs.venus}/secrets/api-keys.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -55,7 +56,7 @@ in
 
       # DeepSeek
       "deepseek_api_key" = {
-        sopsFile = ../../secrets/api-keys.yaml;
+        sopsFile = "${inputs.venus}/secrets/api-keys.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -63,14 +64,14 @@ in
 
       # Replicate
       "replicate_api_key" = {
-        sopsFile = ../../secrets/api-keys.yaml;
+        sopsFile = "${inputs.venus}/secrets/api-keys.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
 
       "nvidia_api_key" = {
-        sopsFile = ../../secrets/api-keys.yaml;
+        sopsFile = "${inputs.venus}/secrets/api-keys.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";

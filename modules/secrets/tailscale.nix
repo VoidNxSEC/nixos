@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -16,7 +17,7 @@ in
 
     secretsFile = mkOption {
       type = types.str;
-      default = "/etc/nixos/secrets/tailscale.yaml";
+      default = "${inputs.venus}/secrets/tailscale.yaml";
       description = "Path to SOPS-encrypted Tailscale secrets file";
     };
   };

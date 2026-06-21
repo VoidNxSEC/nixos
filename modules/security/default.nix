@@ -13,7 +13,6 @@
 {
   imports = [
     # Boot and kernel security
-    ./boot.nix
     ./kernel.nix
 
     # Compiler hardening (currently disabled - Nix 2.18+ compatibility)
@@ -24,7 +23,6 @@
 
     # System hardening
     ./hardening.nix
-    ./network.nix
     ./pam.nix
     ./ssh.nix
     ./tls.nix

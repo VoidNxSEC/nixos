@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -31,9 +32,9 @@ in
     kernelcore.network.vpn.tailscale = {
       # Use SOPS-encrypted auth key (if secrets file exists)
       authKeyFile =
-        mkIf (pathExists "/etc/nixos/secrets/tailscale.yaml")
+        mkIf (pathExists "${inputs.venus}/secrets/tailscale.yaml")
           config.sops.secrets."tailscale-authkey".path;
-      useAuthKeyFile = pathExists "/etc/nixos/secrets/tailscale.yaml";
+      useAuthKeyFile = pathExists "${inputs.venus}/secrets/tailscale.yaml";
 
       # Enable subnet router for local network
       enableSubnetRouter = true;

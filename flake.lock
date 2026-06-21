@@ -449,11 +449,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1781888691,
-        "narHash": "sha256-phWZ+qJyQcQY/fTsi0FtjgdjJSKffJ54biMcUnf+t9E=",
+        "lastModified": 1782038310,
+        "narHash": "sha256-Kp80skSQEb5OliZ6GRGUxJnlR3wVB0CY/vslxF4jYhY=",
         "ref": "refs/heads/main",
-        "rev": "d486a5fe69c9800e75aed76ae4beb3183ac8886d",
-        "revCount": 7486,
+        "rev": "735c0e02247344ed5b8e38a5c39ba8c8c8cb85dd",
+        "revCount": 7487,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -716,6 +716,22 @@
         "type": "github"
       }
     },
+    "mercury": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782025881,
+        "narHash": "sha256-wgXe4jnXHui9G8qiHKDYE3ccblaxdI1dehxFB8iauYQ=",
+        "ref": "refs/heads/main",
+        "rev": "7222886b2c75594ce3583a3301a1ce5a610e661b",
+        "revCount": 3,
+        "type": "git",
+        "url": "file:///home/kernelcore/master/mercury"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/kernelcore/master/mercury"
+      }
+    },
     "niri": {
       "inputs": {
         "niri-stable": "niri-stable",
@@ -969,6 +985,7 @@
         "home-manager": "home-manager",
         "hyprland": "hyprland",
         "i915-governor": "i915-governor",
+        "mercury": "mercury",
         "niri": "niri",
         "nix-colors": "nix-colors",
         "nixos-hardware": "nixos-hardware",
@@ -978,7 +995,8 @@
         "sops-nix": "sops-nix",
         "spider-nix": "spider-nix",
         "spooknix": "spooknix",
-        "swissknife": "swissknife"
+        "swissknife": "swissknife",
+        "venus": "venus"
       }
     },
     "rust-overlay": {
@@ -1356,6 +1374,22 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "venus": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782050639,
+        "narHash": "sha256-QGBZ7gdIsjsz86BGtCl+bSoXF7WLtXv8BvAo0wFn5ck=",
+        "ref": "refs/heads/main",
+        "rev": "216e66ef6a16095c1a0b084a11699563cf07ccc8",
+        "revCount": 3,
+        "type": "git",
+        "url": "ssh://git@github.com/marcosfpina/venus.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/marcosfpina/venus.git"
       }
     },
     "xdph": {

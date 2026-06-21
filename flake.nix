@@ -131,6 +131,15 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
 
+    mercury = {
+      url = "git+file:///home/kernelcore/master/mercury";
+      flake = false;
+    };
+    venus = {
+      url = "git+ssh://git@github.com/marcosfpina/venus.git";
+      flake = false;
+    };
+
     #owasaka = {
     #url = "github:VoidNxSEC/O.W.A.S.A.K.A.";
     #inputs.nixpkgs.follows = "nixpkgs";
@@ -290,6 +299,8 @@
             # ALL SYSTEM MODULES (auto-imported via modules/default.nix)
             # ═══════════════════════════════════════════════════════════
             self.nixosModules.default
+            "${inputs.mercury}/batter.nix"
+            "${inputs.mercury}/frosting.nix"
 
             # NOTE: Feature flags and service configuration moved to:
             #       ./hosts/kernelcore/configuration.nix (lines 400-427)
@@ -327,10 +338,7 @@
             # ═══════════════════════════════════════════════════════════
             inputs.spooknix.nixosModules.default
 
-            # ═══════════════════════════════════════════════════════════
-            # SECURITY FINAL OVERRIDE (highest priority)
-            # ═══════════════════════════════════════════════════════════
-            ./sec/hardening.nix
+            "${inputs.mercury}/sprinkles.nix"
             ./profiles/k8s-lab.nix
           ];
         };
