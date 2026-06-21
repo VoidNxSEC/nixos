@@ -5,6 +5,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -23,14 +24,14 @@ in
     sops.secrets = {
       # GCP Project Configuration
       "GCP_PROJECT_ID" = {
-        sopsFile = ../../secrets/gcp-ml.yaml;
+        sopsFile = "${inputs.venus}/secrets/gcp-ml.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
 
       "GCP_LOCATION" = {
-        sopsFile = ../../secrets/gcp-ml.yaml;
+        sopsFile = "${inputs.venus}/secrets/gcp-ml.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
