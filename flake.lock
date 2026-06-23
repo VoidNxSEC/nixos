@@ -359,11 +359,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781989573,
-        "narHash": "sha256-npfH7Zv7t1akX/ArqCNro4zU4ViPlghLaPnbEfHbCxk=",
+        "lastModified": 1782166451,
+        "narHash": "sha256-SA7LyrayyZBvtzZnesnSLV7haciFuVLeZaX2hd5v4j4=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "78e7d8b13ecd7f5256a5c11ce216876164099d9f",
+        "rev": "471a1d2f840eb7fcbdfd541d99c13a64096f46db",
         "type": "github"
       },
       "original": {
@@ -449,11 +449,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1782038310,
-        "narHash": "sha256-Kp80skSQEb5OliZ6GRGUxJnlR3wVB0CY/vslxF4jYhY=",
+        "lastModified": 1782070887,
+        "narHash": "sha256-AZvkraDtbqlrWbmmUk+pL2OL7G/L3WEV/Y65ZkAJZNo=",
         "ref": "refs/heads/main",
-        "rev": "735c0e02247344ed5b8e38a5c39ba8c8c8cb85dd",
-        "revCount": 7487,
+        "rev": "5a7078d20a14bb199ef9bb81faa4faeaf5e92117",
+        "revCount": 7490,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -814,11 +814,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1781622756,
-        "narHash": "sha256-JrPh4M6S7aPsEE9tOENuZrxC6o2szSLlK+t4+nLke9s=",
+        "lastModified": 1782166108,
+        "narHash": "sha256-/EtnQBcKbsaCAGQ5VRcplrHRkR4ryqyLMpBfkVuG9Xw=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "08018c72174a4df5657f8d94178ac69fb9c243e5",
+        "rev": "875776f0252fcb8618bb948640a0d1f7a5b362be",
         "type": "github"
       },
       "original": {
@@ -1086,11 +1086,11 @@
         "rust-overlay": "rust-overlay_3"
       },
       "locked": {
-        "lastModified": 1780429011,
-        "narHash": "sha256-5zulmcjAAOZQ4qkBclzew3S1dFkZSWFZqNg2/yjLIaY=",
+        "lastModified": 1782055507,
+        "narHash": "sha256-qIPLoz3xsW68jWrMYexYTPO08rW37vJVvKa8CHe4X3g=",
         "owner": "VoidNxSEC",
         "repo": "securellm-bridge",
-        "rev": "9d8e04d19452e8f97d2a1e56e1e5e05b6c4c9e19",
+        "rev": "dbe45efa2667d136e1b47bfff164067e15262f04",
         "type": "github"
       },
       "original": {
@@ -1129,11 +1129,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1781943681,
-        "narHash": "sha256-NFHmA7H47adqiyp+0iEOyZOQhmigDqA/NBAlf4imB6U=",
+        "lastModified": 1782165805,
+        "narHash": "sha256-478kKQBvK6SYTOdN2h9jhKJv94nbXRbFMfuL1WshErg=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "420f8d2e9882911f65cfac15cc706f639ba96cca",
+        "rev": "56b24064fdcaedca53553b1a6d607fd23b613a24",
         "type": "github"
       },
       "original": {
@@ -1192,11 +1192,11 @@
         "sops-nix": "sops-nix_2"
       },
       "locked": {
-        "lastModified": 1780118238,
-        "narHash": "sha256-5HBxsbJaX8tiO+HprChL+z11P1Z+YTiSaA27Nnz92cU=",
+        "lastModified": 1782140602,
+        "narHash": "sha256-rA4uEx7ePtRdColG1oytoBTs2KkOh1WqYqUuAxXl5pg=",
         "owner": "VoidNxSEC",
         "repo": "spooknix",
-        "rev": "fe9f0815fd9b3daf3035df23d4750d30d09c3082",
+        "rev": "0622897e79057aa0fbbbfbf9ae6abc5c32620b77",
         "type": "github"
       },
       "original": {
@@ -1213,11 +1213,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1780235687,
-        "narHash": "sha256-tiOX/Pgz+ntDBB3OSjRCJbYb2uHXMeNuDMarVpV1XpI=",
+        "lastModified": 1782056452,
+        "narHash": "sha256-Ph00S8Nei8YWPyd6zmSiKAhvqUpRQyawWIX/0UISHMY=",
         "owner": "VoidNxSEC",
         "repo": "swissknife",
-        "rev": "38ac5dc06464b10abba9960713062d4503d71d09",
+        "rev": "1757345332fbf8d23e9b9aecef89c716756f25c1",
         "type": "github"
       },
       "original": {
@@ -1379,11 +1379,11 @@
     "venus": {
       "flake": false,
       "locked": {
-        "lastModified": 1782050639,
-        "narHash": "sha256-QGBZ7gdIsjsz86BGtCl+bSoXF7WLtXv8BvAo0wFn5ck=",
+        "lastModified": 1782184701,
+        "narHash": "sha256-nfMhZjVfeJu/JxxjxeUGCdLVw3hL0Ft7G3hZ8BjkV8s=",
         "ref": "refs/heads/main",
-        "rev": "216e66ef6a16095c1a0b084a11699563cf07ccc8",
-        "revCount": 3,
+        "rev": "393b4f57a64e4270db2c1b2abaa438b8ccbb945b",
+        "revCount": 4,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/venus.git"
       },
