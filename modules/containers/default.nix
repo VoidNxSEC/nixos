@@ -17,6 +17,7 @@
     # Kubernetes Stack
     ./k3s-cluster.nix
     ./longhorn-storage.nix
+    ./kind.nix # kind lab cluster + CKA/CKAD/CKS toolset
 
     # Docker Hub integration
     ./docker-hub.nix
