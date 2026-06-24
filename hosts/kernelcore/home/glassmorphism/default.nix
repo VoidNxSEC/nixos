@@ -130,7 +130,7 @@ in
   # ============================================
   qt = {
     enable = true;
-    platformTheme.name = "gtk";
+    platformTheme.name = "gtk3";
     style = {
       name = "kvantum";
       package = pkgs.libsForQt5.qtstyleplugin-kvantum;
