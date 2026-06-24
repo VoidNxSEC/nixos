@@ -1156,6 +1156,7 @@
       evince
       sioyek
       kdePackages.okular
+
       cairo-lang
       metabase
 
