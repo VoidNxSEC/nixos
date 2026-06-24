@@ -31,6 +31,17 @@ jobs:
 
       - uses: ./.github/actions/setup-nix-env
 
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
       - name: Setup AGE key for SOPS
         env:
           AGE_SECRET_KEY: ${{ secrets.AGE_SECRET_KEY }}
