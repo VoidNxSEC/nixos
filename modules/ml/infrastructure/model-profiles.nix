@@ -173,6 +173,16 @@ in
   };
 
   config = mkIf cfg.enable {
+    # llamacpp-swap-init/-status services run as this user; the user is not
+    # declared by services.llamacpp-swap (llama-cpp-swap.nix) when that
+    # module is disabled, so it must be created here too.
+    users.users.llamacpp-swap = mkDefault {
+      isSystemUser = true;
+      group = "llamacpp-swap";
+      home = cfg.swapStateDir;
+    };
+    users.groups.llamacpp-swap = mkDefault { };
+
     # Validate that default profile exists
     assertions = [
       {
