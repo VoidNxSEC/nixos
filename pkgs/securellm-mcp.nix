@@ -34,7 +34,7 @@ pkgs.buildNpmPackage {
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "1";
   };
 
-  npmDepsHash = "sha256-uA78xn4dzPgLTivGSpapPIVtqzEyOPEAkRYGxzZPusY="; # TODO: replace with actual hash after build
+  npmDepsHash = "sha256-uA78xn4dzPgLTivGSpapPIVtqzEyOPEAkRYGxzZPusY=";
 
   buildPhase = ''
     npm run build
