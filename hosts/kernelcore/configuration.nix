@@ -530,7 +530,7 @@
       enable = true;
       profiles = {
         coder = {
-          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
+          modelPath = "/var/lib/ml-models/llamacpp/models/L3-8B-Stheno-v3.3-32K-Ultra-NEO-V1-IMATRIX-GGUF:Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
           gpuLayers = 38;
           contextSize = 8192;
@@ -671,6 +671,19 @@
         };
       };
     };
+  };
+
+  # kind (Kubernetes IN Docker) lab — CKA exam prep.
+  # Disposable multi-node clusters + full CKA/CKAD/CKS toolset and the
+  # kindlab-* helper CLI. Study material: ~/learn/kuber-labs/ and
+  # docs/guides/KIND-CKA-EXAM-GUIDE.md. Requires Docker (enabled above).
+  services.kind-lab = {
+    enable = true;
+    clusterName = "cka-lab";
+    workerCount = 2;
+    haControlPlane = false; # set true to practice etcd quorum / multi-master
+    ingress.enable = true;
+    metricsServer.enable = true;
   };
 
   kernelcore.tools = {
@@ -832,14 +845,14 @@
     };
 
     llamacpp-turbo = {
-      enable = false; # Disabled in favor of llamacpp-swap
-      model = "/var/lib/llamacpp/models/Qwen2.5_Coder_7B_Instruct";
+      enable = true;
+      model = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
       host = "127.0.0.1";
-      port = 8080;
+      port = 8081;
       n_threads = 12;
       n_threads_batch = 12;
       n_gpu_layers = 40;
-      mainGpu = 1;
+      mainGpu = 0; # CUDA backend only sees the NVIDIA GPU (Intel iGPU isn't CUDA-capable); 0 is the RTX 3050
       n_parallel = 1;
       n_ctx = 8196;
       n_batch = 2048;
@@ -855,7 +868,7 @@
 
     # LlamaSwap - Hot Model Reloading
     llamacpp-swap = {
-      enable = true;
+      enable = false; # Disabled in favor of llamacpp-turbo
       host = "127.0.0.1";
       port = 8081;
       n_threads = 12;
@@ -918,7 +931,7 @@
     };
 
     gitea-showcase = {
-      enable = false;
+      enable = true;
       domain = "gitea.voidnx.com";
       rootUrl = "https://gitea.voidnx.com/";
       listenAddress = "127.0.0.1";
@@ -1091,6 +1104,7 @@
     openssh.authorizedKeys.keys = [
       "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG5StF4nUzkEsUei88BstktP/Q/g8BvlHeWnEDD+ii/jB7Fs4v4imG05tJU/jC8/ax2FFRSwoBRt7tH6RDp4Dys= user@iphone"
       "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDF4VaIRhsoZGJKZK7/6RdPyq7XNvyuvLQp+cPG4AueJ4SdLCAW7cob9cgDhTFb4bBG00LOdxcl9hqYcqA8KxkOwnoT+OuHKjBAgsEVdWw2U2p0tD/9UUMFEMt2xYEIucjXDczk/U4TYpi6h233QfdLaqJegOTUNLD7klL/d9uaQJr4q+g80+uKjKRqePLw7KfgMtGk5hDrz2lkv+vjD37vbZADZAp2WGpIz9m26vmzEj35m/54Bv714c9v4RczaD/Rww08P+gyRwH9G15kxZoEnVwxikZXnwXRARc3YU+zlzqJq3CHvbrXjc6yvapPnJ3Avbyl3dZ735nkaGos3HbRLqgx1el0zpuJcteXIrlwnch9agTusiZ4O2gdqAW3ptetdPFhJrH2FbZxD5zsouYw4b+OlVCCjY/tHK6M5jjD7P4hcZ96wamb56t5Qu/pKTI2KcagWZa6hZ4DZi/l55ATY04tEiEPfIOrL0ylWwRMpEKchFHbxz3Nm8jGAqFyDwT+vEGDB5nIy519crNo36Gq1Yl0T8rYPQxGe2eKxkSNkFp9kFsGhvjIcXdo/3MhwLX4GCPUmhXzg8hZJbgScJRlBYTMlTW7EBKVsX4FkeKOe1evRUZNf0kM2Fij5/U4YbYdYEMUoAezP6AAHGFt3Yn8EEof2rN61bWhNw8G8BI3fQ== glab"
+      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBE2jQWzD7N9sMWW+UKBNuxzS5v3Dt5g6UbZ/kd49b7XJugBLma8152DogVrblUxhPqfQfcCVrMHNHFlIkXAB9w= voidnxlabs"
     ];
     packages = with pkgs; [
       obsidian
@@ -1131,14 +1145,17 @@
       codex
       qbittorrent
       # vllm # FIXME: upstream nixpkgs broken patch for llama-cpp-python (406)
-      #koboldcpp
-      #sillytavern
       alacritty
       xclip
       glab
       gh
       wrangler
+      termius
       codeberg-cli
+      zathura
+      evince
+      sioyek
+      kdePackages.okular
 
       # Custom wrapper for brev to work with read-only .ssh/config
       (pkgs.writeShellScriptBin "brev" ''
@@ -1354,6 +1371,22 @@
       "cursor"
       "windsurf"
     ];
+  };
+
+  # GPU power limit - raised from 50W to the 65W hardware max for llamacpp-turbo
+  # inference performance. Trades battery/thermal headroom for sustained clocks.
+  systemd.services.nvidia-power-limit = {
+    description = "Set NVIDIA GPU power limit to hardware max (65W)";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "nvidia-persistenced.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = [
+        "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pm 1"
+        "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pl 65"
+      ];
+    };
   };
 
   system.stateVersion = "26.05";
