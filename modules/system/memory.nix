@@ -13,7 +13,7 @@ with lib;
       optimizations.enable = mkEnableOption "Enable memory optimizations and OOM protection";
       zram.enable = mkOption {
         type = types.bool;
-        default = true;
+        default = false;
         description = "Enable ZRAM compressed swap";
       };
     };
@@ -153,14 +153,8 @@ with lib;
       priority = 10; # Higher priority than disk swap
     };
 
-    # Traditional swap file - Emergency fallback only
-    swapDevices = [
-      {
-        device = "/swapfile";
-        size = 4096; # 4GB - reduced from 32GB (was excessive for 16GB RAM)
-        priority = 5;
-      }
-    ];
+    # Swap disabled
+    swapDevices = [ ];
 
     # Aggressive log rotation to prevent I/O bottleneck
     services.journald.extraConfig = ''

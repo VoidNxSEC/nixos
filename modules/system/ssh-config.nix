@@ -81,6 +81,10 @@ with lib;
     # ============================================================
 
     programs.ssh = {
+      # Opt out of NixOS's auto-injected legacy ssh_config defaults; everything
+      # we want is already declared explicitly below via extraConfig/knownHosts.
+      #enableDefaultConfig = false;
+
       # Enable SSH client - only start agent if GnuPG agent is not handling SSH
       # This prevents conflict with programs.gnupg.agent.enableSSHSupport
       startAgent = mkDefault (!(config.programs.gnupg.agent.enableSSHSupport or false));
