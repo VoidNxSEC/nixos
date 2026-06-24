@@ -13,9 +13,51 @@ Declarative NixOS container infrastructure inspired by the ML-clusters kits patt
 ├── docker-hub.nix           # Docker Hub integration
 ├── ml-containers.nix        # ✨ AI/ML workload containers
 ├── dev-containers.nix       # ✨ Development environment containers
-├── k3s-cluster.nix          # Kubernetes cluster
-└── longhorn-storage.nix     # Persistent storage
+├── k3s-cluster.nix          # Kubernetes cluster (always-on, real hardware)
+├── longhorn-storage.nix     # Persistent storage
+└── kind.nix                 # ✨ kind lab cluster + CKA/CKAD/CKS toolset
 ```
+
+## Kubernetes Lab — kind (`kind.nix`)
+
+`services.kind-lab` generates a disposable, multi-node Kubernetes cluster
+inside Docker (or Podman) for certification study and local testing.
+Where `k3s-cluster.nix` is meant to run permanently on real hardware,
+`kind-lab` is meant to be torn down and rebuilt constantly while studying.
+
+### Features
+
+- Declarative cluster topology: control-plane count (1 or HA/3), worker
+  count, pinned `kindest/node` image, custom pod/service CIDRs.
+- Optional `ingress-nginx` auto-install with host port 80/443 mapping and
+  the `ingress-ready=true` node label already patched in.
+- Optional `metrics-server` auto-install, pre-patched with
+  `--kubelet-insecure-tls` (required for kind's self-signed kubelet certs).
+- Full CKA/CKAD/CKS toolset in `environment.systemPackages`: `kind`,
+  `kubectl`, `helm`, `kustomize`, `k9s`, `kubectx`/`kubens`, `stern`,
+  `kubecolor`, `etcdctl`, `crictl`, `dive`, `kubeconform`, `jq`, `yq-go`.
+- Helper CLI: `kindlab-up` / `kindlab-down` / `kindlab-reset` /
+  `kindlab-status` / `kindlab-load` / `kindlab-help`.
+
+### Configuration
+
+```nix
+# hosts/kernelcore/configuration.nix
+services.kind-lab = {
+  enable = true;
+  clusterName = "cka-lab";
+  workerCount = 2;
+  haControlPlane = false;   # set true to practice etcd quorum / multi-master
+  ingress.enable = true;
+  metricsServer.enable = true;
+};
+```
+
+Run `kindlab-up` to create (or reattach to) the cluster, `kindlab-status`
+for an overview, `kindlab-down` to tear it down. See
+[`docs/guides/KIND-CKA-EXAM-GUIDE.md`](../../docs/guides/KIND-CKA-EXAM-GUIDE.md)
+for exam curriculum coverage and exam-day tips, and
+`~/learn/kuber-labs/` for hands-on manifests and exercises.
 
 ## ML/AI Containers (`ml-containers.nix`)
 
@@ -353,5 +395,8 @@ docker-hub status      # Show status
 
 - `/etc/nixos/lib/packages.nix` - Docker image definitions
 - `/etc/nixos/scripts/build-container-images.sh` - Image builder
+- `/etc/nixos/docs/guides/KIND-CKA-EXAM-GUIDE.md` - CKA exam prep guide (kind module)
+- `~/learn/kuber-labs/` - Hands-on Kubernetes labs + study tracker
 - NixOS Containers Manual: https://nixos.org/manual/nixos/stable/#ch-containers
 - Docker Tools: https://nixos.org/manual/nixpkgs/stable/#sec-pkgs-dockerTools
+- kind documentation: https://kind.sigs.k8s.io/
