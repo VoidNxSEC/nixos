@@ -82,7 +82,7 @@ with lib;
       };
       script = ''
         # Enable persistence mode for better power management
-        ${pkgs.linuxPackages.nvidia_x11}/bin/nvidia-smi -pm 1 || true
+        ${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pm 1 || true
 
         # Set power limit based on thermal profile (if exists)
         if [ -f /var/lib/thermal-profile/current ]; then
@@ -90,15 +90,15 @@ with lib;
           case "$PROFILE" in
             silent)
               # 35W power limit for silent operation
-              ${pkgs.linuxPackages.nvidia_x11}/bin/nvidia-smi -pl 35 || true
+              ${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pl 35 || true
               ;;
             balanced)
               # 60W power limit for balanced performance
-              ${pkgs.linuxPackages.nvidia_x11}/bin/nvidia-smi -pl 60 || true
+              ${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pl 60 || true
               ;;
             performance)
               # 95W power limit for maximum performance (RTX 3050 laptop max)
-              ${pkgs.linuxPackages.nvidia_x11}/bin/nvidia-smi -pl 95 || true
+              ${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pl 95 || true
               ;;
           esac
         fi
