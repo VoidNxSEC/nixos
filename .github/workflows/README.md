@@ -1,29 +1,24 @@
 # GitHub Actions Workflows - NixOS Repository
 
-> Renamed from `README.md` to `WORKFLOWS.md` so GitHub's directory rendering
-> does not shadow the repository root `README.md`. See the root
-> [README.md](../../README.md) and [.github/CI-CD.md](../CI-CD.md) for catalog
-> and quick start.
+## 📋 Workflows Disponíveis
 
-## Workflows Disponíveis
-
-### 1. `ci-observability.yml` - Observabilidade e Debug Completo
+### 1. `ci-observability.yml` - **Observabilidade e Debug Completo**
 Workflow reutilizável com observabilidade completa e debug remoto via tmate.
 
 **Funcionalidades**:
-- **tmate Debug Session** - Acesso SSH remoto para debug
-- **Métricas Detalhadas** - Build time, store size, memory usage
-- **Logs Estruturados** - JSON metrics + HTML reports
-- **Notificações Instantâneas** - Discord, Telegram, Slack
-- **Build Analytics** - Performance tracking
+- 🐛 **tmate Debug Session** - Acesso SSH remoto para debug
+- 📊 **Métricas Detalhadas** - Build time, store size, memory usage
+- 📝 **Logs Estruturados** - JSON metrics + HTML reports
+- 🔔 **Notificações Instantâneas** - Discord, Telegram, Slack
+- 📈 **Build Analytics** - Performance tracking
 
 **Como usar**:
 
 #### Opção 1: Workflow Dispatch (Manual)
 ```bash
 # Ir para Actions > CI Observability & Debug > Run workflow
-- Enable tmate: true (para debug antes do build)
-- Test notifications: true (para testar notificações)
+- Enable tmate: ✅ (para debug antes do build)
+- Test notifications: ✅ (para testar notificações)
 ```
 
 #### Opção 2: Como Workflow Reutilizável
@@ -42,10 +37,10 @@ jobs:
 
 ---
 
-### 2. `nixos-build.yml` - Build Principal
+### 2. `nixos-build.yml` - **Build Principal**
 Build e teste do NixOS com suporte a tmate.
 
-**Inputs**:
+**Novos Inputs**:
 - `enable-tmate`: Habilita sessão tmate antes do build
 - `tmate-on-failure`: Habilita tmate apenas em caso de falha
 
@@ -53,34 +48,34 @@ Build e teste do NixOS com suporte a tmate.
 ```bash
 # Via GitHub UI:
 Actions > NixOS Build & Test > Run workflow
-- enable-tmate: true (para debug)
-- tmate-on-failure: true (apenas em falha)
+- enable-tmate: ✅ (para debug)
+- tmate-on-failure: ✅ (apenas em falha)
 ```
 
 ---
 
-### 3. `pr-validation.yml` - Validação de PRs
+### 3. `pr-validation.yml` - **Validação de PRs**
 Workflow reutilizável para validação de Pull Requests.
 
 ---
 
-## Como Usar tmate para Debug
+## 🐛 Como Usar tmate para Debug
 
 ### O que é tmate?
 tmate cria uma sessão SSH reversa que permite acesso remoto ao runner do GitHub Actions para debug em tempo real.
 
 ### Quando Usar?
-- Build falhando e precisa investigar
-- Testar comandos interativamente
-- Inspecionar estado do sistema
-- Debug de problemas específicos de CI
+- ✅ Build falhando e precisa investigar
+- ✅ Testar comandos interativamente
+- ✅ Inspecionar estado do sistema
+- ✅ Debug de problemas específicos de CI
 
 ### Passo a Passo:
 
 #### 1. Habilitar tmate
 ```bash
 # Opção A: Via Workflow Dispatch
-Actions > [Workflow] > Run workflow > enable-tmate: true
+Actions > [Workflow] > Run workflow > enable-tmate: ✅
 
 # Opção B: Via Git Push com tmate
 git commit --allow-empty -m "debug: enable tmate [tmate]"
@@ -131,15 +126,15 @@ exit
 # Opção B: Cancelar workflow (Actions > Cancel)
 ```
 
-### Importante:
-- **Segurança**: Sessão limitada ao actor (só você pode conectar)
-- **Timeout**: 30 minutos máximo
-- **Acesso**: Apenas com autenticação GitHub
-- **Logs**: Tudo é logado no GitHub Actions
+### ⚠️ Importante:
+- ✅ **Segurança**: Sessão limitada ao actor (só você pode conectar)
+- ⏱️ **Timeout**: 30 minutos máximo
+- 🔒 **Acesso**: Apenas com autenticação GitHub
+- 📊 **Logs**: Tudo é logado no GitHub Actions
 
 ---
 
-## Configurar Notificações
+## 🔔 Configurar Notificações
 
 ### Discord
 
@@ -189,15 +184,15 @@ exit
 
 ---
 
-## Métricas e Relatórios
+## 📊 Métricas e Relatórios
 
 ### Métricas Coletadas:
-- **Build Duration**: Tempo de build em segundos
-- **Store Size**: Tamanho do /nix/store
-- **Memory Usage**: Memória utilizada
-- **Disk Usage**: Espaço em disco usado
-- **Error Count**: Número de erros encontrados
-- **Log Size**: Tamanho dos logs de build
+- ⏱️ **Build Duration**: Tempo de build em segundos
+- 💾 **Store Size**: Tamanho do /nix/store
+- 🧠 **Memory Usage**: Memória utilizada
+- 💽 **Disk Usage**: Espaço em disco usado
+- ❌ **Error Count**: Número de erros encontrados
+- 📝 **Log Size**: Tamanho dos logs de build
 
 ### Acessar Relatórios:
 
@@ -222,7 +217,7 @@ exit
 
 ---
 
-## Exemplos de Uso
+## 🎯 Exemplos de Uso
 
 ### Exemplo 1: Debug de Build Falhando
 ```bash
@@ -256,7 +251,7 @@ cat metrics.json | jq '.build_duration_seconds'
 
 ---
 
-## Troubleshooting
+## 🚨 Troubleshooting
 
 ### tmate Não Conecta
 ```bash
@@ -290,7 +285,7 @@ https://tmate.io/t/XYZ
 
 ---
 
-## Recursos
+## 📚 Recursos
 
 - [tmate Documentation](https://tmate.io/)
 - [GitHub Actions tmate Action](https://github.com/mxschmitt/action-tmate)
@@ -299,7 +294,7 @@ https://tmate.io/t/XYZ
 
 ---
 
-## Roadmap
+## 🎯 Roadmap
 
 ### Próximas Features:
 - [ ] Grafana Dashboard para métricas
@@ -313,5 +308,5 @@ https://tmate.io/t/XYZ
 
 ---
 
-**Última Atualização**: 2026-05-13
+**Última Atualização**: 2025-12-29
 **Mantido por**: kernelcore
