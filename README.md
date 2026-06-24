@@ -96,6 +96,123 @@ graph TB
     K3s --> Longhorn
 ```
 
+### Module Distribution
+
+| Category       | Modules | Notes                                     |
+| -------------- | ------- | ----------------------------------------- |
+| Security + SOC | 39      | AIDE, ClamAV, Wazuh, Suricata, hardening  |
+| ML             | 36      | llama.cpp, vLLM, TabbyAPI, model registry |
+| Packages       | 36      | Sandboxed package builders                |
+| Shell          | 35      | Aliases, rebuild system, utilities        |
+| Services       | 16      | GPU orchestration, MCP servers            |
+| Network        | 12      | Tailscale, VPN, DNS, firewall zones       |
+| Hardware       | 12      | Thermal forensics, NVIDIA tuning          |
+
+**Totals**: 20 categories, 278 modules, ~48k lines of Nix.
+
+---
+
+## Key Subsystems
+
+### ML Infrastructure
+
+GPU-accelerated LLM stack integrated as NixOS modules:
+
+```nix
+kernelcore.ml.offload.enable = true;
+```
+
+- Backends: llama.cpp (turbo + swap variants), vLLM, TabbyAPI.
+- SQLite model registry with auto-discovery.
+- Rust-based REST control API on port 9000.
+- Real-time VRAM monitoring with automatic offloading under pressure.
+- MCP protocol integration for IDE clients.
+
+### Security & SOC
+
+Defense-in-depth with a complete SOC stack:
+
+```nix
+kernelcore.soc.enable = true;
+kernelcore.security.hardening.enable = true;
+```
+
+- **File integrity & AV**: AIDE, ClamAV with scheduled scans.
+- **Endpoint & network**: Wazuh EDR, Suricata IDS/IPS, AppArmor.
+- **Hardening**: kernel sysctl/boot params, compiler hardening (PIE/RELRO/SSP), SSH hardening with key-only auth.
+- **SIEM/Logs**: OpenSearch, Grafana, Vector, threat-intel feeds.
+
+### Custom Package Management
+
+Sandboxed package builders with audit logging:
+
+- `.deb` packages under Firejail isolation.
+- `tar.gz` extraction with FHS environments.
+- npm packages with sandbox profiles.
+- Automatic hash verification and GitHub release tracking.
+- Examples: AppFlowy, Gemini CLI, Proton Suite, Cursor.
+
+### Developer Tools
+
+```nix
+services.securellm-mcp.enable = true;
+kernelcore.tools.enable = true;
+kernelcore.swissknife.enable = true;
+```
+
+- **SecureLLM Bridge** — Multi-provider LLM orchestration (OpenAI, Anthropic, Bedrock, local) with rate limiting and fallback.
+- **Tools CLI** — `nix-utils`, `secops`, `diagnostics`, `llm`, `mcp`.
+- **Swissknife** — Thermal forensics, VRAM monitoring, emergency abort, build reproducibility analysis.
+
+Dev shells:
+
+```bash
+nix develop .#python    # Python with ML libs
+nix develop .#cuda      # CUDA toolchain
+nix develop .#rust      # Rust toolchain
+nix develop .#infra     # Infrastructure tools
+```
+
+### Network Security
+
+- Tailscale mesh VPN (zero-config peer-to-peer).
+- NordVPN with kill-switch and post-quantum encryption.
+- nftables-based firewall zones.
+- DNSCrypt + DNS-over-TLS with caching.
+- NGINX reverse proxy for Tailscale-exposed services.
+
+### Desktop
+
+- **Hyprland** (Wayland): custom v0.52.2 overlay, Waybar, Wofi, Wlogout.
+- **i3** (X11): Polybar, Rofi, Picom.
+
+---
+
+## Notable Implementations
+
+**Thermal Forensics** (760 lines)
+
+```bash
+thermal-forensics --duration 180
+laptop-verdict /var/lib/thermal-evidence
+```
+
+3-phase stress test collecting baseline/stress/rebuild thermal data for hardware warranty claims.
+
+**Advanced Rebuild** (674 lines)
+
+```bash
+rebuild-advanced --profile workstation --check-thermal
+```
+
+Pre-flight checks, thermal monitoring, and binary cache integration during rebuilds.
+
+**GPU Orchestration** (252 lines)
+Unloads llama.cpp models when VRAM drops below 2GB; maintains service priority queues.
+
+**SOC Stack**
+Full Wazuh + OpenSearch + Suricata deployment running on a workstation-class machine.
+
 ---
 
 ## Repository Structure
@@ -156,29 +273,29 @@ Every option sits under the `kernelcore.*` namespace, densest in `security` (66)
 
 Module footprint by category, ordered by lines of Nix:
 
-| Category         | Modules |        LOC | Focus                                          |
-| ---------------- | ------: | ---------: | ---------------------------------------------- |
-| `shell`          |      40 |      7,063 | Aliases, rebuild system, service control       |
-| `security`       |      39 |      5,842 | Hardening, AIDE, ClamAV, Wazuh/Suricata (SOC)  |
-| `ml`             |      36 |      4,710 | llama.cpp, vLLM, TabbyAPI, model registry      |
-| `desktop`        |      12 |      4,101 | Hyprland, Niri, i3, theming                    |
-| `services`       |      15 |      3,767 | GPU orchestration, MCP servers                 |
-| `network`        |      16 |      3,493 | Tailscale, VPN, DNS, firewall zones            |
-| `hardware`       |      12 |      2,701 | Laptop defense, NVIDIA tuning, thermal         |
-| `applications`   |      14 |      2,599 | Hardened browsers, Electron tuning             |
-| `containers`     |      10 |      2,363 | Docker, Podman, k3s, NixOS containers          |
-| `packages`       |      21 |      2,185 | Sandboxed package builders                     |
-| `virtualization` |       4 |      1,971 | vmctl, QEMU/libvirt                            |
-| `system`         |      11 |      1,374 | Core system (nix, memory, I/O, binary cache)   |
-| `development`    |       7 |      1,300 | Dev environments, CI/CD, git forges, Jupyter   |
-| `tools`          |      10 |      1,244 | Unified CLI suite (nix-utils, diagnostics)     |
-| `secrets`        |      16 |      1,181 | SOPS/age secret wiring                         |
-| `audio`          |       3 |      1,027 | Production audio stack                         |
-| `blockchain`     |       4 |        754 | Algorand node/DAO, chainscope                  |
-| `debug`          |       5 |        368 | swissknife diagnostics                         |
-| `programs`       |       4 |        300 | phantom, vmctl, cognitive-vault                |
-| `devops`         |       2 |         96 | GitLab CLI tooling                             |
-| **Total**        | **281** | **48,439** |                                                |
+| Category         | Modules |        LOC | Focus                                         |
+| ---------------- | ------: | ---------: | --------------------------------------------- |
+| `shell`          |      40 |      7,063 | Aliases, rebuild system, service control      |
+| `security`       |      39 |      5,842 | Hardening, AIDE, ClamAV, Wazuh/Suricata (SOC) |
+| `ml`             |      36 |      4,710 | llama.cpp, vLLM, TabbyAPI, model registry     |
+| `desktop`        |      12 |      4,101 | Hyprland, Niri, i3, theming                   |
+| `services`       |      15 |      3,767 | GPU orchestration, MCP servers                |
+| `network`        |      16 |      3,493 | Tailscale, VPN, DNS, firewall zones           |
+| `hardware`       |      12 |      2,701 | Laptop defense, NVIDIA tuning, thermal        |
+| `applications`   |      14 |      2,599 | Hardened browsers, Electron tuning            |
+| `containers`     |      10 |      2,363 | Docker, Podman, k3s, NixOS containers         |
+| `packages`       |      21 |      2,185 | Sandboxed package builders                    |
+| `virtualization` |       4 |      1,971 | vmctl, QEMU/libvirt                           |
+| `system`         |      11 |      1,374 | Core system (nix, memory, I/O, binary cache)  |
+| `development`    |       7 |      1,300 | Dev environments, CI/CD, git forges, Jupyter  |
+| `tools`          |      10 |      1,244 | Unified CLI suite (nix-utils, diagnostics)    |
+| `secrets`        |      16 |      1,181 | SOPS/age secret wiring                        |
+| `audio`          |       3 |      1,027 | Production audio stack                        |
+| `blockchain`     |       4 |        754 | Algorand node/DAO, chainscope                 |
+| `debug`          |       5 |        368 | swissknife diagnostics                        |
+| `programs`       |       4 |        300 | phantom, vmctl, cognitive-vault               |
+| `devops`         |       2 |         96 | GitLab CLI tooling                            |
+| **Total**        | **281** | **48,439** |                                               |
 
 ---
 
@@ -427,3 +544,92 @@ Built on:
 **Hardware**: Acer laptop (Lenovo-compatible tuning profiles) + NVIDIA GPU
 **Channel**: nixos-unstable
 **Status**: production (daily driver)
+
+# NIXOS SYSTEM CONFIGURATION
+
+## LEGAL NOTICE AND DISCLAIMER
+
+**PROPRIETARY SYSTEM CONFIGURATION**
+
+This repository contains proprietary system configuration files for production infrastructure. Unauthorized access, use, modification, or distribution of this configuration is strictly prohibited and may constitute a violation of applicable laws.
+
+### TERMS OF USE
+
+1. **Access Restrictions**: Access to this repository is restricted to authorized personnel only.
+
+2. **Confidentiality**: All configuration files, scripts, and documentation contained herein are confidential and proprietary information.
+
+3. **No Warranty**: This configuration is provided "AS IS" without warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, or non-infringement.
+
+4. **Limitation of Liability**: In no event shall the authors or copyright holders be liable for any claim, damages, or other liability arising from the use of this configuration.
+
+5. **Security Compliance**: This system implements security hardening measures. Any attempt to circumvent, disable, or compromise these security measures is prohibited.
+
+6. **Data Protection**: This configuration handles sensitive data and cryptographic material. Unauthorized access or disclosure may result in legal action.
+
+### SYSTEM CLASSIFICATION
+
+- **Environment**: Production
+- **Security Level**: Hardened
+- **Data Sensitivity**: High
+- **Compliance**: Security-first architecture
+
+### AUTHORIZED OPERATIONS
+
+System operations are restricted to:
+
+- Authorized system administrators
+- Pre-approved maintenance procedures
+- Security-audited modifications
+- Documented change management processes
+
+### PROHIBITED ACTIVITIES
+
+The following activities are expressly prohibited:
+
+- Unauthorized access or attempted access
+- Modification without proper authorization
+- Distribution or copying of configuration files
+- Circumvention of security controls
+- Extraction of sensitive information
+- Reverse engineering of security mechanisms
+
+### CRYPTOGRAPHIC NOTICE
+
+This system employs cryptographic technologies for data protection. Export, re-export, or transfer of cryptographic materials may be subject to export control regulations.
+
+### MONITORING AND AUDIT
+
+All system access and modifications are logged and monitored. Security audits are conducted regularly. Unauthorized activities will be investigated and may result in legal prosecution.
+
+### INTELLECTUAL PROPERTY
+
+All configuration code, scripts, modules, and documentation are the exclusive property of the system owner. No license or right is granted except as explicitly stated.
+
+### THIRD-PARTY COMPONENTS
+
+This system incorporates third-party software components, each subject to their respective licenses. Use of this configuration does not grant rights beyond those specified in the applicable licenses.
+
+### CONTACT
+
+For authorized access requests or security concerns:
+
+- **Administrative Contact**: sec@voidnxlabs.com
+- **Security Incidents**: Report through established security channels only
+
+### JURISDICTION
+
+This notice is governed by applicable international, federal, and state laws. By accessing this repository, you agree to comply with all applicable legal requirements.
+
+---
+
+**EFFECTIVE DATE**: 2025-11-10
+**DOCUMENT VERSION**: 1.0
+**CLASSIFICATION**: RESTRICTED
+**DISTRIBUTION**: AUTHORIZED PERSONNEL ONLY
+
+---
+
+© 2025 VoidNxLabs. All rights reserved.
+
+**WARNING**: Unauthorized access to this system is prohibited and may be prosecuted under applicable computer crime laws including but not limited to the Computer Fraud and Abuse Act (18 U.S.C. § 1030) and equivalent international statutes.
