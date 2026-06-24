@@ -1156,6 +1156,8 @@
       evince
       sioyek
       kdePackages.okular
+      cairo-lang
+      metabase
 
       # Custom wrapper for brev to work with read-only .ssh/config
       (pkgs.writeShellScriptBin "brev" ''
