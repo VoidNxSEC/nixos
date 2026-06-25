@@ -847,7 +847,7 @@
 
     llamacpp-turbo = {
       enable = true;
-      model = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
+      model = "/var/lib/ml-models/llamacpp/models/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf";
       host = "127.0.0.1";
       port = 8081;
       n_threads = 12;
