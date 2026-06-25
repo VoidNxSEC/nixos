@@ -91,7 +91,7 @@ in
         # Application defaults
         export EDITOR="nvim"
         export VISUAL="nvim"
-        export BROWSER="brave"
+        export BROWSER="vivaldi"
 
         # Better cd behavior
         shopt -s autocd
