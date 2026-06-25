@@ -23,6 +23,7 @@
     ./antigravity
     ./brev-cli
 
+    ./hammer-ai
     # Extension based | Bwrap rules applied | Hardened
     ./gemini
 
