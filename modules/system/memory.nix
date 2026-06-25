@@ -31,7 +31,11 @@ with lib;
       # Memory optimization - OPTIMIZED for Electron apps + builds
       "vm.swappiness" = 30; # Prioritize RAM over SWAP
       "vm.vfs_cache_pressure" = 50; # Keep cache longer
+<<<<<<< HEAD
       "vm.dirty_ratio" = 10; # Flush more often, avoid I/O stalls
+=======
+      "vm.dirty_ratio" = 20; # Larger buffer for 16GB RAM
+>>>>>>> 1c443cbcc22c327f179b2e633e578c0a7408d732
       "vm.dirty_background_ratio" = 10; # Background writes at 3GB
 
       # Overcommit: 1=always (never reject malloc). Safer than 0 for dev machines
@@ -44,6 +48,7 @@ with lib;
       "vm.watermark_scale_factor" = 100; # Moderate reclaim, avoid premature swap
       "vm.admin_reserve_kbytes" = 131072; # 128MB reserved for admin recovery
 
+<<<<<<< HEAD
       # inotify - dev tools and monorepos can exhaust the default watcher limits.
       # Calibrated for heavy monorepo development (Zed, multiple IDEs, build watchers).
       # Each watch ≈1KB unswappable kernel memory (~2GB max at 2M watches).
@@ -60,6 +65,13 @@ with lib;
 
       # PID pool - prevent exhaustion from zombie buildup
       "kernel.pid_max" = 131072; # 128K (default 32K)
+=======
+      # inotify - enough watches for Chromium/Electron + VS Code + Vite
+      # monorepos, without allowing runaway watcher instances to pin kernel RAM.
+      "fs.inotify.max_user_watches" = 524288;
+      "fs.inotify.max_user_instances" = 1024;
+      "fs.inotify.max_queued_events" = 32768;
+>>>>>>> 1c443cbcc22c327f179b2e633e578c0a7408d732
     };
 
     # ============================================

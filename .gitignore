@@ -131,10 +131,14 @@ modules/packages/_archive/
 .codex
 #.mcp.json
 
+
 **/.deb
 
 # SOPS defaults
 #secrets
+
+
+
 sec/*.asc
 
 # Local artifacts
