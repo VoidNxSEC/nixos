@@ -388,7 +388,6 @@
         podman-compose
         python313
         python313Packages.pip
-
         nodejs_24
         bun
         syft
@@ -1326,12 +1325,9 @@
     sqlite
     #lxc
     incus
-    cinnamon
     evince
-    koboldcpp
     # antigravity # Replaced by custom build
     pcsx2
-    steam
     postman
     bruno
   ];
