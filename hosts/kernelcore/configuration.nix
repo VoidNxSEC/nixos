@@ -533,11 +533,7 @@
         coder = {
           modelPath = "/var/lib/ml-models/llamacpp/models/L3-8B-Stheno-v3.3-32K-Ultra-NEO-V1-IMATRIX-GGUF:Q4_K_M.gguf";
           displayName = "Qwen 2.5 Coder 7B (Q4)";
-<<<<<<< HEAD
-          gpuLayers = 38;
-=======
           gpuLayers = 999;
->>>>>>> 1c443cbcc22c327f179b2e633e578c0a7408d732
           contextSize = 8192;
         };
 
@@ -1330,8 +1326,6 @@
     sqlite
     #lxc
     incus
-    sillytavern
-    koboldcpp
     cinnamon
     evince
     # antigravity # Replaced by custom build
