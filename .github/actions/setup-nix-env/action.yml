@@ -1,9 +1,13 @@
 name: "Setup Nix Environment"
 <<<<<<< HEAD
+<<<<<<< HEAD
 description: "Configure Nix with flakes and optional Cachix"
 =======
 description: "Configure Nix with flakes, cachix and optimizations"
 >>>>>>> 1c443cbcc22c327f179b2e633e578c0a7408d732
+=======
+description: "Configure Nix with flakes and optional Cachix"
+>>>>>>> d5ced9c1a6fc1b1d6afb075f547c93c15fa77385
 author: "VoidNxSEC"
 
 inputs:
@@ -16,6 +20,7 @@ inputs:
     required: false
     default: ""
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   enable-flakes:
     description: "Enable Nix flakes support"
@@ -26,17 +31,22 @@ inputs:
     required: false
     default: ""
 >>>>>>> 1c443cbcc22c327f179b2e633e578c0a7408d732
+=======
+>>>>>>> d5ced9c1a6fc1b1d6afb075f547c93c15fa77385
 
 outputs:
   nix-version:
     description: "Installed Nix version"
     value: ${{ steps.check-nix.outputs.version }}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   cache-hit:
     description: "Whether cache was hit"
     value: ${{ steps.setup-cachix.outputs.cache-hit }}
 >>>>>>> 1c443cbcc22c327f179b2e633e578c0a7408d732
+=======
+>>>>>>> d5ced9c1a6fc1b1d6afb075f547c93c15fa77385
 
 runs:
   using: "composite"
@@ -114,6 +124,7 @@ runs:
 
         echo "✅ Nix configured"
 
+<<<<<<< HEAD
         if command -v nix &> /dev/null; then
           VERSION=$(nix --version | awk '{print $3}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
@@ -163,10 +174,13 @@ runs:
 
         echo "✅ Nix configured"
 
+=======
+>>>>>>> d5ced9c1a6fc1b1d6afb075f547c93c15fa77385
     - name: Setup Cachix
       if: inputs.cachix-name != ''
       shell: bash
       run: |
+<<<<<<< HEAD
 <<<<<<< HEAD
         nix profile install nixpkgs#cachix
 =======
@@ -227,3 +241,10 @@ runs:
         nix show-config | grep -E "(experimental-features|substituters|max-jobs|cores)" || true
 
 >>>>>>> 1c443cbcc22c327f179b2e633e578c0a7408d732
+=======
+        nix profile install nixpkgs#cachix
+        if [ -n "${{ inputs.cachix-token }}" ]; then
+          echo "${{ inputs.cachix-token }}" | cachix authtoken
+        fi
+        cachix use ${{ inputs.cachix-name }} || echo "Cachix cache unavailable, continuing without it"
+>>>>>>> d5ced9c1a6fc1b1d6afb075f547c93c15fa77385

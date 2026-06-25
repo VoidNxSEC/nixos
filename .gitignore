@@ -125,6 +125,7 @@ projects/cognitive-vault/core/target/debug/**
 modules/packages/js-packages/storage/
 modules/packages/deb-packages/storage
 modules/packages/_archive/
+modules/packages/hammer-ai/hammerai_1.0.50_amd64.deb
 
 # Model Languages
 .claude
@@ -132,10 +133,14 @@ modules/packages/_archive/
 #.mcp.json
 
 
+
+
 **/.deb
 
 # SOPS defaults
-#secrets
+
+
+
 
 
 
@@ -148,4 +153,6 @@ secrets/*.backup-*
 
 # Archived modules (local-only, not tracked)
 modules/_archive/
+
 modules/packages/google-chrome/google-chrome-stable_current_amd64.deb
+
