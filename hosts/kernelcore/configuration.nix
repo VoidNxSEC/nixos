@@ -1328,6 +1328,7 @@
     incus
     cinnamon
     evince
+    koboldcpp
     # antigravity # Replaced by custom build
     pcsx2
     steam
