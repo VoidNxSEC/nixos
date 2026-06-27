@@ -24,7 +24,7 @@ in
     sops.secrets = {
       # GitHub PAT – readable by kernelcore user and any github-runner service
       # group is the runner group created by services.github-runners.<name>
-      "github_token" = {
+      "org_level" = {
         sopsFile = "${inputs.venus}/secrets/github.yaml";
         mode = "0440";
         owner = config.users.users.kernelcore.name;
