@@ -1379,11 +1379,11 @@
     "venus": {
       "flake": false,
       "locked": {
-        "lastModified": 1782347470,
-        "narHash": "sha256-e+1oQZ/Sy6rJLtV//DdrArvfXaFW624NaOrYKWoM39s=",
+        "lastModified": 1782557611,
+        "narHash": "sha256-B7wD7Jgg6MMm5Xpdd8npYT5gklnMkSmPEdMK9PCfBHQ=",
         "ref": "refs/heads/main",
-        "rev": "af23806e84f84ad669b576f53a69416876eab19a",
-        "revCount": 5,
+        "rev": "a4e4ef9c5c61363f185916dca3b05a11c374d18b",
+        "revCount": 7,
         "type": "git",
         "url": "ssh://git@github.com/marcosfpina/venus.git"
       },
