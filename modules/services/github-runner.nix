@@ -22,7 +22,7 @@ let
   cfg = config.kernelcore.services.github-runner;
 
   # ── PAT secret path (long-lived, stored in SOPS) ──────────────────────────
-  patSecretPath = config.sops.secrets."github_token".path;
+  patSecretPath = config.sops.secrets."org_level".path;
 
   # ── Common packages available inside every runner job ──────────────────────
   defaultPackages = with pkgs; [
