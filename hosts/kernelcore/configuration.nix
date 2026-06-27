@@ -128,6 +128,33 @@
         overrideDNS = false;
       };
 
+      # WireGuard VPN – fast, modern kernel-native VPN
+      # To activate: populate secrets/wireguard.yaml via `sops secrets/wireguard.yaml`
+      # then set enable = true and fill in address/peers below.
+      vpn.wireguard = {
+        enable = false; # set true after adding private key to SOPS
+        interface = "wg0";
+        address = [ "10.8.0.2/24" ]; # adjust to your VPN allocation
+        dns = [ "10.8.0.1" ];
+        # Private key must be in SOPS – run:
+        #   wg genkey | sops --set '["wireguard_private_key"]' /path/to/key
+        #   then set privateKeyFile = config.sops.secrets.wireguard_private_key.path
+        privateKeyFile = "/run/secrets/wireguard_private_key";
+        killSwitch = false;
+        peers = [
+          {
+            # Replace with your VPN server's public key
+            publicKey = "REPLACE_WITH_SERVER_PUBLIC_KEY=";
+            endpoint = "vpn.example.com:51820";
+            allowedIPs = [
+              "0.0.0.0/0"
+              "::/0"
+            ]; # full-tunnel; use subnet for split-tunnel
+            persistentKeepalive = 25;
+          }
+        ];
+      };
+
       proxy.nginx-tailscale = {
         enable = true;
         hostname = "nx";
@@ -176,6 +203,13 @@
     nvidia = {
       enable = true;
       cudaSupport = true;
+      prime = {
+        enable = true;
+        offload = true;
+        sync = false;
+        intelBusId = "PCI:0:2:0";
+        nvidiaBusId = "PCI:1:0:0";
+      };
     };
 
     bluetooth.enable = true;
@@ -254,7 +288,7 @@
     containers = {
       docker.enable = true;
       podman = {
-        enable = false;
+        enable = true;
         dockerCompat = false;
         enableNvidia = true;
       };
@@ -283,6 +317,13 @@
       # Development Containers
       dev = {
         enable = true;
+
+        # VS Code in browser – accessible via dev-code-start / dev-code-enter
+        code-server = {
+          enable = true;
+          port = 8443;
+          workspacePath = "/home/kernelcore/dev";
+        };
 
         # Reverse proxy (Caddy)
         proxy = {
@@ -366,7 +407,7 @@
       enable = true;
       org = {
         enable = true;
-        # Covers all repos in the VoidNxSEC org automatically.
+        # Org-level runner covers all VoidNxSEC repos automatically.
         url = "https://github.com/VoidNxSEC";
         name = "kernelcore-org";
         labels = [
@@ -408,6 +449,8 @@
       enableGitAccess = true;
       sshKeys = [
         "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG5StF4nUzkEsUei88BstktP/Q/g8BvlHeWnEDD+ii/jB7Fs4v4imG05tJU/jC8/ax2FFRSwoBRt7tH6RDp4Dys= user@iphone"
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBE2jQWzD7N9sMWW+UKBNuxzS5v3Dt5g6UbZ/kd49b7XJugBLma8152DogVrblUxhPqfQfcCVrMHNHFlIkXAB9w= voidnxlabs"
+
       ];
     };
 
@@ -456,7 +499,20 @@
     };
 
     ci = {
-      enable = true; # Substituído pelo GitHub Actions self-hosted runner
+      enable = true;
+      role = "combined";
+      title = "Kernelcore CI";
+      titleUrl = "https://voidnx.com";
+      buildbotUrl = "http://127.0.0.1:8010/";
+      listenAddress = "127.0.0.1";
+      port = 8010;
+      pbPort = 9989;
+      jobs.enableFlakeCheck = true;
+      jobs.suites = [ ];
+      worker.extraGroups = [
+        "docker"
+        "nix"
+      ];
     };
 
     ml.mcp = {
@@ -868,9 +924,9 @@
 
     # LlamaSwap - Hot Model Reloading
     llamacpp-swap = {
-      enable = true; # Disabled in favor of llamacpp-turbo
+      enable = true;
       host = "127.0.0.1";
-      port = 8080;
+      port = 8081;
       n_threads = 12;
       n_threads_batch = 12;
       n_gpu_layers = 48;
@@ -887,7 +943,19 @@
       speculativeDecoding.enable = false;
       metricsEndpoint = false;
       embeddings = true;
-      extraFlags = [ ];
+      extraFlags = [
+        "--jinja"
+      ];
+    };
+
+    # Model Router – exposes all llama-swap profiles as /v1/models
+    # Clients connect to :8080; router forwards to llamacpp-swap :8081
+    # This solves the single-active-model limitation in any OpenAI-compatible client
+    llamacpp-model-router = {
+      enable = true;
+      host = "127.0.0.1";
+      port = 8080;
+      backendPort = 8081;
     };
 
     # TabbyAPI - OpenAI-compatible Inference Server
@@ -1233,6 +1301,9 @@
       anytype
       antigravity
       evince
+      sillytavern
+      koboldcpp
+      lmstudio
     ];
   };
 
@@ -1386,6 +1457,14 @@
         "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pl 65"
       ];
     };
+  };
+
+  # ZRAM swap – compressed in-memory swap; important for large ML model loads
+  # Uses zstd at 50% of physical RAM; avoids slow disk I/O when VRAM overflows
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 50;
   };
 
   system.stateVersion = "26.05";

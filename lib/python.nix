@@ -20,7 +20,6 @@ in
     uv
     setuptools
     wheel
-    #pipx
     pip-tools
   ];
 
@@ -42,9 +41,7 @@ in
     litellm
     anthropic
     langchain-xai
-    # langchain-mistralai  # broken: test failure in 26.05 (test_mistral_init)
     google-genai
-    # crewai # Commented out if not stable
   ];
 
   # Jupyter ecosystem

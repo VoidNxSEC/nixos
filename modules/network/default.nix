@@ -18,6 +18,7 @@
     ./vpn/tailscale.nix
     ./vpn/tailscale-laptop.nix
     ./vpn/tailscale-desktop.nix
+    ./vpn/wireguard.nix
 
     # Proxy & Reverse Proxy
     ./proxy

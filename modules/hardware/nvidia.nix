@@ -51,13 +51,14 @@ with lib;
       forceFullCompositionPipeline = true;
 
       # NVIDIA Prime configuration for hybrid graphics (Intel Xe + RTX 3050)
-      prime = {
-        offload = {
+      prime = mkIf config.kernelcore.nvidia.prime.enable {
+        sync.enable = mkIf config.kernelcore.nvidia.prime.sync true;
+        offload = mkIf config.kernelcore.nvidia.prime.offload {
           enable = true;
           enableOffloadCmd = true;
         };
-        intelBusId = "PCI:0:2:0";
-        nvidiaBusId = "PCI:1:0:0";
+        intelBusId = config.kernelcore.nvidia.prime.intelBusId;
+        nvidiaBusId = config.kernelcore.nvidia.prime.nvidiaBusId;
       };
     };
 

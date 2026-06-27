@@ -1086,11 +1086,11 @@
         "rust-overlay": "rust-overlay_3"
       },
       "locked": {
-        "lastModified": 1782055507,
-        "narHash": "sha256-qIPLoz3xsW68jWrMYexYTPO08rW37vJVvKa8CHe4X3g=",
+        "lastModified": 1782374370,
+        "narHash": "sha256-l+dlt5DluwL4ADSNi+DqLKTfahu7aiW64/EEQgXVDsw=",
         "owner": "VoidNxSEC",
         "repo": "securellm-bridge",
-        "rev": "dbe45efa2667d136e1b47bfff164067e15262f04",
+        "rev": "1135bdc13f0ec9127576ef6518949f91b26c0ff6",
         "type": "github"
       },
       "original": {
@@ -1111,11 +1111,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781865019,
-        "narHash": "sha256-QslsuyiEs9fl/7ATpiw1qnTmZQEkp9pwa0IUFFLkHug=",
+        "lastModified": 1782374441,
+        "narHash": "sha256-Njyt7iEH8cfPwCVxbLvw4xL7YCzEPRvTAK6Fx8XYV2Q=",
         "owner": "VoidNxSEC",
         "repo": "securellm-mcp",
-        "rev": "bbc65cd4efa6a29645eaa58718a4e6f0caf72f4e",
+        "rev": "13827ebf4a2b69f5002e270ddb1575d18f019287",
         "type": "github"
       },
       "original": {
