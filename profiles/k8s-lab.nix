@@ -80,13 +80,13 @@
   # ──────────────────────────────────────────────────────────────
   boot.kernel.sysctl = {
     # CRÍTICO: encaminhamento de IP é obrigatório para roteamento entre pods
-    "net.ipv4.ip_forward" = lib.mkForce 1;
-    "net.ipv6.conf.all.forwarding" = lib.mkForce 1;
+    #"net.ipv4.ip_forward" = lib.mkForce 1;
+    #"net.ipv6.conf.all.forwarding" = lib.mkForce 1;
 
     # CNI plugins VXLAN/geneve precisam que rp_filter seja 0 ou 2;
     # valor 1 (strict) descarta pacotes encapsulados legítimos.
-    "net.ipv4.conf.all.rp_filter" = lib.mkForce 0;
-    "net.ipv4.conf.default.rp_filter" = lib.mkForce 0;
+    #"net.ipv4.conf.all.rp_filter" = lib.mkForce 0;
+    #"net.ipv4.conf.default.rp_filter" = lib.mkForce 0;
 
     # Permite ping para health checks (liveness/readiness probes via ICMP)
     "net.ipv4.icmp_echo_ignore_all" = lib.mkForce 0;

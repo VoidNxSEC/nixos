@@ -45,7 +45,7 @@ import urllib.parse
 # Configuration
 # ═══════════════════════════════════════════════════════════════════════════
 
-API_URL = os.environ.get("LLAMACPP_URL", "http://127.0.0.1:8081") + "/v1/chat/completions"
+API_URL = os.environ.get("LLAMACPP_URL", "http://127.0.0.1:8080") + "/v1/chat/completions"
 MODEL_NAME = os.getenv("LLM_MODEL", "unsloth_DeepSeek-R1-0528-Qwen3-8B-GGUF_DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf")
 MAX_DIFF_SIZE = 12000  # Increased char limit
 MAX_RETRIES = 3
@@ -176,27 +176,27 @@ class CommitMessage:
     body: str
     breaking: bool = False
     semver_bump: Literal["major", "minor", "patch"] = "patch"
-    
+
     def format(self, issue_id: Optional[str] = None) -> str:
         header = f"{self.type.value}"
         if self.scope:
             header += f"({self.scope})"
-        
+
         if self.breaking:
             header += "!"
 
         header += f": {self.subject}"
-        
+
         full_msg = header
         if self.body:
             full_msg += f"\n\n{self.body}"
-            
+
         if self.breaking:
             full_msg += "\n\nBREAKING CHANGE: " + self.subject
-            
+
         if issue_id:
             full_msg += f"\n\nRefs: #{issue_id}"
-        
+
         return full_msg
 
 @dataclass
@@ -226,7 +226,7 @@ class CommitGenerationResult:
 
 class GitDiffAnalyzer:
     """Advanced structural git diff analysis."""
-    
+
     CATEGORY_MAP = {
         ".nix": FileCategory.CONFIG,
         ".py": FileCategory.CODE,
@@ -240,21 +240,21 @@ class GitDiffAnalyzer:
         ".sh": FileCategory.SCRIPT,
         ".bash": FileCategory.SCRIPT,
     }
-    
+
     TEST_PATTERNS = [r"test_.*\.py$", r".*_test\.py$", r"tests/.*\.py$"]
     CI_PATTERNS = [r"\.github/workflows/.*", r"\.gitlab-ci\.yml$"]
     BUILD_PATTERNS = [r"flake\.nix$", r"package\.json$", r"Cargo\.toml$"]
-    
+
     def parse_diff(self, raw_diff: str) -> DiffAnalysis:
         if not raw_diff.strip():
             raise ValueError("Empty diff")
-        
+
         files = self._parse_file_changes(raw_diff)
         patterns = self._detect_patterns(files)
         complexity = self._calc_complexity(files)
         scopes = self._infer_scopes(files)
         languages = self._detect_languages(files)
-        
+
         reasoning = {
             "file_count": len(files),
             "total_lines": sum(f.additions + f.deletions for f in files),
@@ -263,7 +263,7 @@ class GitDiffAnalyzer:
             "primary_categories": self._get_primary_categories(files),
             "detected_patterns": [p.value for p in patterns],
         }
-        
+
         return DiffAnalysis(
             files_changed=files,
             total_additions=sum(f.additions for f in files),
@@ -275,24 +275,24 @@ class GitDiffAnalyzer:
             confidence_score=self._calc_confidence(files, patterns),
             reasoning_context=reasoning
         )
-    
+
     def _parse_file_changes(self, raw_diff: str) -> List[FileChange]:
         files = []
         current_file = None
         current_hunks = []
-        
+
         for line in raw_diff.split("\n"):
             if line.startswith("diff --git"):
                 if current_file:
                     current_file.change_hunks = current_hunks
                     files.append(current_file)
                     current_hunks = []
-                
+
                 match = re.search(r"b/(.*?)$", line)
                 if match:
                     path = match.group(1)
                     current_file = self._create_file_change(path)
-            
+
             elif current_file:
                 if line.startswith("new file mode"):
                     current_file.is_new = True
@@ -311,18 +311,18 @@ class GitDiffAnalyzer:
                     elif line.startswith("-") and not line.startswith("---"):
                         current_file.deletions += 1
                         current_hunks[-1].content += line + "\n"
-        
+
         if current_file:
             current_file.change_hunks = current_hunks
             files.append(current_file)
-        
+
         return files
-    
+
     def _create_file_change(self, path: str) -> FileChange:
         ext = Path(path).suffix or ".txt"
         category = self._categorize_file(path, ext)
         return FileChange(path, ext, category, 0, 0, False, False, False)
-    
+
     def _categorize_file(self, path: str, ext: str) -> FileCategory:
         for pattern in self.CI_PATTERNS:
             if re.search(pattern, path): return FileCategory.CI
@@ -331,7 +331,7 @@ class GitDiffAnalyzer:
         for pattern in self.TEST_PATTERNS:
             if re.search(pattern, path): return FileCategory.TEST
         return self.CATEGORY_MAP.get(ext, FileCategory.CODE)
-    
+
     def _parse_hunk_header(self, line: str) -> Optional[ChangeHunk]:
         match = re.search(r"@@\s+-(\d+),?(\d+)?\s+\+(\d+),?(\d+)?", line)
         if not match: return None
@@ -339,12 +339,12 @@ class GitDiffAnalyzer:
         new_lines = int(match.group(4) or 1)
         change_type = "addition" if old_lines == 0 else "deletion" if new_lines == 0 else "modification"
         return ChangeHunk(int(match.group(1)), old_lines, int(match.group(3)), new_lines, "", change_type)
-    
+
     def _detect_patterns(self, files: List[FileChange]) -> List[ChangePattern]:
         patterns = []
         total_del = sum(f.deletions for f in files)
         total_add = sum(f.additions for f in files)
-        
+
         if all(f.category == FileCategory.DOCS for f in files): patterns.append(ChangePattern.DOCS_ONLY)
         if total_del > 3 * total_add and total_del > 50: patterns.append(ChangePattern.CLEANUP)
         if sum(1 for f in files if f.is_new) > len(files) * 0.5: patterns.append(ChangePattern.NEW_FEATURE)
@@ -352,7 +352,7 @@ class GitDiffAnalyzer:
         if any(f.category == FileCategory.TEST for f in files): patterns.append(ChangePattern.TEST_ADDITION)
         if 0.7 < (total_add / max(total_del, 1)) < 1.3 and total_add > 20: patterns.append(ChangePattern.REFACTORING)
         return patterns
-    
+
     def _calc_complexity(self, files: List[FileChange]) -> str:
         total = sum(f.additions + f.deletions for f in files)
         count = len(files)
@@ -360,7 +360,7 @@ class GitDiffAnalyzer:
         elif total < 50 and count <= 3: return "simple"
         elif total < 200 and count <= 10: return "moderate"
         return "complex"
-    
+
     def _infer_scopes(self, files: List[FileChange]) -> List[str]:
         scopes = set()
         for file in files:
@@ -373,17 +373,17 @@ class GitDiffAnalyzer:
             elif ".github/workflows" in file.path: scopes.add("ci")
             elif file.path.startswith("docs/"): scopes.add("docs")
         return sorted(list(scopes)) if scopes else sorted(list({f.category.value for f in files}))
-    
+
     def _detect_languages(self, files: List[FileChange]) -> List[str]:
         lang_map = {".nix": "Nix", ".py": "Python", ".js": "JavaScript", ".rs": "Rust", ".go": "Go", ".sh": "Shell"}
         langs = Counter()
         for f in files:
             if f.file_type in lang_map: langs[lang_map[f.file_type]] += f.additions + f.deletions
         return [l for l, _ in langs.most_common(3)]
-    
+
     def _get_primary_categories(self, files: List[FileChange]) -> List[str]:
         return [c for c, _ in Counter(f.category.value for f in files).most_common(3)]
-    
+
     def _calc_confidence(self, files: List[FileChange], patterns: List[ChangePattern]) -> float:
         confidence = 1.0
         total = sum(f.additions + f.deletions for f in files)
@@ -398,34 +398,34 @@ class GitDiffAnalyzer:
 
 class CommitMessageValidator:
     """Enterprise validation with 15+ rules."""
-    
+
     VALID_TYPES = {t.value for t in CommitType}
     IMPERATIVE_VERBS = {
         'add', 'fix', 'remove', 'update', 'refactor', 'implement', 'create',
         'delete', 'improve', 'optimize', 'enhance', 'migrate', 'move',
         'rename', 'extract', 'merge', 'upgrade', 'downgrade', 'revert', 'secure'
     }
-    
+
     def validate_full(self, commit_msg: Dict, diff_analysis: DiffAnalysis) -> ValidationResult:
         errors, warnings = [], []
-        
+
         errors.extend(self._validate_structure(commit_msg))
         if errors: return ValidationResult(False, errors, warnings, 0.0)
-        
+
         type_issues = self._validate_type(commit_msg['type'], diff_analysis)
         errors.extend([e for e in type_issues if e.severity == 'error'])
         warnings.extend([e for e in type_issues if e.severity == 'warning'])
-        
+
         errors.extend(self._validate_subject(commit_msg['subject']))
         warnings.extend(self._validate_scope(commit_msg.get('scope'), diff_analysis))
-        
+
         confidence = 1.0 - len(warnings) * 0.1 if not errors else 0.0
         return ValidationResult(len(errors) == 0, errors, warnings, max(0.0, min(1.0, confidence)))
-    
+
     def _validate_structure(self, msg: Dict) -> List[ValidationError]:
         required = ['type', 'subject', 'body']
         return [ValidationError(f, f"Missing field: {f}", 'error') for f in required if f not in msg]
-    
+
     def _validate_subject(self, subject: str) -> List[ValidationError]:
         errors = []
         if not subject: return [ValidationError('subject', "Empty subject", 'error')]
@@ -435,7 +435,7 @@ class CommitMessageValidator:
         if subject[0].isupper(): errors.append(ValidationError('subject', "Must start lowercase", 'error'))
         if subject.endswith('.'): errors.append(ValidationError('subject', "No period at end", 'error'))
         return errors
-    
+
     def _validate_type(self, typ: str, analysis: DiffAnalysis) -> List[ValidationError]:
         issues = []
         if typ not in self.VALID_TYPES:
@@ -444,7 +444,7 @@ class CommitMessageValidator:
         if ChangePattern.DOCS_ONLY in analysis.change_patterns and typ != 'docs':
             issues.append(ValidationError('type', "Docs-only but type!=docs", 'error'))
         return issues
-    
+
     def _validate_scope(self, scope: Optional[str], analysis: DiffAnalysis) -> List[ValidationError]:
         warnings = []
         if not scope or scope.lower() in {'none', 'null'}: return warnings
@@ -1058,7 +1058,7 @@ class SmartCommitOrchestrator:
         self.settings = settings
         self.analyzer = GitDiffAnalyzer()
         self.llm = ChainOfThoughtLLM(MODEL_NAME, API_URL, REQUEST_TIMEOUT, settings)
-    
+
     def run(self, hint: Optional[str] = None, context: Optional[str] = None) -> None:
         self._verify_git_repo()
 
@@ -1111,12 +1111,12 @@ class SmartCommitOrchestrator:
         self._display_commit(generation.commit)
         self._display_release_notes(diff_analysis, generation.commit)
         self._confirm_and_commit(generation.commit)
-    
+
     def _verify_git_repo(self):
         if not Path(".git").exists():
             log.error(f"{Colors.FAIL}Not a git repository{Colors.ENDC}")
             sys.exit(1)
-    
+
     def _run_pipeline_check(self):
         script = Path("./scripts/pipeline-check.sh")
         if script.exists():
@@ -1126,30 +1126,30 @@ class SmartCommitOrchestrator:
             except subprocess.CalledProcessError:
                 log.error(f"{Colors.FAIL}❌ Pipeline failed{Colors.ENDC}")
                 sys.exit(1)
-    
+
     def _scope_guard(self):
         files = self._run_git(["git", "diff", "--name-only", "--cached"]).splitlines()
         if not files:
             log.error(f"{Colors.FAIL}❌ No files staged.{Colors.ENDC}")
             sys.exit(1)
-        
+
         roots = Counter([f.split('/')[0] for f in files if '/' in f])
         if len(roots) > 1:
             log.warning(f"\n{Colors.WARNING}⚠️  MIXED CONTEXT DETECTED{Colors.ENDC}")
             for r, c in roots.items(): log.warning(f"  - {r}/ ({c} files)")
             if input(f"\n{Colors.BOLD}Continue anyway? [y/N]: {Colors.ENDC}").lower() != 'y':
                 sys.exit(0)
-    
+
     def _get_staged_diff(self) -> str:
         return self._run_git(["git", "diff", "--cached"])
-    
+
     def _run_git(self, cmd: List[str]) -> str:
         try:
             return subprocess.run(cmd, check=True, stdout=subprocess.PIPE, text=True).stdout.strip()
         except subprocess.CalledProcessError as e:
             log.error(f"{Colors.FAIL}Git command failed: {e}{Colors.ENDC}")
             sys.exit(1)
-    
+
     def _display_commit(self, msg: CommitMessage):
         full = msg.format()
         print(f"\n{Colors.HEADER}{'═'*60}{Colors.ENDC}")
@@ -1209,11 +1209,11 @@ class SmartCommitOrchestrator:
         print(f"{color}{'─' * 60}{Colors.ENDC}")
         print(content)
         print(f"{color}{'═' * 60}{Colors.ENDC}\n")
-    
+
     def _confirm_and_commit(self, msg: CommitMessage):
         choice = input(f"{Colors.BOLD}Commit? [Y/n/e(dit)]: {Colors.ENDC}").lower()
         full_msg = msg.format()
-        
+
         if choice in ['y', 'yes', '']:
             subprocess.run(["git", "commit", "-m", full_msg], check=True)
             log.info(f"{Colors.GREEN}✅ Committed successfully{Colors.ENDC}")

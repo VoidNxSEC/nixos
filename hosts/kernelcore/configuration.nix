@@ -258,11 +258,11 @@
         dockerCompat = false;
         enableNvidia = true;
       };
-      nixos.enable = false;
+      nixos.enable = true;
 
       # ML/AI Containers
       ml = {
-        enable = false;
+        enable = true;
 
         # Ollama with llama.cpp from host
         ollama = {
@@ -282,7 +282,7 @@
 
       # Development Containers
       dev = {
-        enable = false;
+        enable = true;
 
         # Reverse proxy (Caddy)
         proxy = {
@@ -456,7 +456,7 @@
     };
 
     ci = {
-      enable = false; # Substituído pelo GitHub Actions self-hosted runner
+      enable = true; # Substituído pelo GitHub Actions self-hosted runner
     };
 
     ml.mcp = {
@@ -678,7 +678,7 @@
   # kindlab-* helper CLI. Study material: ~/learn/kuber-labs/ and
   # docs/guides/KIND-CKA-EXAM-GUIDE.md. Requires Docker (enabled above).
   services.kind-lab = {
-    enable = true;
+    enable = false;
     clusterName = "cka-lab";
     workerCount = 2;
     haControlPlane = false; # set true to practice etcd quorum / multi-master
@@ -845,7 +845,7 @@
     };
 
     llamacpp-turbo = {
-      enable = true;
+      enable = false;
       model = "/var/lib/ml-models/llamacpp/models/Mixtral-4x7B-DPO-RPChat.Q4_K_M.gguf";
       host = "127.0.0.1";
       port = 8081;
@@ -868,12 +868,12 @@
 
     # LlamaSwap - Hot Model Reloading
     llamacpp-swap = {
-      enable = false; # Disabled in favor of llamacpp-turbo
+      enable = true; # Disabled in favor of llamacpp-turbo
       host = "127.0.0.1";
-      port = 8081;
+      port = 8080;
       n_threads = 12;
       n_threads_batch = 12;
-      n_gpu_layers = 38;
+      n_gpu_layers = 48;
       mainGpu = 1;
       n_parallel = 1;
       n_ctx = 8192;
@@ -885,7 +885,7 @@
       mlock = true;
       continuousBatching = true;
       speculativeDecoding.enable = false;
-      metricsEndpoint = true;
+      metricsEndpoint = false;
       embeddings = true;
       extraFlags = [ ];
     };
