@@ -11,6 +11,7 @@
   imports = [
     # DNS Configuration
     ./dns
+    ./dns/adguard-home.nix
     ./dns-resolver.nix
 
     # VPN

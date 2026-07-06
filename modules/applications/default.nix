@@ -17,6 +17,7 @@
     # Browsers
     ./firefox-privacy.nix
     ./brave-secure.nix
+    ./brave-hardened.nix # Hardened Brave profile (strict security/privacy)
     ./chromium.nix
 
     # Editors
