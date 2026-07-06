@@ -11,7 +11,7 @@ let
   cfg = config.kernelcore.ci;
 in
 {
-  imports = [ ../../ci-cd/buildbot ];
+  imports = [ ../../modules/ci-cd/buildbot ];
 
   options.kernelcore.ci = {
     enable = mkEnableOption "Enable local Buildbot orchestration for the CI/CD domain";
@@ -168,8 +168,8 @@ in
         type = types.listOf types.str;
         default = [ "security" ];
         description = ''
-          Suite names from `ci-cd/default.nix` executed via
-          `nix build -f ./ci-cd/default.nix testSuites.<suite>`.
+          Suite names from `modules/ci-cd/default.nix` executed via
+          `nix build -f ./modules/ci-cd/default.nix testSuites.<suite>`.
         '';
       };
 
