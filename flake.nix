@@ -289,14 +289,9 @@
             ./hosts/kernelcore
             ./hosts/kernelcore/configuration.nix
 
-            # Kubernetes Orquestration # GEMINI: Here is the complete stack,
-            #./modules/system/base.nix
-            ./modules/containers/k3s-cluster.nix
-            ./modules/network/cilium-cni.nix
-            ./modules/containers/longhorn-storage.nix
-
             # ═══════════════════════════════════════════════════════════
             # ALL SYSTEM MODULES (auto-imported via modules/default.nix)
+            # Kubernetes (k3s, Cilium, Longhorn) now in modules/kubernetes/
             # ═══════════════════════════════════════════════════════════
             self.nixosModules.default
             "${inputs.mercury}/batter.nix"

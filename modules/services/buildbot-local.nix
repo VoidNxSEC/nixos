@@ -11,7 +11,7 @@ let
   cfg = config.kernelcore.ci;
 in
 {
-  imports = [ ../../ci-cd/buildbot ];
+  imports = [ ../../tests/buildbot ];
 
   options.kernelcore.ci = {
     enable = mkEnableOption "Enable local Buildbot orchestration for the CI/CD domain";

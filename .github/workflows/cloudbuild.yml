@@ -1,7 +1,7 @@
     1 steps:
     2 # Step 1: Build your Nix derivation or run tests
     3 - name: 'nixos/nix'
-    4   args: ['develop', '--command', 'nix-build', 'ci-cd/default.nix']
+    4   args: ['develop', '--command', 'nix-build', 'tests/default.nix']
     5
     6 # Step 2: Push a resulting container if applicable
     7 - name: 'gcr.io/cloud-builders/docker'

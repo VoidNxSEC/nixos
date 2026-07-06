@@ -1,15 +1,18 @@
 { ... }:
 
 # ═══════════════════════════════════════════════════════════════
-# BLOCKCHAIN MODULE AGGREGATOR
+# KUBERNETES MODULE AGGREGATOR
 # ═══════════════════════════════════════════════════════════════
-# Purpose: Crypto development tools and intelligence pipelines
+# Purpose: K3s cluster, CNI, storage, lab tools
+# Migrated from: modules/containers/ and modules/network/
 # ═══════════════════════════════════════════════════════════════
 
 {
   imports = [
-    ./algorand # Algorand / AlgoKit / PyTeal dev environment
-    ./chainscope.nix # CHAINSCOPE — Crypto intelligence pipeline (B300)
-    ./sops-secrets.nix # SOPS secrets for blockchain/web3 (Ethereum, RPC endpoints)
+    ./k3s-cluster.nix # K3s lightweight Kubernetes
+    ./longhorn-storage.nix # Longhorn distributed storage
+    ./kind.nix # kind lab cluster + CKA/CKAD/CKS toolset
+    ./spectre-k8s.nix # Spectre K8s cluster config
+    ./cilium-cni.nix # Cilium CNI networking
   ];
 }

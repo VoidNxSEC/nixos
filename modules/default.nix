@@ -44,13 +44,11 @@
     # ./devops # DevOps tools - imported in home-manager (hosts/kernelcore/home/home.nix)
     ./ml # ML infrastructure + AI agents (consolidates machine-learning/ + ai/)
 
-    # CONTAINERS & VIRTUALIZATION
+    # CONTAINERS, KUBERNETES & VIRTUALIZATION
     # ═══════════════════════════════════════════════════════════
-    ./containers # Docker, Podman, NixOS containers
+    ./containers # Docker, Podman, NixOS containers, ML/dev container kits
+    ./kubernetes # K3s, Cilium CNI, Longhorn, kind, spectre-k8s
     ./virtualization # VMs, vmctl, macOS KVM
-
-    # NOTE: K3s cluster, Cilium CNI, and Longhorn storage are imported
-    # via ./containers and ./network respectively, respecting their feature flags.
 
     # ═══════════════════════════════════════════════════════════
     # DESKTOP & APPLICATIONS
