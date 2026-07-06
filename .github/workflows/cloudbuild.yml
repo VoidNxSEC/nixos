@@ -21,7 +21,10 @@ jobs:
         uses: nixbuild/nix-quick-install-action@v28
 
       - name: Build Nix derivation
-        run: nix develop --command nix-build tests/default.nix
+        run: |
+          NIXPKGS=$(nix eval --impure --raw \
+            "(builtins.getFlake \"path:$PWD\").inputs.nixpkgs.outPath")
+          nix-build tests/default.nix -A default -I "nixpkgs=${NIXPKGS}" --show-trace
 
       - name: Build Docker image
         run: docker build -t gcr.io/${{ env.PROJECT_ID }}/my-nixos-app .
