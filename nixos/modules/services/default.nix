@@ -1,0 +1,71 @@
+{ ... }:
+
+# ============================================================
+# Services Module Aggregator
+# ============================================================
+# Purpose: Import all service configurations
+# Categories: Users, Offload, GPU, Mobile, MCP, Monitoring
+# ============================================================
+
+{
+  imports = [
+    # User Management
+
+    # Offload & Build Services
+    ./offload-server.nix
+    ./laptop-offload-client.nix
+    ./laptop-builder-client.nix
+
+    # GPU & ML Services
+    ./gpu-orchestration.nix
+
+    # Remote Access
+    ./mosh.nix
+    ./mobile-workspace.nix
+
+    # Development & AI
+    ./buildbot-local.nix
+    ./mcp-server.nix
+    ./github-runner.nix
+    ./gitlab-duo/default.nix
+    ./forgejo.nix
+    ./gitea-showcase.nix # Self-hosted Git with auto-mirror for showcase projects
+    # ./firefox-self-hosted.nix
+
+    # Utilities
+    ./config-auditor.nix
+    ./scripts.nix
+  ];
+
+  # Monitoring Services (Prometheus + Grafana)
+  # Disabled by default to save resources on laptop.
+  # Enable in host config or use 'monitor-on' alias if needed.
+  config = {
+    services.prometheus = {
+      enable = false;
+      port = 9090;
+      exporters = {
+        node = {
+          enable = false;
+          port = 9100;
+        };
+      };
+      scrapeConfigs = [
+        {
+          job_name = "node";
+          static_configs = [ { targets = [ "localhost:9100" ]; } ];
+        }
+      ];
+    };
+
+    services.grafana = {
+      enable = false;
+      settings = {
+        server = {
+          domain = "localhost";
+          http_port = 4000;
+        };
+      };
+    };
+  };
+}

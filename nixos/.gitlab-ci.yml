@@ -1,0 +1,137 @@
+stages:
+  - check
+  - build
+  - test
+  - security
+
+variables:
+  GIT_DEPTH: 0
+  NIX_CONFIG: |
+    experimental-features = nix-command flakes
+    access-tokens = gitlab.com=$CI_JOB_TOKEN
+
+# Template for Nix jobs
+.nix-base:
+  image: nixos/nix:latest
+  before_script:
+    - nix --version
+    - nix-env --version
+
+# ══════════════════════════════════════════════════════════════
+# STAGE 1: Check
+# ══════════════════════════════════════════════════════════════
+
+flake-check:
+  extends: .nix-base
+  stage: check
+  script:
+    - nix flake check --all-systems --show-trace
+  cache:
+    key: nix-flake-check-$CI_COMMIT_REF_SLUG
+    paths:
+      - .nix-cache
+
+format-check:
+  extends: .nix-base
+  stage: check
+  script:
+    - nix fmt -- --check .
+  allow_failure: true
+
+# ══════════════════════════════════════════════════════════════
+# STAGE 2: Build
+# ══════════════════════════════════════════════════════════════
+
+build:kernelcore:
+  extends: .nix-base
+  stage: build
+  needs: [flake-check]
+  script:
+    - |
+      nix build .#nixosConfigurations.kernelcore.config.system.build.toplevel \
+        --show-trace \
+        --print-build-logs \
+        --out-link result
+    - du -sh result
+  artifacts:
+    paths:
+      - result
+    expire_in: 1 day
+  cache:
+    key: nix-build-$CI_COMMIT_REF_SLUG
+    paths:
+      - .nix-cache
+
+build:iso:
+  extends: .nix-base
+  stage: build
+  needs: [flake-check]
+  script:
+    - |
+      nix build .#nixosConfigurations.kernelcore-iso.config.system.build.isoImage \
+        --show-trace \
+        --print-build-logs \
+        --out-link iso
+  artifacts:
+    paths:
+      - iso
+    expire_in: 7 days
+  only:
+    - main
+    - tags
+
+# ══════════════════════════════════════════════════════════════
+# STAGE 3: Test
+# ══════════════════════════════════════════════════════════════
+
+test:modules:
+  extends: .nix-base
+  stage: test
+  needs: [build:kernelcore]
+  script:
+    - echo "Running NixOS module tests"
+    # Add your tests here
+  allow_failure: true
+
+# ══════════════════════════════════════════════════════════════
+# STAGE 4: Security
+# ══════════════════════════════════════════════════════════════
+
+security:vulnix:
+  extends: .nix-base
+  stage: security
+  needs: [build:kernelcore]
+  script:
+    - nix run nixpkgs#vulnix -- -w result
+  allow_failure: true
+
+security:trivy:
+  stage: security
+  image: aquasec/trivy:latest
+  needs: []
+  script:
+    - trivy fs --security-checks vuln,config --format json --output trivy-report.json .
+  artifacts:
+    reports:
+      container_scanning: trivy-report.json
+    paths:
+      - trivy-report.json
+    expire_in: 30 days
+  allow_failure: true
+
+# ══════════════════════════════════════════════════════════════
+# Pages (optional: publish docs or reports)
+# ══════════════════════════════════════════════════════════════
+
+pages:
+  stage: security
+  needs: [security:trivy]
+  script:
+    - mkdir -p public
+    - cp trivy-report.json public/ || echo "No trivy report"
+    - echo "<html><body><h1>NixOS Configuration Reports</h1></body></html>" > public/index.html
+  artifacts:
+    paths:
+      - public
+  only:
+    - main

@@ -1,0 +1,110 @@
+name: NixOS Dev
+
+on:
+  pull_request:
+    branches: [dev]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "hosts/**"
+      - "modules/**"
+      - "overlays/**"
+      - "profiles/**"
+      - "sec/**"
+      - "nix/**"
+      - "lib/**"
+      - ".github/actions/setup-nix-env/**"
+      - ".github/workflows/nixos-dev.yml"
+  push:
+    branches: [dev]
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "hosts/**"
+      - "modules/**"
+      - "overlays/**"
+      - "profiles/**"
+      - "sec/**"
+      - "nix/**"
+      - "lib/**"
+      - ".github/actions/setup-nix-env/**"
+      - ".github/workflows/nixos-dev.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
+
+jobs:
+  quick-validation:
+    name: Quick validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Check formatting
+        run: nix fmt -- --check .
+
+      - name: Show flake metadata
+        run: nix flake metadata --no-write-lock-file
+
+      - name: Evaluate flake outputs
+        run: nix flake check --show-trace --no-build
+
+  evaluate-hosts:
+    name: Evaluate ${{ matrix.host }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: quick-validation
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+          - kernelcore
+          - kernelcore-iso
+          - k8s-node
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Evaluate host toplevel derivation
+        run: |
+          nix eval \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath" \
+            --show-trace
+
+      - name: Evaluate systemd unit set
+        run: |
+          nix eval \
+            ".#nixosConfigurations.${{ matrix.host }}.config.systemd.units" \
+            --apply builtins.attrNames \
+            --json \
+            --show-trace

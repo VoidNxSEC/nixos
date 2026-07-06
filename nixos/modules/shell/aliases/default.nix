@@ -1,0 +1,44 @@
+{ ... }:
+
+# ============================================================
+# Shell Aliases - Main Aggregator
+# ============================================================
+# Professional alias organization by category
+# Version: 2.0.0 - Complete Restructure (2025-11-01)
+# ============================================================
+#
+# Structure:
+#   aliases/
+#   ├── docker/      - Docker build, run, compose
+#   ├── kubernetes/  - kubectl shortcuts
+#   ├── gcloud/      - Google Cloud Platform
+#   ├── ai/          - AI/ML stack management
+#   ├── nix/         - Nix/NixOS system
+#   └── system/      - General utilities
+#
+# Usage in flake.nix:
+#   ./modules/shell/aliases
+#
+# See: ./README.md for complete documentation
+# ============================================================
+
+{
+  imports = [
+    ./docker
+    ./kubernetes
+    ./gcloud
+    ./ai
+    ./nix
+    ./system
+    ./security
+    ./desktop
+    ./amazon
+    ./mcp.nix
+    ./emergency.nix
+    ./laptop-defense.nix
+    ./macos-kvm.nix
+    ./service-control.nix # GPU/ML service control & RAM optimization
+    ./llama-swap-control.nix # LlamaSwap hot model reloading control
+    #./nixos-explorer.nix # NixOS configuration explorer  # TEMP DISABLED
+  ];
+}

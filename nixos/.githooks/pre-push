@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Pre-push hook
+# Prevents pushing to protected branches directly if checks fail
+
+current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+
+if [ "$current_branch" = "main" ]; then
+    echo "Protected branch 'main' detected."
+    echo "Running strict verification..."
+    ./scripts/pipeline-check.sh
+fi

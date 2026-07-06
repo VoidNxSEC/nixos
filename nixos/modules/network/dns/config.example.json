@@ -1,0 +1,13 @@
+{
+  "listen_addr": "127.0.0.1:53",
+  "upstreams": [
+    "1.1.1.1:53",
+    "1.0.0.1:53",
+    "8.8.8.8:53",
+    "8.8.4.4:53"
+  ],
+  "cache_size": 10000,
+  "cache_ttl": 300,
+  "timeout": 5,
+  "enable_stats": true
+}

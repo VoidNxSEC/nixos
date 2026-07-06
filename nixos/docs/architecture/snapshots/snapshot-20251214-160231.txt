@@ -1,0 +1,150 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                  NIXOS ARCHITECTURE ANALYSIS REPORT                       ║
+║                        Professional Edition v2.0.0                        ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Generated:     2025-12-14 16:02:34 -02
+Location:      /etc/nixos
+Hostname:      nx
+Git Branch:    main
+Git Commit:    7779e09b (2025-12-14 13:34:05)
+Total Commits: 247
+Contributors:  3
+Last Tag:      ml-restructure-complete
+Repo Age:      0 days
+
+═══════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ EXECUTIVE SUMMARY                                                       │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Repository Overview:
+  • Total Files:           861
+  • Total Directories:     262
+  • Repository Size:       2.2G
+
+NixOS Configuration:
+  • .nix files:            274 (51141 lines)
+  • Total modules:         173
+  • Module categories:     12
+  • Modules size:          1.1G
+
+Documentation:
+  • .md files:             258 (98515 lines)
+  • Documentation size:    2.0M
+  • Doc coverage:          49%
+
+Scripts & Automation:
+  • .sh files:             94 (15925 lines)
+  • Scripts size:          1.3M
+
+Health Metrics:
+  • Overall Health:        64/100
+  • Security Score:        100/100
+  • Documentation:         49/100
+  • Orphaned modules:      131
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ MODULE BREAKDOWN BY CATEGORY                                            │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  shell           ██████████████████████████████  35 modules (  5243 lines)
+                 Shell configuration and aliases
+
+  packages        ████████████████████████░░░░░░  29 modules (  2620 lines)
+                 Custom packages and overlays
+
+  ml              ██████████████████░░░░░░░░░░░░  22 modules (  1953 lines)
+                 Machine learning infrastructure
+
+  security        ██████████████░░░░░░░░░░░░░░░░  17 modules (  2249 lines)
+                 Security hardening and policies
+
+  services        █████████████░░░░░░░░░░░░░░░░░  16 modules (  3021 lines)
+                 System services and daemons
+
+  network         ██████████░░░░░░░░░░░░░░░░░░░░  12 modules (  2816 lines)
+                 Network configuration and services
+
+  hardware        ██████████░░░░░░░░░░░░░░░░░░░░  12 modules (  2712 lines)
+                 Hardware configurations (GPU, CPU, peripherals)
+
+  system          ███████░░░░░░░░░░░░░░░░░░░░░░░   9 modules (  1130 lines)
+                 Core system configuration
+
+  applications    ██████░░░░░░░░░░░░░░░░░░░░░░░░   8 modules (  1778 lines)
+                 User applications and tools
+
+  development     ████░░░░░░░░░░░░░░░░░░░░░░░░░░   5 modules (   973 lines)
+                 Development environments and tools
+
+  virtualization  ███░░░░░░░░░░░░░░░░░░░░░░░░░░░   4 modules (  1971 lines)
+                 VMs, QEMU, libvirt
+
+  containers      ███░░░░░░░░░░░░░░░░░░░░░░░░░░░   4 modules (   361 lines)
+                 Docker, Podman, NixOS containers
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ SECURITY ANALYSIS                                                       │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Security Configuration:
+  • Security modules:      17
+  • SOPS secrets:          11
+  • Hardening config:      Yes
+  • Security score:        100/100
+
+  Score: ██████████████████████████████████████████████████ 100%
+
+  Status: ✓ Excellent security posture
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ ARCHITECTURE HEALTH SCORE                                               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Component Scores:
+  • Documentation:         49/100
+  • Security:              100/100
+  • Structure:             100/100
+
+Overall Health:            64/100
+  ████████████████████████████████░░░░░░░░░░░░░░░░░░ 64%
+
+  ⚠ Good - Minor improvements recommended
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ RECOMMENDATIONS                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  📚 Documentation:
+    - Current coverage: 49%
+    - Target: 80%+
+    - Action: Add 'description' fields to module options
+    - Benefit: Better maintainability and onboarding
+
+  ⚠ Orphaned Modules:
+    - Found: 131 potentially unused modules
+    - Action: Review and either import or remove
+    - Benefit: Cleaner codebase, faster rebuilds
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+Generated by: NixOS Architecture Analysis Tool v2.0.0
+Report Date:  2025-12-14 16:02:34
+Script Path:  ./generate-architecture-tree.sh
+
+To regenerate this report:
+  bash scripts/generate-architecture-tree.sh
+
+For more information:
+  • Repository: /etc/nixos
+  • Documentation: /etc/nixos/docs/
+  • Issues: https://github.com/yourusername/nixos-config/issues
+
+═══════════════════════════════════════════════════════════════════════════

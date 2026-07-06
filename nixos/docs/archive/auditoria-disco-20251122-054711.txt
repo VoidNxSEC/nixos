@@ -1,0 +1,150 @@
+🔍 AUDITORIA COMPLETA DE DISCO
+==============================
+
+Data: Sat Nov 22 05:47:11 -02 2025
+
+📊 1. RESUMO GERAL
+==================
+Filesystem                Size      Used Available Use% Mounted on
+/dev/mapper/luks-49aa90f9-15d5-4622-a2e6-02a989ecc7e3
+                        458.7G    394.0G     41.3G  91% /
+
+📁 2. TOP 30 DIRETÓRIOS MAIORES
+================================
+Analisando... (pode demorar 2-5 minutos)
+394.4G	/
+182.8G	/var
+132.9G	/var/log
+114.2G	/nix
+114.0G	/nix/store
+100.3G	/var/log/audit
+74.6G	/home
+74.5G	/home/kernelcore
+50.9G	/nix/store/.links
+50.0G	/var/lib
+26.2G	/home/kernelcore/.config
+24.4G	/home/kernelcore/.config/VSCodium
+23.4G	/home/kernelcore/.config/VSCodium/User/globalStorage/rooveterinaryinc.roo-code-nightly/tasks
+23.4G	/home/kernelcore/.config/VSCodium/User/globalStorage/rooveterinaryinc.roo-code-nightly
+23.4G	/home/kernelcore/.config/VSCodium/User/globalStorage
+23.4G	/home/kernelcore/.config/VSCodium/User
+22.1G	/var/lib/ollama/models/blobs
+22.1G	/var/lib/ollama/models
+22.1G	/var/lib/ollama
+14.8G	/home/kernelcore/Documents/nx
+14.8G	/home/kernelcore/Documents
+14.6G	/home/kernelcore/dev
+12.3G	/var/lib/docker
+10.8G	/var/lib/docker/volumes
+10.3G	/home/kernelcore/Documents/nx/vm/iso
+10.3G	/home/kernelcore/Documents/nx/vm
+9.8G	/home/kernelcore/.local/share
+9.8G	/home/kernelcore/.local
+9.7G	/var/lib/libvirt/images
+9.7G	/var/lib/libvirt
+
+📦 3. BREAKDOWN DO /NIX
+=======================
+Total /nix:
+114.2G	/nix
+
+Subdiretorios:
+
+🗄️  4. ANÁLISE DO /NIX/STORE
+============================
+Calculando tamanho total (pode demorar)...
+Tamanho total: 
+
+Número de itens no store:
+0 items
+
+Top 20 maiores pacotes individuais:
+
+🏠 5. HOME DIRECTORY
+====================
+72.5G	/home/kernelcore/
+
+Subdiretorios principais:
+8.0K	/home/kernelcore/Untitled1.ipynb
+12.0K	/home/kernelcore/remote-ide
+12.0K	/home/kernelcore/tracebox
+16.0K	/home/kernelcore/Untitled2.ipynb
+16.0K	/home/kernelcore/example_no_g
+20.0K	/home/kernelcore/Script Code Blocks.md
+20.0K	/home/kernelcore/a.out
+20.0K	/home/kernelcore/example
+32.0K	/home/kernelcore/Screenshot_20251121_153313.png
+72.0K	/home/kernelcore/old-backups
+168.0K	/home/kernelcore/uv.lock
+476.0K	/home/kernelcore/learn
+8.6M	/home/kernelcore/Pictures
+20.3M	/home/kernelcore/Videos
+20.6M	/home/kernelcore/Music
+111.2M	/home/kernelcore/go
+1.1G	/home/kernelcore/Downloads
+1.5G	/home/kernelcore/projects
+12.6G	/home/kernelcore/dev
+14.8G	/home/kernelcore/Documents
+
+📋 6. /VAR DIRECTORY
+====================
+
+Subdiretorios:
+
+📄 7. ARQUIVOS DE LOG GRANDES (>10MB)
+======================================
+
+🐳 8. DOCKER
+============
+Docker instalado mas não está rodando
+
+💾 9. CACHES DE USUÁRIO
+=======================
+93.7M	/home/kernelcore/.cache
+Subdiretorios principais:
+84.0K	/home/kernelcore/.cache/p10k-dump-kernelcore.zsh
+132.0K	/home/kernelcore/.cache/systemsettings
+188.0K	/home/kernelcore/.cache/p10k-dump-kernelcore.zsh.zwc
+224.0K	/home/kernelcore/.cache/drkonqi
+1.0M	/home/kernelcore/.cache/bat
+2.8M	/home/kernelcore/.cache/mesa_shader_cache
+3.3M	/home/kernelcore/.cache/nvim
+8.7M	/home/kernelcore/.cache/zellij
+22.9M	/home/kernelcore/.cache/fontconfig
+54.0M	/home/kernelcore/.cache/BraveSoftware
+
+🔄 10. GERAÇÕES DO SISTEMA NIXOS
+=================================
+
+🔗 11. GC ROOTS (o que impede garbage collection)
+==================================================
+Total de roots: 14
+Principais roots:
+/home/kernelcore/.local/state/home-manager/gcroots/current-home -> /nix/store/297w8kk3l2c73b6k79mj733jbw5g2ibr-home-manager-generation
+/home/kernelcore/.local/state/nix/profiles/profile-23-link -> /nix/store/bfpi2bj5vhb5gqlgafl8nhgbq8dp5rpv-profile
+/home/kernelcore/Music/.direnv/flake-inputs/01x5k4nlxcpyd85nnr0b9gm89rm8ff4x-source -> /nix/store/01x5k4nlxcpyd85nnr0b9gm89rm8ff4x-source
+/home/kernelcore/Music/.direnv/flake-inputs/4yszznqdfmd94wkmjkfagpwaiy763jhs-source -> /nix/store/4yszznqdfmd94wkmjkfagpwaiy763jhs-source
+/home/kernelcore/Music/.direnv/flake-inputs/js3h59i67va69xbf90pdvcabd0ddqkcg-source -> /nix/store/js3h59i67va69xbf90pdvcabd0ddqkcg-source
+/home/kernelcore/Music/.direnv/flake-inputs/yj1wxm9hh8610iyzqnz75kvs6xl8j3my-source -> /nix/store/yj1wxm9hh8610iyzqnz75kvs6xl8j3my-source
+/home/kernelcore/Music/.direnv/flake-profile-a5d5b61aa8a61b7d9d765e1daf971a9a578f1cfa -> /nix/store/b747d1sq10801biy3wxrlhka5g90qsjw-nix-shell-env
+/home/kernelcore/result -> /nix/store/39nkcsbx7mrkx7v1jz3nlk8grmdmp7n0-nixos-vm
+/nix/var/nix/profiles/per-container/teste-preprod/system-2-link -> /nix/store/wrh9v5xd144m3hybcmc2a3ryqrpidnzy-nixos-system-teste-preprod-25.11pre-git
+/nix/var/nix/profiles/per-user/root/channels-6-link -> /nix/store/in0vr51x4gg4vhdnf411cg3pb5ffbc9h-user-environment
+/nix/var/nix/profiles/system-311-link -> /nix/store/jmbxkmv6i2l2slhnn6gqjkh0b4rxpfrc-nixos-system-nx-25.11.20251108.b6a8526
+/root/.cache/nix/flake-registry.json -> /nix/store/pc6y12ccrlvmgfbp0rs34cbj8mbsyyvk-flake-registry.json
+/run/booted-system -> /nix/store/jmbxkmv6i2l2slhnn6gqjkh0b4rxpfrc-nixos-system-nx-25.11.20251108.b6a8526
+/run/current-system -> /nix/store/jmbxkmv6i2l2slhnn6gqjkh0b4rxpfrc-nixos-system-nx-25.11.20251108.b6a8526
+
+📦 12. TOP 50 MAIORES ARQUIVOS
+===============================
+Procurando arquivos >100MB... (pode demorar)
+
+💡 13. RESUMO E RECOMENDAÇÕES
+==============================
+
+✅ AUDITORIA COMPLETA!
+
+📄 Relatório salvo em: auditoria-disco-20251122-054711.txt
+
+💡 Para análise visual interativa, instale: nix-shell -p ncdu
+   Depois execute: sudo ncdu /

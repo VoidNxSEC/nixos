@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [main, staging, dev]
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "hosts/**"
+      - "modules/**"
+      - "overlays/**"
+      - "sec/**"
+      - "lib/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [main, staging, dev]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event.pull_request.draft == false || github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: DeterminateSystems/nix-installer-action@v22
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v17
+        if: vars.CACHIX_CACHE_NAME != ''
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Check formatting
+        run: |
+          nix fmt .
+          git diff --exit-code
+
+      - name: Evaluate flake
+        run: nix flake check --no-build --show-trace
+
+  decrypt-secrets:
+    name: Decrypt SOPS Secrets
+    uses: ./.github/workflows/setup-sops.yml
+    secrets: inherit
+
+  verify-pat-scope:
+    name: Verify GitHub PAT org scope
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: decrypt-secrets
+    steps:
+      - name: Check PAT can manage org self-hosted runners
+        env:
+          GH_TOKEN: ${{ needs.decrypt-secrets.outputs.github_token }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo "::error::github_token output is empty — check secrets/github.yaml"
+            exit 1
+          fi
+          STATUS=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+            -X POST \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/orgs/VoidNxSEC/actions/runners/registration-token)
+          cat /tmp/resp.json
+          if [[ "$STATUS" != "201" ]]; then
+            echo "::error::PAT lacks org runner-management scope (HTTP $STATUS) — rotate github_token with admin:org / 'Self-hosted runners: write'"
+            exit 1
+          fi
+          echo "PAT has sufficient scope for org runner registration"
+
+  evaluate:
+    name: Evaluate ${{ matrix.host }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+          - kernelcore
+          - kernelcore-iso
+          - k8s-node
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: DeterminateSystems/nix-installer-action@v22
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v17
+        if: vars.CACHIX_CACHE_NAME != ''
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Evaluate ${{ matrix.host }}
+        run: |
+          nix eval \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath" \
+            --show-trace

@@ -1,0 +1,1508 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
+{
+
+  # Network identity — formerly provided by mercury/batter.nix
+  networking.hostName = "nx";
+  networking.networkmanager.enable = true;
+  systemd.services.NetworkManager-wait-online.enable = false;
+
+  kernelcore.electron.enable = false;
+  #kernelcore.electron.apps.antigravity = {
+  #profile = "performance";
+  #configDir = "Antigravity";
+  #features.enable = [
+  #"VaapiVideoDecodeLinuxGL"
+  #"WaylandWindowDecorations"
+  #];
+  #};
+
+  # Chromium/Electron log suppression (GPU/Wayland error spam)
+  kernelcore.chromium.logSuppression = {
+    enable = true;
+    applyGlobally = true;
+    enablePerformanceFlags = false; # Keep disabled for stability
+  };
+
+  # Shell configuration - Training session logger
+  shell.trainingLogger = {
+    enable = false;
+    userLogDirectory = "\${HOME}/.training-logs";
+    maxLogSize = "1G";
+  };
+
+  kernelcore = {
+    system = {
+      memory.optimizations.enable = true;
+      nix.optimizations.enable = true;
+      nix.experimental-features.enable = true;
+
+      # Local binary cache - uses offload-server's nix-serve
+      binary-cache = {
+        enable = false;
+        local.enable = false;
+        # URL: http://192.168.15.9:5000 (default)
+      };
+    };
+
+    security = {
+      hardening.enable = true;
+      sandbox-fallback = true;
+      audit.enable = true;
+      tls = {
+        enable = true;
+        email = "sec@voidnxlabs.com";
+        dnsProvider = "cloudflare";
+        environmentFile =
+          if config.sops.secrets ? "certificates/dns-provider-env" then
+            config.sops.secrets."certificates/dns-provider-env".path
+          else
+            null;
+        credentialFiles =
+          if config.sops.secrets ? "certificates/cloudflare-dns-api-token" then
+            {
+              "CF_DNS_API_TOKEN_FILE" = config.sops.secrets."certificates/cloudflare-dns-api-token".path;
+              "CF_ZONE_API_TOKEN_FILE" = config.sops.secrets."certificates/cloudflare-dns-api-token".path;
+            }
+          else
+            { };
+        certs = {
+          "gitea.voidnx.com" = {
+            extraDomainNames = [ "git.voidnx.com" ];
+            reloadServices = [ "nginx.service" ];
+          };
+        };
+      };
+
+      # HIGH PRIORITY SECURITY ENHANCEMENTS
+      aide.enable = true;
+      clamav.enable = true;
+      ssh.enable = true;
+      kernel.enable = true;
+      pam.enable = true;
+      packages.enable = true;
+
+      # OS Keyring
+      keyring = {
+        enable = true;
+        enableGUI = true;
+        enableKeePassXCIntegration = true;
+        autoUnlock = true;
+      };
+    };
+
+    network = {
+      dns-resolver = {
+        enable = true;
+        enableDNSSEC = false; # Necessario mais desenvolvimento
+        enableDNSCrypt = false;
+        preferredServers = [
+          "1.1.1.1"
+          "1.0.0.1" # Cloudflare
+          "9.9.9.9"
+          "149.112.112.112" # Quad9
+          "8.8.8.8"
+          "8.8.4.4" # Google
+        ];
+        cacheTTL = 3600;
+      };
+
+      dns-proxy = {
+        # Superseded by AdGuard Home — both claim 127.0.0.1:53
+        enable = false;
+        setAsSystemResolver = false;
+      };
+
+      dns.adguard = {
+        enable = true;
+        # Upstream DoH via Quad9 (malware-blocking) — default kept
+        # Review/extend this list: disable entries, add new feeds, adjust enabled flags.
+        extraFilters = [
+          {
+            name = "AdGuard DNS Filter";
+            url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt";
+            enabled = true;
+            id = 1;
+          }
+          {
+            name = "OISD Big";
+            url = "https://big.oisd.nl";
+            enabled = true;
+            id = 2;
+          }
+          {
+            name = "Hagezi Pro";
+            url = "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/pro.txt";
+            enabled = true;
+            id = 3;
+          }
+          {
+            name = "abuse.ch URLhaus";
+            url = "https://urlhaus-filter.pages.dev/urlhaus-filter-agh.txt";
+            enabled = true;
+            id = 4;
+          }
+          {
+            name = "AdAway";
+            url = "https://adaway.org/hosts.txt";
+            enabled = true;
+            id = 5;
+          }
+          {
+            name = "Hagezi TIF"; # Threat Intelligence Feeds
+            url = "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/tif.txt";
+            enabled = true;
+            id = 6;
+          }
+          {
+            name = "Hagezi DoH/VPN/Proxy bypass";
+            url = "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/doh.txt";
+            enabled = true;
+            id = 7;
+          }
+          {
+            name = "Hagezi NRD 14d"; # Newly Registered Domains
+            url = "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/nrd-14day.txt";
+            enabled = true;
+            id = 8;
+          }
+        ];
+      };
+
+      # spider-network-proxy = {
+      #   enable = false;
+      #   setSystemProxy = false;
+      # };
+
+      bridge = {
+        enable = true;
+        ipv6.enable = false;
+      };
+
+      vpn.nordvpn = {
+        enable = false;
+        autoConnect = false;
+        overrideDNS = false;
+      };
+
+      # WireGuard VPN – fast, modern kernel-native VPN
+      # To activate: populate secrets/wireguard.yaml via `sops secrets/wireguard.yaml`
+      # then set enable = true and fill in address/peers below.
+      vpn.wireguard = {
+        enable = false; # set true after adding private key to SOPS
+        interface = "wg0";
+        address = [ "10.8.0.2/24" ]; # adjust to your VPN allocation
+        dns = [ "10.8.0.1" ];
+        # Private key must be in SOPS – run:
+        #   wg genkey | sops --set '["wireguard_private_key"]' /path/to/key
+        #   then set privateKeyFile = config.sops.secrets.wireguard_private_key.path
+        privateKeyFile = "/run/secrets/wireguard_private_key";
+        killSwitch = false;
+        peers = [
+          {
+            # Replace with your VPN server's public key
+            publicKey = "REPLACE_WITH_SERVER_PUBLIC_KEY=";
+            endpoint = "vpn.example.com:51820";
+            allowedIPs = [
+              "0.0.0.0/0"
+              "::/0"
+            ]; # full-tunnel; use subnet for split-tunnel
+            persistentKeepalive = 25;
+          }
+        ];
+      };
+
+      proxy.nginx-tailscale = {
+        enable = true;
+        hostname = "nx";
+        tailnetDomain = "tailb3b82e.ts.net";
+        services.forgejo = {
+          enable = true;
+          subdomain = "forgejo";
+          upstreamPort = 3002;
+          maxBodySize = "200M";
+          enableWebSocket = true;
+        };
+      };
+
+      proxy.nginx-public = {
+        enable = true;
+        services = {
+          gitea = {
+            enable = true;
+            host = "gitea.voidnx.com";
+            upstreamPort = 3000;
+            maxBodySize = "200M";
+          };
+        };
+      };
+
+      vpn.tailscale.hostname = lib.mkForce "nx";
+
+      security.firewall-zones = {
+        enable = false;
+      };
+    };
+
+    ssh.enable = true;
+
+    soc = {
+      enable = false;
+      profile = "minimal";
+      retention.days = 30;
+      ids.suricata.enable = false;
+      alerting = {
+        enable = true;
+        minSeverity = "medium";
+      };
+    };
+
+    nvidia = {
+      enable = true;
+      cudaSupport = true;
+      prime = {
+        enable = true;
+        offload = true;
+        sync = false;
+        intelBusId = "PCI:0:2:0";
+        nvidiaBusId = "PCI:1:0:0";
+      };
+    };
+
+    bluetooth.enable = true;
+
+    applications.zellij.enable = false;
+
+    packages.claude.enable = true;
+    packages.zellij.enable = false;
+    packages.lynis.enable = true;
+    packages."brev-cli".enable = true;
+    packages.js.enable = false;
+    packages.f5-tts.enable = lib.mkForce false;
+    packages.hubstaff.enable = false;
+
+    # Custom individual packaging for Gemini/Antigravity
+    packages.custom = {
+      gemini = {
+        enable = false; # Set to true to enable custom Gemini build
+        sandbox = false;
+        allowedPaths = [
+          "$HOME/.gemini"
+          "/etc/nixos"
+          "$HOME/dev"
+        ];
+        blockHardware = [
+          "camera"
+          "bluetooth"
+        ];
+      };
+
+      antigravity = {
+        enable = false; # Set to true to enable custom Antigravity build
+        profile = "balanced"; # Options: performance, balanced, minimal
+        enableCache = true;
+      };
+    };
+
+    hardware.wifi-optimization.enable = true;
+
+    development = {
+      rust.enable = true;
+      go.enable = true;
+      python.enable = true;
+      nodejs.enable = true;
+      nix.enable = true;
+      lua.enable = true;
+      editor.enable = true;
+      jupyter = {
+        enable = true;
+        kernels = {
+          python.enable = true;
+          rust.enable = true;
+          nodejs.enable = true;
+          nix.enable = true;
+        };
+        extensions.enable = true;
+      };
+
+      cicd = {
+        enable = true;
+        platforms = {
+          github = true;
+          gitlab = false;
+          gitea = false;
+        };
+        pre-commit = {
+          enable = true;
+          formatCode = false;
+          runTests = false;
+          flakeCheckOnPush = false;
+          autoCommit = true;
+        };
+      };
+    };
+
+    containers = {
+      docker.enable = true;
+      podman = {
+        enable = false;
+        dockerCompat = false;
+        enableNvidia = true;
+      };
+      nixos.enable = false;
+
+      # ML/AI Containers
+      ml = {
+        enable = false;
+
+        # Ollama with llama.cpp from host
+        ollama = {
+          enable = true;
+          port = 11434;
+          modelsPath = "/var/lib/ollama/models";
+          bindLlamaCpp = true; # Bind llama.cpp from host
+        };
+
+        # Jupyter Lab for ML development
+        jupyter = {
+          enable = true;
+          port = 8888;
+          notebooksPath = "/home/kernelcore/dev/notebooks";
+        };
+      };
+
+      # Development Containers
+      dev = {
+        enable = false;
+
+        # VS Code in browser – accessible via dev-code-start / dev-code-enter
+        code-server = {
+          enable = true;
+          port = 8443;
+          workspacePath = "/home/kernelcore/dev";
+        };
+
+        # Reverse proxy (Caddy)
+        proxy = {
+          enable = true;
+          httpPort = 80;
+          httpsPort = 443;
+        };
+      };
+    };
+
+    virtualization = {
+      # TODO: Needs ajustments related to libvirt-kvm root and user group permissions, need sync and tests TODO:[1]; Switch to micro-vm is a better upgrade and resource usage save.
+      enable = false;
+      virt-manager = true;
+      libvirtdGroup = [ "libvirtd" ];
+      virtiofs.enable = true;
+      vmBaseDir = "/srv/vms/images";
+      sourceImageDir = "/var/lib/vm-images";
+
+      macos-kvm = {
+        enable = false;
+        autoDetectResources = true;
+        maxCores = 8;
+        maxMemoryGB = 32;
+        diskSizeGB = 256;
+        cpuModel = "Cascadelake-Server";
+        memoryPrealloc = true;
+        sshPort = 10022;
+        vncPort = 5900;
+        sshUser = "admin";
+        display.virtioGl = true;
+        enableQmpSocket = true;
+        enableMonitorSocket = true;
+      };
+
+      vms = {
+        wazuh = {
+          enable = false;
+          sourceImage = "wazuh.qcow2";
+          imageFile = null;
+          memoryMiB = 4096;
+          vcpus = 2;
+          network = "nat";
+          bridgeName = "br0";
+          enableClipboard = true;
+          sharedDirs = [
+            {
+              path = "/srv/vms/shared";
+              tag = "hostshare";
+              driver = "virtiofs";
+              readonly = false;
+              create = true;
+            }
+          ];
+          autostart = false;
+        };
+
+        nx = {
+          enable = false;
+          sourceImage = "voidnx.qcow2";
+          memoryMiB = 4096;
+          vcpus = 2;
+          network = "nat";
+          bridgeName = "br0";
+          autostart = false;
+          sharedDirs = [
+            {
+              path = "/srv/vms/shared";
+              tag = "hostshare";
+              driver = "virtiofs";
+              readonly = false;
+              create = true;
+            }
+          ];
+          enableClipboard = true;
+        };
+      };
+    };
+
+    services.github-runner = {
+      enable = false;
+      org = {
+        enable = true;
+        # Org-level runner covers all VoidNxSEC repos automatically.
+        url = "https://github.com/VoidNxSEC";
+        name = "kernelcore-org";
+        labels = [
+          "linux"
+          "gpu"
+          "nix"
+          "docker"
+          "python"
+          "node"
+          "containers"
+          "security"
+        ];
+      };
+      extraPackages = with pkgs; [
+        docker
+        docker-compose
+        docker-buildx
+        podman
+        podman-compose
+        python313
+        python313Packages.pip
+        nodejs_24
+        bun
+        syft
+        semgrep
+      ];
+    };
+
+    services.mosh = {
+      enable = true;
+      openFirewall = true;
+      enableMotd = true;
+    };
+
+    services.mobile-workspace = {
+      enable = true;
+      username = "mobile";
+      workspaceDir = "/srv/mobile-workspace";
+      enableGitAccess = true;
+      sshKeys = [
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG5StF4nUzkEsUei88BstktP/Q/g8BvlHeWnEDD+ii/jB7Fs4v4imG05tJU/jC8/ax2FFRSwoBRt7tH6RDp4Dys= user@iphone"
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBE2jQWzD7N9sMWW+UKBNuxzS5v3Dt5g6UbZ/kd49b7XJugBLma8152DogVrblUxhPqfQfcCVrMHNHFlIkXAB9w= voidnxlabs"
+
+      ];
+    };
+
+    services.gpu-orchestration = {
+      enable = false;
+      defaultMode = "local";
+    };
+
+    services.gitlab-runner = {
+      enable = false;
+      useSops = false;
+      runnerName = "nixos-gitlab-runner";
+      url = "https://gitlab.com";
+      executor = "shell";
+      tags = [
+        "nixos"
+        "nix"
+        "linux"
+      ];
+      concurrent = 4;
+    };
+
+    secrets.sops = {
+      enable = true;
+      secretsPath = "/etc/nixos/secrets";
+      ageKeyFile = "/var/lib/sops-nix/key.txt";
+    };
+
+    secrets.github.enable = true;
+    secrets.ci.enable = false;
+    secrets.certificates.enable = true;
+    secrets.gcp-ml.enable = true;
+    secrets.aws-bedrock.enable = true;
+    secrets.blockchain.enable = true;
+    secrets.k8s.enable = true;
+    secrets.grok.enable = true;
+    secrets.gitlab.enable = true;
+    secrets.api-keys.enable = true;
+    secrets.forgejo.enable = true;
+
+    ml.models-storage = {
+      enable = true;
+      baseDirectory = "/var/lib/ml-models";
+    };
+
+    ci = {
+      enable = true;
+      role = "combined";
+      title = "Kernelcore CI";
+      titleUrl = "https://voidnx.com";
+      buildbotUrl = "http://127.0.0.1:8010/";
+      listenAddress = "127.0.0.1";
+      port = 8010;
+      pbPort = 9989;
+      jobs.enableFlakeCheck = true;
+      jobs.suites = [ ];
+      worker.extraGroups = [
+        "docker"
+        "nix"
+      ];
+    };
+
+    ml.mcp = {
+      enable = true;
+      knowledgeDbPath = "/var/lib/mcp-knowledge/knowledge.db";
+      agents = {
+        roo = {
+          enable = false;
+          projectRoot = "/home/kernelcore/master";
+          configPath = "/home/kernelcore/.roo/mcp.json";
+          user = "kernelcore";
+        };
+
+        # AGENTES MCP
+        # -----------------------------------------------------------
+        codex = {
+          enable = false;
+          projectRoot = "/var/lib/codex";
+          configPath = "/home/kernelcore/.codex/mcp_config.json";
+          user = "kernelcore";
+        };
+        gemini = {
+          enable = false;
+          projectRoot = "/var/lib/gemini";
+          configPath = "/home/kernelcore/.gemini/mcp_config.json";
+          user = "kernelcore";
+        };
+        antigravity = {
+          enable = false;
+          projectRoot = "/var/lib/antigravity";
+          configPath = "/home/kernelcore/.gemini/antigravity/mcp_config.json";
+          user = "kernelcore";
+        };
+
+        zed-editor = {
+          enable = true;
+          projectRoot = "/var/lib/zed";
+          configPath = "/home/kernelcore/.config/zed/mcp_config.json";
+          user = "kernelcore";
+        };
+      };
+    };
+    # ═══════════════════════════════════════════════════════════
+    # AI AGENT HUB - Event-Driven Automation with Speech
+    # ═══════════════════════════════════════════════════════════
+    ai.agent-hub = {
+      # Infrastructure (Nomad orchestrator + Redpanda/Kafka)
+      # Disabled: eating too much RAM; re-enable when needed
+      infra = {
+        enable = false;
+        orchestrator = "nomad";
+      };
+      # Speech Capabilities (F5-TTS + Whisper STT)
+      capabilities.speech = {
+        enable = true;
+        enableTTS = false; # TODO: f5-tts wheel checa deps na instalação, falta propagatedBuildInputs completo
+        enableSTT = true; # Whisper speech-to-text
+        # Whisper model: tiny, base, small, medium, large
+        # base = good balance between speed and accuracy
+        whisperModel = "base";
+
+        # Voice cloning reference (opcional - deixar default por enquanto)
+        referenceText = "Olá, eu sou o assistente inteligente do Agent Hub.";
+      };
+    };
+
+    system.ml-gpu-users.enable = true;
+
+    # LlamaSwap - Hot Model Reloading Configuration
+    llama-swap = {
+      enable = true;
+      profiles = {
+        coder = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/L3-8B-Stheno-v3.3-32K-Ultra-NEO-V1-IMATRIX-GGUF:Q4_K_M.gguf";
+          displayName = "Qwen 2.5 Coder 7B (Q4)";
+          gpuLayers = 999;
+          contextSize = 8192;
+        };
+
+        reasoning = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/HauhauCS_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive_Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf";
+          displayName = "DeepSeek-R1 8B (Q4)";
+          gpuLayers = 999;
+          contextSize = 8192;
+        };
+
+        thinking = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/osmapi-Nidum-Llama-3.2-3B-Uncensored-Q4_K_M.gguf";
+          displayName = "Llama 3.3 Thinking 8B (Q4)";
+          gpuLayers = 999;
+          contextSize = 8192;
+        };
+
+        fast = {
+          modelPath = "/var/lib/ml-models/llamacpp/models/Llama-3.3-8B-Instruct-heretic.Q4_K_M.gguf";
+          displayName = "Qwen3 VL 2B (Fast)";
+          gpuLayers = 999; # Full offload for small model
+          contextSize = 8192;
+        };
+      };
+      defaultProfile = "reasoning";
+    };
+
+    # Shell control scripts
+    shell = {
+      serviceControl.enable = true; # GPU/ML service control & RAM optimization
+      llamaSwapControl.enable = true; # LlamaSwap hot model reloading control
+      config-audit.enable = true; # kernelcore.* cross-reference auditor + aliases
+    };
+  };
+
+  # ============================================================================
+  # QUICK START HELPERS
+  # ============================================================================
+
+  environment.etc."k8s-quickstart.sh" = {
+    text = ''
+      #!/usr/bin/env bash
+      # Quick K8s cluster operations
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+      case "$1" in
+        status)
+          echo "=== Cluster Status ==="
+          kubectl get nodes -o wide
+          echo -e "\n=== System Pods ==="
+          kubectl get pods -A
+          ;;
+        ui)
+          echo "Opening Hubble UI: http://localhost:12000"
+          echo "Opening Longhorn UI: http://localhost:8000"
+          ;;
+        logs)
+          stern -n kube-system "$2"
+          ;;
+        top)
+          kubectl top nodes
+          kubectl top pods -A
+          ;;
+        test)
+          echo "Deploying test application..."
+          kubectl apply -f /etc/longhorn/test-pvc.yaml
+          ;;
+        *)
+          echo "Usage: k8s-quickstart.sh {status|ui|logs|top|test}"
+          ;;
+      esac
+    '';
+    mode = "0755";
+  };
+
+  environment.shellAliases = {
+    k = "kubectl";
+    kns = "kubens";
+    kctx = "kubectx";
+    kgp = "kubectl get pods";
+    kgs = "kubectl get svc";
+    kdp = "kubectl describe pod";
+    klf = "kubectl logs -f";
+  };
+
+  environment.shellInit = ''
+    export PATH="$HOME/.local/bin:$PATH"
+    if [ -e ~/.nix-profile/etc/profile.d/nix.sh ]; then
+      source ~/.nix-profile/etc/profile.d/nix.sh
+    fi
+  '';
+
+  # ═══════════════════════════════════════════════════════════
+  # FEATURE FLAGS
+  # ═══════════════════════════════════════════════════════════
+
+  services.securellm-mcp = {
+    enable = true;
+    daemon.enable = true;
+    daemon.logLevel = "INFO";
+
+    # Dynamic project profiles - switch with: mcp-context profile <name>
+    profiles = {
+      nixos = {
+        workdir = "/srv/nixos-config";
+        environment = "production";
+        env = {
+          PROJECT_NAME = "NixOS Configuration";
+          PROJECT_TYPE = "infrastructure";
+        };
+      };
+
+      dev = {
+        workdir = "/home/kernelcore/arch";
+        environment = "development";
+        env = {
+          PROJECT_NAME = "Development";
+          PROJECT_TYPE = "general";
+        };
+      };
+
+      gemini = {
+        workdir = "/var/lib/gemini";
+        environment = "development";
+        env = {
+          PROJECT_NAME = "Gemini Agent";
+          PROJECT_TYPE = "ai-agent";
+        };
+      };
+
+      codex = {
+        workdir = "/var/lib/codex";
+        environment = "development";
+        env = {
+          PROJECT_NAME = "Codex";
+          PROJECT_TYPE = "ai-agent";
+        };
+      };
+    };
+  };
+
+  # kind (Kubernetes IN Docker) lab — CKA exam prep.
+  # Disposable multi-node clusters + full CKA/CKAD/CKS toolset and the
+  # kindlab-* helper CLI. Study material: ~/learn/kuber-labs/ and
+  # docs/guides/KIND-CKA-EXAM-GUIDE.md. Requires Docker (enabled above).
+  services.kind-lab = {
+    enable = false;
+    clusterName = "cka-lab";
+    workerCount = 2;
+    haControlPlane = false; # set true to practice etcd quorum / multi-master
+    ingress.enable = true;
+    metricsServer.enable = true;
+  };
+
+  kernelcore.tools = {
+    enable = true;
+    intel.enable = true;
+    secops.enable = true;
+    nix-utils.enable = true;
+    dev.enable = true;
+    secrets.enable = true;
+    diagnostics.enable = true;
+    llm.enable = true;
+    mcp.enable = true;
+    arch-analyzer.enable = true;
+  };
+
+  kernelcore.swissknife.enable = true;
+
+  # ═══════════════════════════════════════════════════════════
+  # MAIN SERVICES BLOCK
+  # ═══════════════════════════════════════════════════════════
+
+  services = {
+    xserver = {
+      enable = true;
+      videoDrivers = [ "nvidia" ];
+      xkb = {
+        layout = "br";
+        variant = "";
+      };
+    };
+
+    greetd = {
+      enable = false;
+      settings = {
+        default_session = {
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'";
+          user = "greeter";
+        };
+      };
+    };
+
+    displayManager = {
+      # gdm = {
+      #enable = false;
+      # wayland = true;
+      #};
+      sddm = {
+        enable = true;
+        wayland.enable = true;
+      };
+      defaultSession = "hyprland-uwsm";
+    };
+
+    hyprland-desktop = {
+      enable = true;
+      nvidia = true;
+    };
+
+    # K3S Cluster
+    k3s-cluster = {
+      enable = false;
+      role = "server";
+      tokenFile = config.sops.secrets.k3s-token.path; # Definido em secrets/k8s.nix ou similar
+      clusterCIDR = "10.42.0.0/16";
+      serviceCIDR = "10.43.0.0/16";
+      disableComponents = [
+        "traefik"
+        "servicelb"
+        "local-storage"
+      ];
+      extraFlags = [
+        "--kube-apiserver-arg=enable-aggregator-routing=true"
+        "--kube-apiserver-arg=audit-log-path=/var/log/kubernetes/audit.log"
+        "--kube-apiserver-arg=audit-log-maxage=30"
+      ];
+    };
+
+    cilium-cni = {
+      enable = false;
+      apiServerHost = "127.0.0.1";
+      apiServerPort = 6443;
+      clusterCIDR = "10.42.0.0/16";
+      encryption = {
+        enable = true;
+        type = "wireguard";
+      };
+      hubble = {
+        enable = true;
+        relay = true;
+        ui = true;
+      };
+      policyEnforcementMode = "default";
+      securityFeatures.runtimeSecurity = false;
+      prometheus.serviceMonitor = true;
+    };
+
+    longhorn-storage = {
+      enable = false;
+      defaultStorageClass = true;
+      defaultReplicas = 1;
+      reclaimPolicy = "Delete";
+      overProvisioningPercentage = 200;
+      minimalAvailablePercentage = 25;
+      autoSalvage = true;
+      backup = {
+        target = "";
+        credential = null;
+      };
+      snapshot = {
+        enable = true;
+        dataIntegrity = "fast-check";
+        immediateCheck = false;
+      };
+      ingress = {
+        enable = true;
+        host = "longhorn.k8s.local";
+        tls = false;
+        ingressClassName = "traefik";
+      };
+      resources = {
+        manager = {
+          limits = {
+            cpu = "1000m";
+            memory = "1Gi";
+          };
+          requests = {
+            cpu = "250m";
+            memory = "512Mi";
+          };
+        };
+        driver = {
+          limits = {
+            cpu = "500m";
+            memory = "512Mi";
+          };
+          requests = {
+            cpu = "100m";
+            memory = "256Mi";
+          };
+        };
+      };
+      dataPath = "/var/lib/longhorn";
+    };
+
+    openssh = {
+      enable = true;
+      settings = {
+        PermitRootLogin = "no";
+        PasswordAuthentication = false;
+      };
+    };
+
+    offload-server = {
+      enable = false;
+      cachePort = 5000;
+      builderUser = "nix-builder";
+      cacheKeyPath = "/var/cache-priv-key.pem";
+      enableNFS = true;
+    };
+
+    llamacpp-turbo = {
+      enable = false;
+      model = "/var/lib/ml-models/llamacpp/models/Mixtral-4x7B-DPO-RPChat.Q4_K_M.gguf";
+      host = "127.0.0.1";
+      port = 8081;
+      n_threads = 12;
+      n_threads_batch = 12;
+      n_gpu_layers = 40;
+      mainGpu = 0; # CUDA backend only sees the NVIDIA GPU (Intel iGPU isn't CUDA-capable); 0 is the RTX 3050
+      n_parallel = 1;
+      n_ctx = 8196;
+      n_batch = 2048;
+      n_ubatch = 512;
+      cudaGraphs = true;
+      flashAttention = true;
+      mmap = true;
+      mlock = true;
+      continuousBatching = true;
+      speculativeDecoding.enable = false;
+      metricsEndpoint = false;
+    };
+
+    # LlamaSwap - Hot Model Reloading
+    llamacpp-swap = {
+      enable = true;
+      host = "127.0.0.1";
+      port = 8081;
+      n_threads = 12;
+      n_threads_batch = 12;
+      n_gpu_layers = 40;
+      mainGpu = 1;
+      n_parallel = 1;
+      n_ctx = 8192;
+      n_batch = 2048;
+      n_ubatch = 512;
+      cudaGraphs = true;
+      flashAttention = true;
+      mmap = true;
+      mlock = true;
+      continuousBatching = true;
+      speculativeDecoding.enable = false;
+      metricsEndpoint = false;
+      embeddings = true;
+      extraFlags = [
+        "--jinja"
+      ];
+    };
+
+    # Python router superseded by ml-ops-api (Rust/Axum — auth + rate limiting)
+    llamacpp-model-router.enable = false;
+
+
+
+    # TabbyAPI - OpenAI-compatible Inference Server
+    #tabbyapi = {
+    #enable = false;
+    #host = "127.0.0.1";
+    #port = 7734;
+    #modelsDir = "/var/lib/ml-models";
+    #maxSeqLen = 16384;
+    #cacheMode = "FP16";
+    #gpuSplitAuto = true;
+    #openFirewall = false; # Acessível de containers Docker, mas não da internet
+    #};
+
+    # Open-WebUI - Self-hosted AI Chat Interface (ML Hardcore Mode)
+    # Open-WebUI - upstream NixOS module (simple config)
+    open-webui = {
+      enable = false;
+      host = "127.0.0.1";
+      port = 3000;
+      openFirewall = false;
+
+      # Configuração via environment variables
+      environment = {
+        # Backend: TabbyAPI
+        OPENAI_API_BASE_URL = "http://127.0.0.1:7734/v1";
+        OPENAI_API_KEY = "not-needed";
+        ENABLE_OPENAI_API = "true";
+        ENABLE_OLLAMA_API = "false";
+
+        # Disable analytics
+        SCARF_NO_ANALYTICS = "true";
+        DO_NOT_TRACK = "true";
+        ANONYMIZED_TELEMETRY = "false";
+
+        # Features
+        ENABLE_SIGNUP = "false";
+        DEFAULT_USER_ROLE = "user";
+        ENABLE_IMAGE_GENERATION = "false";
+      };
+    };
+
+    gitea-showcase = {
+      enable = false;
+      domain = "gitea.voidnx.com";
+      rootUrl = "https://gitea.voidnx.com/";
+      listenAddress = "127.0.0.1";
+      httpPort = 3000;
+      showcaseProjectsPath = "/home/kernelcore/dev/projects";
+      gitea = {
+        adminTokenFile = "/run/secrets/gitea-admin-token";
+        autoInitRepos = false;
+      };
+      autoMirror = {
+        enable = false;
+        interval = "hourly";
+      };
+    };
+
+    forgejo = {
+      enable = true;
+      integration = {
+        publicDomain = "forgejo.nx.tailb3b82e.ts.net";
+        publicUrl = "http://forgejo.nx.tailb3b82e.ts.net/";
+        listenPort = 3002;
+        proxy.enable = false;
+        tls.enable = false;
+        integratedSsh = {
+          enable = true;
+          port = 22;
+          listenPort = 2222;
+        };
+        database = {
+          type = "postgres";
+          name = "forgejo";
+          user = "forgejo";
+          createLocally = true;
+        };
+      };
+    };
+
+    postgresql = {
+      enable = true;
+      enableTCPIP = false;
+      ensureDatabases = [ "kernelcore" ];
+      ensureUsers = [
+        {
+          name = "kernelcore";
+          ensureDBOwnership = true;
+        }
+      ];
+    };
+
+    etcd = {
+      enable = false;
+      name = "etc";
+    };
+    pulseaudio.enable = false;
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+    };
+    libinput.enable = true;
+    printing.enable = true;
+
+    chromiumOrg = {
+      enable = true;
+      extraArgs = [
+        "--force-dark-mode"
+        "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,ParallelDownloading"
+        "--ignore-gpu-blocklist"
+        #"--enable-gpu-rasterization"
+        # REMOVED: --enable-zero-copy (incompatível com NVIDIA+Wayland+GBM)
+        # Causa EGL_BAD_MATCH errors (0x3009) ao tentar criar EGLImages
+        "--ozone-platform-hint=auto"
+        # NVIDIA+Wayland specific fixes para EGL errors
+        "--use-gl=egl"
+        "--disable-gpu-driver-bug-workarounds"
+        "--no-first-run"
+        "--disable-sync"
+      ];
+    };
+
+    udisks2.enable = true;
+    gvfs.enable = true;
+    tailscale.enable = true;
+    config-auditor.enable = true;
+    i915-governor.enable = false;
+
+    # ═══════════════════════════════════════════════════════════
+    # SPOOKNIX - Privacy-first STT Engine (Docker container)
+    # ═══════════════════════════════════════════════════════════
+    spooknix = {
+      enable = false;
+      model = "large-v3";
+      device = "cuda";
+      port = 8000;
+    };
+  };
+
+  # ml-ops-api disabled — module removed from flake.nix (local path dependency)
+  # Re-enable after publishing to github:VoidNxSEC/ml-ops-api
+  #services.ml-ops-api = {
+  #  enable = true;
+  #  llamacppUrl  = "http://127.0.0.1:8081";
+  #  rateLimitRpm = 30;
+  #  orchestrator = { workers = 2; maxConcurrent = 4; timeoutSecs = 300; };
+  #};
+
+  programs.niri.enable = false;
+
+  imports = [ ./specialisations ];
+
+  #kernelcore.hyprland.performance = {
+  #enable = config.services.hyprland-desktop.enable;
+  #mode = "balanced";
+  #};
+
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "terraform" ];
+  kernelcore.hardware.intel.enable = true;
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true; # <--- Critical: Enables UWSM wrapper and integration
+  };
+
+  # xdg.portal is managed by services.hyprland-desktop module
+  # xdg.portal = {
+  #   enable = true;
+  #   wlr.enable = true;
+  #   extraPortals = [
+  #     pkgs.xdg-desktop-portal-hyprland
+  #     pkgs.xdg-desktop-portal-gtk
+  #   ];
+  #   config.common.default = "*";
+  # };
+  time.timeZone = "America/Bahia";
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  console.keyMap = "br-abnt2";
+  security.rtkit.enable = true;
+  hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
+
+  modules.audio.production.enable = true;
+
+  modules.audio.videoProduction = {
+    enable = true;
+    enableNVENC = true;
+    fixHeadphoneMute = true;
+    lowLatency = true;
+  };
+
+  services.xserver.screenSection = ''
+    Option "metamodes" "nvidia-auto-select +0+0 (ForceFullCompositionPipeLIne=On)"
+  '';
+  users.groups.kernelcore = { };
+  users.users.kernelcore = {
+    isNormalUser = true;
+    description = "kernel";
+    shell = pkgs.zsh;
+    group = "kernelcore";
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "video"
+      "audio"
+      "nvidia"
+      "docker"
+      "render"
+      "libvirtd"
+      "kvm"
+      "mcp-shared"
+      "input"
+      "plugdev"
+    ];
+    hashedPasswordFile = "/etc/nixos/sec/user-password";
+    openssh.authorizedKeys.keys = [
+      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG5StF4nUzkEsUei88BstktP/Q/g8BvlHeWnEDD+ii/jB7Fs4v4imG05tJU/jC8/ax2FFRSwoBRt7tH6RDp4Dys= user@iphone"
+      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDF4VaIRhsoZGJKZK7/6RdPyq7XNvyuvLQp+cPG4AueJ4SdLCAW7cob9cgDhTFb4bBG00LOdxcl9hqYcqA8KxkOwnoT+OuHKjBAgsEVdWw2U2p0tD/9UUMFEMt2xYEIucjXDczk/U4TYpi6h233QfdLaqJegOTUNLD7klL/d9uaQJr4q+g80+uKjKRqePLw7KfgMtGk5hDrz2lkv+vjD37vbZADZAp2WGpIz9m26vmzEj35m/54Bv714c9v4RczaD/Rww08P+gyRwH9G15kxZoEnVwxikZXnwXRARc3YU+zlzqJq3CHvbrXjc6yvapPnJ3Avbyl3dZ735nkaGos3HbRLqgx1el0zpuJcteXIrlwnch9agTusiZ4O2gdqAW3ptetdPFhJrH2FbZxD5zsouYw4b+OlVCCjY/tHK6M5jjD7P4hcZ96wamb56t5Qu/pKTI2KcagWZa6hZ4DZi/l55ATY04tEiEPfIOrL0ylWwRMpEKchFHbxz3Nm8jGAqFyDwT+vEGDB5nIy519crNo36Gq1Yl0T8rYPQxGe2eKxkSNkFp9kFsGhvjIcXdo/3MhwLX4GCPUmhXzg8hZJbgScJRlBYTMlTW7EBKVsX4FkeKOe1evRUZNf0kM2Fij5/U4YbYdYEMUoAezP6AAHGFt3Yn8EEof2rN61bWhNw8G8BI3fQ== glab"
+      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBE2jQWzD7N9sMWW+UKBNuxzS5v3Dt5g6UbZ/kd49b7XJugBLma8152DogVrblUxhPqfQfcCVrMHNHFlIkXAB9w= voidnxlabs"
+    ];
+    packages = with pkgs; [
+      obsidian
+      google-cloud-sdk
+      sssd
+      vscodium
+      gphoto2
+      libimobiledevice
+      devenv
+      tailscale
+      trezor-suite
+      tmux
+      starship
+      terraform
+      nushell
+      azure-cli
+      glab
+      cachix
+      waybackurls
+      hakrawler
+      google-chrome
+      awscli
+      onlyoffice-desktopeditors
+      minikube
+      kubernetes
+      kubernetes-polaris
+      kubernetes-helm
+      kind
+      git-lfs
+      certbot
+      flameshot
+      qbittorrent
+      alacritty
+      xclip
+      glab
+      gh
+      wrangler
+      termius
+      codeberg-cli
+      zathura
+      evince
+      sioyek
+      kdePackages.okular
+
+      cairo-lang
+      metabase
+
+      # Custom wrapper for brev to work with read-only .ssh/config
+      (pkgs.writeShellScriptBin "brev" ''
+        #!/usr/bin/env bash
+
+        # Original brev binary path
+        BREV_BIN="${config.kernelcore.packages."brev-cli".package}/bin/brev"
+
+        # Real paths
+        REAL_HOME="$HOME"
+        BREV_HOME="$REAL_HOME/.brev"
+        NIX_BREV_CONFIG="$REAL_HOME/.ssh/brev_config"
+        export BREV_NO_ANALYTICS="''${BREV_NO_ANALYTICS:-1}"
+
+        # Usar um cache persistente para não matar processos em background (ex: Fleet IDE)
+        FAKE_HOME="$REAL_HOME/.cache/brev_fake_home"
+
+        # Setup do ambiente Fake
+        mkdir -p "$FAKE_HOME/.ssh"
+        echo 'Include "/home/kernelcore/.brev/ssh_config"' > "$FAKE_HOME/.ssh/config"
+        chmod 600 "$FAKE_HOME/.ssh/config"
+
+        # Symlink do diretório .brev e de chaves conhecidas para não quebrar o handshake
+        ln -sfn "$BREV_HOME" "$FAKE_HOME/.brev"
+
+        # Função para extrair o config de forma limpa
+        sync_config() {
+            echo "[NixOS] Sincronizando o estado declarativo do Brev..." >&2
+            # Rodamos um refresh silencioso no Fake Home para forçar a escrita do arquivo
+            HOME="$FAKE_HOME" "$BREV_BIN" refresh < /dev/null > /dev/null 2>&1
+
+            if [ -f "$BREV_HOME/ssh_config" ]; then
+                # Substitui o caminho do cache persistente pelo real e gera o arquivo final
+                sed "s|$FAKE_HOME|$REAL_HOME|g" "$BREV_HOME/ssh_config" > "$NIX_BREV_CONFIG"
+                chmod 600 "$NIX_BREV_CONFIG"
+            fi
+        }
+
+        # Lógica de Roteamento
+        case "$1" in
+          login|start|create|provision|delete|reset|refresh|register|deregister|enable-ssh|grant-ssh|revoke-ssh|scale)
+            # Executa o comando na sandbox, depois sincroniza os configs
+            HOME="$FAKE_HOME" "$BREV_BIN" "$@" || EXIT_CODE=$?
+            sync_config
+            exit ''${EXIT_CODE:-0}
+            ;;
+
+          open|shell|ssh|exec|copy|cp|scp|port-forward)
+            # Sincroniza o estado antes de comandos que dependem do SSH gerado pelo Brev
+            sync_config
+
+            # Executa o acesso remoto passando o FAKE_HOME persistente,
+            # garantindo que IDEs não percam o File Descriptor depois.
+            exec env HOME="$FAKE_HOME" "$BREV_BIN" "$@"
+            ;;
+
+          *)
+            # Comandos read-only passam direto
+            exec "$BREV_BIN" "$@"
+            ;;
+        esac
+      '')
+      slack
+      gnome-console
+      zed-editor
+      cinnamon
+      gnome-disk-utility
+      rust-analyzer
+      rustup
+      terraform-providers.carlpett_sops
+      terraform-providers.hashicorp_vault
+      anytype
+      evince
+      sillytavern
+      koboldcpp
+      lmstudio
+      dive
+      ladybird
+    ];
+  };
+
+  users.extraGroups.docker.members = [
+    "kernelcore"
+    "nvidia"
+  ];
+
+  programs = {
+    firefox.enable = true;
+    mtr.enable = true;
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
+    ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
+    cognitive-vault.enable = true;
+
+    vscodium-secure = {
+      enable = true;
+      enableGitLabDuo = true;
+      extensions = with pkgs.vscode-extensions; [
+        rooveterinaryinc.roo-cline
+      ];
+    };
+    brave-secure.enable = true;
+    firefox-privacy.enable = true;
+    git.lfs.enable = true;
+    nemo.enable = true;
+
+    vmctl = {
+      enable = false;
+      vms.wazuh = {
+        image = "/var/lib/vm-images/wazuh.qcow2";
+        memory = "4G";
+        cpus = 2;
+      };
+    };
+  };
+
+  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.nvidia.acceptLicense = true;
+  nixpkgs.config.packageOverrides = pkgs: {
+    ltrace = pkgs.ltrace.overrideAttrs (oldAttrs: {
+      doCheck = false;
+    });
+  };
+
+  environment.systemPackages = with pkgs; [
+    wget
+    curl
+    cudatoolkit
+    ffmpeg
+    yt-dlp
+    cri-tools
+    docker-compose
+    docker
+    libfido2
+    libudev0-shim
+    libusb1
+    trezord
+    trezor-udev-rules
+    rust-analyzer
+    bat
+    gdb
+    lldb
+    strace
+    valgrind
+    perf
+    heaptrack
+    hotspot
+    sysstat
+    bpftrace
+    iotop
+    nethogs
+    iftop
+    nmon
+    atop
+    lsof
+    tcpdump
+    wireshark
+    tshark
+    sqlite
+    #lxc
+    incus
+    evince
+    pcsx2
+    postman
+    bruno
+  ];
+
+  kernelcore.shell.cli-helpers = {
+    enable = true;
+    flakePath = "/etc/nixos";
+    hostName = "kernelcore";
+  };
+
+  kernelcore.shell.nix-ops.enable = true;
+
+  boot.initrd.prepend = [
+    "${
+      pkgs.runCommand "acpi-override"
+        {
+          nativeBuildInputs = [
+            pkgs.cpio
+            pkgs.findutils
+          ];
+        }
+        ''
+          mkdir -p $out/kernel/firmware/acpi
+          cp ${./acpi-fix/dsdt.aml} $out/kernel/firmware/acpi/dsdt.aml
+          find $out -print0 | cpio -o -H newc --reproducible -0 > $out/acpi_override.cpio
+        ''
+    }/acpi_override.cpio"
+  ];
+
+  programs.zsh.enable = true;
+  programs.vscode-secure = {
+    enable = true;
+  };
+
+  # Enable Remote SSH extension for VSCode-like editors
+  programs.vscode-remote-ssh = {
+    enable = true;
+    installFor = [
+      "vscode"
+      "cursor"
+      "windsurf"
+    ];
+  };
+
+  # GPU power limit - raised from 50W to the 65W hardware max for llamacpp-turbo
+  # inference performance. Trades battery/thermal headroom for sustained clocks.
+  systemd.services.nvidia-power-limit = {
+    description = "Set NVIDIA GPU power limit to hardware max (65W)";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "nvidia-persistenced.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = [
+        "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pm 1"
+        "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pl 65"
+      ];
+    };
+  };
+
+  system.stateVersion = "26.05";
+}

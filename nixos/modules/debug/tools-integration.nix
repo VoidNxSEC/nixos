@@ -1,0 +1,54 @@
+# Swissknife Debug Tools Integration
+# Professional debugging, monitoring, and system health tools
+# Note: Tools come from inputs.swissknife flake (github:voidnxsec/swissknife)
+{
+  pkgs,
+  lib,
+  config,
+  inputs,
+  ...
+}:
+
+let
+  swissknife-tools = inputs.swissknife.packages.${pkgs.stdenv.hostPlatform.system};
+in
+{
+  options.kernelcore.swissknife = {
+    enable = lib.mkEnableOption "Swissknife Debug Tools";
+
+    enableSystray = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable Swiss Monitor systray indicator on Wayland";
+    };
+  };
+
+  config = lib.mkIf config.kernelcore.swissknife.enable {
+    # Install swissknife tools from flake input directly
+    environment.systemPackages =
+      with swissknife-tools;
+      [
+        swiss-rebuild
+        swiss-doctor
+        swiss-monitor
+      ]
+      ++ lib.optionals config.kernelcore.swissknife.enableSystray [
+        swiss-systray
+      ];
+
+    # Handy aliases
+    environment.shellAliases = {
+      # Quick access (using different names to avoid conflicts with rebuild-advanced.nix)
+      doctor = "sudo swiss-doctor";
+      swiss = "sudo swiss-rebuild"; # Renamed from 'rebuild' to avoid conflict
+
+      # Monitor aliases
+      monitor = "swiss-monitor";
+      soc = "swiss-monitor";
+      soc-tray = "swiss-systray &";
+    };
+
+    # Autostart systray on Hyprland login
+    # User can add to their Hyprland config: exec-once = swiss-systray
+  };
+}

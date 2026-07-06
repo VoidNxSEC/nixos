@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Post-merge hook: Update dependencies after merge
+# Installed via: git config core.hooksPath .githooks
+
+echo "🔄 Post-merge checks..."
+
+# Check if flake.lock changed
+if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -q "flake.lock"; then
+  echo "  → flake.lock changed, consider updating dependencies"
+  echo "💡 Run: nix flake update"
+fi
+
+# Check if modules changed
+if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -q "^modules/"; then
+  echo "  → Modules changed, consider rebuilding"
+  echo "💡 Run: sudo nixos-rebuild switch"
+fi
+
+# Check if secrets config changed
+if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -q ".sops.yaml\|secrets/"; then
+  echo "  → Secrets configuration changed"
+  echo "💡 Check: sops updatekeys secrets/*.yaml"
+fi
+
+echo "✅ Post-merge checks complete"

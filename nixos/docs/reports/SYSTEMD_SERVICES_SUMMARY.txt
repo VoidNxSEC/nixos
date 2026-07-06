@@ -1,0 +1,271 @@
+================================================================================
+SYSTEMD SERVICES INVENTORY - QUICK SUMMARY
+================================================================================
+Repository: /etc/nixos
+Generated: October 21, 2025
+
+================================================================================
+SERVICES FOUND (7 PRIMARY + 2 ENHANCED)
+================================================================================
+
+1. LLAMACPP (LLM Inference Server)
+   File: /etc/nixos/modules/ml/llama.nix (lines 163-200)
+   Type: Simple service
+   Ports: 8080 (default)
+   Restart: Always (10s delay)
+   GPU Support: Yes (via n_gpu_layers)
+   Status: ACTIVE
+
+2. DOCKER-PULL-IMAGES (Container Pre-pull)
+   File: /etc/nixos/modules/system/services.nix (lines 10-22)
+   Type: Oneshot
+   Dependencies: docker.service
+   Images: pytorch:25.09, text-generation-inference:latest
+   Status: ACTIVE
+
+3. OLLAMA (Configuration Enhancement)
+   File: /etc/nixos/modules/system/services.nix (lines 24-34)
+   Type: Enhanced existing service
+   GPU Devices: /dev/nvidia0, /dev/nvidiactl, /dev/nvidia-uvm
+   Status: ACTIVE (enhancement only)
+
+4. JUPYTER (JupyterLab Development)
+   File: /etc/nixos/modules/development/jupyter.nix (lines 124-145)
+   Type: User-level service
+   Port: 127.0.0.1:default
+   Security: PrivateTmp, ProtectSystem strict, NoNewPrivileges
+   GPU Support: Yes
+   Restart: on-failure
+   Status: ACTIVE (conditional)
+
+5. SETUP-SYSTEM-CREDENTIALS (Credential Storage)
+   File: /etc/nixos/sec/hardening.nix (lines 140-148)
+   Type: Oneshot
+   Creates: /etc/credstore with 700 permissions
+   Status: ACTIVE
+
+6. CLAMAV-SCAN (Antivirus Scanner Service)
+   File: /etc/nixos/sec/hardening.nix (lines 161-182)
+   Type: Oneshot
+   Scan Target: /home directory
+   Excludes: /sys, /proc, /dev, /run, /nix/store
+   Limits: 100M file size, 300M scan size
+   Triggered By: clamav-scan timer
+   Status: ACTIVE
+
+7. SSHD (SSH Service - Enhanced)
+   File: /etc/nixos/sec/hardening.nix (lines 234-252)
+   Type: Enhanced existing service
+   Hardening: PrivateTmp, ProtectSystem, ProtectHome, NoNewPrivileges, etc.
+   Status: ENHANCEMENT ONLY
+
+8. CLAMAV-DAEMON (ClamAV Daemon - Enhanced)
+   File: /etc/nixos/sec/hardening.nix (lines 254-262)
+   Type: Enhanced existing service
+   Protection: strict system, read-only home
+   Status: ENHANCEMENT ONLY
+
+OPTIONAL/COMMENTED:
+- GPU-MONITOR-DAEMON (shell/default.nix, lines 186-194) - Commented out
+
+================================================================================
+TIMERS FOUND (1)
+================================================================================
+
+1. CLAMAV-SCAN (Weekly Antivirus Scan)
+   File: /etc/nixos/sec/hardening.nix (lines 184-192)
+   Schedule: Weekly
+   Randomized Delay: 2 hours
+   Triggers: clamav-scan service
+   Status: ACTIVE
+
+================================================================================
+TMPFILES RULES (3)
+================================================================================
+
+1. ClamAV Log Directory
+   File: /etc/nixos/sec/hardening.nix (line 158)
+   Rule: d /var/log/clamav 0755 clamav clamav -
+
+2. CUDA Cache Directory
+   File: /etc/nixos/modules/hardware/nvidia.nix (lines 69-71)
+   Rules: 
+     - d /var/cache/cuda 0770 root nvidia -
+     - L+ /var/tmp/cuda-cache symlink
+
+3. VM Shared Directory
+   File: /etc/nixos/modules/virtualization/vms.nix (line 69)
+   Rule: d /srv/vms/shared 0755 root libvirtd -
+
+================================================================================
+FILES CONTAINING SYSTEMD DEFINITIONS
+================================================================================
+
+1. /etc/nixos/modules/ml/llama.nix                    [1 service]
+2. /etc/nixos/modules/system/services.nix            [2 services + 1 enhancement]
+3. /etc/nixos/modules/development/jupyter.nix        [1 user service]
+4. /etc/nixos/sec/hardening.nix                      [3 services + 2 enhancements + 1 timer + 1 tmpfile]
+5. /etc/nixos/modules/security/hardening.nix         [0 services]
+6. /etc/nixos/modules/hardware/nvidia.nix            [2 tmpfiles]
+7. /etc/nixos/modules/virtualization/vms.nix         [1 tmpfile]
+8. /etc/nixos/modules/shell/default.nix              [1 commented service]
+9. /etc/nixos/modules/services/default.nix           [2 monitoring services - Prometheus, Grafana]
+
+================================================================================
+CURRENT SERVICES MODULE STRUCTURE
+================================================================================
+
+/etc/nixos/modules/services/
+├── default.nix        # Prometheus & Grafana configuration
+└── scripts.nix        # Docker build script aliases
+
+EXISTING SERVICES IN default.nix:
+1. Prometheus (monitoring) - Port 9090
+   - node exporter (port 9100)
+2. Grafana (visualization) - Port 4000
+
+================================================================================
+RECOMMENDED CENTRALIZATION STRUCTURE
+================================================================================
+
+/etc/nixos/modules/services/
+├── default.nix                    # Main orchestrator & monitoring
+├── docker.nix                     # Docker-related services
+├── ml/
+│   └── llama.nix                  # LLM services
+├── security/
+│   ├── hardening.nix              # Security services
+│   ├── clamav.nix                 # ClamAV scan & timer
+│   └── sshd.nix                   # SSH hardening
+├── development/
+│   └── jupyter.nix                # Jupyter notebook service
+└── system/
+    └── init.nix                   # System init services
+
+================================================================================
+KEY FINDINGS
+================================================================================
+
+GPU-RELATED SERVICES:
+  - llamacpp (optional GPU support via n_gpu_layers)
+  - jupyter (explicit /dev/nvidia0 access)
+  - ollama (enhanced with GPU device access)
+
+SECURITY-CRITICAL SERVICES:
+  - clamav-scan (weekly antivirus)
+  - clamav-daemon (runtime protection)
+  - sshd (SSH hardening)
+  - setup-system-credentials (credential storage)
+
+MONITORING SERVICES:
+  - Prometheus (metrics collection)
+  - Grafana (visualization)
+
+DEVELOPMENT SERVICES:
+  - jupyter (interactive development)
+
+ML/AI SERVICES:
+  - llamacpp (LLM inference)
+
+CONTAINER SERVICES:
+  - docker-pull-images (pre-caching)
+  - ollama (AI model server)
+
+================================================================================
+MIGRATION PHASES
+================================================================================
+
+PHASE 1: ASSESSMENT (COMPLETED)
+  ✓ Identified all systemd services
+  ✓ Identified all systemd timers
+  ✓ Identified all tmpfiles rules
+  ✓ Documented service purposes
+  ✓ Mapped dependencies
+
+PHASE 2: MODULE CREATION (READY)
+  [ ] Create new service modules
+  [ ] Move services to modules/services/
+  [ ] Create category subdirectories
+
+PHASE 3: INTEGRATION (PENDING)
+  [ ] Create orchestrator default.nix
+  [ ] Update flake.nix imports
+  [ ] Test all services
+
+PHASE 4: CLEANUP (PENDING)
+  [ ] Remove definitions from original files
+  [ ] Clean up redundant code
+  [ ] Verify references
+
+PHASE 5: VALIDATION (PENDING)
+  [ ] Run nixos-rebuild switch
+  [ ] Verify service status
+  [ ] Check journalctl logs
+
+================================================================================
+DEPENDENCIES SUMMARY
+================================================================================
+
+docker-pull-images  -> docker.service, network.target
+                    -> pulls images for llamacpp, TGI, PyTorch
+
+llamacpp            -> network.target
+                    -> provides LLM API (port 8080)
+
+jupyter             -> network.target
+                    -> requires GPU devices, credentials
+
+ollama              -> docker-pull-images (images)
+                    -> requires GPU devices
+
+clamav-scan         -> clamav-scan timer
+                    -> requires clamav package
+
+clamav-scan timer   -> clamav-scan service
+                    -> weekly execution
+
+setup-system-credentials -> required by jupyter (optional)
+
+================================================================================
+SECURITY MEASURES BY SERVICE
+================================================================================
+
+JUPYTER:
+  - PrivateTmp: true
+  - ProtectSystem: strict
+  - NoNewPrivileges: true
+  - GPU via group membership
+
+SSHD:
+  - PrivateTmp: true
+  - ProtectSystem: strict
+  - ProtectHome: true
+  - SystemCallFilter: @system-service
+  - CapabilityBoundingSet restricted
+
+CLAMAV:
+  - Nice level 19 (low priority)
+  - Idle IO scheduling
+  - File/scan size limits
+
+GPU ACCESS:
+  - Controlled via 'nvidia' group
+  - Device allowlist per service
+  - Udev rules for access control
+
+================================================================================
+FILES TO MIGRATE
+================================================================================
+
+Primary moves required:
+1. /etc/nixos/modules/ml/llama.nix                -> modules/services/ml/llama.nix
+2. /etc/nixos/modules/system/services.nix (parts) -> modules/services/docker.nix
+3. /etc/nixos/modules/development/jupyter.nix    -> modules/services/development/jupyter.nix
+4. /etc/nixos/sec/hardening.nix (parts)          -> modules/services/security/clamav.nix
+
+Extraction from existing files:
+- Extract hardening/service definitions from /etc/nixos/sec/hardening.nix
+- Extract GPU-related tmpfiles from /etc/nixos/modules/hardware/nvidia.nix
+- Extract VM tmpfiles from /etc/nixos/modules/virtualization/vms.nix
+
+================================================================================

@@ -1,0 +1,129 @@
+# CODEOWNERS - Define code ownership and automatic PR reviewers
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global ownership (fallback)
+* @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# Critical Security & Secrets
+# ═══════════════════════════════════════════════════════════════
+
+# Security modules (require security review)
+/modules/security/ @kernelcore
+/sec/ @kernelcore
+
+# Secrets and encryption (critical changes)
+/secrets/ @kernelcore
+/modules/secrets/ @kernelcore
+/.sops.yaml @kernelcore
+/scripts/add-secret.sh @kernelcore
+/scripts/migrate-sec-to-sops.sh @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# CI/CD & Infrastructure
+# ═══════════════════════════════════════════════════════════════
+
+# GitHub Actions workflows
+/.github/ @kernelcore
+/.github/workflows/ @kernelcore
+
+# GitLab CI
+/.gitlab-ci.yml @kernelcore
+
+# Git hooks
+/.githooks/ @kernelcore
+/scripts/setup-git-hooks.sh @kernelcore
+
+# Flake configuration
+/flake.nix @kernelcore
+/flake.lock @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# Core System Modules
+# ═══════════════════════════════════════════════════════════════
+
+# Hardware configurations
+/modules/hardware/ @kernelcore
+/hosts/*/hardware-configuration.nix @kernelcore
+
+# Network configuration
+/modules/network/ @kernelcore
+/modules/services/vpn/ @kernelcore
+
+# Boot and kernel
+/modules/system/boot.nix @kernelcore
+/modules/security/kernel.nix @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# Containers & Virtualization
+# ═══════════════════════════════════════════════════════════════
+
+# Docker and containers
+/modules/containers/ @kernelcore
+/lib/packages.nix @kernelcore
+
+# Virtualization
+/modules/virtualization/ @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# ML Infrastructure
+# ═══════════════════════════════════════════════════════════════
+
+# ML modules
+/modules/ml/ @kernelcore
+
+# MCP server (critical for IDE integration)
+/modules/ml/unified-llm/mcp-server/ @kernelcore
+
+# GPU orchestration
+/modules/services/gpu-orchestration.nix @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# Documentation
+# ═══════════════════════════════════════════════════════════════
+
+# Main documentation
+/README.md @kernelcore
+/docs/ @kernelcore
+
+# CLAUDE.md instructions
+/.claude/ @kernelcore
+/CLAUDE.md @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# Scripts & Tools
+# ═══════════════════════════════════════════════════════════════
+
+# Utility scripts
+/scripts/ @kernelcore
+
+# Validation scripts (critical)
+/scripts/post-rebuild-validate.sh @kernelcore
+/modules/debug/test-init.nix @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# Testing Infrastructure
+# ═══════════════════════════════════════════════════════════════
+
+# Test directory (when created)
+# /tests/ @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# Special Files
+# ═══════════════════════════════════════════════════════════════
+
+# License and legal
+# /LICENSE @kernelcore
+
+# Git configuration
+/.gitignore @kernelcore
+/.gitattributes @kernelcore
+
+# ═══════════════════════════════════════════════════════════════
+# Future: Multi-maintainer Setup
+# ═══════════════════════════════════════════════════════════════
+
+# Example for future team members:
+# /modules/security/ @kernelcore @security-team
+# /modules/ml/ @kernelcore @ml-team
+# /secrets/ @kernelcore @security-team

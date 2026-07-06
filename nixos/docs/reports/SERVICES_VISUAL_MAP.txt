@@ -1,0 +1,311 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    SYSTEMD SERVICES DISTRIBUTION MAP                       ║
+║                          /etc/nixos Configuration                          ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ SERVICES BY CATEGORY                                                       │
+└────────────────────────────────────────────────────────────────────────────┘
+
+ML/AI Services (1)
+├─ llamacpp
+│  ├─ File: modules/ml/llama.nix (lines 163-200)
+│  ├─ Type: Simple service
+│  ├─ Port: 8080
+│  ├─ GPU: Yes (optional)
+│  └─ Restart: always
+│
+├─ Status: ACTIVE ✓
+└─ Priority: HIGH (inference engine)
+
+
+Container Services (3)
+├─ docker-pull-images
+│  ├─ File: modules/system/services.nix (lines 10-22)
+│  ├─ Type: Oneshot
+│  ├─ Pulls: pytorch:25.09, text-generation-inference
+│  └─ Dependency: docker.service
+│
+├─ ollama (enhanced)
+│  ├─ File: modules/system/services.nix (lines 24-34)
+│  ├─ Type: Enhancement only
+│  ├─ GPU Devices: /dev/nvidia0, /dev/nvidiactl, /dev/nvidia-uvm
+│  └─ Status: ACTIVE ✓
+│
+└─ Priority: HIGH (base infrastructure)
+
+
+Development Services (1)
+├─ jupyter
+│  ├─ File: modules/development/jupyter.nix (lines 124-145)
+│  ├─ Type: User-level service
+│  ├─ Port: 127.0.0.1 (localhost only)
+│  ├─ GPU: Yes (explicit)
+│  ├─ Security: PrivateTmp, ProtectSystem strict
+│  ├─ Restart: on-failure
+│  └─ Status: ACTIVE (conditional) ✓
+│
+└─ Priority: MEDIUM (development tool)
+
+
+Security Services (5)
+├─ setup-system-credentials
+│  ├─ File: sec/hardening.nix (lines 140-148)
+│  ├─ Type: Oneshot
+│  ├─ Creates: /etc/credstore (700)
+│  └─ Status: ACTIVE ✓
+│
+├─ clamav-scan
+│  ├─ File: sec/hardening.nix (lines 161-182)
+│  ├─ Type: Oneshot
+│  ├─ Triggered by: clamav-scan timer (weekly)
+│  ├─ Scan Target: /home directory
+│  └─ Status: ACTIVE ✓
+│
+├─ sshd (enhanced)
+│  ├─ File: sec/hardening.nix (lines 234-252)
+│  ├─ Type: Enhancement only
+│  ├─ Hardening: PrivateTmp, ProtectSystem, Capabilities
+│  └─ Status: ENHANCEMENT ONLY
+│
+├─ clamav-daemon (enhanced)
+│  ├─ File: sec/hardening.nix (lines 254-262)
+│  ├─ Type: Enhancement only
+│  ├─ Protection: strict system, read-only home
+│  └─ Status: ENHANCEMENT ONLY
+│
+└─ Priority: HIGH (security-critical)
+
+
+Monitoring Services (2)
+├─ Prometheus
+│  ├─ File: modules/services/default.nix (lines 10-25)
+│  ├─ Port: 9090
+│  ├─ Exporter: node (9100)
+│  └─ Status: ACTIVE ✓
+│
+├─ Grafana
+│  ├─ File: modules/services/default.nix
+│  ├─ Port: 4000
+│  └─ Status: ACTIVE ✓
+│
+└─ Priority: MEDIUM (infrastructure)
+
+
+Timers (1)
+├─ clamav-scan
+│  ├─ File: sec/hardening.nix (lines 184-192)
+│  ├─ Schedule: Weekly
+│  ├─ Randomized Delay: 2 hours
+│  └─ Status: ACTIVE ✓
+│
+└─ Priority: HIGH (security)
+
+
+Optional/Commented (1)
+├─ gpu-monitor-daemon
+│  ├─ File: modules/shell/default.nix (lines 186-194)
+│  ├─ Status: COMMENTED OUT (disabled)
+│  └─ Purpose: Background GPU monitoring
+│
+└─ Priority: LOW (experimental)
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ FILE DISTRIBUTION                                                          │
+└────────────────────────────────────────────────────────────────────────────┘
+
+/etc/nixos/
+│
+├── modules/ml/llama.nix
+│   └─ [1 service] llamacpp
+│
+├── modules/system/services.nix
+│   └─ [2 services + 1 enhancement]
+│      ├─ docker-pull-images
+│      ├─ ollama* (enhancement)
+│
+├── modules/development/jupyter.nix
+│   └─ [1 user service]
+│      └─ jupyter
+│
+├── modules/services/default.nix
+│   └─ [2 monitoring services]
+│      ├─ Prometheus
+│      ├─ Grafana
+│
+├── sec/hardening.nix
+│   ├─ [3 services + 2 enhancements + 1 timer]
+│   ├─ setup-system-credentials
+│   ├─ clamav-scan (service)
+│   ├─ clamav-scan (timer)
+│   ├─ sshd* (enhancement)
+│   └─ clamav-daemon* (enhancement)
+│
+├── modules/hardware/nvidia.nix
+│   └─ [2 tmpfiles]
+│
+├── modules/virtualization/vms.nix
+│   └─ [1 tmpfiles]
+│
+└── modules/shell/default.nix
+    └─ [1 commented service] gpu-monitor-daemon
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ DEPENDENCY FLOW                                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+                         ┌─────────────────┐
+                         │ multi-user.target
+                         └────────┬────────┘
+                                  │
+                    ┌─────────────┼──────────────┐
+                    │             │              │
+              ┌─────▼──┐    ┌────▼────┐    ┌────▼────┐
+              │network  │    │docker   │    │timers   │
+              │target   │    │service  │    │target   │
+              └─────┬──┘    └────┬────┘    └────┬────┘
+                    │             │             │
+    ┌───────────────┼─────────────┼───┐         │
+    │               │             │   │         │
+┌───▼────┐  ┌──────▼──┐  ┌──────▼──┐ │    ┌────▼──────┐
+│llamacpp│  │jupyter  │  │docker   │ │    │clamav-scan│
+│        │  │         │  │pull-imgs│ │    │timer      │
+└────────┘  └──────────┘  └─────────┘ │    └────┬──────┘
+                                      │         │
+                              ┌───────▼─────┐   │
+                              │ollama config│   │
+                              │enhancement  │   │
+                              └─────────────┘   │
+                                            ┌───▼─────────┐
+                                            │clamav-scan  │
+                                            │service      │
+                                            └─────────────┘
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ GPU SERVICES MAP                                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+GPU-Enabled Services (3):
+
+1. llamacpp
+   ├─ Type: Optional GPU support
+   ├─ Method: n_gpu_layers parameter
+   └─ Control: Service config
+
+2. jupyter
+   ├─ Type: Explicit GPU access
+   ├─ Devices: /dev/nvidia0, /dev/nvidiactl
+   └─ Control: Group membership (nvidia)
+
+3. ollama
+   ├─ Type: GPU-enhanced existing service
+   ├─ Devices: /dev/nvidia0, /dev/nvidiactl, /dev/nvidia-uvm
+   └─ Control: Enhancement via serviceConfig
+
+
+GPU Access Control Chain:
+┌────────────────────┐
+│ nvidia group       │
+│ membership         │
+└─────────┬──────────┘
+          │
+    ┌─────▼──────┐
+    │udev rules  │
+    │device perms│
+    └─────┬──────┘
+          │
+    ┌─────▼──────────┐
+    │service config  │
+    │DeviceAllow     │
+    └─────┬──────────┘
+          │
+    ┌─────▼──────────────┐
+    │service access to   │
+    │/dev/nvidia* devices│
+    └────────────────────┘
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ SECURITY HARDENING LEVELS                                                  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+LEVEL 1: Minimal (docker-pull-images)
+├─ Type: oneshot
+└─ Security: Standard
+
+LEVEL 2: Basic (llamacpp, ollama)
+├─ Type: Simple service
+└─ Security: Restart policies
+
+LEVEL 3: Hardened (jupyter)
+├─ Type: User service + hardening
+├─ PrivateTmp: Yes
+├─ ProtectSystem: strict
+├─ NoNewPrivileges: Yes
+└─ Device Control: Yes
+
+LEVEL 4: Maximum (sshd, clamav-daemon)
+├─ Type: System service + comprehensive hardening
+├─ PrivateTmp: Yes
+├─ ProtectSystem: strict
+├─ ProtectHome: Yes
+├─ SystemCallFilter: Yes
+├─ CapabilityBoundingSet: Yes
+├─ RestrictNamespaces: Yes
+├─ RestrictRealtime: Yes
+└─ RestrictSUIDSGID: Yes
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ STATISTICS                                                                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+Total Services:           7 primary + 2 enhancements
+Total Timers:             1
+Total Tmpfiles Rules:     3
+Total Optional:           1 (commented)
+
+By Type:
+  Simple Services:        5
+  Oneshot Services:       2
+  User Services:          1
+  Service Enhancements:   2
+
+By Priority:
+  HIGH (critical):        5 (clamav-scan, security setup, gpu services)
+  MEDIUM (infrastructure) 3 (monitoring, jupyter)
+  LOW (experimental):     1 (gpu-monitor-daemon)
+
+By Category:
+  Security:               5 (highest concentration)
+  ML/AI:                  1
+  Containers:             2
+  Development:            1
+  Monitoring:             2
+
+Restart Policies:
+  always:                 1 (llamacpp)
+  on-failure:             1 (jupyter)
+  none:                   5 (oneshot, enhancements)
+
+GPU Services:             3 (33% of primary services)
+
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          NEXT STEPS                                        ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║                                                                            ║
+║ PHASE 2: Module Creation (Ready to begin)                                 ║
+║                                                                            ║
+║ 1. Create modules/services/ subdirectories                                 ║
+║ 2. Extract services into category-specific modules                         ║
+║ 3. Create new orchestrator default.nix                                     ║
+║ 4. Update flake.nix imports                                                ║
+║ 5. Run nixos-rebuild switch                                                ║
+║                                                                            ║
+║ See SYSTEMD_SERVICES_INVENTORY.md for detailed instructions                ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝

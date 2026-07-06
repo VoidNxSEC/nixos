@@ -1,0 +1,207 @@
+name: NixOS Staging
+
+on:
+  pull_request:
+    branches: [staging]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "hosts/**"
+      - "modules/**"
+      - "overlays/**"
+      - "profiles/**"
+      - "sec/**"
+      - "nix/**"
+      - "lib/**"
+      - ".github/actions/setup-nix-env/**"
+      - ".github/workflows/nixos-staging.yml"
+  push:
+    branches: [staging]
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "hosts/**"
+      - "modules/**"
+      - "overlays/**"
+      - "profiles/**"
+      - "sec/**"
+      - "nix/**"
+      - "lib/**"
+      - ".github/actions/setup-nix-env/**"
+      - ".github/workflows/nixos-staging.yml"
+  workflow_dispatch:
+    inputs:
+      host:
+        description: "NixOS host to build"
+        required: true
+        default: kernelcore
+        type: choice
+        options:
+          - kernelcore
+          - kernelcore-iso
+          - k8s-node
+      target:
+        description: "System build target"
+        required: true
+        default: toplevel
+        type: choice
+        options:
+          - toplevel
+          - vm
+      upload-result:
+        description: "Upload result as an artifact"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
+
+jobs:
+  promotion-gate:
+    name: Require dev source
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Validate promotion source
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$HEAD_REF" != "dev" ]; then
+            echo "Staging accepts promotion PRs from dev only." >&2
+            echo "Current source branch: $HEAD_REF" >&2
+            exit 1
+          fi
+
+  staging-validation:
+    name: Staging validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    needs: promotion-gate
+    if: >-
+      always() &&
+      (github.event_name != 'pull_request' || needs.promotion-gate.result == 'success') &&
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Check formatting
+        run: nix fmt -- --check .
+
+      - name: Evaluate flake outputs
+        run: nix flake check --show-trace --no-build
+
+  build-systems:
+    name: Build ${{ matrix.host }} toplevel
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    needs: staging-validation
+    if: github.event_name != 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+          - kernelcore
+          - k8s-node
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Build host toplevel
+        run: |
+          nix build \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" \
+            --show-trace \
+            --print-build-logs \
+            --no-link
+
+  manual-build:
+    name: Manual build ${{ github.event.inputs.host || 'kernelcore' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    needs: staging-validation
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix-env
+        with:
+          cachix-name: ${{ env.CACHIX_CACHE_NAME }}
+          cachix-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Resolve build attribute
+        id: target
+        shell: bash
+        run: |
+          host="${{ github.event.inputs.host }}"
+          target="${{ github.event.inputs.target }}"
+
+          case "$target" in
+            toplevel)
+              attr=".#nixosConfigurations.${host}.config.system.build.toplevel"
+              ;;
+            vm)
+              attr=".#nixosConfigurations.${host}.config.system.build.vm"
+              ;;
+            *)
+              echo "Unsupported target: $target" >&2
+              exit 1
+              ;;
+          esac
+
+          {
+            echo "host=$host"
+            echo "target=$target"
+            echo "attr=$attr"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build configuration
+        run: |
+          nix build "${{ steps.target.outputs.attr }}" \
+            --show-trace \
+            --print-build-logs \
+            --print-out-paths
+
+      - name: Report closure size
+        run: nix path-info -Sh "${{ steps.target.outputs.attr }}"
+
+      - name: Upload result
+        if: github.event.inputs['upload-result'] == 'true'
+        uses: actions/upload-artifact@v6
+        with:
+          name: nixos-${{ steps.target.outputs.host }}-${{ steps.target.outputs.target }}
+          path: result
+          if-no-files-found: error
+          retention-days: 7

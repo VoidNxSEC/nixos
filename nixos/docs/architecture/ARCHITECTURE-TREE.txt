@@ -1,0 +1,256 @@
+╔════════════════════════════════════════════════════════════════════╗
+║                  NIXOS REPOSITORY ARCHITECTURE                     ║
+║                     Auto-Generated Tree Diagram                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+Generated: $(date +"%Y-%m-%d %H:%M:%S")
+Location: /etc/nixos
+Host: $(hostname)
+
+LEGEND:
+  /     - Directory
+  *     - Executable file
+  .nix  - Nix configuration
+  .md   - Documentation
+  .sh   - Shell script
+
+FILTERS APPLIED:
+  ✓ Excluded: .git, result*, *.iso, *.qcow2, archive/, nixtrap/
+  ✓ Max depth: 5 levels
+  ✓ Directories first, alphabetically sorted
+
+════════════════════════════════════════════════════════════════════
+
+./
+|-- .claude/
+|   |-- agents/
+|   |   |-- agent-template.md
+|   |   `-- README.md
+|   |-- skills/
+|   |   `-- README.md
+|   |-- workflows/
+|   |   `-- README.md
+|   |-- CLAUDE.md*
+|   `-- settings.local.json*
+|-- docs/
+|   |-- guides/
+|   |   |-- MULTI-HOST-SETUP.md
+|   |   |-- SECRETS.md
+|   |   |-- SETUP-SOPS-FINAL.md
+|   |   `-- SSH-CONFIGURATION.md
+|   |-- reports/
+|   |   |-- CI_CD_README.md*
+|   |   |-- SECURITY_AUDIT_REPORT.md*
+|   |   |-- SERVICES_MIGRATION_PLAN.md*
+|   |   |-- SERVICES_VISUAL_MAP.txt*
+|   |   `-- SYSTEMD_SERVICES_SUMMARY.txt*
+|   |-- AGENTS.md
+|   |-- AUDITD_INVESTIGATION.md*
+|   |-- BINARY-CACHE-SETUP.md
+|   |-- CONFIGURATION_ENHANCEMENTS.md*
+|   |-- DESKTOP-TROUBLESHOOTING.md
+|   |-- DNS_FIX_SUMMARY.md*
+|   |-- DNS_WORKING_CONFIG.md*
+|   |-- GITHUB_ACTIONS_SETUP.md*
+|   |-- GITHUB_CLI_AUTH.md
+|   |-- GUIA-CORRECAO-DNS.md*
+|   |-- README_SYSTEMD_INVENTORY.txt*
+|   |-- SOPS-TROUBLESHOOTING.md*
+|   |-- SUMMARY.md*
+|   |-- SYSTEMD_CENTRALIZATION_INDEX.md*
+|   |-- SYSTEMD_SERVICES_INVENTORY.md*
+|   |-- TODO.md*
+|   `-- VMCTL-USAGE.md
+|-- .gitea/
+|   `-- workflows/
+|       `-- nixos-build.yml*
+|-- .github/
+|   `-- workflows/
+|       `-- nixos-build.yml*
+|-- hosts/
+|   `-- kernelcore/
+|       |-- home/
+|       |   |-- aliases/
+|       |   |   |-- ai-compose-stack.sh*
+|       |   |   |-- ai-ml-stack.sh*
+|       |   |   |-- aliases.sh
+|       |   |   |-- gcloud.sh*
+|       |   |   |-- gpu-docker-core.sh*
+|       |   |   |-- gpu-management.sh
+|       |   |   |-- gpu.sh*
+|       |   |   |-- litellm_runtime_manager.sh*
+|       |   |   |-- multimodal.sh*
+|       |   |   |-- nixos-aliases.nix
+|       |   |   `-- nx.sh*
+|       |   `-- home.nix*
+|       |-- configuration.nix*
+|       |-- configurations-template.nix*
+|       |-- default.nix*
+|       `-- hardware-configuration.nix*
+|-- lib/
+|   |-- packages.nix*
+|   |-- shell.nix*
+|   `-- shells.nix*
+|-- modules/
+|   |-- applications/
+|   |   |-- brave-secure.nix*
+|   |   |-- chromium.nix
+|   |   |-- default.nix
+|   |   |-- firefox-privacy.nix*
+|   |   |-- vscode-secure.nix*
+|   |   `-- vscodium-secure.nix*
+|   |-- containers/
+|   |   |-- default.nix
+|   |   |-- docker.nix*
+|   |   |-- nixos-containers.nix*
+|   |   `-- podman.nix
+|   |-- debug/
+|   |   |-- debug-init.nix*
+|   |   `-- test-init.nix*
+|   |-- desktop/
+|   |   |-- default.nix
+|   |   `-- i3-lightweight.nix
+|   |-- development/
+|   |   |-- cicd.nix*
+|   |   |-- environments.nix*
+|   |   `-- jupyter.nix*
+|   |-- hardware/
+|   |   |-- default.nix
+|   |   |-- intel.nix*
+|   |   |-- nvidia.nix*
+|   |   |-- trezor.nix*
+|   |   `-- wifi-optimization.nix
+|   |-- ml/
+|   |   |-- llama.nix*
+|   |   |-- models-storage.nix*
+|   |   `-- ollama-gpu-manager.nix*
+|   |-- network/
+|   |   |-- dns/
+|   |   |   |-- config.example.json
+|   |   |   |-- default.nix
+|   |   |   |-- go.mod
+|   |   |   |-- go.sum
+|   |   |   |-- main.go
+|   |   |   `-- README.md
+|   |   |-- vpn/
+|   |   |   `-- nordvpn.nix*
+|   |   |-- bridge.nix
+|   |   `-- dns-resolver.nix*
+|   |-- programs/
+|   |   `-- default.nix
+|   |-- secrets/
+|   |   |-- api-keys.nix
+|   |   `-- sops-config.nix*
+|   |-- security/
+|   |   |-- aide.nix*
+|   |   |-- audit.nix*
+|   |   |-- auto-upgrade.nix*
+|   |   |-- boot.nix*
+|   |   |-- clamav.nix*
+|   |   |-- compiler-hardening.nix*
+|   |   |-- default.nix
+|   |   |-- hardening.nix*
+|   |   |-- hardening-template.nix*
+|   |   |-- kernel.nix*
+|   |   |-- network.nix*
+|   |   |-- nix-daemon.nix*
+|   |   |-- packages.nix*
+|   |   |-- pam.nix*
+|   |   `-- ssh.nix*
+|   |-- services/
+|   |   |-- users/
+|   |   |   |-- actions.nix*
+|   |   |   |-- claude-code.nix*
+|   |   |   |-- default.nix*
+|   |   |   `-- gitlab-runner.nix
+|   |   |-- default.nix*
+|   |   |-- gpu-orchestration.nix
+|   |   |-- laptop-builder-client.nix
+|   |   |-- laptop-offload-client.nix
+|   |   `-- scripts.nix*
+|   |-- shell/
+|   |   |-- aliases/
+|   |   |   |-- ai/
+|   |   |   |   |-- default.nix
+|   |   |   |   `-- ollama.nix
+|   |   |   |-- docker/
+|   |   |   |   |-- build.nix
+|   |   |   |   |-- compose.nix
+|   |   |   |   |-- default.nix
+|   |   |   |   `-- run.nix
+|   |   |   |-- gcloud/
+|   |   |   |   |-- default.nix
+|   |   |   |   `-- gcloud.nix
+|   |   |   |-- kubernetes/
+|   |   |   |   |-- default.nix
+|   |   |   |   `-- kubectl.nix
+|   |   |   |-- nix/
+|   |   |   |   |-- default.nix
+|   |   |   |   `-- system.nix
+|   |   |   |-- system/
+|   |   |   |   |-- default.nix
+|   |   |   |   `-- utils.nix
+|   |   |   |-- default.nix
+|   |   |   `-- README.md
+|   |   |-- scripts/
+|   |   |   |-- bash/
+|   |   |   `-- python/
+|   |   |       |-- gpu_monitor.py*
+|   |   |       `-- model_manager.py*
+|   |   |-- templates/
+|   |   |-- default.nix*
+|   |   |-- gpu-flags.nix*
+|   |   `-- INTEGRATION.md*
+|   |-- system/
+|   |   |-- bash/
+|   |   |-- aliases.nix*
+|   |   |-- binary-cache.nix
+|   |   |-- memory.nix*
+|   |   |-- ml-gpu-users.nix
+|   |   |-- nix.nix*
+|   |   |-- services.nix*
+|   |   `-- ssh-config.nix
+|   `-- virtualization/
+|       |-- default.nix
+|       |-- vmctl.nix
+|       `-- vms.nix*
+|-- overlays/
+|   |-- default.nix
+|   |-- python-packages.nix
+|   `-- README.md
+|-- scripts/
+|   |-- add-secret.sh*
+|   |-- diagnose-home-manager.sh*
+|   |-- fix-secrets-permissions.sh*
+|   |-- generate-tree-diagram.sh*
+|   `-- migrate-sec-to-sops.sh*
+|-- sec/
+|   |-- hardening.nix*
+|   `-- user-password*
+|-- secrets/
+|   |-- ssh-keys/
+|   |   |-- dev.yaml*
+|   |   |-- production.yaml*
+|   |   `-- staging.yaml*
+|   |-- api.yaml
+|   |-- aws.yaml*
+|   |-- database.yaml*
+|   |-- github.yaml
+|   |-- github.yaml.backup*
+|   |-- prod.yaml*
+|   `-- ssh.yaml*
+|-- ARCHITECTURE-BLUEPRINT.md
+|-- ARCHITECTURE-TREE.txt
+|-- CLAUDE.md
+|-- flake.lock*
+|-- flake.nix*
+|-- .gitignore*
+|-- .gitlab-ci.yml*
+|-- .gitmessage
+|-- README.md
+|-- REPOSITORY-ANALYSIS.md
+|-- RESTRUCTURING-MISSION.md
+|-- SESSION-1-SUMMARY.md
+`-- .sops.yaml*
+
+53 directories, 178 files

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Pre-commit hook
+# Redirects to the centralized pipeline check
+
+# Allow bypassing with GIT_NO_VERIFY=1
+if [ "$GIT_NO_VERIFY" = "1" ]; then
+    exit 0
+fi
+
+./scripts/pipeline-check.sh

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "securellm-bridge": {
+      "command": "/run/current-system/sw/bin/securellm-mcp",
+      "args": [],
+      "env": {
+        "PROJECT_ROOT": "~/master",
+        "KNOWLEDGE_DB_PATH": "/var/lib/mcp-knowledge/knowledge.db",
+        "ENABLE_KNOWLEDGE": "true"
+      },
+      "alwaysAllow": []
+    }
+  }
+}
+

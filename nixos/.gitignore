@@ -1,0 +1,158 @@
+# Generic ignore patterns
+logs/
+temp/
+build/
+cache/
+node_modules/
+
+
+# Binary installers / large downloads (must be fetched from upstream)
+*.deb
+*.rpm
+*.AppImage
+
+# Local databases / caches
+scripts/ssh_sessions.db
+.cache/
+
+# Nix build results
+result
+result-*
+
+
+# Nix REPL history
+.nix-repl-history
+
+nx.qcow2
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Secrets and sensitive data (SOPS)
+.secrets
+.sops
+.sop*
+*.key
+*.pem
+*.crt
+secrets.yaml
+secrets.json
+*-token
+*.token
+.env
+.env.*
+credentials.json
+
+# CI/CD temporary files
+trivy-report.json
+.nix-cache/
+iso/
+
+# Home-manager backup files
+*.nix-*-backup
+
+# System-specific
+hardware-configuration.nix.bak
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Keep important dotfiles
+!.github/
+!.gitlab-ci.yml
+!.gitea/
+!.gitignore
+!.gitattributes
+
+# Ignore build outputs from performing a nix-build or `nix build` command
+result
+result-*
+
+# Ignore automatically generated direnv output
+.direnv
+*.qcow2
+
+# ML Build Artifacts
+modules/ml/**/target/
+modules/ml/**/node_modules/
+modules/ml/**/*.db
+modules/ml/**/*.db-shm
+modules/ml/**/*.db-wal
+modules/ml/**/*.db-journal
+modules/ml/**/build/
+modules/ml/**/.cache/
+
+# General Build Artifacts (all modules)
+**/.cache/
+**/target/debug/
+**/target/release/
+.claude/settings.local.json
+.claude
+.codex
+# OAuth tokens (plaintext - never commit) - Updated paths
+modules/ml/integrations/mcp/server/secrets/oauth/*.token.json
+modules/ml/integrations/mcp/server/secrets/oauth/*.dev.json
+modules/ml/applications/securellm-bridge/secrets/oauth/*.token.json
+modules/ml/applications/securellm-bridge/secrets/oauth/*.dev.json
+
+# Only commit encrypted tokens
+!modules/ml/integrations/mcp/server/secrets/oauth/*.token.enc.json
+!modules/ml/applications/securellm-bridge/secrets/oauth/*.token.enc.json
+
+# Gemini CLI Build Artifacts
+modules/packages/js-packages/storage/*/.allstar/
+modules/packages/js-packages/storage/*/.gcp/
+modules/packages/js-packages/storage/*/.gemini/
+modules/packages/js-packages/storage/*/.github/
+modules/packages/js-packages/storage/*/.husky/
+modules/packages/js-packages/storage/*/.vscode/
+modules/packages/js-packages/storage/*/node_modules/
+modules/packages/js-packages/storage/*/dist/
+modules/packages/js-packages/storage/*/build/
+modules/packages/js-packages/storage/*/.turbo/
+modules/packages/js-packages/storage/*/coverage/
+modules/packages/tar-packages/storage/
+projects/cognitive-vault/core/target/debug/**
+modules/packages/js-packages/storage/
+modules/packages/deb-packages/storage
+modules/packages/_archive/
+modules/packages/hammer-ai/hammerai_1.0.50_amd64.deb
+
+# Model Languages
+.claude
+.codex
+#.mcp.json
+
+
+
+
+**/.deb
+
+# SOPS defaults
+
+
+
+
+
+
+sec/*.asc
+
+# Local artifacts
+modules/packages/google-chrome/
+scripts/ssh_sessions.db
+secrets/*.backup-*
+
+# Archived modules (local-only, not tracked)
+modules/_archive/
+
+modules/packages/google-chrome/google-chrome-stable_current_amd64.deb
+
