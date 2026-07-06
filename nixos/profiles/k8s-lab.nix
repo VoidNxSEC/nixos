@@ -1,6 +1,6 @@
 # profiles/k8s-lab.nix
 #
-# Sobrescreve regras de hardening de rede do sec/hardening.nix para uso local
+# Sobrescreve regras de hardening de rede do modules/security/profiles/hardened.nix para uso local
 # com Kubernetes (kind, minikube, k3s, kubeadm).
 #
 # ATENÇÃO: Este perfil relaxa intencionalmente regras de segurança.

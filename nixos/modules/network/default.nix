@@ -36,7 +36,6 @@
     # Anti-detection proxy (disabled, kept for future use)
     # ./spider-network-proxy.nix
 
-    # Kubernetes CNI
-    ./cilium-cni.nix
+    # Kubernetes CNI moved to modules/kubernetes/cilium-cni.nix
   ];
 }

@@ -44,7 +44,7 @@ in
       "xt_tcpudp" # -p tcp / -p udp matching
       "xt_conntrack" # -m conntrack (stateful rules)
       "xt_state" # -m state (legacy syntax used by hardening rules)
-      "xt_recent" # -m recent (port-scan / rate-limit rules in sec/hardening.nix)
+      "xt_recent" # -m recent (port-scan / rate-limit rules in modules/security/profiles/hardened.nix)
       "xt_limit" # -m limit
       "xt_multiport" # -m multiport
       "xt_LOG" # -j LOG target
@@ -89,7 +89,7 @@ in
       "kernel.unprivileged_bpf_disabled" = mkDefault 1;
       "kernel.yama.ptrace_scope" = mkDefault 2;
       "kernel.kexec_load_disabled" = mkDefault 1;
-      # modules_disabled=1 bloqueia hotplug pós-boot — setar mkForce 1 em sec/hardening.nix para ativar
+      # modules_disabled=1 bloqueia hotplug pós-boot — setar mkForce 1 em modules/security/profiles/hardened.nix para ativar
       "kernel.modules_disabled" = mkDefault 0;
       "kernel.perf_event_paranoid" = mkDefault 3;
       # 50000 previne cascata de auto-throttle que degrada para ~32000 após ~1h de uso do perf

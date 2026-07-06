@@ -291,11 +291,9 @@
             ./hosts/kernelcore
             ./hosts/kernelcore/configuration.nix
 
-            # Kubernetes Orquestration # GEMINI: Here is the complete stack,
-            #./modules/system/base.nix
-            ./modules/containers/k3s-cluster.nix
-            ./modules/network/cilium-cni.nix
-            ./modules/containers/longhorn-storage.nix
+            # Kubernetes — ativado via specialisations (k8s-lab, k8s-prod)
+            # Ver: hosts/kernelcore/specialisations/k8s-lab.nix
+            #      hosts/kernelcore/specialisations/k8s-prod.nix
 
             # ML-OPS API disabled (local path removed)
             #"${inputs.ml-ops-api}/ml-ops-api-module.nix"
@@ -347,7 +345,7 @@
             inputs.spooknix.nixosModules.default
 
             #"${inputs.mercury}/sprinkles.nix"
-            ./profiles/k8s-lab.nix
+            # k8s-lab migrated to hosts/kernelcore/specialisations/k8s-lab.nix
           ];
         };
 

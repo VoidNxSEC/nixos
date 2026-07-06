@@ -95,7 +95,7 @@ in
       '';
     };
 
-    # Rsyslog configuration moved to sec/hardening.nix to avoid duplication
+    # Rsyslog configuration moved to modules/security/profiles/hardened.nix to avoid duplication
     # (was causing 3x log entries in /var/log/messages)
 
     # Credential storage setup

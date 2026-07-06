@@ -18,8 +18,8 @@ import "${pkgs.path}/nixos/tests/make-test-python.nix" (
       { config, pkgs, ... }:
       {
         imports = [
-          ../../modules/security
-          ../../sec/hardening.nix
+          ../../security
+          ../../security/profiles/hardened.nix
         ];
 
         # Minimal config for test

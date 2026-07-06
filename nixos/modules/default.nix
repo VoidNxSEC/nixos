@@ -18,7 +18,7 @@
     ./audio # Pipewire, video production
 
     # ═══════════════════════════════════════════════════════════
-    # SECURITY (imported early, overridden last via sec/hardening.nix)
+    # SECURITY (imported early, hardened profile: modules/security/profiles/hardened.nix)
     # ═══════════════════════════════════════════════════════════
     ./security # Boot, kernel, network, SSH hardening, audit + SOC (security/soc/)
 
@@ -44,13 +44,18 @@
     # ./devops # DevOps tools - imported in home-manager (hosts/kernelcore/home/home.nix)
     ./ml # ML infrastructure + AI agents (consolidates machine-learning/ + ai/)
 
+    # ═══════════════════════════════════════════════════════════
     # CONTAINERS & VIRTUALIZATION
     # ═══════════════════════════════════════════════════════════
     ./containers # Docker, Podman, NixOS containers
     ./virtualization # VMs, vmctl, macOS KVM
 
-    # NOTE: K3s cluster, Cilium CNI, and Longhorn storage are imported
-    # via ./containers and ./network respectively, respecting their feature flags.
+    # ═══════════════════════════════════════════════════════════
+    # KUBERNETES (modules loaded; activation via specialisations)
+    # See: hosts/kernelcore/specialisations/k8s-lab.nix
+    #      hosts/kernelcore/specialisations/k8s-prod.nix
+    # ═══════════════════════════════════════════════════════════
+    ./kubernetes # K3s, Kind, Longhorn, Cilium CNI
 
     # ═══════════════════════════════════════════════════════════
     # DESKTOP & APPLICATIONS
