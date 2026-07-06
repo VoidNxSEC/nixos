@@ -22,7 +22,7 @@ jobs:
 
       - name: Build Nix derivation
         run: |
-          NIXPKGS=$(nix eval --impure --raw \
+          NIXPKGS=$(nix eval --impure --raw --expr \
             "(builtins.getFlake \"path:$PWD\").inputs.nixpkgs.outPath")
           nix-build tests/default.nix -A default -I "nixpkgs=${NIXPKGS}" --show-trace
 
