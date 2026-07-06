@@ -82,12 +82,13 @@ jobs:
           fi
 
   flake-check:
-      name: Validate Flake
-      runs-on: ubuntu-latest
-        - name: Setup Git LFS
-          run: |
-              git lfs install --force
-              git lfs version
+    name: Validate Flake
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Git LFS
+        run: |
+          git lfs install --force
+          git lfs version
 
       - name: Checkout
         uses: actions/checkout@v4
