@@ -132,8 +132,8 @@
     # };
 
     mercury = {
-      url = "git+file:///home/kernelcore/master/mercury";
-      flake = false;
+      url = "git+ssh://git@github.com/marcosfpina/mercury.git";
+      flake = true;
     };
     venus = {
       url = "git+ssh://git@github.com/marcosfpina/venus.git";
@@ -294,8 +294,8 @@
             # Kubernetes (k3s, Cilium, Longhorn) now in modules/kubernetes/
             # ═══════════════════════════════════════════════════════════
             self.nixosModules.default
-            "${inputs.mercury}/batter.nix"
-            "${inputs.mercury}/frosting.nix"
+            # inputs.mercury.nixosModules.batter
+            # inputs.mercury.nixosModules.frosting
 
             # NOTE: Feature flags and service configuration moved to:
             #       ./hosts/kernelcore/configuration.nix (lines 400-427)
@@ -333,7 +333,7 @@
             # ═══════════════════════════════════════════════════════════
             inputs.spooknix.nixosModules.default
 
-            "${inputs.mercury}/sprinkles.nix"
+            # inputs.mercury.nixosModules.sprinkles
             ./profiles/k8s-lab.nix
           ];
         };
