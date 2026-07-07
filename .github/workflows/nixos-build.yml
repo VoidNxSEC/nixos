@@ -73,7 +73,7 @@ jobs:
           git status --short
 
       - name: Setup Cachix
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v17
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
           authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
@@ -115,7 +115,7 @@ jobs:
           git status --short
 
       - name: Setup Cachix
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v17
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
           authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
@@ -176,7 +176,7 @@ jobs:
           git status --short
 
       - name: Setup Cachix
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v17
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
           authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
@@ -280,7 +280,7 @@ jobs:
           git status --short
 
       - name: Setup Cachix
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v17
         with:
           name: ${{ env.CACHIX_CACHE_NAME }}
           authToken: ${{ needs.setup-secrets.outputs.cachix_token }}
