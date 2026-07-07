@@ -9,5 +9,17 @@
 
     # Emergency boot: Trezor hardware auth, diagnostic tools, no heavy workloads
     ./emergency.nix
+
+    # Profissional de cybersecurity: ferramentas ofensivas/defensivas, Docker para labs
+    ./cybersecurity.nix
+
+    # Privacy paranoia: Tor, kernel hardening máximo, anti-fingerprinting
+    ./privacy-paranoia.nix
+
+    # Development: ambientes de linguagem, Docker, portas de dev abertas
+    ./development.nix
+
+    # Stable: kernel padrão, sem containers, hardening base, auto-upgrade
+    ./stable.nix
   ];
 }
