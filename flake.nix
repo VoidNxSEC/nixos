@@ -132,7 +132,7 @@
     # };
 
     mercury = {
-      url = "git+ssh://git@github.com/marcosfpina/mercury.git";
+      url = "git+ssh://git@github.com/VoidNxSEC/mercury.git";
       flake = true;
     };
     venus = {
