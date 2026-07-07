@@ -294,8 +294,8 @@
             # Kubernetes (k3s, Cilium, Longhorn) now in modules/kubernetes/
             # ═══════════════════════════════════════════════════════════
             self.nixosModules.default
-            # inputs.mercury.nixosModules.batter
-            # inputs.mercury.nixosModules.frosting
+            inputs.mercury.nixosModules.batter
+            inputs.mercury.nixosModules.frosting
 
             # NOTE: Feature flags and service configuration moved to:
             #       ./hosts/kernelcore/configuration.nix (lines 400-427)
@@ -333,7 +333,7 @@
             # ═══════════════════════════════════════════════════════════
             inputs.spooknix.nixosModules.default
 
-            # inputs.mercury.nixosModules.sprinkles
+            inputs.mercury.nixosModules.sprinkles
             ./profiles/k8s-lab.nix
           ];
         };
