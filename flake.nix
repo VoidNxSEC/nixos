@@ -70,7 +70,7 @@
 
     # Spider-Nix
     spider-nix = {
-      url = "git+ssh://git@github.com/VoidNxSEC/spider-nix";
+      url = "github:VoidNxSEC/spider-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     i915-governor = {
@@ -131,14 +131,15 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
 
-    mercury = {
-      url = "git+ssh://git@github.com/VoidNxSEC/mercury.git";
-      flake = true;
-    };
-    venus = {
-      url = "git+ssh://git@github.com/marcosfpina/venus.git";
-      flake = false;
-    };
+    # PENDENTE: reativar mercury e venus quando keys SSH estiverem configuradas
+    #mercury = {
+    #  url = "git+ssh://git@github.com/VoidNxSEC/mercury.git";
+    #  flake = true;
+    #};
+    #venus = {
+    #  url = "git+ssh://git@github.com/marcosfpina/venus.git";
+    #  flake = false;
+    #};
 
     #owasaka = {
     #url = "github:VoidNxSEC/O.W.A.S.A.K.A.";
@@ -294,8 +295,9 @@
             # Kubernetes (k3s, Cilium, Longhorn) now in modules/kubernetes/
             # ═══════════════════════════════════════════════════════════
             self.nixosModules.default
-            inputs.mercury.nixosModules.batter
-            inputs.mercury.nixosModules.frosting
+            # PENDENTE: reativar após restaurar mercury
+            #inputs.mercury.nixosModules.batter
+            #inputs.mercury.nixosModules.frosting
 
             # NOTE: Feature flags and service configuration moved to:
             #       ./hosts/kernelcore/configuration.nix (lines 400-427)
@@ -333,7 +335,8 @@
             # ═══════════════════════════════════════════════════════════
             inputs.spooknix.nixosModules.default
 
-            inputs.mercury.nixosModules.sprinkles
+            # PENDENTE: reativar após restaurar mercury
+            #inputs.mercury.nixosModules.sprinkles
             ./profiles/k8s-lab.nix
           ];
         };

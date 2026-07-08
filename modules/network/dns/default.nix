@@ -17,7 +17,7 @@ let
 
     src = ./.;
 
-    vendorHash = "sha256-f9j0KRpWmIPnPAXZpNqiMFng5zlcmzmem2R8Mst8kdU=";
+    vendorHash = "sha256-EyJIzW/cap3VCczFTmLdD1XDVSvZNqc/UfTlL6gTpW8=";
 
     meta = with lib; {
       description = "Fast DNS proxy with caching for improved resolution";

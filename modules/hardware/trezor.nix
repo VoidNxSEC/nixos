@@ -30,7 +30,7 @@ in
         python313Packages.trezor
       ]
       ++ optionals cfg.enableSSHAgent [
-        pinentry
+        pinentry-curses
         #python313Packages.libagent
       ];
 

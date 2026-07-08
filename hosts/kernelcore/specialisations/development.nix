@@ -20,8 +20,8 @@
 
     # ── Nix: builds agressivos com recursos máximos ───────────────────────────
     nix.settings = {
-      max-jobs = lib.mkForce 8;
-      cores = lib.mkForce 4;
+      max-jobs = lib.mkForce 2;
+      cores = lib.mkForce 2;
       keep-outputs = lib.mkForce true;
       keep-derivations = lib.mkForce true;
     };
@@ -47,7 +47,7 @@
       git-lfs gh lazygit
 
       # Análise de código
-      tokei loc cloc
+      tokei cloc
 
       # Containers / infra
       kubectl helm k9s docker-compose

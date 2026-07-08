@@ -7,7 +7,7 @@
 
 {
   # Import sops secrets for blockchain/web3
-  sops.secrets = {
+  sops.secrets = lib.mkIf config.kernelcore.secrets.blockchain.enable {
     # Ethereum wallet private key
     "ethereum/private_key" = {
       sopsFile = /etc/nixos/secrets/blockchain.yaml;
@@ -60,7 +60,7 @@
       group = config.users.users.kernelcore.group;
       mode = "0400";
     };
-  };
+  }; # end mkIf secrets.blockchain.enable
 
   # Environment variables for blockchain development
   # These will be available in the user's shell

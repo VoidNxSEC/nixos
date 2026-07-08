@@ -404,7 +404,7 @@
     };
 
     services.github-runner = {
-      enable = true;
+      enable = false;
       org = {
         enable = true;
         # Org-level runner covers all VoidNxSEC repos automatically.
@@ -476,22 +476,23 @@
     };
 
     secrets.sops = {
-      enable = true;
+      enable = false; # PENDENTE: reativar após importar age key para /var/lib/sops-nix/key.txt
       secretsPath = "/etc/nixos/secrets";
       ageKeyFile = "/var/lib/sops-nix/key.txt";
     };
 
-    secrets.github.enable = true;
-    secrets.ci.enable = false; # buildbot not operational; ci.yaml missing, keys absent from github.yaml
-    secrets.certificates.enable = true;
-    secrets.gcp-ml.enable = true;
-    secrets.aws-bedrock.enable = true;
-    secrets.blockchain.enable = true; # Ethereum, IPFS, Arweave secrets
-    secrets.k8s.enable = true;
-    secrets.grok.enable = true;
-    secrets.gitlab.enable = true;
-    secrets.api-keys.enable = true; # DeepSeek, Anthropic, Mistral, Gemini
-    secrets.forgejo.enable = true;
+    # PENDENTE: reativar após restaurar venus (secrets repo) e age key SOPS
+    secrets.github.enable = false;
+    secrets.ci.enable = false;
+    secrets.certificates.enable = false;
+    secrets.gcp-ml.enable = false;
+    secrets.aws-bedrock.enable = false;
+    secrets.blockchain.enable = false;
+    secrets.k8s.enable = false;
+    secrets.grok.enable = false;
+    secrets.gitlab.enable = false;
+    secrets.api-keys.enable = false;
+    secrets.forgejo.enable = false;
 
     ml.models-storage = {
       enable = true;
@@ -1016,7 +1017,7 @@
     };
 
     forgejo = {
-      enable = true;
+      enable = false; # PENDENTE: reativar após restaurar secrets forgejo
       integration = {
         publicDomain = "forgejo.nx.tailb3b82e.ts.net";
         publicUrl = "http://forgejo.nx.tailb3b82e.ts.net/";
@@ -1148,6 +1149,12 @@
   services.xserver.screenSection = ''
     Option "metamodes" "nvidia-auto-select +0+0 (ForceFullCompositionPipeLIne=On)"
   '';
+  # Boot loader — controle explícito desta máquina (mercury comentado)
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  networking.networkmanager.enable = true;
+
   users.groups.kernelcore = { };
   users.users.kernelcore = {
     isNormalUser = true;
@@ -1170,8 +1177,8 @@
     ];
     hashedPasswordFile = "/etc/nixos/sec/user-password";
     openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIqr4XMgOMg94E2101vACedmzpGGoDvP7yhaPZ7bBAhQ sec@voidnxlabs.com"
       "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG5StF4nUzkEsUei88BstktP/Q/g8BvlHeWnEDD+ii/jB7Fs4v4imG05tJU/jC8/ax2FFRSwoBRt7tH6RDp4Dys= user@iphone"
-      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDF4VaIRhsoZGJKZK7/6RdPyq7XNvyuvLQp+cPG4AueJ4SdLCAW7cob9cgDhTFb4bBG00LOdxcl9hqYcqA8KxkOwnoT+OuHKjBAgsEVdWw2U2p0tD/9UUMFEMt2xYEIucjXDczk/U4TYpi6h233QfdLaqJegOTUNLD7klL/d9uaQJr4q+g80+uKjKRqePLw7KfgMtGk5hDrz2lkv+vjD37vbZADZAp2WGpIz9m26vmzEj35m/54Bv714c9v4RczaD/Rww08P+gyRwH9G15kxZoEnVwxikZXnwXRARc3YU+zlzqJq3CHvbrXjc6yvapPnJ3Avbyl3dZ735nkaGos3HbRLqgx1el0zpuJcteXIrlwnch9agTusiZ4O2gdqAW3ptetdPFhJrH2FbZxD5zsouYw4b+OlVCCjY/tHK6M5jjD7P4hcZ96wamb56t5Qu/pKTI2KcagWZa6hZ4DZi/l55ATY04tEiEPfIOrL0ylWwRMpEKchFHbxz3Nm8jGAqFyDwT+vEGDB5nIy519crNo36Gq1Yl0T8rYPQxGe2eKxkSNkFp9kFsGhvjIcXdo/3MhwLX4GCPUmhXzg8hZJbgScJRlBYTMlTW7EBKVsX4FkeKOe1evRUZNf0kM2Fij5/U4YbYdYEMUoAezP6AAHGFt3Yn8EEof2rN61bWhNw8G8BI3fQ== glab"
       "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBE2jQWzD7N9sMWW+UKBNuxzS5v3Dt5g6UbZ/kd49b7XJugBLma8152DogVrblUxhPqfQfcCVrMHNHFlIkXAB9w= voidnxlabs"
     ];
     packages = with pkgs; [
@@ -1317,8 +1324,9 @@
     mtr.enable = true;
     gnupg.agent = {
       enable = true;
-      enableSSHSupport = true;
+      enableSSHSupport = lib.mkForce false; # PENDENTE: reativar após importar GPG keys
     };
+    ssh.startAgent = lib.mkForce false; # gcr-ssh-agent (GNOME keyring) assume o papel
     ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
     cognitive-vault.enable = true;
 

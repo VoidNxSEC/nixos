@@ -145,6 +145,7 @@ modules/packages/hammer-ai/hammerai_1.0.50_amd64.deb
 
 
 sec/*.asc
+sec/user-password
 
 # Local artifacts
 modules/packages/google-chrome/

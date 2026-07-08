@@ -70,7 +70,7 @@
     # ──────────────────────────────────────────────────────────────
     boot.kernel.sysctl = {
       "net.ipv4.icmp_echo_ignore_all" = lib.mkForce 0;
-      "kernel.unprivileged_userns_clone" = lib.mkForce 1;
+      #"kernel.unprivileged_userns_clone" = lib.mkForce 1;
       "net.bridge.bridge-nf-call-iptables" = lib.mkForce 1;
       "net.bridge.bridge-nf-call-ip6tables" = lib.mkForce 1;
       "vm.max_map_count" = lib.mkForce 524288;

@@ -89,22 +89,22 @@
     #"net.ipv4.conf.default.rp_filter" = lib.mkForce 0;
 
     # Permite ping para health checks (liveness/readiness probes via ICMP)
-    "net.ipv4.icmp_echo_ignore_all" = lib.mkForce 0;
+    #"net.ipv4.icmp_echo_ignore_all" = lib.mkForce 0;
 
     # Namespaces de usuário não-privilegiados — necessário para containerd
     # rootless e para o runtime de alguns operadores.
-    "kernel.unprivileged_userns_clone" = lib.mkForce 1;
+    #"kernel.unprivileged_userns_clone" = lib.mkForce 1;
 
-    "net.bridge.bridge-nf-call-iptables" = lib.mkForce 1;
-    "net.bridge.bridge-nf-call-ip6tables" = lib.mkForce 1;
+    #"net.bridge.bridge-nf-call-iptables" = lib.mkForce 1;
+   # "net.bridge.bridge-nf-call-ip6tables" = lib.mkForce 1;
 
     # Aumenta o limite de mapeamentos de memória; Elasticsearch, JVM e
     # algumas imagens de ML exigem valores acima de 262144.
-    "vm.max_map_count" = lib.mkForce 524288;
+   # "vm.max_map_count" = lib.mkForce 524288;
 
     # Conntrack — clusters com muitos pods esgotam o valor padrão rapidamente
-    "net.netfilter.nf_conntrack_max" = lib.mkForce 524288;
-    "net.nf_conntrack_max" = lib.mkForce 524288;
+   # "net.netfilter.nf_conntrack_max" = lib.mkForce 524288;
+   # "net.nf_conntrack_max" = lib.mkForce 524288;
   };
 
   environment.systemPackages = with pkgs; [

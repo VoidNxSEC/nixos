@@ -25,10 +25,14 @@
   programs.git = {
     enable = true;
 
-    # Default GPG key (GitHub)
+    # PENDENTE: restaurar chaves GPG do backup e reativar signing
+    # signing = {
+    #   key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnxlabs.com>
+    #   signByDefault = true;
+    # };
     signing = {
-      key = "EC57E3FB66D01693"; # voidnx (hey dog) <sec@voidnxlabs.com>
-      signByDefault = true;
+      key = "EC57E3FB66D01693";
+      signByDefault = false;
     };
 
     # ═══════════════════════════════════════════════════════════
@@ -114,6 +118,9 @@
             email = "sec@voidnxlabs.com";
             signingkey = "82FBA1A53A3FFA8B"; # VoidNxLabs <sec@voidnxlabs.com>
           };
+          # PENDENTE: remover após restaurar GPG backup
+          commit.gpgsign = false;
+          tag.gpgsign = false;
         };
       }
       # OLD KEY - Only for legacy GitHub repos that still need it

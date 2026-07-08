@@ -716,24 +716,6 @@
         "type": "github"
       }
     },
-    "mercury": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_2"
-      },
-      "locked": {
-        "lastModified": 1783406982,
-        "narHash": "sha256-2zBy7UExR/2xot8W3ZnxgcOLMG75/RxdRenn9ftbDY4=",
-        "ref": "refs/heads/main",
-        "rev": "dcac952c7e86fccc11d85d310c23282c294da1e9",
-        "revCount": 5,
-        "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/mercury.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/mercury.git"
-      }
-    },
     "niri": {
       "inputs": {
         "niri-stable": "niri-stable",
@@ -813,7 +795,7 @@
     },
     "nixos-hardware": {
       "inputs": {
-        "nixpkgs": "nixpkgs_3"
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1782166108,
@@ -894,22 +876,6 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1783224372,
-        "narHash": "sha256-8i/87eeoqiGE4yOTjwSA3Eh/ziJRQEmd/unYU+K27sk=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_3": {
-      "locked": {
         "lastModified": 1767892417,
         "narHash": "sha256-8bW3q88CEg2u4hSP66Vf4lpbLonHz7hqDNBMcCY7E9U=",
         "rev": "3497aa5c9457a9d88d71fa93a4a8368816fbeeba",
@@ -921,7 +887,7 @@
         "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
       }
     },
-    "nixpkgs_4": {
+    "nixpkgs_3": {
       "locked": {
         "lastModified": 1781577229,
         "narHash": "sha256-lrp67w8AulE9Ks53n27I45ADSzbOCn4H+CNW1Ck8B+8=",
@@ -937,7 +903,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_5": {
+    "nixpkgs_4": {
       "locked": {
         "lastModified": 1744536153,
         "narHash": "sha256-awS2zRgF4uTwrOKwwiJcByDzDOdo3Q1rPZbiHQg/N38=",
@@ -953,7 +919,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_6": {
+    "nixpkgs_5": {
       "locked": {
         "lastModified": 1775888245,
         "narHash": "sha256-nwASzrRDD1JBEu/o8ekKYEXm/oJW6EMCzCRdrwcLe90=",
@@ -1003,18 +969,16 @@
         "home-manager": "home-manager",
         "hyprland": "hyprland",
         "i915-governor": "i915-governor",
-        "mercury": "mercury",
         "niri": "niri",
         "nix-colors": "nix-colors",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs_4",
+        "nixpkgs": "nixpkgs_3",
         "securellm-bridge": "securellm-bridge",
         "securellm-mcp": "securellm-mcp",
         "sops-nix": "sops-nix",
         "spider-nix": "spider-nix",
         "spooknix": "spooknix",
-        "swissknife": "swissknife",
-        "venus": "venus"
+        "swissknife": "swissknife"
       }
     },
     "rust-overlay": {
@@ -1058,7 +1022,7 @@
     },
     "rust-overlay_3": {
       "inputs": {
-        "nixpkgs": "nixpkgs_5"
+        "nixpkgs": "nixpkgs_4"
       },
       "locked": {
         "lastModified": 1777346187,
@@ -1144,7 +1108,7 @@
     },
     "sops-nix": {
       "inputs": {
-        "nixpkgs": "nixpkgs_6"
+        "nixpkgs": "nixpkgs_5"
       },
       "locked": {
         "lastModified": 1782165805,
@@ -1191,15 +1155,15 @@
       "locked": {
         "lastModified": 1780447177,
         "narHash": "sha256-BwW39bXvwC9KXxoUrwJ5kSseGp2RCKJyV/14ay7OA3k=",
-        "ref": "refs/heads/main",
+        "owner": "VoidNxSEC",
+        "repo": "spider-nix",
         "rev": "9823311c5e6b9ce8d512ddc14f6f2260e3c5ce6a",
-        "revCount": 55,
-        "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/VoidNxSEC/spider-nix"
+        "owner": "VoidNxSEC",
+        "repo": "spider-nix",
+        "type": "github"
       }
     },
     "spooknix": {
@@ -1392,22 +1356,6 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
-      }
-    },
-    "venus": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1782582341,
-        "narHash": "sha256-nSyShTIYrlERYgdA3zGGUHxPwC04gLnvEgmheASZ6/U=",
-        "ref": "refs/heads/main",
-        "rev": "00ba53fe6a4f1896af96ca22df288c3f97d7b54b",
-        "revCount": 8,
-        "type": "git",
-        "url": "ssh://git@github.com/marcosfpina/venus.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/marcosfpina/venus.git"
       }
     },
     "xdph": {

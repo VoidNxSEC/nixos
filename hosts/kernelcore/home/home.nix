@@ -295,7 +295,7 @@
       enable = true;
       defaultCacheTtl = 1800;
       maxCacheTtl = 7200;
-      enableSshSupport = true;
+      enableSshSupport = false; # PENDENTE: reativar após importar GPG keys
       pinentry.package = pkgs.pinentry-gnome3;
     };
   };
