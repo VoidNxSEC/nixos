@@ -1305,7 +1305,7 @@
       rustup
       terraform-providers.carlpett_sops
       terraform-providers.hashicorp_vault
-      anytype
+      #anytype
       antigravity
       evince
       sillytavern
