@@ -95,8 +95,11 @@ in
 
     mainGpu = lib.mkOption {
       type = lib.types.int;
-      default = 1;
-      description = "Main GPU index for inference (0 = first GPU).";
+      default = 0;
+      description = ''
+        CUDA device index for main GPU. With PRIME (Intel+NVIDIA), CUDA only
+        sees the dGPU as device 0 — the iGPU is not CUDA-capable. Use 0.
+      '';
     };
 
     # =====================
@@ -336,7 +339,7 @@ in
           ]
           # CUDA Graphs (no explicit flag needed in recent versions, enabled by default for bs=1)
           # Flash Attention
-          ++ lib.optionals cfg.flashAttention [ "--flash-attn on" ]
+          ++ lib.optionals cfg.flashAttention [ "--flash-attn" ]
           # Memory options
           ++ lib.optionals (!cfg.mmap) [ "--no-mmap" ]
           ++ lib.optionals cfg.mlock [ "--mlock" ]
@@ -402,7 +405,7 @@ in
         PrivateUsers = true;
         ProtectClock = true;
         ProtectControlGroups = true;
-        ProtectHome = true;
+        ProtectHome = lib.mkDefault "read-only";
         ProtectKernelLogs = true;
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
