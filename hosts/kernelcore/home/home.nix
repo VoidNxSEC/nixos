@@ -25,11 +25,9 @@
     ../../../modules/development/git-forge-tools.nix # Unified Git Forges CLI Tools
     ../../../modules/development/ssh-git-forges.nix # Advanced Git Forges SSH Configuration
   ]
-  ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland.nix;
-  # Niri config temporarily disabled - focus on Hyprland first
-  # ++ lib.optional (osConfig.programs.niri.enable) inputs.niri.homeModules.niri
-  # ++ lib.optional (osConfig.programs.niri.enable) ./niri/niri.nix
-  # ++ lib.optional (osConfig.programs.niri.enable) ./niri/waybar-niri.nix;
+  ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland.nix
+  ++ lib.optional (osConfig.programs.niri.enable) ./niri/niri.nix
+  ++ lib.optional (osConfig.programs.niri.enable) ./niri/waybar-niri.nix;
 
   # ============================================================
   # SHELL CONFIGURATION

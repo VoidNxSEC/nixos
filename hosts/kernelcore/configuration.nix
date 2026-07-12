@@ -1099,7 +1099,7 @@
     };
   };
 
-  programs.niri.enable = false;
+  programs.niri.enable = true;
 
   imports = [ ./specialisations ];
 

@@ -174,6 +174,7 @@ in
         intel-media-driver # Driver iHD para VA-API (Gen9+) - CRÍTICO para Chromium
         intel-vaapi-driver # Driver legado (i965)
         vpl-gpu-rt # Intel OneVPL
+	intel-compute-runtime
       ];
     };
 

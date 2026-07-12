@@ -29,7 +29,7 @@ in
   imports = [
     ./colors.nix
     ./kitty.nix # NEW - Kitty terminal with glassmorphism theme
-    ./wallpaper.nix # NEW - Wallpaper management with swaybg service
+    ./wallpaper.nix # Wallpaper management com swww (animado, compositor-agnostic)
     ./waybar.nix
     ./mako.nix
     ./wofi.nix
@@ -178,8 +178,7 @@ in
     # Notification control
     libnotify
 
-    # Wallpaper
-    swaybg
+    # Wallpaper (swww é instalado via wallpaper.nix)
 
     # Clipboard
     wl-clipboard

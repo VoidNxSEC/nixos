@@ -1,10 +1,8 @@
 # ============================================
 # Wallpaper Management - Glassmorphism Theme
 # ============================================
-# Manages themed wallpaper for Hyprland with:
-# - Static wallpaper via swaybg
-# - Wallpaper generation script (optional)
-# - Color-matched dark glassmorphism aesthetic
+# Compositor-agnostic: usa swww (Wayland, animado)
+# Funciona com Niri, Hyprland, Sway etc.
 # ============================================
 
 {
@@ -85,13 +83,10 @@ let
 
     echo "Wallpaper saved to: $OUTPUT_FILE"
 
-    # Optionally restart swaybg if running
-    if pgrep -x swaybg > /dev/null; then
-      echo "Refreshing swaybg..."
-      pkill swaybg || true
-      sleep 0.5
-      swaybg -i "$OUTPUT_FILE" -m fill &
-      disown
+    # Atualiza wallpaper se swww estiver rodando
+    if pgrep -x swww-daemon > /dev/null; then
+      echo "Refreshing swww..."
+      swww img "$OUTPUT_FILE" --transition-type grow --transition-pos 0.5,0.5 --transition-duration 2
     fi
 
     echo "Done!"
@@ -132,13 +127,10 @@ let
         mv "$OUTPUT_FILE.tmp" "$OUTPUT_FILE"
         echo "✨ Downloaded to: $OUTPUT_FILE"
         
-        # Optionally restart swaybg
-        if pgrep -x swaybg > /dev/null; then
-          echo "󰑓 Refreshing swaybg..."
-          pkill swaybg || true
-          sleep 0.5
-          swaybg -i "$OUTPUT_FILE" -m fill &
-          disown
+        # Atualiza wallpaper se swww estiver rodando
+        if pgrep -x swww-daemon > /dev/null; then
+          echo "󰑓 Refreshing swww..."
+          swww img "$OUTPUT_FILE" --transition-type grow --transition-pos 0.5,0.5 --transition-duration 2
         fi
         
         echo "󰄬 Done!"
@@ -167,13 +159,14 @@ let
 
     echo "󰋩 Setting wallpaper: $WALLPAPER"
 
-    # Kill existing swaybg
-    pkill swaybg || true
-    sleep 0.3
-
-    # Start swaybg with new wallpaper
-    swaybg -i "$WALLPAPER" -m fill &
-    disown
+    if pgrep -x swww-daemon > /dev/null; then
+      swww img "$WALLPAPER" --transition-type grow --transition-pos 0.5,0.5 --transition-duration 2
+    else
+      swww-daemon &
+      disown
+      sleep 0.3
+      swww img "$WALLPAPER" --transition-type grow --transition-pos 0.5,0.5 --transition-duration 2
+    fi
 
     echo "󰄬 Wallpaper set!"
   '';
@@ -184,11 +177,10 @@ in
   # PACKAGES
   # ============================================
   home.packages = with pkgs; [
-    swaybg
-    imagemagick # For wallpaper generation
-    curl # For wallpaper download
+    swww            # wallpaper animado (substitui swaybg, funciona com qualquer compositor)
+    imagemagick
+    curl
 
-    # Custom scripts
     wallpaperGeneratorScript
     wallpaperDownloadScript
     setWallpaperScript
@@ -205,27 +197,12 @@ in
   '';
 
   # ============================================
-  # SYSTEMD USER SERVICE - Wallpaper Daemon
+  # SYSTEMD USER SERVICE - swww daemon
   # ============================================
-  systemd.user.services.swaybg = {
-    Unit = {
-      Description = "Wayland wallpaper daemon (swaybg)";
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-    };
-
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.swaybg}/bin/swaybg -i ${defaultWallpaper} -m fill";
-      ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR1 $MAINPID";
-      Restart = "on-failure";
-      RestartSec = 1;
-    };
-
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
+  # swww-daemon é iniciado pelos compositors (niri spawn-at-startup,
+  # hyprland exec-once). Não instanciamos via systemd pra evitar
+  # race condition com a sessão Wayland.
+  # Use `set-wallpaper` ou `generate-glassmorphism-wallpaper` manualmente.
 
   # ============================================
   # PLACEHOLDER WALLPAPER
