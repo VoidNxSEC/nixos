@@ -1,0 +1,30 @@
+# Config do typo-catcher (workflow quality.yml).
+# Falsos positivos comuns em repo Nix/infra: hashes, nomes de pacotes,
+# chaves SSH, material arquivado.
+
+[files]
+extend-exclude = [
+  "flake.lock",
+  "docs/archive/**",
+  "secrets/**",
+  "*.age",
+  "*.asc",
+  "*.gguf",
+  "**/*.lock",
+]
+
+[default]
+# Ignora hashes sri/base64, chaves públicas ssh e store paths
+extend-ignore-re = [
+  "sha256-[A-Za-z0-9+/=]{40,}",
+  "ssh-(ed25519|rsa) [A-Za-z0-9+/=]+",
+  "ecdsa-sha2-nistp256 [A-Za-z0-9+/=]+",
+  "/nix/store/[a-z0-9]{32}-[^ ]*",
+]
+
+[default.extend-words]
+# Vocabulário do projeto — não são typos
+nixos = "nixos"
+hyprland = "hyprland"
+waybar = "waybar"
+noice = "noice"

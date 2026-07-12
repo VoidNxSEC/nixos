@@ -114,7 +114,7 @@ in
     # SOPS secret for runner token
     sops.secrets = mkIf cfg.useSops {
       "gitlab/runner/token" = {
-        sopsFile = "${inputs.venus}/secrets/gitlab.yaml";
+        sopsFile = ../../../secrets/gitlab.yaml;
         owner = "gitlab-runner";
         group = "gitlab-runner";
         mode = "0400";

@@ -1,0 +1,97 @@
+name: Docs
+
+# Documentação automática publicada no GitHub Pages:
+# 1. options-doc — referência das options kernelcore.* gerada por
+#    nixosOptionsDoc a partir das próprias declarações dos módulos
+#    (nome, tipo, default, descrição, link pro arquivo de origem).
+# 2. Site mdBook — monta o livro a partir de docs/ (242+ arquivos .md);
+#    o SUMMARY.md é gerado automaticamente da árvore de diretórios.
+#
+# Pré-requisito (uma vez): Settings → Pages → Source = "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "modules/**"
+      - "hosts/**"
+      - "flake.*"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      # Referência de options gerada do próprio código — se a doc inline
+      # dos módulos melhora (Fase 6), esta página melhora junto.
+      - name: Build options reference (nixosOptionsDoc)
+        run: nix build .#options-doc
+
+      - name: Assemble mdBook
+        run: |
+          mkdir -p book-src/src
+          cp -r docs/* book-src/src/
+          cp result/options.md book-src/src/options-reference.md
+
+          cat > book-src/book.toml <<'EOF'
+          [book]
+          title = "VoidNxSEC / nixos"
+          description = "Documentação da configuração NixOS (kernelcore)"
+          language = "pt-BR"
+          src = "src"
+
+          [output.html]
+          default-theme = "ayu"
+          git-repository-url = "https://github.com/VoidNxSEC/nixos"
+          EOF
+
+          # SUMMARY.md gerado da árvore: capítulo por diretório, página por .md.
+          {
+            echo "# Summary"
+            echo
+            echo "- [Referência de Options (kernelcore.*)](options-reference.md)"
+            (cd book-src/src && find . -name '*.md' \
+              ! -path './archive/*' ! -name 'SUMMARY.md' ! -name 'options-reference.md' \
+              | sort | while read -r f; do
+                rel="${f#./}"
+                title="$(basename "$rel" .md)"
+                depth="$(echo "$rel" | tr -cd '/' | wc -c)"
+                indent="$(printf '%*s' $((depth * 2)) '')"
+                echo "${indent}- [${title}](${rel})"
+              done)
+          } > book-src/src/SUMMARY.md
+
+          nix run nixpkgs#mdbook -- build book-src --dest-dir ../book
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: book
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -21,7 +21,7 @@ in
     sops.secrets = {
       # Grok API Key
       "api_key_grok" = {
-        sopsFile = "${inputs.venus}/secrets/grok.yaml";
+        sopsFile = ../../secrets/grok.yaml;
         mode = "0400";
         owner = "root";
         group = "root";

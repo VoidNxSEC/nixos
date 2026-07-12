@@ -21,7 +21,7 @@ in
     sops.secrets = {
       # Anthropic API Key
       "anthropic_api_key" = {
-        sopsFile = "${inputs.venus}/secrets/api-keys.yaml";
+        sopsFile = ../../secrets/api-keys.yaml;
         mode = "0400";
         owner = "root";
         group = "root";

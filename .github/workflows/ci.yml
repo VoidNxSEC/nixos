@@ -32,8 +32,12 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
+      # `nix fmt` reformata in-place; o diff vazio é o que prova que o
+      # repo já estava formatado — é assim que o check falha em CI.
       - name: Format check (nixfmt-tree)
-        run: nix fmt .
+        run: |
+          nix fmt .
+          git diff --exit-code
 
   eval:
     runs-on: ubuntu-latest

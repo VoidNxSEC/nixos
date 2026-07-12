@@ -21,7 +21,7 @@ in
     sops.secrets = {
       # K3s Cluster Token
       "k3s-token" = {
-        sopsFile = "${inputs.venus}/secrets/k8s.yaml";
+        sopsFile = ../../secrets/k8s.yaml;
         mode = "0400";
         owner = "root";
         group = "root";

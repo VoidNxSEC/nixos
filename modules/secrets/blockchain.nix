@@ -24,7 +24,7 @@ in
     sops.secrets = {
       # Ethereum wallet private key
       "ethereum/private_key" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0400"; # Read-only for owner
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -32,7 +32,7 @@ in
 
       # Ethereum deployer address (not sensitive, but kept with secrets)
       "ethereum/deployer_address" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0444"; # Readable by all
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -40,21 +40,21 @@ in
 
       # RPC endpoints
       "rpc/sepolia_url" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
 
       "rpc/mainnet_url" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
 
       "rpc/alchemy_key" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0400";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -62,7 +62,7 @@ in
 
       # Etherscan API key
       "etherscan/api_key" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -70,21 +70,21 @@ in
 
       # IPFS credentials
       "ipfs/api_url" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0444";
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
 
       "ipfs/project_id" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
 
       "ipfs/project_secret" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0400";
         owner = config.users.users.kernelcore.name;
         group = "users";
@@ -92,7 +92,7 @@ in
 
       # Arweave wallet path (not the actual wallet, just the path)
       "arweave/wallet_path" = {
-        sopsFile = "${inputs.venus}/secrets/blockchain.yaml";
+        sopsFile = ../../secrets/blockchain.yaml;
         mode = "0444";
         owner = config.users.users.kernelcore.name;
         group = "users";

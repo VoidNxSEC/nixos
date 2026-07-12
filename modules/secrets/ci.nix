@@ -16,7 +16,7 @@ in
 
     secretsFile = mkOption {
       type = types.path;
-      default = "${inputs.venus}/secrets/github.yaml";
+      default = ../../secrets/github.yaml;
       description = "Path to the SOPS-encrypted CI secrets file.";
     };
   };

@@ -18,6 +18,44 @@ in
   # SecureLLM MCP - from external flake input
   securellm-mcp = import ../pkgs/securellm-mcp.nix { inherit pkgs inputs; };
 
+  # ── Documentação automática das options kernelcore.* ──
+  # Gera Markdown (CommonMark) a partir das declarações de options do
+  # módulo-sistema, com nome, tipo, default, descrição e arquivo de origem.
+  # Uso: nix build .#options-doc  → result/ contém options.md
+  # Consumido pelo workflow docs.yml para publicar no GitHub Pages.
+  options-doc =
+    let
+      eval = self.nixosConfigurations.kernelcore;
+      doc = pkgs.nixosOptionsDoc {
+        options = eval.options.kernelcore;
+        # descrições ausentes viram warning, não erro — o objetivo é
+        # documentar o que existe, não travar CI enquanto a Fase 6
+        # (documentação inline completa) não termina.
+        warningsAreErrors = false;
+        transformOptions =
+          opt:
+          opt
+          // {
+            # troca o caminho absoluto do nix store pelo caminho relativo
+            # do repo, com link para o arquivo no GitHub
+            declarations = map (
+              d:
+              let
+                rel = pkgs.lib.removePrefix "${self}/" (toString d);
+              in
+              {
+                name = rel;
+                url = "https://github.com/VoidNxSEC/nixos/blob/main/${rel}";
+              }
+            ) opt.declarations;
+          };
+      };
+    in
+    pkgs.runCommand "kernelcore-options-doc" { } ''
+      mkdir -p $out
+      cp ${doc.optionsCommonMark} $out/options.md
+    '';
+
   #securellm-bridge =
   #  inputs.securellm-bridge.packages.${system}.default
   #    or inputs.securellm-bridge.packages.${system}.securellm-bridge or null;

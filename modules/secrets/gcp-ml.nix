@@ -24,14 +24,14 @@ in
     sops.secrets = {
       # GCP Project Configuration
       "GCP_PROJECT_ID" = {
-        sopsFile = "${inputs.venus}/secrets/gcp-ml.yaml";
+        sopsFile = ../../secrets/gcp-ml.yaml;
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";
       };
 
       "GCP_LOCATION" = {
-        sopsFile = "${inputs.venus}/secrets/gcp-ml.yaml";
+        sopsFile = ../../secrets/gcp-ml.yaml;
         mode = "0440";
         owner = config.users.users.kernelcore.name;
         group = "users";

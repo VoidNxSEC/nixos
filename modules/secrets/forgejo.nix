@@ -12,7 +12,7 @@ with lib;
 
 let
   cfg = config.kernelcore.secrets.forgejo;
-  secretsFile = "${inputs.venus}/secrets/forgejo.yaml";
+  secretsFile = ../../secrets/forgejo.yaml;
   secretsFileExists = pathExists secretsFile;
 in
 {

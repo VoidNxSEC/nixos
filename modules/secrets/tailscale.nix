@@ -16,8 +16,8 @@ in
     enable = mkEnableOption "Enable Tailscale secrets management via SOPS";
 
     secretsFile = mkOption {
-      type = types.str;
-      default = "${inputs.venus}/secrets/tailscale.yaml";
+      type = types.path;
+      default = ../../secrets/tailscale.yaml;
       description = "Path to SOPS-encrypted Tailscale secrets file";
     };
   };

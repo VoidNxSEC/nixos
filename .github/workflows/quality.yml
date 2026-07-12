@@ -1,0 +1,115 @@
+name: Code Quality
+
+# Qualidade de código Nix + higiene geral do repo:
+# - statix: anti-patterns de Nix (lints com sugestão de fix)
+# - deadnix: código Nix morto (bindings/args não usados)
+# - typos: typo catcher em código, comentários e docs (config: .typos.toml)
+# - actionlint: valida os próprios workflows
+# - metrics: métricas de código no summary do job (tokei + contagens do repo)
+#
+# statix e deadnix são informativos por enquanto (continue-on-error):
+# o repo está em reestruturação (Fases 4-6) e a dívida vai sendo zerada
+# por fase — quando zerar, remover o continue-on-error para travar regressão.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  statix:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Statix lint (anti-patterns Nix)
+        run: nix run nixpkgs#statix -- check .
+
+  deadnix:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Deadnix (código morto)
+        run: nix run nixpkgs#deadnix -- --fail .
+
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Typo check (código + docs)
+        run: nix run nixpkgs#typos -- --config .typos.toml .
+
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Actionlint (valida workflows)
+        run: nix run nixpkgs#actionlint -- .github/workflows/*.yml
+
+  metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Code metrics → job summary
+        run: |
+          {
+            echo "## 📊 Métricas do repositório"
+            echo
+            echo "### Linhas por linguagem (tokei)"
+            echo '```'
+            nix run nixpkgs#tokei -- --exclude docs/archive .
+            echo '```'
+            echo
+            echo "### Estrutura Nix"
+            echo "| Métrica | Valor |"
+            echo "| :--- | ---: |"
+            echo "| Módulos (.nix em modules/) | $(find modules -name '*.nix' | wc -l) |"
+            echo "| Arquivos do host kernelcore | $(find hosts/kernelcore -name '*.nix' | wc -l) |"
+            echo "| Options declaradas (mkOption/mkEnableOption) | $(grep -rE 'mkOption|mkEnableOption' modules --include='*.nix' | wc -l) |"
+            echo "| Options fora do namespace kernelcore.* | $(grep -rEl 'options\.(?!kernelcore)[a-z]' modules --include='*.nix' -P | wc -l) |"
+            echo
+            echo "### 10 maiores arquivos .nix (candidatos a split — Fase 5)"
+            echo '```'
+            find modules hosts -name '*.nix' -exec wc -l {} + | sort -rn | head -11 | tail -10
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

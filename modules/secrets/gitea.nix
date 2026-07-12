@@ -24,7 +24,7 @@ in
     sops.secrets = {
       # Gitea Admin Token (for repository automation)
       "gitea-admin-token" = {
-        sopsFile = "${inputs.venus}/secrets/gitea.yaml";
+        sopsFile = ../../secrets/gitea.yaml;
         mode = "0400";
         owner = "root";
         group = "root";

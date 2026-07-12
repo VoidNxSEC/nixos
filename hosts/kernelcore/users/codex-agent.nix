@@ -10,13 +10,9 @@ with lib;
 let
   cfg = config.kernelcore.services.users.codex-agent;
 
-  tarCodexPackage =
-    if config.kernelcore.packages.tar.resolvedPackages ? codex then
-      config.kernelcore.packages.tar.resolvedPackages.codex
-    else
-      null;
-
-  packageDefault = if tarCodexPackage != null then tarCodexPackage else pkgs.codex;
+  # tar-packages (kernelcore.packages.tar.resolvedPackages) foi removido do
+  # repo — o pacote upstream é o default direto.
+  packageDefault = pkgs.codex;
 
   codexBinary = "${cfg.package}/bin/${cfg.binaryName}";
 
