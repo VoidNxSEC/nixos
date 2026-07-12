@@ -25,9 +25,14 @@
     ../../../modules/development/git-forge-tools.nix # Unified Git Forges CLI Tools
     ../../../modules/development/ssh-git-forges.nix # Advanced Git Forges SSH Configuration
   ]
-  ++ lib.optional (osConfig.services.hyprland-desktop.enable) ./hyprland.nix
+  ++ lib.optional (osConfig.kernelcore.desktop.hyprland.enable) ./hyprland.nix
   ++ lib.optional (osConfig.programs.niri.enable) ./niri/niri.nix
-  ++ lib.optional (osConfig.programs.niri.enable) ./niri/waybar-niri.nix;
+  # waybar-niri só em niri standalone: com Hyprland ativo o waybar do
+  # glassmorphism (que também suporta niri) prevalece — evita conflito de
+  # definição em programs.waybar.settings.mainBar.
+  ++ lib.optional (
+    osConfig.programs.niri.enable && !osConfig.kernelcore.desktop.hyprland.enable
+  ) ./niri/waybar-niri.nix;
 
   # ============================================================
   # SHELL CONFIGURATION
@@ -227,16 +232,14 @@
   # ============================================================
   # PROGRAM CONFIGURATIONS
   # ============================================================
-  programs = {
-    # ========================================================
-    # Intelligent SSH Configuration
-    # ========================================================
-    ssh.gitForges = {
-      enable = true;
-      keys.gitlab = "glab";
-    };
-    git-forge-tools.enable = true;
+  # Git forges (CLI + SSH inteligente) — ex-programs.ssh.gitForges/git-forge-tools
+  kernelcore.development.ssh-git-forges = {
+    enable = true;
+    keys.gitlab = "glab";
+  };
+  kernelcore.development.git-forge-tools.enable = true;
 
+  programs = {
     # ========================================================
     # Home Manager
     # ========================================================
@@ -269,19 +272,6 @@
       waybar.enable = true;
     };
 
-    actionsTv = {
-      enable = false;
-      pollInterval = 30;
-      waybar.enable = true;
-      ui.terminalCommand = "${pkgs.alacritty}/bin/alacritty -e";
-      projects = [
-        {
-          name = "spooknix";
-          repo = "VoidNxSEC/spooknix";
-          maxRuns = 5;
-        }
-      ];
-    };
   };
 
   # ============================================================

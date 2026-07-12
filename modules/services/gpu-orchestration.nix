@@ -59,7 +59,7 @@ with lib;
     # ═══════════════════════════════════════════════════════════
 
     # Modify llamacpp-swap to support GPU modes
-    systemd.services.llamacpp-swap = mkIf config.services.llamacpp-swap.enable {
+    systemd.services.llamacpp-swap = mkIf config.kernelcore.ml.inference.llamacpp-swap.enable {
       conflicts = [ "gpu-docker-mode.target" ];
       partOf = [ "gpu-local-mode.target" ];
 

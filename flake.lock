@@ -1,25 +1,5 @@
 {
   "nodes": {
-    "actions-tv": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1775603162,
-        "narHash": "sha256-/7mcSqbT6pgd64p7PwaRx9b7sX8+Kiu+OUJjWG0paGY=",
-        "owner": "VoidNxSEC",
-        "repo": "actions-tv",
-        "rev": "7128fd3baac93f51e3527bfef0129e9c63513f58",
-        "type": "github"
-      },
-      "original": {
-        "owner": "VoidNxSEC",
-        "repo": "actions-tv",
-        "type": "github"
-      }
-    },
     "ai-agent-os": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -85,15 +65,15 @@
       "locked": {
         "lastModified": 1782356673,
         "narHash": "sha256-JBlSLWS24SmKB5a+13dc5B8zAmhYKYw0wwRSII7leNw=",
-        "owner": "VoidNxSEC",
-        "repo": "arch-analyzer",
+        "ref": "refs/heads/main",
         "rev": "8764f80b9315eb3964d66705a6fec6fccc349539",
-        "type": "github"
+        "revCount": 22,
+        "type": "git",
+        "url": "ssh://git@github.com/VoidNxSEC/arch-analyzer"
       },
       "original": {
-        "owner": "VoidNxSEC",
-        "repo": "arch-analyzer",
-        "type": "github"
+        "type": "git",
+        "url": "ssh://git@github.com/VoidNxSEC/arch-analyzer"
       }
     },
     "base16-schemes": {
@@ -960,7 +940,6 @@
     },
     "root": {
       "inputs": {
-        "actions-tv": "actions-tv",
         "ai-agent-os": "ai-agent-os",
         "arch-analyzer": "arch-analyzer",
         "cognitive-vault": "cognitive-vault",

@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.modules.audio.production;
+  cfg = config.kernelcore.audio.production;
 in
 {
-  options.modules.audio.production = {
+  options.kernelcore.audio.production = {
     enable = mkEnableOption "Ambiente de produção musical completo";
 
     jackAudio = mkOption {
@@ -561,12 +561,12 @@ in
 
           Adicione ao seu `configuration.nix`:
           ```nix
-          modules.audio.production.enable = true;
+          kernelcore.audio.production.enable = true;
           ```
 
           Opções adicionais:
           ```nix
-          modules.audio.production = {
+          kernelcore.audio.production = {
             enable = true;
             jackAudio = true;        # JACK Audio Connection Kit
             plugins = true;          # Plugins LV2/LADSPA/VST

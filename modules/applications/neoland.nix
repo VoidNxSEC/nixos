@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.programs.neoland;
+  cfg = config.kernelcore.applications.neoland;
 in
 {
-  options.programs.neoland = {
+  options.kernelcore.applications.neoland = {
     enable = mkEnableOption "Neoland AI Agent Interface";
 
     serverPort = mkOption {

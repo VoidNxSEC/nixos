@@ -4,10 +4,14 @@
 { config, lib, ... }:
 
 let
-  cfg = config.services.phantom;
+  cfg = config.kernelcore.ml.agents.phantom;
 in
 {
-  options.services.phantom = {
+  imports = [
+    ./app.nix # Phantom AI toolkit (CLI/desktop; migrado de modules/programs/)
+  ];
+
+  options.kernelcore.ml.agents.phantom = {
     enable = lib.mkEnableOption "Phantom security scanner";
 
     port = lib.mkOption {
@@ -43,7 +47,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    warnings = [ "services.phantom: stub — implement service before enabling." ];
+    warnings = [ "kernelcore.ml.agents.phantom: stub — implement service before enabling." ];
 
     users.users.${cfg.user} = {
       isSystemUser = true;

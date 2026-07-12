@@ -11,7 +11,7 @@
 with lib;
 
 let
-  cfg = config.services.gitlabDuo;
+  cfg = config.kernelcore.services.gitlab-duo;
 
   # Convert YAML config to environment variables
   configToEnv =
@@ -30,7 +30,7 @@ let
 
 in
 {
-  options.services.gitlabDuo = {
+  options.kernelcore.services.gitlab-duo = {
     enable = mkEnableOption "GitLab Duo service";
 
     settings = mkOption {

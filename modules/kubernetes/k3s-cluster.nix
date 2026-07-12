@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.services.k3s-cluster;
+  cfg = config.kernelcore.kubernetes.k3s;
 in
 {
-  options.services.k3s-cluster = {
+  options.kernelcore.kubernetes.k3s = {
     enable = mkEnableOption "K3s Kubernetes cluster";
 
     role = mkOption {
@@ -141,8 +141,7 @@ in
       "net.bridge.bridge-nf-call-ip6tables" = 1;
       "net.ipv4.ip_forward" = mkForce 1;
       "net.ipv6.conf.all.forwarding" = mkForce 1;
-      "net.ipv4.conf.all.rp_filter" = mkForce 0;
-      "net.ipv4.conf.default.rp_filter" = mkForce 0;
+      # rp_filter fica na specialisation (k8s-prod.nix) — colide com security/kernel.nix aqui.
 
       # Network performance tuning
       "net.core.somaxconn" = 32768;

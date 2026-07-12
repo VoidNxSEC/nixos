@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.services.edr.alerting;
+  cfg = config.kernelcore.soc.edr.alerting;
 in
 {
-  options.services.edr.alerting = {
+  options.kernelcore.soc.edr.alerting = {
     enable = mkEnableOption "EDR Alerting System";
   };
 

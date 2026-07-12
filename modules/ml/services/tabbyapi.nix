@@ -19,10 +19,10 @@
 # API: http://localhost:5000/v1
 
 let
-  cfg = config.services.tabbyapi;
+  cfg = config.kernelcore.ml.inference.tabbyapi;
 in
 {
-  options.services.tabbyapi = {
+  options.kernelcore.ml.inference.tabbyapi = {
     enable = lib.mkEnableOption "TabbyAPI - OpenAI-compatible inference server";
 
     dataDir = lib.mkOption {
@@ -214,7 +214,7 @@ in
         Restart = "always";
         RestartSec = 10;
 
-        User = config.system.user.username; # Required for Docker socket access
+        User = config.kernelcore.system.user.username; # Required for Docker socket access
         Group = "docker";
 
         # Graceful shutdown

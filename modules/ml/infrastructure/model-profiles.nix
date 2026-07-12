@@ -13,7 +13,7 @@
 with lib;
 
 let
-  cfg = config.kernelcore.llama-swap;
+  cfg = config.kernelcore.ml.inference.swap-control;
 
   # Convert profile attrset to JSON format
   profilesJson = builtins.toJSON (
@@ -35,7 +35,7 @@ let
   );
 in
 {
-  options.kernelcore.llama-swap = {
+  options.kernelcore.ml.inference.swap-control = {
     enable = mkEnableOption "LlamaSwap hot model reloading system";
 
     profiles = mkOption {
@@ -174,7 +174,7 @@ in
 
   config = mkIf cfg.enable {
     # llamacpp-swap-init/-status services run as this user; the user is not
-    # declared by services.llamacpp-swap (llama-cpp-swap.nix) when that
+    # declared by kernelcore.ml.inference.llamacpp-swap (llama-cpp-swap.nix) when that
     # module is disabled, so it must be created here too.
     users.users.llamacpp-swap = mkDefault {
       isSystemUser = true;

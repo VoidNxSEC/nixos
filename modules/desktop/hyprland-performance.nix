@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.kernelcore.hyprland.performance;
+  cfg = config.kernelcore.desktop.hyprland.performance;
 in
 {
-  options.kernelcore.hyprland.performance = {
+  options.kernelcore.desktop.hyprland.performance = {
     enable = mkEnableOption "Enable Hyprland performance optimizations";
 
     mode = mkOption {
@@ -116,7 +116,7 @@ in
     # ============================================
     # NVIDIA TWEAKS (if enabled)
     # ============================================
-    environment.sessionVariables = mkIf config.services.hyprland-desktop.nvidia {
+    environment.sessionVariables = mkIf config.kernelcore.desktop.hyprland.nvidia {
       # Force GPU to max performance
       __GL_YIELD = "USLEEP";
       __GL_THREADED_OPTIMIZATIONS = "1";

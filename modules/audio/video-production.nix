@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.modules.audio.videoProduction;
+  cfg = config.kernelcore.audio.videoProduction;
 in
 {
-  options.modules.audio.videoProduction = {
+  options.kernelcore.audio.videoProduction = {
     enable = mkEnableOption "Ambiente profissional de produção de vídeo com OBS e NVIDIA";
 
     enableNVENC = mkOption {
@@ -368,6 +368,6 @@ in
     ];
 
     # Adicionar usuário ao grupo video
-    users.groups.video.members = [ config.system.user.username ];
+    users.groups.video.members = [ config.kernelcore.system.user.username ];
   };
 }

@@ -24,6 +24,16 @@ with lib;
       default = "PCI:1:0:0";
       description = "PCI Bus ID do chip NVIDIA (ex: PCI:1:0:0)";
     };
+    kernelcore.nvidia.powerLimit = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      example = 65;
+      description = ''
+        Limite fixo de potência da GPU em watts (nvidia-smi -pl).
+        Quando definido, cria o serviço nvidia-power-limit e tem precedência
+        sobre o ajuste dinâmico por thermal profile. null = não definir.
+      '';
+    };
   };
 
   config = mkIf config.kernelcore.nvidia.enable {
@@ -71,6 +81,26 @@ with lib;
       # Enable NVIDIA GSP firmware for better power management
       "nvidia.NVreg_EnableGpuFirmware=1"
     ];
+
+    # Limite fixo de potência (kernelcore.nvidia.powerLimit) — migrado do
+    # hosts/kernelcore/configuration.nix (Fase 3). Tem precedência sobre o
+    # ajuste por thermal profile abaixo (roda depois dele no boot).
+    systemd.services.nvidia-power-limit = mkIf (config.kernelcore.nvidia.powerLimit != null) {
+      description = "Set NVIDIA GPU power limit (${toString config.kernelcore.nvidia.powerLimit}W)";
+      wantedBy = [ "multi-user.target" ];
+      after = [
+        "nvidia-persistenced.service"
+        "nvidia-rtx3050-power-management.service"
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = [
+          "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pm 1"
+          "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pl ${toString config.kernelcore.nvidia.powerLimit}"
+        ];
+      };
+    };
 
     # NVIDIA power management service for RTX 3050
     systemd.services.nvidia-rtx3050-power-management = mkIf config.kernelcore.nvidia.cudaSupport {

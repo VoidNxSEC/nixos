@@ -9,7 +9,7 @@
 with lib;
 
 let
-  cfg = config.services.securellm-mcp;
+  cfg = config.kernelcore.services.securellm-mcp;
   securellmMcpPackage = import ../../pkgs/securellm-mcp.nix { inherit pkgs inputs; };
 
   # Load MCP configuration template from root .mcp.json
@@ -33,7 +33,7 @@ let
 
 in
 {
-  options.services.securellm-mcp = {
+  options.kernelcore.services.securellm-mcp = {
     enable = mkEnableOption "SecureLLM Bridge MCP Server";
 
     daemon = {
@@ -59,7 +59,7 @@ in
 
     user = mkOption {
       type = types.str;
-      default = config.system.user.username;
+      default = config.kernelcore.system.user.username;
       description = "User to run the MCP server as";
     };
 

@@ -18,10 +18,10 @@
 with lib;
 
 let
-  cfg = config.services.hyprland-desktop;
+  cfg = config.kernelcore.desktop.hyprland;
 in
 {
-  options.services.hyprland-desktop = {
+  options.kernelcore.desktop.hyprland = {
     enable = mkEnableOption "Hyprland desktop environment";
 
     # Option to enable NVIDIA optimizations

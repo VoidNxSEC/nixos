@@ -10,10 +10,10 @@
 with lib;
 
 let
-  cfg = config.programs.vmctl;
+  cfg = config.kernelcore.virtualization.vmctl-cli;
 in
 {
-  options.programs.vmctl = {
+  options.kernelcore.virtualization.vmctl-cli = {
     enable = mkEnableOption "vmctl - Lightweight QEMU VM Manager";
     package = mkOption {
       type = types.package;

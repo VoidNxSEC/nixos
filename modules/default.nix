@@ -54,8 +54,7 @@
     # DESKTOP & APPLICATIONS
     # ═══════════════════════════════════════════════════════════
     ./desktop # GNOME, Yazi, desktop environment
-    ./applications # Browsers (Firefox, Brave), editors (VSCode, VSCodium)
-    ./programs # User programs and utilities
+    ./applications # Browsers (Firefox, Brave), editors (VSCode, VSCodium), cognitive-vault
 
     # ═══════════════════════════════════════════════════════════
     # TOOLS & PACKAGES

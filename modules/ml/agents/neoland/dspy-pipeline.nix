@@ -9,8 +9,8 @@
 }:
 
 let
-  cfg = config.services.neoland-dspy-pipeline;
-  eco = config.ai.ecosystem;
+  cfg = config.kernelcore.ml.neoland.dspyPipeline;
+  eco = config.kernelcore.ml.agents.ecosystem;
 
   pythonEnv = pkgs.python311.withPackages (
     ps: with ps; [
@@ -24,7 +24,7 @@ let
   );
 in
 {
-  options.services.neoland-dspy-pipeline = {
+  options.kernelcore.ml.neoland.dspyPipeline = {
     enable = lib.mkEnableOption "Neoland DSPy multi-agent pipeline";
 
     workdir = lib.mkOption {
@@ -105,12 +105,12 @@ in
         NEOLAND_RAG_TOP_K = "5";
         NEOLAND_SHM_PATH = cfg.shmPath;
         # Ecosystem service URLs available to the pipeline
-        AI_CEREBRO_URL = eco.services.cerebro.url;
-        AI_CEREBRO_ENABLED = lib.boolToString eco.services.cerebro.enabled;
-        AI_PHANTOM_URL = eco.services.phantom.url;
-        AI_PHANTOM_ENABLED = lib.boolToString eco.services.phantom.enabled;
-        AI_NEOTRON_URL = eco.services.neotron.url;
-        AI_NEOTRON_GUARDRAILS = lib.boolToString eco.services.neotron.guardrailsEnabled;
+        AI_CEREBRO_URL = eco.kernelcore.ml.agents.cerebro.url;
+        AI_CEREBRO_ENABLED = lib.boolToString eco.kernelcore.ml.agents.cerebro.enabled;
+        AI_PHANTOM_URL = eco.kernelcore.ml.agents.phantom.url;
+        AI_PHANTOM_ENABLED = lib.boolToString eco.kernelcore.ml.agents.phantom.enabled;
+        AI_NEOTRON_URL = eco.kernelcore.ml.agents.neotron.url;
+        AI_NEOTRON_GUARDRAILS = lib.boolToString eco.kernelcore.ml.agents.neotron.guardrailsEnabled;
       };
 
       serviceConfig = {

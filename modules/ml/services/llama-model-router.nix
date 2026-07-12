@@ -19,7 +19,7 @@
 with lib;
 
 let
-  cfg = config.services.llamacpp-model-router;
+  cfg = config.kernelcore.ml.inference.router;
 
   routerPy = pkgs.writeText "llama-model-router.py" ''
     #!/usr/bin/env python3
@@ -180,7 +180,7 @@ let
   '';
 in
 {
-  options.services.llamacpp-model-router = {
+  options.kernelcore.ml.inference.router = {
     enable = lib.mkEnableOption "LLaMA model-router proxy (multi-model /v1/models selector)";
 
     host = lib.mkOption {

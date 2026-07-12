@@ -13,7 +13,7 @@
     ./llama-cpp-turbo.nix
     ./llama-cpp-swap.nix
     ./llama-model-router.nix
-    #./tabbyapi.nix
+    ./tabbyapi.nix # enable-gated (default false)
     ./vllm.nix
   ];
 }

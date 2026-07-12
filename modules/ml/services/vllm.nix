@@ -14,14 +14,14 @@
 # - OpenAI-compatible API
 #
 # Usage:
-#   services.vllm.enable = true;
-#   services.vllm.model = "meta-llama/Llama-3.1-8B-Instruct";
+#   kernelcore.ml.inference.vllm.enable = true;
+#   kernelcore.ml.inference.vllm.model = "meta-llama/Llama-3.1-8B-Instruct";
 
 let
-  cfg = config.services.vllm;
+  cfg = config.kernelcore.ml.inference.vllm;
 in
 {
-  options.services.vllm = {
+  options.kernelcore.ml.inference.vllm = {
     enable = lib.mkEnableOption "vLLM high-performance inference server";
 
     package = lib.mkOption {

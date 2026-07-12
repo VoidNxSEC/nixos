@@ -18,10 +18,10 @@
 with lib;
 
 let
-  cfg = config.programs.vscode-remote-ssh;
+  cfg = config.kernelcore.applications.vscode-remote-ssh;
 in
 {
-  options.programs.vscode-remote-ssh = {
+  options.kernelcore.applications.vscode-remote-ssh = {
     enable = mkEnableOption "Enable Remote SSH extension for VSCode-like editors";
 
     installFor = mkOption {
@@ -64,17 +64,17 @@ in
         ''
           # Install Remote SSH extension for Cursor
           ${optionalString (builtins.elem "cursor" cfg.installFor) ''
-            if [ -d "${config.system.user.homeDir}/.cursor" ] && command -v cursor >/dev/null 2>&1; then
+            if [ -d "${config.kernelcore.system.user.homeDir}/.cursor" ] && command -v cursor >/dev/null 2>&1; then
               echo "Installing Remote SSH extension for Cursor..."
-              su - ${config.system.user.username} -c "cursor --install-extension ms-vscode-remote.remote-ssh --force" || true
+              su - ${config.kernelcore.system.user.username} -c "cursor --install-extension ms-vscode-remote.remote-ssh --force" || true
             fi
           ''}
 
           # Install Remote SSH extension for Windsurf
           ${optionalString (builtins.elem "windsurf" cfg.installFor) ''
-            if [ -d "${config.system.user.homeDir}/.windsurf" ] && command -v windsurf >/dev/null 2>&1; then
+            if [ -d "${config.kernelcore.system.user.homeDir}/.windsurf" ] && command -v windsurf >/dev/null 2>&1; then
               echo "Installing Remote SSH extension for Windsurf..."
-              su - ${config.system.user.username} -c "windsurf --install-extension ms-vscode-remote.remote-ssh --force" || true
+              su - ${config.kernelcore.system.user.username} -c "windsurf --install-extension ms-vscode-remote.remote-ssh --force" || true
             fi
           ''}
         '';
@@ -150,8 +150,8 @@ in
         /etc/nixos/modules/applications/vscode-remote-ssh.nix
 
         Available options:
-        - programs.vscode-remote-ssh.enable
-        - programs.vscode-remote-ssh.installFor
+        - kernelcore.applications.vscode-remote-ssh.enable
+        - kernelcore.applications.vscode-remote-ssh.installFor
 
         ## Brev Integration
 

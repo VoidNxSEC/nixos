@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.programs.nemo;
+  cfg = config.kernelcore.applications.nemo;
 in
 {
-  options.programs.nemo = {
+  options.kernelcore.applications.nemo = {
     enable = mkEnableOption "Nemo file manager with full features";
 
     package = mkOption {

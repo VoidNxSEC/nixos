@@ -14,7 +14,7 @@
 with lib;
 
 {
-  options.system.emergency = {
+  options.kernelcore.system.emergency = {
     enable = mkEnableOption "Emergency monitoring and auto-intervention";
 
     swapThreshold = mkOption {
@@ -42,7 +42,7 @@ with lib;
     };
   };
 
-  config = mkIf config.system.emergency.enable {
+  config = mkIf config.kernelcore.system.emergency.enable {
     # ========================================
     # EMERGENCY MONITORING SERVICE
     # ========================================
@@ -63,10 +63,10 @@ with lib;
           #!/usr/bin/env bash
           set -euo pipefail
 
-          SWAP_THRESHOLD=${toString config.system.emergency.swapThreshold}
-          TEMP_THRESHOLD=${toString config.system.emergency.tempThreshold}
-          LOAD_THRESHOLD=${toString config.system.emergency.loadThreshold}
-          AUTO_INTERVENE=${if config.system.emergency.autoIntervene then "true" else "false"}
+          SWAP_THRESHOLD=${toString config.kernelcore.system.emergency.swapThreshold}
+          TEMP_THRESHOLD=${toString config.kernelcore.system.emergency.tempThreshold}
+          LOAD_THRESHOLD=${toString config.kernelcore.system.emergency.loadThreshold}
+          AUTO_INTERVENE=${if config.kernelcore.system.emergency.autoIntervene then "true" else "false"}
 
           log() {
             echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*" | tee -a /var/log/emergency-monitor.log
@@ -189,7 +189,7 @@ with lib;
 
     security.sudo.extraRules = [
       {
-        users = [ config.system.user.username ];
+        users = [ config.kernelcore.system.user.username ];
         commands = [
           {
             command = "/etc/nixos/scripts/nix-emergency.sh";

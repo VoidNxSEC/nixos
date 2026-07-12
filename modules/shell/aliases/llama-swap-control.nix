@@ -404,7 +404,7 @@ with lib;
           echo ""
           echo "⚠️  To make this profile permanent, add it to configuration.nix:"
           echo ""
-          echo "  kernelcore.llama-swap.profiles.$PROFILE_NAME = {"
+          echo "  kernelcore.ml.inference.swap-control.profiles.$PROFILE_NAME = {"
           echo "    modelPath = \"$MODEL_PATH\";"
           echo "    displayName = \"$DISPLAY_NAME\";"
           echo "    gpuLayers = 35; # Adjust as needed"

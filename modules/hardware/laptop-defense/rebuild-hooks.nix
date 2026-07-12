@@ -14,7 +14,7 @@
 with lib;
 
 {
-  options.hardware.rebuildHooks = {
+  options.kernelcore.hardware.rebuildHooks = {
     enable = mkEnableOption "Rebuild safety hooks (thermal monitoring)";
 
     thermalCheck = {
@@ -58,14 +58,14 @@ with lib;
     };
   };
 
-  config = mkIf config.hardware.rebuildHooks.enable {
+  config = mkIf config.kernelcore.hardware.rebuildHooks.enable {
 
     # ========================================
     # PRE-REBUILD HOOK
     # ========================================
 
     system.activationScripts.pre-rebuild-thermal-check =
-      mkIf config.hardware.rebuildHooks.thermalCheck.enable
+      mkIf config.kernelcore.hardware.rebuildHooks.thermalCheck.enable
         {
           text = ''
             echo "🌡️  PRE-REBUILD: Thermal safety check..."
@@ -74,9 +74,9 @@ with lib;
             MAX_TEMP=$(${pkgs.lm_sensors}/bin/sensors 2>/dev/null | grep -oP '\+\K[0-9]+' | sort -rn | head -1 || echo "0")
 
             echo "   Current temperature: ''${MAX_TEMP}°C"
-            echo "   Maximum allowed: ${toString config.hardware.rebuildHooks.thermalCheck.maxStartTemp}°C"
+            echo "   Maximum allowed: ${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.maxStartTemp}°C"
 
-            if [ "''${MAX_TEMP:-0}" -gt ${toString config.hardware.rebuildHooks.thermalCheck.maxStartTemp} ]; then
+            if [ "''${MAX_TEMP:-0}" -gt ${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.maxStartTemp} ]; then
               echo ""
               echo "❌ THERMAL SAFETY: Temperature too high (''${MAX_TEMP}°C)"
               echo ""
@@ -88,7 +88,7 @@ with lib;
               echo "  4. Try again in 10 minutes"
               echo ""
               echo "To bypass (NOT RECOMMENDED):"
-              echo "  hardware.rebuildHooks.thermalCheck.maxStartTemp = 90;"
+              echo "  kernelcore.hardware.rebuildHooks.thermalCheck.maxStartTemp = 90;"
               echo ""
 
               exit 1
@@ -103,7 +103,7 @@ with lib;
     # REBUILD MONITOR SERVICE
     # ========================================
 
-    systemd.services.rebuild-thermal-monitor = mkIf config.hardware.rebuildHooks.thermalCheck.enable {
+    systemd.services.rebuild-thermal-monitor = mkIf config.kernelcore.hardware.rebuildHooks.thermalCheck.enable {
       description = "Monitor temperature during nixos-rebuild";
 
       # Não inicia automaticamente - será chamado por wrapper
@@ -117,8 +117,8 @@ with lib;
           set -e
 
           REBUILD_PID="''${1:?Usage: rebuild-monitor <rebuild-pid>}"
-          MAX_TEMP=${toString config.hardware.rebuildHooks.thermalCheck.maxRunningTemp}
-          INTERVAL=${toString config.hardware.rebuildHooks.thermalCheck.monitorInterval}
+          MAX_TEMP=${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.maxRunningTemp}
+          INTERVAL=${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.monitorInterval}
 
           LOG_FILE="/var/log/rebuild-thermal.log"
           ABORT_FLAG="/tmp/rebuild-thermal-abort"
@@ -149,7 +149,7 @@ with lib;
               echo "Rebuild aborted due to thermal emergency" | tee -a "$LOG_FILE"
 
               # Trigger evidence collection if enabled
-              ${optionalString config.hardware.rebuildHooks.evidenceCollection.enable ''
+              ${optionalString config.kernelcore.hardware.rebuildHooks.evidenceCollection.enable ''
                 ${pkgs.bash}/bin/bash /etc/nixos/modules/hardware/laptop-defense/collect-evidence.sh thermal-abort
               ''}
 
@@ -179,12 +179,12 @@ with lib;
         echo ""
 
         # Thermal check
-        ${optionalString config.hardware.rebuildHooks.thermalCheck.enable ''
+        ${optionalString config.kernelcore.hardware.rebuildHooks.thermalCheck.enable ''
           MAX_TEMP=$(${pkgs.lm_sensors}/bin/sensors 2>/dev/null | grep -oP '\+\K[0-9]+' | sort -rn | head -1 || echo "0")
 
-          if [ "''${MAX_TEMP:-0}" -gt ${toString config.hardware.rebuildHooks.thermalCheck.maxStartTemp} ]; then
+          if [ "''${MAX_TEMP:-0}" -gt ${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.maxStartTemp} ]; then
             echo "❌ Pre-check failed: Temperature too high (''${MAX_TEMP}°C)"
-            echo "   Maximum allowed: ${toString config.hardware.rebuildHooks.thermalCheck.maxStartTemp}°C"
+            echo "   Maximum allowed: ${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.maxStartTemp}°C"
             echo ""
             echo "Wait for cooling or use: sudo nixos-rebuild switch (bypass)"
             exit 1
@@ -202,7 +202,7 @@ with lib;
         REBUILD_PID=$!
 
         # Start monitor
-        ${optionalString config.hardware.rebuildHooks.thermalCheck.enable ''
+        ${optionalString config.kernelcore.hardware.rebuildHooks.thermalCheck.enable ''
           ${pkgs.systemd}/bin/systemd-run \
             --unit=rebuild-thermal-monitor-$REBUILD_PID \
             --description="Thermal monitor for rebuild $REBUILD_PID" \
@@ -217,7 +217,7 @@ with lib;
         REBUILD_EXIT=$?
 
         # Kill monitor if still running
-        ${optionalString config.hardware.rebuildHooks.thermalCheck.enable ''
+        ${optionalString config.kernelcore.hardware.rebuildHooks.thermalCheck.enable ''
           kill $MONITOR_PID 2>/dev/null || true
         ''}
 
@@ -228,8 +228,8 @@ with lib;
           echo ""
           echo "Evidence: /var/log/rebuild-thermal.log"
 
-          ${optionalString config.hardware.rebuildHooks.evidenceCollection.enable ''
-            echo "Forensic evidence: ${config.hardware.rebuildHooks.evidenceCollection.storePath}"
+          ${optionalString config.kernelcore.hardware.rebuildHooks.evidenceCollection.enable ''
+            echo "Forensic evidence: ${config.kernelcore.hardware.rebuildHooks.evidenceCollection.storePath}"
           ''}
 
           rm -f /tmp/rebuild-thermal-abort
@@ -244,7 +244,7 @@ with lib;
           echo ""
           echo "❌ Rebuild failed (exit code: $REBUILD_EXIT)"
 
-          ${optionalString config.hardware.rebuildHooks.evidenceCollection.enable ''
+          ${optionalString config.kernelcore.hardware.rebuildHooks.evidenceCollection.enable ''
             ${pkgs.bash}/bin/bash /etc/nixos/modules/hardware/laptop-defense/collect-evidence.sh rebuild-failure
           ''}
         fi
@@ -258,7 +258,7 @@ with lib;
     # ========================================
 
     environment.etc."laptop-defense/collect-evidence.sh" =
-      mkIf config.hardware.rebuildHooks.evidenceCollection.enable
+      mkIf config.kernelcore.hardware.rebuildHooks.evidenceCollection.enable
         {
           mode = "0755";
           text = ''
@@ -266,7 +266,7 @@ with lib;
 
                     REASON="''${1:-unknown}"
                     TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-                    EVIDENCE_DIR="${config.hardware.rebuildHooks.evidenceCollection.storePath}/$REASON-$TIMESTAMP"
+                    EVIDENCE_DIR="${config.kernelcore.hardware.rebuildHooks.evidenceCollection.storePath}/$REASON-$TIMESTAMP"
 
                     mkdir -p "$EVIDENCE_DIR"/{logs,thermal,system}
 
@@ -294,7 +294,7 @@ with lib;
             EOF
 
                     # Archive
-                    tar czf "$EVIDENCE_DIR.tar.gz" -C "${config.hardware.rebuildHooks.evidenceCollection.storePath}" "$(basename $EVIDENCE_DIR)"
+                    tar czf "$EVIDENCE_DIR.tar.gz" -C "${config.kernelcore.hardware.rebuildHooks.evidenceCollection.storePath}" "$(basename $EVIDENCE_DIR)"
 
                     echo "✅ Evidence collected: $EVIDENCE_DIR.tar.gz"
           '';
@@ -314,8 +314,8 @@ with lib;
     };
 
     # Create evidence directory
-    systemd.tmpfiles.rules = mkIf config.hardware.rebuildHooks.evidenceCollection.enable [
-      "d ${config.hardware.rebuildHooks.evidenceCollection.storePath} 0755 root root -"
+    systemd.tmpfiles.rules = mkIf config.kernelcore.hardware.rebuildHooks.evidenceCollection.enable [
+      "d ${config.kernelcore.hardware.rebuildHooks.evidenceCollection.storePath} 0755 root root -"
     ];
   };
 }

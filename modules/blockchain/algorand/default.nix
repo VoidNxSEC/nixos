@@ -45,6 +45,10 @@ let
 
 in
 {
+  imports = [
+    ./dao.nix # DAO contract templates (enable-gated; gate duplo com algorand.enable)
+  ];
+
   options.kernelcore.blockchain.algorand = {
     enable = mkEnableOption "Algorand development environment";
 

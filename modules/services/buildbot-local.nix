@@ -117,7 +117,7 @@ in
 
       adminMessage = mkOption {
         type = types.nullOr types.str;
-        default = config.system.user.username;
+        default = config.kernelcore.system.user.username;
         description = "Administrative owner string exposed by the worker.";
       };
 

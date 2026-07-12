@@ -102,10 +102,10 @@
         }:
         with lib;
         let
-          cfg = config.services.ml-offload-api;
+          cfg = config.kernelcore.ml.orchestration.offload-api;
         in
         {
-          options.services.ml-offload-api = {
+          options.kernelcore.ml.orchestration.offload-api = {
             enable = mkEnableOption "ML Offload Manager API";
 
             package = mkOption {

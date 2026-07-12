@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.security.hardening.seccomp.edr;
+  cfg = config.kernelcore.soc.edr.hardening.seccomp;
 in
 {
-  options.security.hardening.seccomp.edr = {
+  options.kernelcore.soc.edr.hardening.seccomp = {
     enable = mkEnableOption "EDR Seccomp Filters";
   };
 

@@ -7,8 +7,8 @@
 
 {
 
-  kernelcore.electron.enable = false;
-  #kernelcore.electron.apps.antigravity = {
+  kernelcore.applications.electron.enable = false;
+  #kernelcore.applications.electron.apps.antigravity = {
   #profile = "performance";
   #configDir = "Antigravity";
   #features.enable = [
@@ -18,14 +18,14 @@
   #};
 
   # Chromium/Electron log suppression (GPU/Wayland error spam)
-  kernelcore.chromium.logSuppression = {
+  kernelcore.applications.chromium.logSuppression = {
     enable = true;
     applyGlobally = true;
     enablePerformanceFlags = false; # Keep disabled for stability
   };
 
   # Shell configuration - Training session logger
-  shell.trainingLogger = {
+  kernelcore.shell.trainingLogger = {
     enable = false;
     userLogDirectory = "\${HOME}/.training-logs";
     maxLogSize = "1G";
@@ -187,7 +187,7 @@
       };
     };
 
-    ssh.enable = true;
+    system.ssh.enable = true; # config declarativa de cliente SSH (ex-kernelcore.ssh)
 
     soc = {
       enable = false;
@@ -212,7 +212,7 @@
       };
     };
 
-    bluetooth.enable = true;
+    hardware.bluetooth.enable = true; # (ex-kernelcore.bluetooth)
 
     applications.zellij.enable = false;
 
@@ -286,17 +286,17 @@
     };
 
     containers = {
-      docker.enable = true;
+      docker.enable = false;
       podman = {
-        enable = true;
+        enable = false;
         dockerCompat = false;
         enableNvidia = true;
       };
-      nixos.enable = true;
+      nixos.enable = false;
 
       # ML/AI Containers
       ml = {
-        enable = true;
+        enable = false;
 
         # Ollama with llama.cpp from host
         ollama = {
@@ -316,7 +316,7 @@
 
       # Development Containers
       dev = {
-        enable = true;
+        enable = false;
 
         # VS Code in browser – accessible via dev-code-start / dev-code-enter
         code-server = {
@@ -336,7 +336,7 @@
 
     virtualization = {
       # TODO: Needs ajustments related to libvirt-kvm root and user group permissions, need sync and tests
-      enable = true;
+      enable = false;
       virt-manager = true;
       libvirtdGroup = [ "libvirtd" ];
       virtiofs.enable = true;
@@ -500,7 +500,7 @@
     };
 
     ci = {
-      enable = true;
+      enable = false;
       role = "combined";
       title = "Kernelcore CI";
       titleUrl = "https://voidnx.com";
@@ -583,7 +583,7 @@
     system.ml-gpu-users.enable = true;
 
     # LlamaSwap - Hot Model Reloading Configuration
-    llama-swap = {
+    ml.inference.swap-control = { # (ex-kernelcore.llama-swap)
       enable = true;
       profiles = {
         coder = {
@@ -685,7 +685,7 @@
   # FEATURE FLAGS
   # ═══════════════════════════════════════════════════════════
 
-  services.securellm-mcp = {
+  kernelcore.services.securellm-mcp = {
     enable = true;
     daemon.enable = true;
     daemon.logLevel = "INFO";
@@ -734,7 +734,7 @@
   # Disposable multi-node clusters + full CKA/CKAD/CKS toolset and the
   # kindlab-* helper CLI. Study material: ~/learn/kuber-labs/ and
   # docs/guides/KIND-CKA-EXAM-GUIDE.md. Requires Docker (enabled above).
-  services.kind-lab = {
+  kernelcore.kubernetes.kind = {
     enable = false;
     clusterName = "cka-lab";
     workerCount = 2;
@@ -756,7 +756,7 @@
     arch-analyzer.enable = true;
   };
 
-  kernelcore.swissknife.enable = true;
+  kernelcore.debug.swissknife.enable = true;
 
   # ═══════════════════════════════════════════════════════════
   # MAIN SERVICES BLOCK
@@ -794,97 +794,6 @@
       defaultSession = "hyprland-uwsm";
     };
 
-    hyprland-desktop = {
-      enable = true;
-      nvidia = true;
-    };
-
-    # K3S Cluster
-    k3s-cluster = {
-      enable = false;
-      role = "server";
-      tokenFile = config.sops.secrets.k3s-token.path; # Definido em secrets/k8s.nix ou similar
-      clusterCIDR = "10.42.0.0/16";
-      serviceCIDR = "10.43.0.0/16";
-      disableComponents = [
-        "traefik"
-        "servicelb"
-        "local-storage"
-      ];
-      extraFlags = [
-        "--kube-apiserver-arg=enable-aggregator-routing=true"
-        "--kube-apiserver-arg=audit-log-path=/var/log/kubernetes/audit.log"
-        "--kube-apiserver-arg=audit-log-maxage=30"
-      ];
-    };
-
-    cilium-cni = {
-      enable = false;
-      apiServerHost = "127.0.0.1";
-      apiServerPort = 6443;
-      clusterCIDR = "10.42.0.0/16";
-      encryption = {
-        enable = true;
-        type = "wireguard";
-      };
-      hubble = {
-        enable = true;
-        relay = true;
-        ui = true;
-      };
-      policyEnforcementMode = "default";
-      securityFeatures.runtimeSecurity = false;
-      prometheus.serviceMonitor = true;
-    };
-
-    longhorn-storage = {
-      enable = false;
-      defaultStorageClass = true;
-      defaultReplicas = 1;
-      reclaimPolicy = "Delete";
-      overProvisioningPercentage = 200;
-      minimalAvailablePercentage = 25;
-      autoSalvage = true;
-      backup = {
-        target = "";
-        credential = null;
-      };
-      snapshot = {
-        enable = true;
-        dataIntegrity = "fast-check";
-        immediateCheck = false;
-      };
-      ingress = {
-        enable = true;
-        host = "longhorn.k8s.local";
-        tls = false;
-        ingressClassName = "traefik";
-      };
-      resources = {
-        manager = {
-          limits = {
-            cpu = "1000m";
-            memory = "1Gi";
-          };
-          requests = {
-            cpu = "250m";
-            memory = "512Mi";
-          };
-        };
-        driver = {
-          limits = {
-            cpu = "500m";
-            memory = "512Mi";
-          };
-          requests = {
-            cpu = "100m";
-            memory = "256Mi";
-          };
-        };
-      };
-      dataPath = "/var/lib/longhorn";
-    };
-
     openssh = {
       enable = true;
       settings = {
@@ -892,84 +801,6 @@
         PasswordAuthentication = false;
       };
     };
-
-    offload-server = {
-      enable = false;
-      cachePort = 5000;
-      builderUser = "nix-builder";
-      cacheKeyPath = "/var/cache-priv-key.pem";
-      enableNFS = true;
-    };
-
-    llamacpp-turbo = {
-      enable = false;
-      model = "/var/lib/ml-models/llamacpp/models/Mixtral-4x7B-DPO-RPChat.Q4_K_M.gguf";
-      host = "127.0.0.1";
-      port = 8081;
-      n_threads = 12;
-      n_threads_batch = 12;
-      n_gpu_layers = 40;
-      mainGpu = 0; # CUDA backend only sees the NVIDIA GPU (Intel iGPU isn't CUDA-capable); 0 is the RTX 3050
-      n_parallel = 1;
-      n_ctx = 8196;
-      n_batch = 2048;
-      n_ubatch = 512;
-      cudaGraphs = true;
-      flashAttention = true;
-      mmap = true;
-      mlock = true;
-      continuousBatching = true;
-      speculativeDecoding.enable = false;
-      metricsEndpoint = false;
-    };
-
-    # LlamaSwap - Hot Model Reloading
-    llamacpp-swap = {
-      enable = true;
-      host = "127.0.0.1";
-      port = 8081;
-      n_threads = 12;
-      n_threads_batch = 12;
-      n_gpu_layers = 48;
-      mainGpu = 1;
-      n_parallel = 1;
-      n_ctx = 8192;
-      n_batch = 2048;
-      n_ubatch = 512;
-      cudaGraphs = true;
-      flashAttention = true;
-      mmap = true;
-      mlock = true;
-      continuousBatching = true;
-      speculativeDecoding.enable = false;
-      metricsEndpoint = false;
-      embeddings = true;
-      extraFlags = [
-        "--jinja"
-      ];
-    };
-
-    # Model Router – exposes all llama-swap profiles as /v1/models
-    # Clients connect to :8080; router forwards to llamacpp-swap :8081
-    # This solves the single-active-model limitation in any OpenAI-compatible client
-    llamacpp-model-router = {
-      enable = true;
-      host = "127.0.0.1";
-      port = 8080;
-      backendPort = 8081;
-    };
-
-    # TabbyAPI - OpenAI-compatible Inference Server
-    #tabbyapi = {
-    #enable = false;
-    #host = "127.0.0.1";
-    #port = 7734;
-    #modelsDir = "/var/lib/ml-models";
-    #maxSeqLen = 16384;
-    #cacheMode = "FP16";
-    #gpuSplitAuto = true;
-    #openFirewall = false; # Acessível de containers Docker, mas não da internet
-    #};
 
     # Open-WebUI - Self-hosted AI Chat Interface (ML Hardcore Mode)
     # Open-WebUI - upstream NixOS module (simple config)
@@ -999,43 +830,8 @@
       };
     };
 
-    gitea-showcase = {
-      enable = false;
-      domain = "gitea.voidnx.com";
-      rootUrl = "https://gitea.voidnx.com/";
-      listenAddress = "127.0.0.1";
-      httpPort = 3000;
-      showcaseProjectsPath = "/home/kernelcore/dev/projects";
-      gitea = {
-        adminTokenFile = "/run/secrets/gitea-admin-token";
-        autoInitRepos = false;
-      };
-      autoMirror = {
-        enable = false;
-        interval = "hourly";
-      };
-    };
-
     forgejo = {
       enable = false; # PENDENTE: reativar após restaurar secrets forgejo
-      integration = {
-        publicDomain = "forgejo.nx.tailb3b82e.ts.net";
-        publicUrl = "http://forgejo.nx.tailb3b82e.ts.net/";
-        listenPort = 3002;
-        proxy.enable = false;
-        tls.enable = false;
-        integratedSsh = {
-          enable = true;
-          port = 22;
-          listenPort = 2222;
-        };
-        database = {
-          type = "postgres";
-          name = "forgejo";
-          user = "forgejo";
-          createLocally = true;
-        };
-      };
     };
 
     postgresql = {
@@ -1064,29 +860,9 @@
     libinput.enable = true;
     printing.enable = true;
 
-    chromiumOrg = {
-      enable = true;
-      extraArgs = [
-        "--force-dark-mode"
-        "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,ParallelDownloading"
-        "--ignore-gpu-blocklist"
-        #"--enable-gpu-rasterization"
-        # REMOVED: --enable-zero-copy (incompatível com NVIDIA+Wayland+GBM)
-        # Causa EGL_BAD_MATCH errors (0x3009) ao tentar criar EGLImages
-        "--ozone-platform-hint=auto"
-        # NVIDIA+Wayland specific fixes para EGL errors
-        "--use-gl=egl"
-        "--disable-gpu-driver-bug-workarounds"
-        "--no-first-run"
-        "--disable-sync"
-      ];
-    };
-
     udisks2.enable = true;
     gvfs.enable = true;
     tailscale.enable = true;
-    config-auditor.enable = true;
-    i915-governor.enable = false;
 
     # ═══════════════════════════════════════════════════════════
     # SPOOKNIX - Privacy-first STT Engine (Docker container)
@@ -1099,12 +875,234 @@
     };
   };
 
+  # ═══════════════════════════════════════════════════════════
+  # OPTIONS CUSTOM (migradas do bloco `services` p/ kernelcore.*)
+  # ═══════════════════════════════════════════════════════════
+  kernelcore.desktop.hyprland = {
+    enable = true;
+    nvidia = true;
+  };
+
+  # K3S Cluster
+  kernelcore.kubernetes.k3s = {
+    enable = false;
+    role = "server";
+    # Secret só existe com kernelcore.secrets.k8s.enable (specialisation k8s-lab);
+    # fallback evita erro de eval no host base, onde k3s fica desabilitado.
+    tokenFile = config.sops.secrets."k3s-token".path or "/run/secrets/k3s-token";
+    clusterCIDR = "10.42.0.0/16";
+    serviceCIDR = "10.43.0.0/16";
+    disableComponents = [
+      "traefik"
+      "servicelb"
+      "local-storage"
+    ];
+    extraFlags = [
+      "--kube-apiserver-arg=enable-aggregator-routing=true"
+      "--kube-apiserver-arg=audit-log-path=/var/log/kubernetes/audit.log"
+      "--kube-apiserver-arg=audit-log-maxage=30"
+    ];
+  };
+
+  kernelcore.kubernetes.cilium = {
+    enable = false;
+    apiServerHost = "127.0.0.1";
+    apiServerPort = 6443;
+    clusterCIDR = "10.42.0.0/16";
+    encryption = {
+      enable = true;
+      type = "wireguard";
+    };
+    hubble = {
+      enable = true;
+      relay = true;
+      ui = true;
+    };
+    policyEnforcementMode = "default";
+    securityFeatures.runtimeSecurity = false;
+    prometheus.serviceMonitor = true;
+  };
+
+  kernelcore.kubernetes.longhorn = {
+    enable = false;
+    defaultStorageClass = true;
+    defaultReplicas = 1;
+    reclaimPolicy = "Delete";
+    overProvisioningPercentage = 200;
+    minimalAvailablePercentage = 25;
+    autoSalvage = true;
+    backup = {
+      target = "";
+      credential = null;
+    };
+    snapshot = {
+      enable = true;
+      dataIntegrity = "fast-check";
+      immediateCheck = false;
+    };
+    ingress = {
+      enable = true;
+      host = "longhorn.k8s.local";
+      tls = false;
+      ingressClassName = "traefik";
+    };
+    resources = {
+      manager = {
+        limits = {
+          cpu = "1000m";
+          memory = "1Gi";
+        };
+        requests = {
+          cpu = "250m";
+          memory = "512Mi";
+        };
+      };
+      driver = {
+        limits = {
+          cpu = "500m";
+          memory = "512Mi";
+        };
+        requests = {
+          cpu = "100m";
+          memory = "256Mi";
+        };
+      };
+    };
+    dataPath = "/var/lib/longhorn";
+  };
+
+  kernelcore.services.offload-server = {
+    enable = false;
+    cachePort = 5000;
+    builderUser = "nix-builder";
+    cacheKeyPath = "/var/cache-priv-key.pem";
+    enableNFS = true;
+  };
+
+  kernelcore.ml.inference.llamacpp-turbo = {
+    enable = false;
+    model = "/var/lib/ml-models/llamacpp/models/Mixtral-4x7B-DPO-RPChat.Q4_K_M.gguf";
+    host = "127.0.0.1";
+    port = 8081;
+    n_threads = 12;
+    n_threads_batch = 12;
+    n_gpu_layers = 40;
+    mainGpu = 0; # CUDA backend only sees the NVIDIA GPU (Intel iGPU isn't CUDA-capable); 0 is the RTX 3050
+    n_parallel = 1;
+    n_ctx = 8196;
+    n_batch = 2048;
+    n_ubatch = 512;
+    cudaGraphs = true;
+    flashAttention = true;
+    mmap = true;
+    mlock = true;
+    continuousBatching = true;
+    speculativeDecoding.enable = false;
+    metricsEndpoint = false;
+  };
+
+  # LlamaSwap - Hot Model Reloading
+  kernelcore.ml.inference.llamacpp-swap = {
+    enable = true;
+    host = "127.0.0.1";
+    port = 8081;
+    n_threads = 12;
+    n_threads_batch = 12;
+    n_gpu_layers = 48;
+    mainGpu = 1;
+    n_parallel = 1;
+    n_ctx = 8192;
+    n_batch = 2048;
+    n_ubatch = 512;
+    cudaGraphs = true;
+    flashAttention = true;
+    mmap = true;
+    mlock = true;
+    continuousBatching = true;
+    speculativeDecoding.enable = false;
+    metricsEndpoint = false;
+    embeddings = true;
+    extraFlags = [
+      "--jinja"
+    ];
+  };
+
+  # Model Router – exposes all llama-swap profiles as /v1/models
+  # Clients connect to :8080; router forwards to llamacpp-swap :8081
+  kernelcore.ml.inference.router = {
+    enable = true;
+    host = "127.0.0.1";
+    port = 8080;
+    backendPort = 8081;
+  };
+
+  kernelcore.services.gitea-showcase = {
+    enable = false;
+    domain = "gitea.voidnx.com";
+    rootUrl = "https://gitea.voidnx.com/";
+    listenAddress = "127.0.0.1";
+    httpPort = 3000;
+    showcaseProjectsPath = "/home/kernelcore/dev/projects";
+    gitea = {
+      adminTokenFile = "/run/secrets/gitea-admin-token";
+      autoInitRepos = false;
+    };
+    autoMirror = {
+      enable = false;
+      interval = "hourly";
+    };
+  };
+
+  # Integração Forgejo (gate = services.forgejo.enable upstream)
+  kernelcore.services.forgejo = {
+    publicDomain = "forgejo.nx.tailb3b82e.ts.net";
+    publicUrl = "http://forgejo.nx.tailb3b82e.ts.net/";
+    listenPort = 3002;
+    proxy.enable = false;
+    tls.enable = false;
+    integratedSsh = {
+      enable = true;
+      port = 22;
+      listenPort = 2222;
+    };
+    database = {
+      type = "postgres";
+      name = "forgejo";
+      user = "forgejo";
+      createLocally = true;
+    };
+  };
+
+  kernelcore.applications.chromium = {
+    enable = true;
+    extraArgs = [
+      "--force-dark-mode"
+      "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,ParallelDownloading"
+      "--ignore-gpu-blocklist"
+      #"--enable-gpu-rasterization"
+      # REMOVED: --enable-zero-copy (incompatível com NVIDIA+Wayland+GBM)
+      # Causa EGL_BAD_MATCH errors (0x3009) ao tentar criar EGLImages
+      "--ozone-platform-hint=auto"
+      # NVIDIA+Wayland specific fixes para EGL errors
+      "--use-gl=egl"
+      "--disable-gpu-driver-bug-workarounds"
+      "--no-first-run"
+      "--disable-sync"
+    ];
+  };
+
+  kernelcore.services.config-auditor.enable = true;
+  kernelcore.hardware.i915-governor.enable = false;
+
   programs.niri.enable = true;
 
-  imports = [ ./specialisations ];
+  imports = [
+    ./specialisations
+    ./acpi-dsdt.nix # DSDT override específico deste laptop
+  ];
 
-  #kernelcore.hyprland.performance = {
-  #enable = config.services.hyprland-desktop.enable;
+  #kernelcore.desktop.hyprland.performance = {
+  #enable = config.kernelcore.desktop.hyprland.enable;
   #mode = "balanced";
   #};
 
@@ -1119,7 +1117,7 @@
     withUWSM = true; # <--- Critical: Enables UWSM wrapper and integration
   };
 
-  # xdg.portal is managed by services.hyprland-desktop module
+  # xdg.portal is managed by kernelcore.desktop.hyprland module
   # xdg.portal = {
   #   enable = true;
   #   wlr.enable = true;
@@ -1137,9 +1135,9 @@
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
 
-  modules.audio.production.enable = true;
+  kernelcore.audio.production.enable = true;
 
-  modules.audio.videoProduction = {
+  kernelcore.audio.videoProduction = {
     enable = true;
     enableNVENC = true;
     fixHeadphoneMute = true;
@@ -1328,27 +1326,34 @@
     };
     ssh.startAgent = lib.mkForce false; # gcr-ssh-agent (GNOME keyring) assume o papel
     ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
-    cognitive-vault.enable = true;
-
-    vscodium-secure = {
-      enable = true;
-      enableGitLabDuo = true;
-      extensions = with pkgs.vscode-extensions; [
-        rooveterinaryinc.roo-cline
-      ];
-    };
-    brave-secure.enable = true;
-    firefox-privacy.enable = true;
     git.lfs.enable = true;
-    nemo.enable = true;
+  };
 
-    vmctl = {
-      enable = false;
-      vms.wazuh = {
-        image = "/var/lib/vm-images/wazuh.qcow2";
-        memory = "4G";
-        cpus = 2;
-      };
+  # ── Aplicações custom (migradas do bloco `programs`) ──
+  kernelcore.applications.cognitive-vault.enable = true;
+
+  kernelcore.applications.vscodium = {
+    enable = true;
+    enableGitLabDuo = true;
+    extensions = with pkgs.vscode-extensions; [
+      rooveterinaryinc.roo-cline
+    ];
+  };
+
+  kernelcore.applications.brave = {
+    enable = true;
+    profile = "secure";
+  };
+
+  kernelcore.applications.firefox.enable = true;
+  kernelcore.applications.nemo.enable = true;
+
+  kernelcore.virtualization.vmctl-cli = {
+    enable = false;
+    vms.wazuh = {
+      image = "/var/lib/vm-images/wazuh.qcow2";
+      memory = "4G";
+      cpus = 2;
     };
   };
 
@@ -1419,30 +1424,13 @@
 
   kernelcore.shell.nix-ops.enable = true;
 
-  boot.initrd.prepend = [
-    "${
-      pkgs.runCommand "acpi-override"
-        {
-          nativeBuildInputs = [
-            pkgs.cpio
-            pkgs.findutils
-          ];
-        }
-        ''
-          mkdir -p $out/kernel/firmware/acpi
-          cp ${./acpi-fix/dsdt.aml} $out/kernel/firmware/acpi/dsdt.aml
-          find $out -print0 | cpio -o -H newc --reproducible -0 > $out/acpi_override.cpio
-        ''
-    }/acpi_override.cpio"
-  ];
-
   programs.zsh.enable = true;
-  programs.vscode-secure = {
+  kernelcore.applications.vscode = {
     enable = true;
   };
 
   # Enable Remote SSH extension for VSCode-like editors
-  programs.vscode-remote-ssh = {
+  kernelcore.applications.vscode-remote-ssh = {
     enable = true;
     installFor = [
       "vscode"
@@ -1453,25 +1441,12 @@
 
   # GPU power limit - raised from 50W to the 65W hardware max for llamacpp-turbo
   # inference performance. Trades battery/thermal headroom for sustained clocks.
-  systemd.services.nvidia-power-limit = {
-    description = "Set NVIDIA GPU power limit to hardware max (65W)";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "nvidia-persistenced.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = [
-        "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pm 1"
-        "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pl 65"
-      ];
-    };
-  };
+  kernelcore.nvidia.powerLimit = 65;
 
   # ZRAM swap – compressed in-memory swap; important for large ML model loads
   # Uses zstd at 50% of physical RAM; avoids slow disk I/O when VRAM overflows
-  zramSwap = {
+  kernelcore.system.memory.zram = {
     enable = true;
-    algorithm = "zstd";
     memoryPercent = 50;
   };
 

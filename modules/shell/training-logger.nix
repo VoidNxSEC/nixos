@@ -19,7 +19,7 @@ with lib;
   # OPTIONS
   # ============================================================
 
-  options.shell.trainingLogger = {
+  options.kernelcore.shell.trainingLogger = {
     enable = mkEnableOption "Training session logger utilities";
 
     logDirectory = mkOption {
@@ -51,7 +51,7 @@ with lib;
   # CONFIGURATION
   # ============================================================
 
-  config = mkIf config.shell.trainingLogger.enable {
+  config = mkIf config.kernelcore.shell.trainingLogger.enable {
 
     # Pacotes necessários
     environment.systemPackages = with pkgs; [
@@ -76,7 +76,7 @@ with lib;
                 # ══════════════════════════════════════════════════════
 
                 # Diretório de logs (usa variável do NixOS config)
-                TRAINING_LOG_DIR="${config.shell.trainingLogger.userLogDirectory}"
+                TRAINING_LOG_DIR="${config.kernelcore.shell.trainingLogger.userLogDirectory}"
                 TRAINING_LOG_DIR="''${TRAINING_LOG_DIR//\$\{HOME\}/$HOME}"  # Expande $HOME
 
                 # Criar diretório se não existir
@@ -452,9 +452,9 @@ with lib;
     services.logrotate = {
       enable = true;
       settings = {
-        "${config.shell.trainingLogger.logDirectory}" = {
+        "${config.kernelcore.shell.trainingLogger.logDirectory}" = {
           rotate = 5;
-          size = config.shell.trainingLogger.maxLogSize;
+          size = config.kernelcore.shell.trainingLogger.maxLogSize;
           compress = true;
           delaycompress = true;
           missingok = true;
@@ -469,7 +469,7 @@ with lib;
 
     # Criar diretório de logs do sistema se não existir
     systemd.tmpfiles.rules = [
-      "d ${config.shell.trainingLogger.logDirectory} 0755 root root -"
+      "d ${config.kernelcore.shell.trainingLogger.logDirectory} 0755 root root -"
     ];
 
     # ============================================================
@@ -498,7 +498,7 @@ with lib;
 
         ```nix
         {
-          shell.trainingLogger = {
+          kernelcore.shell.trainingLogger = {
             enable = true;
             userLogDirectory = "''${HOME}/.training-logs";  # Customizável
             maxLogSize = "1G";  # Rotação automática

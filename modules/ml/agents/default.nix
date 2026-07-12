@@ -15,7 +15,7 @@
     ./ecosystem.nix
     ./neoland
     ./neotron
-    #./ml-ops-api
+    ./ml-ops-api # enable-gated (default false)
     ./cerebro
     ./phantom
     # Legacy agent-hub (mantido para compatibilidade)

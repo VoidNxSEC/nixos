@@ -12,13 +12,13 @@ with lib;
     ./k3s-cluster.nix
   ];
 
-  options.spectre.k8s = {
+  options.kernelcore.kubernetes.spectre = {
     enable = mkEnableOption "SPECTRE Kubernetes Hybrid Infrastructure";
   };
 
-  config = mkIf config.spectre.k8s.enable {
+  config = mkIf config.kernelcore.kubernetes.spectre.enable {
     # Base Cluster Settings
-    services.k3s-cluster = {
+    kernelcore.kubernetes.k3s = {
       enable = true;
       role = "server";
 

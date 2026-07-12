@@ -59,6 +59,6 @@
     ];
 
     # ── Electron apps para IDEs ───────────────────────────────────────────────
-    kernelcore.electron.enable = lib.mkForce true;
+    kernelcore.applications.electron.enable = lib.mkForce true;
   };
 }

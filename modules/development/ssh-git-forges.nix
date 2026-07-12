@@ -9,15 +9,16 @@
 with lib;
 
 let
-  cfg = config.programs.ssh.gitForges;
+  cfg = config.kernelcore.development.ssh-git-forges;
 
   # Access system-level SSH config if available, otherwise defaults
+  # (config declarativa de cliente vive em kernelcore.system.ssh no NixOS)
   sysSsh =
-    if (osConfig != null && hasAttr "kernelcore" osConfig && hasAttr "ssh" osConfig.kernelcore) then
-      osConfig.kernelcore.ssh
+    if (osConfig != null && hasAttrByPath [ "kernelcore" "system" "ssh" ] osConfig) then
+      osConfig.kernelcore.system.ssh
     else
       {
-        sshDir = "${config.system.user.homeDir}/.ssh";
+        sshDir = "${config.home.homeDirectory}/.ssh";
         personalKey = "id_ed25519";
         gitlabKey = "id_ed25519";
         brevKey = "id_rsa";
@@ -107,7 +108,7 @@ let
 
 in
 {
-  options.programs.ssh.gitForges = {
+  options.kernelcore.development.ssh-git-forges = {
     enable = mkEnableOption "Enable intelligent Git Forge SSH configurations";
 
     # Allow overriding specific keys per forge

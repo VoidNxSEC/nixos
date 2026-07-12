@@ -11,5 +11,6 @@
     ./nix.nix
     ./services.nix
     ./ssh-config.nix
+    ./io-scheduler.nix # IO/latency tuning (enable-gated, default false)
   ];
 }

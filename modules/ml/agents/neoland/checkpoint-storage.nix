@@ -8,10 +8,10 @@
 }:
 
 let
-  cfg = config.services.neoland-checkpoints;
+  cfg = config.kernelcore.ml.neoland.checkpoints;
 in
 {
-  options.services.neoland-checkpoints = {
+  options.kernelcore.ml.neoland.checkpoints = {
     enable = lib.mkEnableOption "Neoland checkpoint ADR storage";
 
     dir = lib.mkOption {

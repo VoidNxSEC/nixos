@@ -6,7 +6,7 @@
 }:
 
 let
-  cfg = config.programs.git-forge-tools;
+  cfg = config.kernelcore.development.git-forge-tools;
 
   # Helper script to create repos across different forges
   forgeCreate = pkgs.writeShellScriptBin "forge-create" ''
@@ -36,7 +36,7 @@ let
 
 in
 {
-  options.programs.git-forge-tools = {
+  options.kernelcore.development.git-forge-tools = {
     enable = lib.mkEnableOption "Enable advanced CLI tools for Git Forges (GitHub, GitLab, Gitea, Azure)";
 
     enableExtensions = lib.mkOption {

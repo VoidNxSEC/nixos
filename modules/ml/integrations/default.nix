@@ -10,6 +10,7 @@
 
 {
   imports = [
+    ./neovim # stub — integração ML p/ Neovim (TODO)
     ./mcp
   ];
 }

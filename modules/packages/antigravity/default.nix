@@ -10,7 +10,7 @@
 # ═══════════════════════════════════════════════════════════════
 # Purpose: Orchestrate packaging, tuning, and security for Antigravity
 # Architecture: Modular separation of concerns
-#   - tuning.nix:   Performance optimization (argv.json, caching)
+#   - tuning-fixed.nix: Performance optimization (argv.json, caching)
 #   - security.nix: Sandboxing and hardening (bubblewrap, persistence)
 #   - default.nix:  Package installation and orchestration (this file)
 # ═══════════════════════════════════════════════════════════════

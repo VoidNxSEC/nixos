@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = config.services.longhorn-storage;
+  cfg = config.kernelcore.kubernetes.longhorn;
 
   longhornValues = pkgs.writeText "longhorn-values.yaml" ''
     # Persistence
@@ -89,7 +89,7 @@ let
 
 in
 {
-  options.services.longhorn-storage = {
+  options.kernelcore.kubernetes.longhorn = {
     enable = mkEnableOption "Longhorn distributed block storage";
 
     defaultStorageClass = mkOption {

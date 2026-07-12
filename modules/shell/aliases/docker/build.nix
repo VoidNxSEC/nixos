@@ -15,7 +15,7 @@
 let
   # Import GPU flags from centralized config
   gpuFlags =
-    config.shell.gpu.dockerFlags
+    config.kernelcore.shell.gpu.dockerFlags
       or "--device=nvidia.com/gpu=all --ipc=host --ulimit stack=67108864 --shm-size=8g";
 in
 {

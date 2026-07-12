@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.programs.brave-secure;
+  cfg = config.kernelcore.applications.brave-secure;
 in
 {
-  options.programs.brave-secure = {
+  options.kernelcore.applications.brave-secure = {
     enable = mkEnableOption "Enable Brave browser with Firejail GPU memory limits";
 
     gpuMemoryLimit = mkOption {
@@ -187,7 +187,7 @@ in
     # Sudo rules for cgroup management (needed for wrapper script)
     security.sudo.extraRules = [
       {
-        users = [ config.system.user.username ];
+        users = [ config.kernelcore.system.user.username ];
         commands = [
           {
             command = "${pkgs.coreutils}/bin/mkdir";

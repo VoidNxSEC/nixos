@@ -268,7 +268,7 @@ in
     # tmpfiles criar o diretório alvo (/var/lib/hubstaff/Downloads).
     systemd.mounts = [
       {
-        what = "${config.system.user.homeDir}/Downloads";
+        what = "${config.kernelcore.system.user.homeDir}/Downloads";
         where = "/var/lib/hubstaff/Downloads";
         type = "none";
         options = "bind";
@@ -281,7 +281,7 @@ in
     # ── sudo: kernelcore → hubstaff (no password, env passthrough) ───────────
     security.sudo.extraRules = [
       {
-        users = [ config.system.user.username ];
+        users = [ config.kernelcore.system.user.username ];
         commands = [
           {
             command = "/run/current-system/sw/bin/hubstaff-session";

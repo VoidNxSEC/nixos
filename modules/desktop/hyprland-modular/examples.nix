@@ -17,7 +17,7 @@
   # ==========================================
   # EXAMPLE 1: Minimal Gaming Setup
   # ==========================================
-  # programs.hyprland-modular = {
+  # kernelcore.desktop.hyprland-modular = {
   #   enable = true;
   #   theme = "minimal";
   #   profile = "gaming";
@@ -38,7 +38,7 @@
   # ==========================================
   # EXAMPLE 2: Developer Workstation
   # ==========================================
-  # programs.hyprland-modular = {
+  # kernelcore.desktop.hyprland-modular = {
   #   enable = true;
   #   theme = "tokyonight";
   #   profile = "development";
@@ -66,7 +66,7 @@
   # ==========================================
   # EXAMPLE 3: Streaming Setup
   # ==========================================
-  # programs.hyprland-modular = {
+  # kernelcore.desktop.hyprland-modular = {
   #   enable = true;
   #   theme = "dracula";
   #   profile = "streaming";
@@ -88,7 +88,7 @@
   # ==========================================
   # EXAMPLE 4: Full Featured (Your Config)
   # ==========================================
-  programs.hyprland-modular = {
+  kernelcore.desktop.hyprland-modular = {
     enable = true;
 
     # Visual styling

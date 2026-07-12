@@ -15,13 +15,13 @@
 with lib;
 
 {
-  options.kernelcore.ssh = {
+  options.kernelcore.system.ssh = {
     enable = mkEnableOption "Enable declarative SSH configuration";
 
     # User-specific SSH directory
     sshDir = mkOption {
       type = types.str;
-      default = "${config.system.user.homeDir}/.ssh";
+      default = "${config.kernelcore.system.user.homeDir}/.ssh";
       description = "SSH directory path";
     };
 
@@ -69,12 +69,12 @@ with lib;
 
     serverUser = mkOption {
       type = types.str;
-      default = config.system.user.username;
+      default = config.kernelcore.system.user.username;
       description = "Username for internal server";
     };
   };
 
-  config = mkIf config.kernelcore.ssh.enable {
+  config = mkIf config.kernelcore.system.ssh.enable {
 
     # ============================================================
     # System-wide SSH Configuration
@@ -146,7 +146,7 @@ with lib;
             "github.com-marcos" = {
               hostname = "github.com";
               user = "git";
-              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.personalKey}";
+              identityFile = "${config.kernelcore.system.ssh.sshDir}/${config.kernelcore.system.ssh.personalKey}";
               identitiesOnly = true;
               extraOptions = {
                 PreferredAuthentications = "publickey";
@@ -160,7 +160,7 @@ with lib;
             "github.com-voidnxlabs" = {
               hostname = "github.com";
               user = "git";
-              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.orgKey}";
+              identityFile = "${config.kernelcore.system.ssh.sshDir}/${config.kernelcore.system.ssh.orgKey}";
               identitiesOnly = true;
               extraOptions = {
                 PreferredAuthentications = "publickey";
@@ -174,7 +174,7 @@ with lib;
             "gitlab.com" = {
               hostname = "gitlab.com";
               user = "git";
-              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.gitlabKey}";
+              identityFile = "${config.kernelcore.system.ssh.sshDir}/${config.kernelcore.system.ssh.gitlabKey}";
               identitiesOnly = true;
             };
 
@@ -182,9 +182,9 @@ with lib;
             # Internal NixOS Server
             # ────────────────────────────────────────────────────
             "voidnx-server" = {
-              hostname = config.kernelcore.ssh.serverHost;
-              user = config.kernelcore.ssh.serverUser;
-              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}";
+              hostname = config.kernelcore.system.ssh.serverHost;
+              user = config.kernelcore.system.ssh.serverUser;
+              identityFile = "${config.kernelcore.system.ssh.sshDir}/${config.kernelcore.system.ssh.serverKey}";
               identitiesOnly = true;
               port = 22;
               forwardAgent = true;  # Useful for git operations on server
@@ -196,7 +196,7 @@ with lib;
             "desktop" = {
               hostname = "192.168.15.7"; # IP do desktop
               user = "cypher"; # Usuário do desktop
-              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}";
+              identityFile = "${config.kernelcore.system.ssh.sshDir}/${config.kernelcore.system.ssh.serverKey}";
               identitiesOnly = true;
               port = 22;
             };
@@ -206,8 +206,8 @@ with lib;
             # ────────────────────────────────────────────────────
             "laptop" = {
               hostname = "192.168.15.9"; # IP do laptop
-              user = config.kernelcore.ssh.serverUser;
-              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.serverKey}"; # Supondo a mesma chave, ajuste se necessário
+              user = config.kernelcore.system.ssh.serverUser;
+              identityFile = "${config.kernelcore.system.ssh.sshDir}/${config.kernelcore.system.ssh.serverKey}"; # Supondo a mesma chave, ajuste se necessário
               identitiesOnly = true;
               port = 22;
             };
@@ -218,7 +218,7 @@ with lib;
             "ci-runner" = {
               hostname = "ci.example.com";
               user = "runner";
-              identityFile = "${config.kernelcore.ssh.sshDir}/id_ed25519_ci";
+              identityFile = "${config.kernelcore.system.ssh.sshDir}/id_ed25519_ci";
               identitiesOnly = true;
               extraOptions = {
                 StrictHostKeyChecking = "no";  # Only for CI
@@ -230,8 +230,8 @@ with lib;
             # Nvidia Brev Development Environments
             # ────────────────────────────────────────────────────
             "*.brev.dev" = {
-              user = config.kernelcore.ssh.serverUser;
-              identityFile = "${config.kernelcore.ssh.sshDir}/${config.kernelcore.ssh.brevKey}";
+              user = config.kernelcore.system.ssh.serverUser;
+              identityFile = "${config.kernelcore.system.ssh.sshDir}/${config.kernelcore.system.ssh.brevKey}";
               identitiesOnly = true;
               extraOptions = {
                 StrictHostKeyChecking = "accept-new";
@@ -249,15 +249,15 @@ with lib;
 
     # Ensure SSH directory exists with correct permissions
     system.activationScripts.sshSetup = ''
-      mkdir -p ${config.kernelcore.ssh.sshDir}
-      chown kernelcore:users ${config.kernelcore.ssh.sshDir}
-      chmod 700 ${config.kernelcore.ssh.sshDir}
+      mkdir -p ${config.kernelcore.system.ssh.sshDir}
+      chown kernelcore:users ${config.kernelcore.system.ssh.sshDir}
+      chmod 700 ${config.kernelcore.system.ssh.sshDir}
 
       # Create config if doesn't exist
-      if [ ! -f ${config.kernelcore.ssh.sshDir}/config ]; then
-        touch ${config.kernelcore.ssh.sshDir}/config
-        chown kernelcore:users ${config.kernelcore.ssh.sshDir}/config
-        chmod 600 ${config.kernelcore.ssh.sshDir}/config
+      if [ ! -f ${config.kernelcore.system.ssh.sshDir}/config ]; then
+        touch ${config.kernelcore.system.ssh.sshDir}/config
+        chown kernelcore:users ${config.kernelcore.system.ssh.sshDir}/config
+        chmod 600 ${config.kernelcore.system.ssh.sshDir}/config
       fi
     '';
 
@@ -271,7 +271,7 @@ with lib;
       "ssh-server" = "ssh voidnx-server";
 
       # SSH key management
-      "ssh-add-all" = "ssh-add ${config.kernelcore.ssh.sshDir}/id_*";
+      "ssh-add-all" = "ssh-add ${config.kernelcore.system.ssh.sshDir}/id_*";
       "ssh-list" = "ssh-add -l";
       "ssh-test-github" = "ssh -T git@github.com-marcos";
       "ssh-test-gitlab" = "ssh -T git@gitlab.com";
@@ -292,11 +292,11 @@ with lib;
 
         ## Key Files
 
-        - Personal: ~/.ssh/${config.kernelcore.ssh.personalKey}
-        - Org: ~/.ssh/${config.kernelcore.ssh.orgKey}
-        - Server: ~/.ssh/${config.kernelcore.ssh.serverKey}
-        - GitLab: ~/.ssh/${config.kernelcore.ssh.gitlabKey}
-        - Nvidia Brev: ~/.ssh/${config.kernelcore.ssh.brevKey}
+        - Personal: ~/.ssh/${config.kernelcore.system.ssh.personalKey}
+        - Org: ~/.ssh/${config.kernelcore.system.ssh.orgKey}
+        - Server: ~/.ssh/${config.kernelcore.system.ssh.serverKey}
+        - GitLab: ~/.ssh/${config.kernelcore.system.ssh.gitlabKey}
+        - Nvidia Brev: ~/.ssh/${config.kernelcore.system.ssh.brevKey}
 
         ## Usage Examples
 
@@ -349,13 +349,13 @@ with lib;
         /etc/nixos/modules/system/ssh-config.nix
 
         Available options:
-        - kernelcore.ssh.enable
-        - kernelcore.ssh.sshDir
-        - kernelcore.ssh.personalKey
-        - kernelcore.ssh.orgKey
-        - kernelcore.ssh.serverKey
-        - kernelcore.ssh.serverHost
-        - kernelcore.ssh.serverUser
+        - kernelcore.system.ssh.enable
+        - kernelcore.system.ssh.sshDir
+        - kernelcore.system.ssh.personalKey
+        - kernelcore.system.ssh.orgKey
+        - kernelcore.system.ssh.serverKey
+        - kernelcore.system.ssh.serverHost
+        - kernelcore.system.ssh.serverUser
 
         ## Security Notes
 

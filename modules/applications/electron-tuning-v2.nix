@@ -21,7 +21,7 @@
 with lib;
 
 let
-  cfg = config.kernelcore.electron;
+  cfg = config.kernelcore.applications.electron;
 
   # ═══════════════════════════════════════════════════════════════
   # TUNING PROFILES - Reusable performance configurations
@@ -70,7 +70,7 @@ let
 
 in
 {
-  options.kernelcore.electron = {
+  options.kernelcore.applications.electron = {
     enable = mkEnableOption "Per-app Electron tuning system";
 
     # Per-app configuration

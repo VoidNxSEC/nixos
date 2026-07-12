@@ -4,10 +4,10 @@
 { config, lib, ... }:
 
 let
-  cfg = config.services.neoland-agents;
+  cfg = config.kernelcore.ml.neoland.agents;
 in
 {
-  options.services.neoland-agents = {
+  options.kernelcore.ml.neoland.agents = {
     escalation = {
       juniorConfidenceWarnThreshold = lib.mkOption {
         type = lib.types.float;

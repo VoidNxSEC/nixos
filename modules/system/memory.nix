@@ -11,15 +11,37 @@ with lib;
   options = {
     kernelcore.system.memory = {
       optimizations.enable = mkEnableOption "Enable memory optimizations and OOM protection";
-      zram.enable = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Enable ZRAM compressed swap";
+      zram = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable ZRAM compressed swap";
+        };
+        memoryPercent = mkOption {
+          type = types.int;
+          default = 50;
+          description = "Percentual da RAM física usado pelo ZRAM (zstd).";
+        };
+        priority = mkOption {
+          type = types.int;
+          default = 10;
+          description = "Prioridade do swap ZRAM (maior = usado primeiro).";
+        };
       };
     };
   };
 
-  config = mkIf config.kernelcore.system.memory.optimizations.enable {
+  # ZRAM independe de optimizations.enable (gate próprio)
+  config = mkMerge [
+    (mkIf config.kernelcore.system.memory.zram.enable {
+      zramSwap = {
+        enable = true;
+        algorithm = "zstd"; # Best compression/speed balance
+        memoryPercent = config.kernelcore.system.memory.zram.memoryPercent;
+        priority = config.kernelcore.system.memory.zram.priority;
+      };
+    })
+    (mkIf config.kernelcore.system.memory.optimizations.enable {
     # ============================================
     # KERNEL MEMORY MANAGEMENT - Cgroup v2 optimized
     # ============================================
@@ -148,13 +170,7 @@ with lib;
     # Subreaper: systemd --user adopts orphaned child processes
     systemd.services."user@".serviceConfig.Subreaper = true;
 
-    # ZRAM swap - Enhanced for heavy compilation
-    zramSwap = mkIf config.kernelcore.system.memory.zram.enable {
-      enable = true;
-      algorithm = "zstd"; # Best compression/speed balance
-      memoryPercent = 30; # 30% gives ~10GB compressed swap, saves CPU
-      priority = 10; # Higher priority than disk swap
-    };
+    # ZRAM swap: ver bloco próprio acima (gate kernelcore.system.memory.zram.enable)
 
     # Swap disabled
     swapDevices = [ ];
@@ -244,5 +260,6 @@ with lib;
       };
     };
 
-  };
+    })
+  ];
 }

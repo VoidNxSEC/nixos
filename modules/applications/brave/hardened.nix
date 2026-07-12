@@ -7,7 +7,7 @@
 #
 # Uso:
 #   imports = [ ./modules/brave-hardened.nix ];
-#   voidnxlabs.brave-hardened = {
+#   kernelcore.applications.brave-hardened = {
 #     enable   = true;
 #     vaapiDriver = "radeonsi";   # i965 | iHD | nvidia
 #     dns.provider = "quad9";
@@ -24,7 +24,7 @@
 with lib;
 
 let
-  cfg = config.voidnxlabs.brave-hardened;
+  cfg = config.kernelcore.applications.brave-hardened;
 
   # ── DNS presets ─────────────────────────────────────────────────────────────
   dnsPresets = {
@@ -290,7 +290,7 @@ in
 {
 
   # ── Options ───────────────────────────────────────────────────────────────────
-  options.voidnxlabs.brave-hardened = {
+  options.kernelcore.applications.brave-hardened = {
 
     enable = mkEnableOption "Brave Browser hardened (voidnxlabs)";
 
@@ -431,16 +431,16 @@ in
     assertions = [
       {
         assertion = !(cfg.networkConfinement.useFirejail && !cfg.networkConfinement.enable);
-        message = "voidnxlabs.brave-hardened: useFirejail = true requer networkConfinement.enable = true";
+        message = "kernelcore.applications.brave-hardened: useFirejail = true requer networkConfinement.enable = true";
       }
       {
         assertion = cfg.dns.provider != "nextdns" || cfg.dns.nextdnsId != "";
-        message = "voidnxlabs.brave-hardened: dns.provider = nextdns requer dns.nextdnsId";
+        message = "kernelcore.applications.brave-hardened: dns.provider = nextdns requer dns.nextdnsId";
       }
       {
         assertion =
           cfg.dns.provider != "custom" || (cfg.dns.customServers != [ ] && cfg.dns.customDoH != "");
-        message = "voidnxlabs.brave-hardened: dns.provider = custom requer dns.customServers e dns.customDoH";
+        message = "kernelcore.applications.brave-hardened: dns.provider = custom requer dns.customServers e dns.customDoH";
       }
     ];
   };

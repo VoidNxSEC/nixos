@@ -16,11 +16,11 @@
 }:
 
 let
-  cfg = config.services.ml-ops-api;
-  eco = config.ai.ecosystem;
+  cfg = config.kernelcore.ml.agents.ml-ops-api;
+  eco = config.kernelcore.ml.agents.ecosystem;
 in
 {
-  options.services.ml-ops-api = {
+  options.kernelcore.ml.agents.ml-ops-api = {
     enable = lib.mkEnableOption "ML-Ops API Rust inference gateway";
 
     package = lib.mkOption {

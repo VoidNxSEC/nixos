@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = config.services.cilium-cni;
+  cfg = config.kernelcore.kubernetes.cilium;
 
   ciliumValues = pkgs.writeText "cilium-values.yaml" ''
     # Cluster configuration
@@ -91,7 +91,7 @@ let
 
 in
 {
-  options.services.cilium-cni = {
+  options.kernelcore.kubernetes.cilium = {
     enable = mkEnableOption "Cilium CNI with eBPF networking";
 
     apiServerHost = mkOption {

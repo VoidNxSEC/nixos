@@ -268,7 +268,7 @@ in
       extraGroups = [
         "systemd-journal"
         "root"
-        config.system.user.username
+        config.kernelcore.system.user.username
       ];
     };
     # Add suricata user to vector group for log access

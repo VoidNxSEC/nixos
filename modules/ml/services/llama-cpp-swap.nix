@@ -23,7 +23,7 @@
 # - Swap time: ~5-10s total downtime
 
 let
-  cfg = config.services.llamacpp-swap;
+  cfg = config.kernelcore.ml.inference.llamacpp-swap;
 
   boolToShell = value: if value then "true" else "false";
 
@@ -191,7 +191,7 @@ let
   '';
 in
 {
-  options.services.llamacpp-swap = {
+  options.kernelcore.ml.inference.llamacpp-swap = {
     enable = lib.mkEnableOption "LLaMA.cpp SWAP - hot model reloading inference server";
 
     package = lib.mkOption {

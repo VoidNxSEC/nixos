@@ -10,10 +10,10 @@
 with lib;
 
 let
-  cfg = config.services.i915-governor;
+  cfg = config.kernelcore.hardware.i915-governor;
 in
 {
-  options.services.i915-governor = {
+  options.kernelcore.hardware.i915-governor = {
     enable = mkEnableOption "Intel i915 Memory Governor";
     thresholds = {
       gpuCritical = mkOption {

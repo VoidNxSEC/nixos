@@ -28,7 +28,7 @@ let
 
   # Top-level roots to scan
   roots = [
-    config.system.user.username
+    config.kernelcore.system.user.username
     "services"
     "programs"
     "security"
@@ -139,11 +139,11 @@ let
 
 in
 {
-  options.services.config-auditor = {
+  options.kernelcore.services.config-auditor = {
     enable = mkEnableOption "Configuration Auditor Tool";
   };
 
-  config = mkIf config.services.config-auditor.enable {
+  config = mkIf config.kernelcore.services.config-auditor.enable {
     environment.systemPackages = [ auditScript ];
   };
 }

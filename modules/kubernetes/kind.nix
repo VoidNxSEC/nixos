@@ -2,7 +2,7 @@
 #
 # kind (Kubernetes IN Docker) lab environment.
 # Declarative local multi-node cluster generator + CKA/CKAD/CKS toolset,
-# meant to complement (not replace) the heavier services.k3s-cluster module:
+# meant to complement (not replace) the heavier kernelcore.kubernetes.k3s module:
 # kind is for fast, disposable, multi-node practice clusters used to study
 # for Kubernetes certification exams; k3s-cluster.nix is for an always-on
 # cluster on real hardware.
@@ -16,7 +16,7 @@
 with lib;
 
 let
-  cfg = config.services.kind-lab;
+  cfg = config.kernelcore.kubernetes.kind;
 
   controlPlaneCount = if cfg.haControlPlane then 3 else 1;
 
@@ -226,7 +226,7 @@ let
 
 in
 {
-  options.services.kind-lab = {
+  options.kernelcore.kubernetes.kind = {
     enable = mkEnableOption "kind (Kubernetes IN Docker) lab environment for Kubernetes certification exam prep (CKA/CKAD/CKS)";
 
     clusterName = mkOption {
@@ -370,7 +370,7 @@ in
         assertion =
           (cfg.provider == "docker" && config.virtualisation.docker.enable)
           || (cfg.provider == "podman" && config.virtualisation.podman.enable);
-        message = "services.kind-lab.provider = \"${cfg.provider}\" requires virtualisation.${cfg.provider}.enable = true.";
+        message = "kernelcore.kubernetes.kind.provider = \"${cfg.provider}\" requires virtualisation.${cfg.provider}.enable = true.";
       }
     ];
 

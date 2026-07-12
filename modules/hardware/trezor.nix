@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.hardware.trezor;
+  cfg = config.kernelcore.hardware.trezor;
 in
 {
-  options.hardware.trezor = {
+  options.kernelcore.hardware.trezor = {
     enable = mkEnableOption "Trezor hardware wallet udev rules";
 
     enableSSHAgent = mkOption {

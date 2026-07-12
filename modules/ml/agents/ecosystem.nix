@@ -7,10 +7,10 @@
 { config, lib, ... }:
 
 let
-  cfg = config.ai.ecosystem;
+  cfg = config.kernelcore.ml.agents.ecosystem;
 in
 {
-  options.ai.ecosystem = {
+  options.kernelcore.ml.agents.ecosystem = {
     # ── Deployment mode ────────────────────────────────────────────────────
     deploymentMode = lib.mkOption {
       type = lib.types.enum [

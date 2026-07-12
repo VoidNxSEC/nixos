@@ -28,7 +28,7 @@
     virtualisation.libvirtd.enable = lib.mkForce false;
 
     # ── Sem electron apps ─────────────────────────────────────────────────────
-    kernelcore.electron.enable = lib.mkForce false;
+    kernelcore.applications.electron.enable = lib.mkForce false;
 
     # ── Kernel estável (não latest) ───────────────────────────────────────────
     boot.kernelPackages = lib.mkForce pkgs.linuxPackages;

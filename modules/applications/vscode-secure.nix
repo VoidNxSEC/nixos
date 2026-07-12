@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.programs.vscode-secure;
+  cfg = config.kernelcore.applications.vscode;
 in
 {
-  options.programs.vscode-secure = {
+  options.kernelcore.applications.vscode = {
     enable = mkEnableOption "Enable VSCode with Firejail sandboxing";
 
     enableHardening = mkOption {
@@ -292,7 +292,7 @@ in
 
     # Warning message for users
     warnings = mkIf cfg.enableMicrosoftTelemetry [
-      "VSCode telemetry is enabled. This sends data to Microsoft. Consider disabling with programs.vscode-secure.enableMicrosoftTelemetry = false;"
+      "VSCode telemetry is enabled. This sends data to Microsoft. Consider disabling with kernelcore.applications.vscode.enableMicrosoftTelemetry = false;"
     ];
   };
 }

@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.programs.firefox-privacy;
+  cfg = config.kernelcore.applications.firefox;
 in
 {
-  options.programs.firefox-privacy = {
+  options.kernelcore.applications.firefox = {
     enable = mkEnableOption "Firefox Hardened: Privacy + Intel iGPU Tuning";
 
     enableGoogleAuthenticator = mkOption {

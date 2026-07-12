@@ -10,8 +10,14 @@
   # TICKET #IO-992: IO OPTIMIZATION & LATENCY REDUCTION
   # Based on RCA: Suricata Restart Loop + High Swap Latency
   # =================================================================
+  # NOTA: usa mkForce em zramSwap/sysctl — conflita com o ZRAM inline
+  # do hosts/kernelcore/configuration.nix. Manter default=false até a
+  # Fase 3 (desmonte do configuration.nix) consolidar em system/memory.
+  options.kernelcore.system.ioScheduler.enable = lib.mkEnableOption "IO/latency tuning (ZRAM zstd, kyber/bfq, VM sysctl, journald limits)";
 
-  # 1. ZRAM SWAP (CRUCIAL - Fixes Swap Thrashing)
+  config = lib.mkIf config.kernelcore.system.ioScheduler.enable {
+
+    # 1. ZRAM SWAP (CRUCIAL - Fixes Swap Thrashing)
   # Evidence: vmstat showed high si/so (swap in/out).
   # Solution: Compress swap in RAM (zstd) instead of hitting slow disk.
   zramSwap = lib.mkForce {
@@ -58,10 +64,11 @@
     Storage=persistent
   '';
 
-  # 5. SYSTEMD GLOBAL LIMITS (Prevent Service Runaways)
-  #systemd.extraConfig = ''
-  # Stop services that fail too quickly (5 times in 10s)
-  #DefaultStartLimitIntervalSec=10s
-  #DefaultStartLimitBurst=5
-  #'';
+    # 5. SYSTEMD GLOBAL LIMITS (Prevent Service Runaways)
+    #systemd.extraConfig = ''
+    # Stop services that fail too quickly (5 times in 10s)
+    #DefaultStartLimitIntervalSec=10s
+    #DefaultStartLimitBurst=5
+    #'';
+  };
 }

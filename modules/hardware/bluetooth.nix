@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.kernelcore.bluetooth;
+  cfg = config.kernelcore.hardware.bluetooth;
 in
 {
-  options.kernelcore.bluetooth = {
+  options.kernelcore.hardware.bluetooth = {
     enable = mkEnableOption "Bluetooth support with GUI management";
   };
 

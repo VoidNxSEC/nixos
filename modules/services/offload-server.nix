@@ -8,7 +8,7 @@
 with lib;
 
 {
-  options.services.offload-server = {
+  options.kernelcore.services.offload-server = {
     enable = mkEnableOption "Enable NixOS offload build server";
 
     cachePort = mkOption {
@@ -36,21 +36,21 @@ with lib;
     };
   };
 
-  config = mkIf config.services.offload-server.enable {
+  config = mkIf config.kernelcore.services.offload-server.enable {
 
     # ===== NIX-SERVE BINARY CACHE =====
     services.nix-serve = {
       enable = true;
-      port = config.services.offload-server.cachePort;
+      port = config.kernelcore.services.offload-server.cachePort;
       bindAddress = "0.0.0.0"; # Listen on all interfaces
-      secretKeyFile = config.services.offload-server.cacheKeyPath;
+      secretKeyFile = config.kernelcore.services.offload-server.cacheKeyPath;
     };
 
     # ===== CREATE BUILDER USER =====
-    users.users.${config.services.offload-server.builderUser} = {
+    users.users.${config.kernelcore.services.offload-server.builderUser} = {
       isSystemUser = true;
-      group = config.services.offload-server.builderUser;
-      home = "/var/lib/${config.services.offload-server.builderUser}";
+      group = config.kernelcore.services.offload-server.builderUser;
+      home = "/var/lib/${config.kernelcore.services.offload-server.builderUser}";
       createHome = true;
       shell = pkgs.bash;
       description = "Nix remote build user";
@@ -63,7 +63,7 @@ with lib;
       ];
     };
 
-    users.groups.${config.services.offload-server.builderUser} = { };
+    users.groups.${config.kernelcore.services.offload-server.builderUser} = { };
 
     # ===== SSH SERVER CONFIGURATION =====
     services.openssh = {
@@ -86,7 +86,7 @@ with lib;
     # ===== NIX CONFIGURATION =====
     nix.settings = {
       # Trust the builder user
-      trusted-users = [ config.services.offload-server.builderUser ];
+      trusted-users = [ config.kernelcore.services.offload-server.builderUser ];
 
       # Optimize for serving builds
       keep-outputs = true;
@@ -98,7 +98,7 @@ with lib;
     };
 
     # ===== NFS EXPORTS (OPTIONAL) =====
-    services.nfs.server = mkIf config.services.offload-server.enableNFS {
+    services.nfs.server = mkIf config.kernelcore.services.offload-server.enableNFS {
       enable = true;
       exports = ''
         # Export /nix/store read-only to LAN
@@ -110,26 +110,26 @@ with lib;
     };
 
     # Create NFS directories if enabled
-    systemd.tmpfiles.rules = mkIf config.services.offload-server.enableNFS [
+    systemd.tmpfiles.rules = mkIf config.kernelcore.services.offload-server.enableNFS [
       "d /var/lib/nix-offload 0755 root root -"
       "d /var/lib/nix-offload/builds 0755 root root -"
       "d /var/lib/nix-offload/cache 0755 root root -"
     ];
 
-    services.rpcbind.enable = mkIf config.services.offload-server.enableNFS true;
+    services.rpcbind.enable = mkIf config.kernelcore.services.offload-server.enableNFS true;
 
     # ===== FIREWALL CONFIGURATION =====
     networking.firewall = {
       allowedTCPPorts = [
         22 # SSH
-        config.services.offload-server.cachePort # nix-serve
+        config.kernelcore.services.offload-server.cachePort # nix-serve
       ]
-      ++ (optionals config.services.offload-server.enableNFS [
+      ++ (optionals config.kernelcore.services.offload-server.enableNFS [
         2049 # NFS
         111 # RPC portmapper
       ]);
 
-      allowedUDPPorts = optionals config.services.offload-server.enableNFS [
+      allowedUDPPorts = optionals config.kernelcore.services.offload-server.enableNFS [
         2049 # NFS
         111 # RPC portmapper
       ];
@@ -145,14 +145,14 @@ with lib;
         # Check services
         echo "📊 Services:"
         systemctl is-active --quiet nix-serve && \
-          echo "✅ nix-serve: Running (port ${toString config.services.offload-server.cachePort})" || \
+          echo "✅ nix-serve: Running (port ${toString config.kernelcore.services.offload-server.cachePort})" || \
           echo "❌ nix-serve: Inactive"
 
         systemctl is-active --quiet sshd && \
           echo "✅ sshd: Running" || \
           echo "❌ sshd: Inactive"
 
-        ${optionalString config.services.offload-server.enableNFS ''
+        ${optionalString config.kernelcore.services.offload-server.enableNFS ''
           systemctl is-active --quiet nfs-server && \
             echo "✅ NFS: Running" || \
             echo "❌ NFS: Inactive"
@@ -161,10 +161,10 @@ with lib;
         # Check cache key
         echo
         echo "🔑 Cache Configuration:"
-        if [ -f "${config.services.offload-server.cacheKeyPath}" ]; then
+        if [ -f "${config.kernelcore.services.offload-server.cacheKeyPath}" ]; then
           echo "✅ Cache signing key: Present"
           PUB_KEY_PATH="${
-            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.services.offload-server.cacheKeyPath
+            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.kernelcore.services.offload-server.cacheKeyPath
           }"
           if [ -f "$PUB_KEY_PATH" ]; then
             echo "   Public key: $PUB_KEY_PATH"
@@ -173,9 +173,9 @@ with lib;
         else
           echo "❌ Cache signing key: Missing"
           echo "   Run: sudo nix-store --generate-binary-cache-key cache.local \\"
-          echo "        ${config.services.offload-server.cacheKeyPath} \\"
+          echo "        ${config.kernelcore.services.offload-server.cacheKeyPath} \\"
           echo "        ${
-            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.services.offload-server.cacheKeyPath
+            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.kernelcore.services.offload-server.cacheKeyPath
           }"
         fi
 
@@ -184,26 +184,26 @@ with lib;
         echo "🌐 Network:"
         IP=$(ip route get 1.1.1.1 | awk '{print $7}' | head -1)
         echo "Server IP: $IP"
-        echo "Cache URL: http://$IP:${toString config.services.offload-server.cachePort}"
+        echo "Cache URL: http://$IP:${toString config.kernelcore.services.offload-server.cachePort}"
 
         # Test cache
         echo
         echo "🧪 Cache Test:"
-        if curl -s -f http://localhost:${toString config.services.offload-server.cachePort}/nix-cache-info >/dev/null; then
+        if curl -s -f http://localhost:${toString config.kernelcore.services.offload-server.cachePort}/nix-cache-info >/dev/null; then
           echo "✅ Cache accessible"
-          curl -s http://localhost:${toString config.services.offload-server.cachePort}/nix-cache-info
+          curl -s http://localhost:${toString config.kernelcore.services.offload-server.cachePort}/nix-cache-info
         else
           echo "❌ Cache not accessible"
         fi
 
         # Builder user info
         echo
-        echo "👤 Builder User (${config.services.offload-server.builderUser}):"
-        if id ${config.services.offload-server.builderUser} >/dev/null 2>&1; then
+        echo "👤 Builder User (${config.kernelcore.services.offload-server.builderUser}):"
+        if id ${config.kernelcore.services.offload-server.builderUser} >/dev/null 2>&1; then
           echo "✅ User exists"
-          echo "   Home: $(eval echo ~${config.services.offload-server.builderUser})"
+          echo "   Home: $(eval echo ~${config.kernelcore.services.offload-server.builderUser})"
 
-          AUTH_KEYS="$(eval echo ~${config.services.offload-server.builderUser})/.ssh/authorized_keys"
+          AUTH_KEYS="$(eval echo ~${config.kernelcore.services.offload-server.builderUser})/.ssh/authorized_keys"
           if [ -f "$AUTH_KEYS" ]; then
             KEY_COUNT=$(wc -l < "$AUTH_KEYS")
             echo "   Authorized keys: $KEY_COUNT"
@@ -227,8 +227,8 @@ with lib;
         echo
 
         # Test SSH
-        echo "1. Testing SSH access for ${config.services.offload-server.builderUser}..."
-        if sudo -u ${config.services.offload-server.builderUser} ssh -o ConnectTimeout=5 -o BatchMode=yes localhost 'echo "SSH OK"' 2>/dev/null; then
+        echo "1. Testing SSH access for ${config.kernelcore.services.offload-server.builderUser}..."
+        if sudo -u ${config.kernelcore.services.offload-server.builderUser} ssh -o ConnectTimeout=5 -o BatchMode=yes localhost 'echo "SSH OK"' 2>/dev/null; then
           echo "   ✅ SSH test passed"
         else
           echo "   ⚠️  SSH test failed (may need SSH key setup)"
@@ -237,7 +237,7 @@ with lib;
 
         # Test cache
         echo "2. Testing cache server..."
-        if curl -s -f http://localhost:${toString config.services.offload-server.cachePort}/nix-cache-info >/dev/null; then
+        if curl -s -f http://localhost:${toString config.kernelcore.services.offload-server.cachePort}/nix-cache-info >/dev/null; then
           echo "   ✅ Cache server responding"
         else
           echo "   ❌ Cache server not responding"
@@ -253,7 +253,7 @@ with lib;
         fi
         echo
 
-        ${optionalString config.services.offload-server.enableNFS ''
+        ${optionalString config.kernelcore.services.offload-server.enableNFS ''
           # Test NFS
           echo "4. Testing NFS exports..."
           if showmount -e localhost >/dev/null 2>&1; then
@@ -279,9 +279,9 @@ with lib;
       '')
 
       (writeShellScriptBin "offload-generate-cache-keys" ''
-        PRIV_KEY="${config.services.offload-server.cacheKeyPath}"
+        PRIV_KEY="${config.kernelcore.services.offload-server.cacheKeyPath}"
         PUB_KEY="${
-          builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.services.offload-server.cacheKeyPath
+          builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.kernelcore.services.offload-server.cacheKeyPath
         }"
 
         if [ -f "$PRIV_KEY" ] && [ -f "$PUB_KEY" ]; then
@@ -318,15 +318,15 @@ with lib;
     # ===== ACTIVATION SCRIPT =====
     system.activationScripts.offload-server-setup = ''
       # Ensure builder SSH directory exists
-      BUILDER_HOME="/var/lib/${config.services.offload-server.builderUser}"
+      BUILDER_HOME="/var/lib/${config.kernelcore.services.offload-server.builderUser}"
       if [ -d "$BUILDER_HOME" ]; then
         mkdir -p "$BUILDER_HOME/.ssh"
-        chown ${config.services.offload-server.builderUser}:${config.services.offload-server.builderUser} "$BUILDER_HOME/.ssh"
+        chown ${config.kernelcore.services.offload-server.builderUser}:${config.kernelcore.services.offload-server.builderUser} "$BUILDER_HOME/.ssh"
         chmod 700 "$BUILDER_HOME/.ssh"
       fi
 
       # Warn if cache keys don't exist
-      if [ ! -f "${config.services.offload-server.cacheKeyPath}" ]; then
+      if [ ! -f "${config.kernelcore.services.offload-server.cacheKeyPath}" ]; then
         echo "⚠️  WARNING: Cache signing keys not found!"
         echo "   Run: offload-generate-cache-keys"
       fi

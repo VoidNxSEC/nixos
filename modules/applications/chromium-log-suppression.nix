@@ -22,7 +22,7 @@
 with lib;
 
 let
-  cfg = config.kernelcore.chromium.logSuppression;
+  cfg = config.kernelcore.applications.chromium.logSuppression;
 
   # Flags to suppress verbose GPU/Wayland logging
   suppressionFlags = [
@@ -60,7 +60,7 @@ let
 
 in
 {
-  options.kernelcore.chromium.logSuppression = {
+  options.kernelcore.applications.chromium.logSuppression = {
     enable = mkEnableOption "Suppress verbose Chromium GPU/Wayland logging";
 
     enablePerformanceFlags = mkOption {
@@ -142,7 +142,7 @@ in
   # DOCUMENTATION
   # ═══════════════════════════════════════════════════════════════
   # Usage:
-  #   kernelcore.chromium.logSuppression.enable = true;
+  #   kernelcore.applications.chromium.logSuppression.enable = true;
   #
   # This will:
   #   1. Set CHROMIUM_FLAGS and ELECTRON_FLAGS environment variables

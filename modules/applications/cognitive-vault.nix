@@ -10,10 +10,10 @@
 with lib;
 
 let
-  cfg = config.programs.cognitive-vault;
+  cfg = config.kernelcore.applications.cognitive-vault;
 in
 {
-  options.programs.cognitive-vault = {
+  options.kernelcore.applications.cognitive-vault = {
     enable = mkEnableOption "CognitiveVault - Hybrid Secure Password Manager";
     package = mkOption {
       type = types.package;

@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.security.hardening.apparmor.edr;
+  cfg = config.kernelcore.soc.edr.hardening.apparmor;
 in
 {
-  options.security.hardening.apparmor.edr = {
+  options.kernelcore.soc.edr.hardening.apparmor = {
     enable = mkEnableOption "EDR AppArmor Profiles";
   };
 

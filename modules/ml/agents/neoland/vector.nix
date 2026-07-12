@@ -19,11 +19,11 @@
 }:
 
 let
-  cfg = config.services.neoland-vector;
-  lokiPort = config.services.neoland-loki.port or 3100;
+  cfg = config.kernelcore.ml.neoland.vector;
+  lokiPort = config.kernelcore.ml.neoland.loki.port or 3100;
 in
 {
-  options.services.neoland-vector = {
+  options.kernelcore.ml.neoland.vector = {
     enable = lib.mkEnableOption "Vector log pipeline para neoland/neotron";
 
     lokiUrl = lib.mkOption {

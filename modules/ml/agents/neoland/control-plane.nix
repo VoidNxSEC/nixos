@@ -14,11 +14,11 @@
 }:
 
 let
-  cfg = config.services.neoland-control-plane;
-  eco = config.ai.ecosystem;
+  cfg = config.kernelcore.ml.neoland.controlPlane;
+  eco = config.kernelcore.ml.agents.ecosystem;
 in
 {
-  options.services.neoland-control-plane = {
+  options.kernelcore.ml.neoland.controlPlane = {
     enable = lib.mkEnableOption "Neoland Rust control plane";
 
     package = lib.mkOption {
@@ -93,11 +93,11 @@ in
         NEOLAND_NATS_URL = cfg.natsUrl;
         # Service discovery from ecosystem registry
         NEOLAND_AGENTS_DSPY_URL = eco.services.neoland.pipelineUrl;
-        AI_NEOTRON_URL = eco.services.neotron.url;
+        AI_NEOTRON_URL = eco.kernelcore.ml.agents.neotron.url;
         AI_MLOPS_URL = eco.services.mlOpsApi.url;
-        AI_CEREBRO_URL = eco.services.cerebro.url;
-        AI_PHANTOM_URL = eco.services.phantom.url;
-        AI_NEOTRON_GUARDRAILS = lib.boolToString eco.services.neotron.guardrailsEnabled;
+        AI_CEREBRO_URL = eco.kernelcore.ml.agents.cerebro.url;
+        AI_PHANTOM_URL = eco.kernelcore.ml.agents.phantom.url;
+        AI_NEOTRON_GUARDRAILS = lib.boolToString eco.kernelcore.ml.agents.neotron.guardrailsEnabled;
       };
 
       serviceConfig = {

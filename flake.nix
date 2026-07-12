@@ -84,7 +84,7 @@
 
     # Arch-Analyzer
     arch-analyzer = {
-      url = "github:VoidNxSEC/arch-analyzer";
+      url = "git+ssh://git@github.com/VoidNxSEC/arch-analyzer"; # repo privado: fetch via SSH
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -98,12 +98,6 @@
     # SpookNix
     spooknix = {
       url = "github:VoidNxSEC/spooknix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Actions-TV
-    actions-tv = {
-      url = "github:VoidNxSEC/actions-tv";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -235,7 +229,7 @@
       #program = "${inputs.securellm-bridge.packages.${system}.default}/bin/securellm-bridge";
       #};
 
-      # spider-nix, arch-analyzer, phantom, actions-tv, ai-agent-os, spooknix
+      # spider-nix, arch-analyzer, phantom, ai-agent-os, spooknix
       # comentados temporariamente durante estabilização do flake
       #};
 
@@ -295,8 +289,7 @@
             # Kubernetes (k3s, Cilium, Longhorn) now in modules/kubernetes/
             # ═══════════════════════════════════════════════════════════
             self.nixosModules.default
-            # PENDENTE: reativar após restaurar mercury
-            #inputs.mercury.nixosModules.batter
+#MERCURYKEEP#            #inputs.mercury.nixosModules.batter
             #inputs.mercury.nixosModules.frosting
 
             # NOTE: Feature flags and service configuration moved to:
@@ -323,7 +316,6 @@
               };
               home-manager.sharedModules = [
                 inputs.spooknix.homeManagerModules.default
-                inputs.actions-tv.homeManagerModules.github-actions-waybar
               ];
               home-manager.users.kernelcore = import ./hosts/kernelcore/home/home.nix; # kernelcore is the actual user on this machine
               home-manager.backupFileExtension = null;
@@ -335,9 +327,8 @@
             # ═══════════════════════════════════════════════════════════
             inputs.spooknix.nixosModules.default
 
-            # PENDENTE: reativar após restaurar mercury
+            # PENDENTE: reativar apos restaurar mercury
             #inputs.mercury.nixosModules.sprinkles
-            ./profiles/k8s-lab.nix
           ];
         };
 

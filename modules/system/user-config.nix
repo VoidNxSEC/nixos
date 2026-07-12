@@ -8,16 +8,16 @@
 # all modules inherit consistent paths automatically.
 #
 # Usage in hosts/your-host/configuration.nix:
-#   config.system.user.username = "alice";
+#   config.kernelcore.system.user.username = "alice";
 # ============================================================
 
 with lib;
 
 let
-  cfg = config.system.user;
+  cfg = config.kernelcore.system.user;
 in
 {
-  options.system.user = {
+  options.kernelcore.system.user = {
     username = mkOption {
       type = types.str;
       default = "kernelcore";
@@ -55,8 +55,8 @@ in
   # ── PHASE 3 TODO ──────────────────────────────────────────
   # Sweep all modules that contain hardcoded /home/kernelcore
   # or literal "kernelcore" and replace with:
-  #   config.system.user.homeDir
-  #   config.system.user.username
+  #   config.kernelcore.system.user.homeDir
+  #   config.kernelcore.system.user.username
   # See docs/runbooks/phase-3-parametrize-paths.md
   # ─────────────────────────────────────────────────────────
   config = { };

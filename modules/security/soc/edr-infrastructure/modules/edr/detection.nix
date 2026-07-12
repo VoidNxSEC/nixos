@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.services.edr.detection;
+  cfg = config.kernelcore.soc.edr.detection;
 in
 {
-  options.services.edr.detection = {
+  options.kernelcore.soc.edr.detection = {
     enable = mkEnableOption "EDR Detection Engine";
   };
 

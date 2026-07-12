@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = config.services.gitea-showcase;
+  cfg = config.kernelcore.services.gitea-showcase;
   publicUrl = removeSuffix "/" (
     if cfg.rootUrl != null then cfg.rootUrl else "http://${cfg.domain}:${toString cfg.httpPort}/"
   );
@@ -21,7 +21,7 @@ let
       publicUrl;
 in
 {
-  options.services.gitea-showcase = {
+  options.kernelcore.services.gitea-showcase = {
     enable = mkEnableOption "Gitea with automatic showcase projects mirroring";
 
     domain = mkOption {
@@ -65,7 +65,7 @@ in
 
     showcaseProjectsPath = mkOption {
       type = types.str;
-      default = "${config.system.user.homeDir}/dev/projects";
+      default = "${config.kernelcore.system.user.homeDir}/dev/projects";
       description = "Path to showcase projects directory";
     };
 
@@ -414,7 +414,7 @@ in
 
     warnings =
       optional (cfg.protocol != "http")
-        "services.gitea-showcase.protocol = \"https\" is deprecated; terminate TLS at the central NGINX/ACME layer instead."
-      ++ optional cfg.cloudflare.enable "services.gitea-showcase.cloudflare.enable is deprecated; manage DNS and TLS centrally via the repo-wide proxy/TLS modules.";
+        "kernelcore.services.gitea-showcase.protocol = \"https\" is deprecated; terminate TLS at the central NGINX/ACME layer instead."
+      ++ optional cfg.cloudflare.enable "kernelcore.services.gitea-showcase.cloudflare.enable is deprecated; manage DNS and TLS centrally via the repo-wide proxy/TLS modules.";
   };
 }

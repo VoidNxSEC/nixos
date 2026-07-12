@@ -16,8 +16,7 @@
 
     # Browsers
     ./firefox-privacy.nix
-    ./brave-secure.nix
-    ./brave-hardened.nix # Hardened Brave profile (strict security/privacy)
+    ./brave # Brave profile-based (secure | hardened)
     ./chromium.nix
 
     # Editors
@@ -28,5 +27,10 @@
     # Terminal
     ./zellij.nix
     ./nemo-full.nix
+    # NÃO importar ./neoland.nix aqui: usa options de home-manager
+    # (wayland.windowManager) — pendente adaptação.
+
+    # Utilities
+    ./cognitive-vault.nix # Cognitive vault (migrado de modules/programs/)
   ];
 }

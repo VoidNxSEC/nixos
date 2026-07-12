@@ -18,7 +18,7 @@
   # ============================================================
 
   # Flags base para docker run com GPU
-  options.shell.gpu = {
+  options.kernelcore.shell.gpu = {
     # Flags completas como string (para usar em aliases)
     dockerFlags = lib.mkOption {
       type = lib.types.str;
@@ -114,7 +114,7 @@
   # ============================================================
   # IMAGENS TESTADAS
   # ============================================================
-  config.shell.gpu.images = {
+  config.kernelcore.shell.gpu.images = {
     pytorch = "nvcr.io/nvidia/pytorch:25.09-py3";
     tgi = "ghcr.io/huggingface/text-generation-inference:latest";
     tensorflow = "nvcr.io/nvidia/tensorflow:25.09-tf2-py3";
@@ -123,7 +123,7 @@
   # ============================================================
   # ALIASES DE REFERÊNCIA (originais de scripts.nix)
   # ============================================================
-  config.shell.gpu.referenceAliases = {
+  config.kernelcore.shell.gpu.referenceAliases = {
     tgi = "docker run --rm --device=nvidia.com/gpu=all --ipc=host --ulimit stack=67108864 --shm-size=8g ghcr.io/huggingface/text-generation-inference:latest";
 
     pytorch = "docker run --rm --device=nvidia.com/gpu=all --ipc=host --ulimit stack=67108864 --shm-size=8g nvcr.io/nvidia/pytorch:25.09-py3";
@@ -140,7 +140,7 @@
   # ============================================================
   # VALIDAÇÃO E DOCUMENTAÇÃO
   # ============================================================
-  config.shell.gpu.docs = {
+  config.kernelcore.shell.gpu.docs = {
     flagsExplanation = ''
       FLAGS GPU - EXPLICAÇÃO:
 

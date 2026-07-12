@@ -17,10 +17,10 @@
 }:
 
 let
-  cfg = config.services.neoland-loki;
+  cfg = config.kernelcore.ml.neoland.loki;
 in
 {
-  options.services.neoland-loki = {
+  options.kernelcore.ml.neoland.loki = {
     enable = lib.mkEnableOption "Loki log store para o stack AI neoland/neotron";
 
     port = lib.mkOption {

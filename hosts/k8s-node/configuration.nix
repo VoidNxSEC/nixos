@@ -66,7 +66,7 @@
   # KUBERNETES STACK (K3S)
   # ============================================================================
 
-  services.k3s-cluster = {
+  kernelcore.kubernetes.k3s = {
     enable = true;
     role = "server";
 
@@ -98,7 +98,7 @@
     wantedBy = [ "multi-user.target" ];
 
     # Only run if k3s is enabled
-    enable = config.services.k3s-cluster.enable; # Fixed reference to module option
+    enable = config.kernelcore.kubernetes.k3s.enable; # Fixed reference to module option
 
     script = ''
       export KUBECONFIG=/etc/rancher/k3s/k3s.yaml

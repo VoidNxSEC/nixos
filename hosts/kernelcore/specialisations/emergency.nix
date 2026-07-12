@@ -13,8 +13,8 @@
     # Trezor hardware authentication
     # Acesso físico obrigatório para qualquer operação SSH/sudo
     # ──────────────────────────────────────────────────────────────
-    hardware.trezor.enable = lib.mkForce true;
-    hardware.trezor.enableSSHAgent = lib.mkForce true;
+    kernelcore.hardware.trezor.enable = lib.mkForce true;
+    kernelcore.hardware.trezor.enableSSHAgent = lib.mkForce true;
 
     # ──────────────────────────────────────────────────────────────
     # SSH — apenas autenticação por chave Trezor em modo emergência
@@ -33,9 +33,9 @@
     # ──────────────────────────────────────────────────────────────
     # Serviços — desabilitar workloads pesados para estabilidade
     # ──────────────────────────────────────────────────────────────
-    services.k3s-cluster.enable = lib.mkForce false;
-    services.cilium-cni.enable = lib.mkForce false;
-    services.longhorn-storage.enable = lib.mkForce false;
+    kernelcore.kubernetes.k3s.enable = lib.mkForce false;
+    kernelcore.kubernetes.cilium.enable = lib.mkForce false;
+    kernelcore.kubernetes.longhorn.enable = lib.mkForce false;
 
     # ──────────────────────────────────────────────────────────────
     # Pacotes de diagnóstico disponíveis no boot de emergência

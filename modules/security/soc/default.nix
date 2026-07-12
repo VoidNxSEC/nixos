@@ -42,5 +42,8 @@
     # Visualization & Alerting
     ./dashboards/grafana.nix
     ./alerting/alerting.nix
+
+    # Compliance auditing (enable-gated)
+    ./anduril # STIG auditor (kernelcore.soc.anduril)
   ];
 }

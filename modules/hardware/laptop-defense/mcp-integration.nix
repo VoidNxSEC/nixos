@@ -13,11 +13,11 @@
 with lib;
 
 {
-  options.services.mcp.laptopDefense = {
+  options.kernelcore.hardware.laptop-defense.mcp = {
     enable = mkEnableOption "MCP Laptop Defense tools integration";
   };
 
-  config = mkIf config.services.mcp.laptopDefense.enable {
+  config = mkIf config.kernelcore.hardware.laptop-defense.mcp.enable {
 
     # Extend MCP server com novas tools
     environment.etc."mcp/tools/laptop-defense.json" = {

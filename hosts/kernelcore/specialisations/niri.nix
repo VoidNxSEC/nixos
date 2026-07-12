@@ -11,7 +11,7 @@
       system.nixos.tags = [ "Niri" ];
 
       # Desabilitar Hyprland
-      services.hyprland-desktop.enable = lib.mkForce false;
+      kernelcore.desktop.hyprland.enable = lib.mkForce false;
 
       # Habilitar Niri (mkForce para sobrescrever o false do main config)
       programs.niri.enable = lib.mkForce true;
@@ -20,7 +20,7 @@
       services.displayManager.defaultSession = "niri";
 
       # Desabilitar performance optimizations do Hyprland
-      kernelcore.hyprland.performance.enable = lib.mkForce false;
+      kernelcore.desktop.hyprland.performance.enable = lib.mkForce false;
     };
   };
 }

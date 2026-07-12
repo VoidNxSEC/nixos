@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.services.chromiumOrg;
+  cfg = config.kernelcore.applications.chromium;
 
   # Build the managed policy JSON by combining high-level "rules" with any raw overrides
   computedPolicies =
@@ -119,7 +119,7 @@ let
 
 in
 {
-  options.services.chromiumOrg = {
+  options.kernelcore.applications.chromium = {
     enable = mkEnableOption "Managed Chromium with organization rules";
 
     package = mkOption {
@@ -330,7 +330,7 @@ in
     assertions = [
       {
         assertion = cfg.package != null;
-        message = "services.chromiumOrg.package must be set.";
+        message = "kernelcore.applications.chromium.package must be set.";
       }
     ];
 

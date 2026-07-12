@@ -26,7 +26,7 @@
   # OPTIONS (para outros módulos acessarem)
   # ============================================================
 
-  options.shell = {
+  options.kernelcore.shell = {
     enableGpuMonitor = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -165,8 +165,8 @@
               # ══════════════════════════════════════════════════════
 
               # GPU Flags (disponível como variável de ambiente)
-              export DOCKER_GPU_FLAGS="${config.shell.gpu.dockerFlags}"
-              export PYTORCH_IMAGE="${config.shell.gpu.images.pytorch}"
+              export DOCKER_GPU_FLAGS="${config.kernelcore.shell.gpu.dockerFlags}"
+              export PYTORCH_IMAGE="${config.kernelcore.shell.gpu.images.pytorch}"
 
               # Python scripts path
               export NIXOS_SHELL_SCRIPTS="/etc/nixos-shell/scripts"

@@ -17,10 +17,10 @@
 # CUDA-optimized llama.cpp service for NVIDIA GPUs with cuBLAS acceleration.
 
 let
-  cfg = config.services.llamacpp-turbo;
+  cfg = config.kernelcore.ml.inference.llamacpp-turbo;
 in
 {
-  options.services.llamacpp-turbo = {
+  options.kernelcore.ml.inference.llamacpp-turbo = {
     enable = lib.mkEnableOption "LLaMA.cpp TURBO - high-performance inference server";
 
     package = lib.mkOption {

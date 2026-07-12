@@ -6,7 +6,7 @@
 #
 # Usage in your flake:
 #   imports = [ ./modules/desktop/hyprland ];
-#   programs.hyprland-modular = {
+#   kernelcore.desktop.hyprland-modular = {
 #     enable = true;
 #     theme = "glassmorphism";
 #     profile = "work";
@@ -21,7 +21,7 @@
 }:
 
 let
-  cfg = config.programs.hyprland-modular;
+  cfg = config.kernelcore.desktop.hyprland-modular;
 
   # Import library functions
   hyprLib = import ./lib { inherit lib pkgs; };
@@ -65,7 +65,7 @@ let
 
 in
 {
-  options.programs.hyprland-modular = {
+  options.kernelcore.desktop.hyprland-modular = {
     enable = lib.mkEnableOption "Hyprland Modular Framework";
 
     # ==========================================

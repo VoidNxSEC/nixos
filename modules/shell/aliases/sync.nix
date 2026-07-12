@@ -1,8 +1,16 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
+  options.kernelcore.shell.aliases.sync.enable = lib.mkEnableOption "Rsync aliases for laptop-desktop synchronization";
+
   # Rsync aliases for laptop-desktop synchronization
-  environment.shellAliases = {
+  config = lib.mkIf config.kernelcore.shell.aliases.sync.enable {
+    environment.shellAliases = {
     # ════════════════════════════════════════════════════════════════
     # RSYNC - Laptop ↔ Desktop Sync
     # ════════════════════════════════════════════════════════════════
@@ -34,5 +42,6 @@
     # Direct rsync commands for advanced usage
     "rsync-desktop" = "rsync -avz --progress";
     "rsync-safe" = "rsync -avzn --progress"; # Always dry-run
+    };
   };
 }

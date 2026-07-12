@@ -13,7 +13,7 @@ let
   swissknife-tools = inputs.swissknife.packages.${pkgs.stdenv.hostPlatform.system};
 in
 {
-  options.kernelcore.swissknife = {
+  options.kernelcore.debug.swissknife = {
     enable = lib.mkEnableOption "Swissknife Debug Tools";
 
     enableSystray = lib.mkOption {
@@ -23,7 +23,7 @@ in
     };
   };
 
-  config = lib.mkIf config.kernelcore.swissknife.enable {
+  config = lib.mkIf config.kernelcore.debug.swissknife.enable {
     # Install swissknife tools from flake input directly
     environment.systemPackages =
       with swissknife-tools;
@@ -32,7 +32,7 @@ in
         swiss-doctor
         swiss-monitor
       ]
-      ++ lib.optionals config.kernelcore.swissknife.enableSystray [
+      ++ lib.optionals config.kernelcore.debug.swissknife.enableSystray [
         swiss-systray
       ];
 

@@ -689,7 +689,7 @@
         }:
         with lib;
         {
-          options.hardware.thermalProtection = {
+          options.kernelcore.hardware.laptop-defense.thermal = {
             enable = mkEnableOption "Thermal protection and emergency brake";
 
             maxTemp = mkOption {
@@ -699,7 +699,7 @@
             };
           };
 
-          config = mkIf config.hardware.thermalProtection.enable {
+          config = mkIf config.kernelcore.hardware.laptop-defense.thermal.enable {
             # Disable ClamAV durante rebuilds
             systemd.services.clamav-daemon.serviceConfig =
               mkIf (config.services.clamav.daemon.enable or false)
@@ -722,7 +722,7 @@
                   while true; do
                     MAX_TEMP=$(${pkgs.lm_sensors}/bin/sensors 2>/dev/null | grep -oP '\+\K[0-9]+' | sort -rn | head -1 || echo "0")
 
-                    if [ "''${MAX_TEMP:-0}" -gt ${toString config.hardware.thermalProtection.maxTemp} ]; then
+                    if [ "''${MAX_TEMP:-0}" -gt ${toString config.kernelcore.hardware.laptop-defense.thermal.maxTemp} ]; then
                       echo "🚨 THERMAL EMERGENCY: ''${MAX_TEMP}°C" | ${pkgs.systemd}/bin/systemd-cat -t thermal-emergency -p err
 
                       # Kill rebuild if running

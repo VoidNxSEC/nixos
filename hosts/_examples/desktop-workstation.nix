@@ -22,7 +22,7 @@
 #            ../_examples/desktop-workstation.nix
 #          ];
 #          networking.hostName = "my-machine";
-#          system.user.username = "myusername";
+#          kernelcore.system.user.username = "myusername";
 #        }
 #
 #   3. Add to flake.nix nixosConfigurations and rebuild.
@@ -55,7 +55,7 @@
 
   # ── Customize these for your machine ─────────────────────
   networking.hostName = "change-me"; # <── set your hostname
-  system.user.username = "change-me"; # <── set your username
+  kernelcore.system.user.username = "change-me"; # <── set your username
 
   time.timeZone = "UTC"; # e.g. "America/Sao_Paulo"
   i18n.defaultLocale = "en_US.UTF-8";

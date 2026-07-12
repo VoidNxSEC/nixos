@@ -4,10 +4,10 @@
 { config, lib, ... }:
 
 let
-  cfg = config.services.cerebro;
+  cfg = config.kernelcore.ml.agents.cerebro;
 in
 {
-  options.services.cerebro = {
+  options.kernelcore.ml.agents.cerebro = {
     enable = lib.mkEnableOption "Cerebro semantic reranker";
 
     port = lib.mkOption {
@@ -34,7 +34,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    warnings = [ "services.cerebro: stub — implement service before enabling." ];
+    warnings = [ "kernelcore.ml.agents.cerebro: stub — implement service before enabling." ];
 
     users.users.${cfg.user} = {
       isSystemUser = true;

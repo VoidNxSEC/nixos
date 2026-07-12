@@ -41,7 +41,7 @@ let
 
     # Configuration
     FLAKE_PATH="/etc/nixos"
-    HOST="${config.system.user.username}"
+    HOST="${config.kernelcore.system.user.username}"
     MAX_JOBS="4"
     CORES="4"
 
@@ -324,6 +324,11 @@ let
 
 in
 {
+  options.kernelcore.shell.aliases.rebuildHelpers.enable =
+    lib.mkEnableOption "Colorized nixos-rebuild helper scripts (rebuild, rb, gens, cleanup)";
+
+  config = lib.mkIf config.kernelcore.shell.aliases.rebuildHelpers.enable {
+
   # Install helper scripts
   environment.systemPackages = [
     nixosRebuildScript
@@ -374,4 +379,5 @@ in
       export NIXOS_REBUILD_HINT_SHOWN=1
     fi
   '';
+  };
 }

@@ -39,6 +39,7 @@
     ./macos-kvm.nix
     ./service-control.nix # GPU/ML service control & RAM optimization
     ./llama-swap-control.nix # LlamaSwap hot model reloading control
-    #./nixos-explorer.nix # NixOS configuration explorer  # TEMP DISABLED
+    ./nixos-explorer.nix # NixOS configuration explorer (enable-gated)
+    ./sync.nix # Rsync laptop-desktop aliases (enable-gated)
   ];
 }

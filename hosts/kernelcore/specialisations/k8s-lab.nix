@@ -12,9 +12,9 @@
     # ──────────────────────────────────────────────────────────────
     # Kubernetes modules activation
     # ──────────────────────────────────────────────────────────────
-    services.k3s-cluster.enable = lib.mkForce false; # Use kind for lab
-    services.cilium-cni.enable = lib.mkForce false; # Not needed for kind
-    services.longhorn-storage.enable = lib.mkForce false;
+    kernelcore.kubernetes.k3s.enable = lib.mkForce false; # Use kind for lab
+    kernelcore.kubernetes.cilium.enable = lib.mkForce false; # Not needed for kind
+    kernelcore.kubernetes.longhorn.enable = lib.mkForce false;
 
     # ──────────────────────────────────────────────────────────────
     # Firewall — portas necessárias para k8s local

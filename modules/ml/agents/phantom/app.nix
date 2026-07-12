@@ -8,7 +8,7 @@
 }:
 
 let
-  cfg = config.programs.phantom;
+  cfg = config.kernelcore.ml.agents.phantom.app;
 
   # Build phantom from local source
   phantomPkg = pkgs.python313Packages.buildPythonApplication {
@@ -90,12 +90,12 @@ let
   };
 in
 {
-  options.programs.phantom = {
+  options.kernelcore.ml.agents.phantom.app = {
     enable = lib.mkEnableOption "Phantom AI toolkit";
 
     srcPath = lib.mkOption {
       type = lib.types.path;
-      default = "${config.system.user.homeDir}/dev/Projects/phantom";
+      default = "${config.kernelcore.system.user.homeDir}/dev/Projects/phantom";
       description = "Path to the Phantom source directory on the local filesystem.";
     };
 

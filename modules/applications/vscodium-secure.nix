@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.programs.vscodium-secure;
+  cfg = config.kernelcore.applications.vscodium;
 in
 {
-  options.programs.vscodium-secure = {
+  options.kernelcore.applications.vscodium = {
     enable = mkEnableOption "Enable VSCodium with Firejail sandboxing";
 
     enableHardening = mkOption {
@@ -91,7 +91,7 @@ in
 
   config = mkIf cfg.enable {
     # Enable GitLab Duo service if requested
-    services.gitlabDuo.enable = mkIf cfg.enableGitLabDuo true;
+    kernelcore.services.gitlab-duo.enable = mkIf cfg.enableGitLabDuo true;
 
     # Install VSCodium and Firejail
     environment.systemPackages = with pkgs; [

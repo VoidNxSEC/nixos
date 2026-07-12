@@ -23,7 +23,6 @@ let
   gpuMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/gpu-monitor.sh";
   diskMonitor = "${config.home.homeDirectory}/.config/waybar/scripts/disk-monitor.sh";
   sshSessions = "${config.home.homeDirectory}/.config/waybar/scripts/ssh-sessions.sh";
-  actionsTvWaybarEnabled = lib.attrByPath [ "programs" "actionsTv" "waybar" "enable" ] false config;
   spooknixWaybarEnabled = lib.attrByPath [ "programs" "spooknix" "waybar" "enable" ] false config;
 
   # Import glassmorphism design tokens
@@ -32,7 +31,7 @@ in
 {
   config = {
     programs.waybar =
-      lib.mkIf (osConfig.services.hyprland-desktop.enable || osConfig.programs.niri.enable)
+      lib.mkIf (osConfig.kernelcore.desktop.hyprland.enable || osConfig.programs.niri.enable)
         {
           enable = true;
 
@@ -49,7 +48,7 @@ in
 
               # Module layout (compositor-agnostic)
               modules-left =
-                if osConfig.services.hyprland-desktop.enable then
+                if osConfig.kernelcore.desktop.hyprland.enable then
                   [
                     "hyprland/workspaces"
                     "hyprland/window"
@@ -70,7 +69,6 @@ in
                 [
                   "custom/flake"
                 ]
-                ++ lib.optional actionsTvWaybarEnabled "custom/actions-tv"
                 ++ lib.optional spooknixWaybarEnabled "custom/spooknix"
                 ++ [
                   "custom/agent-hub"

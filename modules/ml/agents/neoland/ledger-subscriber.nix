@@ -17,10 +17,10 @@
 }:
 
 let
-  cfg = config.services.neoland-ledger-subscriber;
+  cfg = config.kernelcore.ml.neoland.ledgerSubscriber;
 in
 {
-  options.services.neoland-ledger-subscriber = {
+  options.kernelcore.ml.neoland.ledgerSubscriber = {
     enable = lib.mkEnableOption "Neoland ADR ledger subscriber (secp256k1 + Merkle chain)";
 
     package = lib.mkOption {

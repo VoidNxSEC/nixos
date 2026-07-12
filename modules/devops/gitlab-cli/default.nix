@@ -8,7 +8,7 @@
 
 let
   cfg =
-    config.programs.glab-custom or {
+    config.kernelcore.devops.glab or {
       enable = false;
       tokenFile = "/run/keys/gitlab-token"; # ou ~/.local/secrets/gitlab.token
       defaultNamespaceId = 1234; # muda pro teu grupo
@@ -47,11 +47,11 @@ let
   '';
 in
 {
-  options.programs.glab-custom = {
+  options.kernelcore.devops.glab = {
     enable = lib.mkEnableOption "Enable custom glab CLI setup with aliases and API helpers";
     tokenFile = lib.mkOption {
       type = lib.types.path;
-      default = "${config.system.user.homeDir}/.local/secrets/gitlab.token";
+      default = "${config.kernelcore.system.user.homeDir}/.local/secrets/gitlab.token";
       description = "Caminho para o token do GitLab";
     };
     defaultNamespaceId = lib.mkOption {
