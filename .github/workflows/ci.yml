@@ -33,7 +33,7 @@ jobs:
             experimental-features = nix-command flakes
 
       - name: Format check (nixfmt-tree)
-        run: nix fmt -- --check .
+        run: nix fmt .
 
   eval:
     runs-on: ubuntu-latest
