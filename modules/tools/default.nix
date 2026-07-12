@@ -144,7 +144,6 @@ in
     ./diagnostics.nix
     ./llm.nix
     ./mcp.nix
-    ./arch-analyzer
   ];
 
   options.kernelcore.tools = {

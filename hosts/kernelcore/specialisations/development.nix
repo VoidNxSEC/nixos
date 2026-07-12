@@ -35,27 +35,42 @@
     # ── Ferramentas de dev ────────────────────────────────────────────────────
     environment.systemPackages = with pkgs; [
       # Debug
-      gdb valgrind strace ltrace
+      gdb
+      valgrind
+      strace
+      ltrace
 
       # Performance
-      hyperfine flamegraph perf-tools
+      hyperfine
+      flamegraph
+      perf-tools
 
       # Rede / API
-      httpie insomnia
+      httpie
+      insomnia
 
       # Git avançado
-      git-lfs gh lazygit
+      git-lfs
+      gh
+      lazygit
 
       # Análise de código
-      tokei cloc
+      tokei
+      cloc
 
       # Containers / infra
-      kubectl helm k9s docker-compose
+      kubectl
+      helm
+      k9s
+      docker-compose
     ];
 
     # ── Firewall: portas de dev local abertas ─────────────────────────────────
     networking.firewall.allowedTCPPortRanges = lib.mkForce [
-      { from = 3000; to = 9999; }
+      {
+        from = 3000;
+        to = 9999;
+      }
     ];
 
     # ── Electron apps para IDEs ───────────────────────────────────────────────

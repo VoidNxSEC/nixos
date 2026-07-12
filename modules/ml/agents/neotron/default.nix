@@ -48,7 +48,9 @@ in
 
   config = lib.mkIf cfg.enable {
     # Placeholder — service definition added when neotron is implemented
-    warnings = [ "kernelcore.ml.agents.neotron is enabled but not yet implemented. Guardrails will be inactive." ];
+    warnings = [
+      "kernelcore.ml.agents.neotron is enabled but not yet implemented. Guardrails will be inactive."
+    ];
 
     users.users.${cfg.user} = {
       isSystemUser = true;

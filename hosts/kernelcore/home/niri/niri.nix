@@ -17,12 +17,15 @@ let
   colors = config.glassmorphism.colors;
 
   # Wallpaper 4K gerado no nix store usando as cores do design system
-  aestheticWallpaper = pkgs.runCommand "niri-wallpaper" {
-    buildInputs = [ pkgs.imagemagick ];
-  } ''
-    mkdir -p $out
-    magick -size 3840x2160 gradient:"${colors.base.bg0}-${colors.base.overlay}" $out/wallpaper.png
-  '';
+  aestheticWallpaper =
+    pkgs.runCommand "niri-wallpaper"
+      {
+        buildInputs = [ pkgs.imagemagick ];
+      }
+      ''
+        mkdir -p $out
+        magick -size 3840x2160 gradient:"${colors.base.bg0}-${colors.base.overlay}" $out/wallpaper.png
+      '';
 
   screenshotScript = pkgs.writeShellScriptBin "niri-screenshot" ''
     #!/usr/bin/env bash
@@ -37,7 +40,7 @@ let
 in
 {
   home.packages = with pkgs; [
-    swww           # wallpaper animado com transições
+    swww # wallpaper animado com transições
     swaylock
     swayidle
     grim

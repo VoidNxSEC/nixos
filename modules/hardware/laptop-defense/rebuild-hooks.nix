@@ -103,66 +103,68 @@ with lib;
     # REBUILD MONITOR SERVICE
     # ========================================
 
-    systemd.services.rebuild-thermal-monitor = mkIf config.kernelcore.hardware.rebuildHooks.thermalCheck.enable {
-      description = "Monitor temperature during nixos-rebuild";
+    systemd.services.rebuild-thermal-monitor =
+      mkIf config.kernelcore.hardware.rebuildHooks.thermalCheck.enable
+        {
+          description = "Monitor temperature during nixos-rebuild";
 
-      # Não inicia automaticamente - será chamado por wrapper
-      wantedBy = [ ];
+          # Não inicia automaticamente - será chamado por wrapper
+          wantedBy = [ ];
 
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = false;
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = false;
 
-        ExecStart = pkgs.writeShellScript "rebuild-monitor" ''
-          set -e
+            ExecStart = pkgs.writeShellScript "rebuild-monitor" ''
+              set -e
 
-          REBUILD_PID="''${1:?Usage: rebuild-monitor <rebuild-pid>}"
-          MAX_TEMP=${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.maxRunningTemp}
-          INTERVAL=${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.monitorInterval}
+              REBUILD_PID="''${1:?Usage: rebuild-monitor <rebuild-pid>}"
+              MAX_TEMP=${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.maxRunningTemp}
+              INTERVAL=${toString config.kernelcore.hardware.rebuildHooks.thermalCheck.monitorInterval}
 
-          LOG_FILE="/var/log/rebuild-thermal.log"
-          ABORT_FLAG="/tmp/rebuild-thermal-abort"
+              LOG_FILE="/var/log/rebuild-thermal.log"
+              ABORT_FLAG="/tmp/rebuild-thermal-abort"
 
-          rm -f "$ABORT_FLAG"
+              rm -f "$ABORT_FLAG"
 
-          echo "🌡️  Monitoring rebuild PID $REBUILD_PID (max: ''${MAX_TEMP}°C)" | tee -a "$LOG_FILE"
+              echo "🌡️  Monitoring rebuild PID $REBUILD_PID (max: ''${MAX_TEMP}°C)" | tee -a "$LOG_FILE"
 
-          while kill -0 "$REBUILD_PID" 2>/dev/null; do
-            TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-            CURRENT_TEMP=$(${pkgs.lm_sensors}/bin/sensors 2>/dev/null | grep -oP '\+\K[0-9]+' | sort -rn | head -1 || echo "0")
+              while kill -0 "$REBUILD_PID" 2>/dev/null; do
+                TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+                CURRENT_TEMP=$(${pkgs.lm_sensors}/bin/sensors 2>/dev/null | grep -oP '\+\K[0-9]+' | sort -rn | head -1 || echo "0")
 
-            echo "[$TIMESTAMP] Temp: ''${CURRENT_TEMP}°C" | tee -a "$LOG_FILE"
+                echo "[$TIMESTAMP] Temp: ''${CURRENT_TEMP}°C" | tee -a "$LOG_FILE"
 
-            if [ "''${CURRENT_TEMP:-0}" -gt "$MAX_TEMP" ]; then
-              echo "" | tee -a "$LOG_FILE"
-              echo "🚨 THERMAL EMERGENCY: ''${CURRENT_TEMP}°C > ''${MAX_TEMP}°C" | tee -a "$LOG_FILE"
-              echo "" | tee -a "$LOG_FILE"
+                if [ "''${CURRENT_TEMP:-0}" -gt "$MAX_TEMP" ]; then
+                  echo "" | tee -a "$LOG_FILE"
+                  echo "🚨 THERMAL EMERGENCY: ''${CURRENT_TEMP}°C > ''${MAX_TEMP}°C" | tee -a "$LOG_FILE"
+                  echo "" | tee -a "$LOG_FILE"
 
-              # Signal abort
-              touch "$ABORT_FLAG"
+                  # Signal abort
+                  touch "$ABORT_FLAG"
 
-              # Kill rebuild gracefully
-              kill -TERM "$REBUILD_PID" 2>/dev/null || true
-              sleep 5
-              kill -KILL "$REBUILD_PID" 2>/dev/null || true
+                  # Kill rebuild gracefully
+                  kill -TERM "$REBUILD_PID" 2>/dev/null || true
+                  sleep 5
+                  kill -KILL "$REBUILD_PID" 2>/dev/null || true
 
-              echo "Rebuild aborted due to thermal emergency" | tee -a "$LOG_FILE"
+                  echo "Rebuild aborted due to thermal emergency" | tee -a "$LOG_FILE"
 
-              # Trigger evidence collection if enabled
-              ${optionalString config.kernelcore.hardware.rebuildHooks.evidenceCollection.enable ''
-                ${pkgs.bash}/bin/bash /etc/nixos/modules/hardware/laptop-defense/collect-evidence.sh thermal-abort
-              ''}
+                  # Trigger evidence collection if enabled
+                  ${optionalString config.kernelcore.hardware.rebuildHooks.evidenceCollection.enable ''
+                    ${pkgs.bash}/bin/bash /etc/nixos/modules/hardware/laptop-defense/collect-evidence.sh thermal-abort
+                  ''}
 
-              exit 1
-            fi
+                  exit 1
+                fi
 
-            sleep "$INTERVAL"
-          done
+                sleep "$INTERVAL"
+              done
 
-          echo "Rebuild completed - final temp: ''${CURRENT_TEMP}°C" | tee -a "$LOG_FILE"
-        '';
-      };
-    };
+              echo "Rebuild completed - final temp: ''${CURRENT_TEMP}°C" | tee -a "$LOG_FILE"
+            '';
+          };
+        };
 
     # ========================================
     # REBUILD WRAPPER

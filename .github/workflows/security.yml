@@ -1,0 +1,39 @@
+name: Security Scan
+
+# Secret scanning via workflow central da org (reusable-security.yml,
+# language=generic pula os jobs específicos de Python) + vulnix local
+# (CVEs do nixpkgs pinado, non-blocking).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "15 4 * * 1" # semanal, segunda 04:15 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    uses: VoidNxSEC/voidnxlabs-workflows/.github/workflows/reusable-security.yml@main
+    with:
+      language: generic
+    secrets: inherit
+
+  vulnix:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Vulnix scan (non-blocking)
+        run: |
+          nix run nixpkgs#vulnix -- --system x86_64-linux ./flake.lock \
+            || echo "::warning::vulnix reportou CVEs potenciais — revisar output acima"

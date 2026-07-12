@@ -1,0 +1,43 @@
+name: Update Flake Lock
+
+# Bespoke (não usa o reusable central): adiciona sanity check eval-only
+# antes do PR, que o reusable não tem.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "45 3 * * 1" # semanal, segunda 03:45 UTC (padrão da org)
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Update flake.lock
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          nix flake update --commit-lock-file
+
+      - name: Sanity check (eval only)
+        run: nix flake check --no-build
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: auto_update_deps
+          title: "Bump flake.lock"
+          body: |
+            Atualização automática do flake.lock (semanal).
+            Validado com `nix flake check --no-build`.

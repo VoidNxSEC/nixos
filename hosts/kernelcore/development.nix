@@ -51,7 +51,6 @@
     diagnostics.enable = true;
     llm.enable = true;
     mcp.enable = true;
-    arch-analyzer.enable = true;
   };
 
   kernelcore.debug.swissknife.enable = true;

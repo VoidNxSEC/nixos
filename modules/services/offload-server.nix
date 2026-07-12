@@ -164,7 +164,8 @@ with lib;
         if [ -f "${config.kernelcore.services.offload-server.cacheKeyPath}" ]; then
           echo "✅ Cache signing key: Present"
           PUB_KEY_PATH="${
-            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.kernelcore.services.offload-server.cacheKeyPath
+            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ]
+              config.kernelcore.services.offload-server.cacheKeyPath
           }"
           if [ -f "$PUB_KEY_PATH" ]; then
             echo "   Public key: $PUB_KEY_PATH"
@@ -175,7 +176,8 @@ with lib;
           echo "   Run: sudo nix-store --generate-binary-cache-key cache.local \\"
           echo "        ${config.kernelcore.services.offload-server.cacheKeyPath} \\"
           echo "        ${
-            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.kernelcore.services.offload-server.cacheKeyPath
+            builtins.replaceStrings [ "-priv-" ] [ "-pub-" ]
+              config.kernelcore.services.offload-server.cacheKeyPath
           }"
         fi
 
@@ -281,7 +283,8 @@ with lib;
       (writeShellScriptBin "offload-generate-cache-keys" ''
         PRIV_KEY="${config.kernelcore.services.offload-server.cacheKeyPath}"
         PUB_KEY="${
-          builtins.replaceStrings [ "-priv-" ] [ "-pub-" ] config.kernelcore.services.offload-server.cacheKeyPath
+          builtins.replaceStrings [ "-priv-" ] [ "-pub-" ]
+            config.kernelcore.services.offload-server.cacheKeyPath
         }"
 
         if [ -f "$PRIV_KEY" ] && [ -f "$PUB_KEY" ]; then

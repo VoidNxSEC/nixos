@@ -1,20 +1,17 @@
 name: CI
 
+# CI de repo de configuração NixOS: valida sem buildar o sistema.
+# - fmt: nixfmt-tree via `nix fmt`
+# - eval: drvPath das 3 nixosConfigurations (validação canônica do repo)
+# - checks: flake check --no-build + build do check leve (mcp-server)
+#
+# Deploy/switch NUNCA acontece por CI — é sempre manual (ver .github/README.md).
+
 on:
   push:
-    branches: [main, staging, dev]
-    paths:
-      - "flake.nix"
-      - "flake.lock"
-      - "hosts/**"
-      - "modules/**"
-      - "overlays/**"
-      - "sec/**"
-      - "lib/**"
-      - ".github/workflows/ci.yml"
+    branches: [main]
   pull_request:
-    branches: [main, staging, dev]
-    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -25,95 +22,59 @@ permissions:
   contents: read
 
 jobs:
-  validate:
-    name: Validate
+  fmt:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: github.event.pull_request.draft == false || github.event_name != 'pull_request'
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v6
 
-      - uses: DeterminateSystems/nix-installer-action@v22
+      - uses: cachix/install-nix-action@v31
         with:
-          extra-conf: |
+          extra_nix_config: |
             experimental-features = nix-command flakes
-            accept-flake-config = true
 
-      - uses: cachix/cachix-action@v17
-        if: vars.CACHIX_CACHE_NAME != ''
-        with:
-          name: ${{ vars.CACHIX_CACHE_NAME }}
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - name: Format check (nixfmt-tree)
+        run: nix fmt -- --check .
 
-      - name: Check formatting
-        run: |
-          nix fmt .
-          git diff --exit-code
-
-      - name: Evaluate flake
-        run: nix flake check --no-build --show-trace
-
-  decrypt-secrets:
-    name: Decrypt SOPS Secrets
-    uses: ./.github/workflows/setup-sops.yml
-    secrets: inherit
-
-  verify-pat-scope:
-    name: Verify GitHub PAT org scope
+  eval:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: decrypt-secrets
-    steps:
-      - name: Check PAT can manage org self-hosted runners
-        env:
-          GH_TOKEN: ${{ needs.decrypt-secrets.outputs.github_token }}
-        run: |
-          set -euo pipefail
-          if [[ -z "$GH_TOKEN" ]]; then
-            echo "::error::github_token output is empty — check secrets/github.yaml"
-            exit 1
-          fi
-          STATUS=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
-            -X POST \
-            -H "Authorization: token $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/orgs/VoidNxSEC/actions/runners/registration-token)
-          cat /tmp/resp.json
-          if [[ "$STATUS" != "201" ]]; then
-            echo "::error::PAT lacks org runner-management scope (HTTP $STATUS) — rotate github_token with admin:org / 'Self-hosted runners: write'"
-            exit 1
-          fi
-          echo "PAT has sufficient scope for org runner registration"
-
-  evaluate:
-    name: Evaluate ${{ matrix.host }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: validate
     strategy:
       fail-fast: false
       matrix:
-        host:
-          - kernelcore
-          - kernelcore-iso
-          - k8s-node
+        host: [kernelcore, kernelcore-iso, k8s-node]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v6
 
-      - uses: DeterminateSystems/nix-installer-action@v22
+      - uses: cachix/install-nix-action@v31
         with:
-          extra-conf: |
+          extra_nix_config: |
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: cachix/cachix-action@v17
-        if: vars.CACHIX_CACHE_NAME != ''
+      - name: Evaluate ${{ matrix.host }} toplevel
+        run: |
+          nix eval --raw \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath"
+
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
         with:
-          name: ${{ vars.CACHIX_CACHE_NAME }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v16
+        if: ${{ github.event_name != 'pull_request' }}
+        continue-on-error: true
+        with:
+          name: voidnxlabs
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Evaluate ${{ matrix.host }}
-        run: |
-          nix eval \
-            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath" \
-            --show-trace
+      - name: Flake check (no build)
+        run: nix flake check --no-build
+
+      - name: Build light checks (mcp-server)
+        run: nix build ".#checks.x86_64-linux.mcp-server"

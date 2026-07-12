@@ -159,8 +159,7 @@ in
       services.forgejo.settings.server.PROTOCOL = mkDefault "http";
       services.forgejo.settings.server.DISABLE_SSH = mkDefault (!icfg.integratedSsh.enable);
       services.forgejo.settings.server.SSH_PORT = mkDefault icfg.integratedSsh.port;
-      services.forgejo.settings.service.DISABLE_REGISTRATION =
-        mkDefault icfg.disableRegistration;
+      services.forgejo.settings.service.DISABLE_REGISTRATION = mkDefault icfg.disableRegistration;
       services.forgejo.settings.service.DEFAULT_KEEP_EMAIL_PRIVATE = mkDefault true;
       services.forgejo.settings.service.DEFAULT_ORG_VISIBILITY = mkDefault "private";
       services.forgejo.settings.session.COOKIE_SECURE = mkDefault (hasPrefix "https://" publicUrl);
@@ -200,8 +199,7 @@ in
 
     (mkIf icfg.integratedSsh.enable {
       services.forgejo.settings.server.START_SSH_SERVER = mkDefault true;
-      services.forgejo.settings.server.SSH_LISTEN_PORT =
-        mkDefault icfg.integratedSsh.listenPort;
+      services.forgejo.settings.server.SSH_LISTEN_PORT = mkDefault icfg.integratedSsh.listenPort;
     })
 
     (mkIf icfg.proxy.enable {

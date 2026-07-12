@@ -82,11 +82,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Arch-Analyzer
-    arch-analyzer = {
-      url = "git+ssh://git@github.com/VoidNxSEC/arch-analyzer"; # repo privado: fetch via SSH
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     # neoland and adr-ledger use local paths — add to flakes/personal.nix for your setup
     #neoland.url = "github:VoidNxSEC/neoland";
@@ -289,7 +284,7 @@
             # Kubernetes (k3s, Cilium, Longhorn) now in modules/kubernetes/
             # ═══════════════════════════════════════════════════════════
             self.nixosModules.default
-#MERCURYKEEP#            #inputs.mercury.nixosModules.batter
+            #MERCURYKEEP#            #inputs.mercury.nixosModules.batter
             #inputs.mercury.nixosModules.frosting
 
             # NOTE: Feature flags and service configuration moved to:

@@ -13,7 +13,10 @@
     # Desabilita features experimentais e otimizações agressivas
 
     nix.settings = {
-      experimental-features = lib.mkForce [ "nix-command" "flakes" ];
+      experimental-features = lib.mkForce [
+        "nix-command"
+        "flakes"
+      ];
       max-jobs = lib.mkForce 4;
       cores = lib.mkForce 2;
       # Sem sandbox relaxado

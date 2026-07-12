@@ -41,13 +41,15 @@
     # };
   };
 
-  outputs = { self, ... }@inputs: {
-    # Re-export inputs for use in NixOS host configurations
-    inherit inputs;
+  outputs =
+    { self, ... }@inputs:
+    {
+      # Re-export inputs for use in NixOS host configurations
+      inherit inputs;
 
-    # Example: overlay for your custom packages
-    # overlay = final: prev: {
-    #   my-package = inputs.my-private-service.packages.${prev.system}.default;
-    # };
-  };
+      # Example: overlay for your custom packages
+      # overlay = final: prev: {
+      #   my-package = inputs.my-private-service.packages.${prev.system}.default;
+      # };
+    };
 }

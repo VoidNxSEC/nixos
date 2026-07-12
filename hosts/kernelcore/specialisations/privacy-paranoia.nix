@@ -47,15 +47,39 @@
     # ── Módulos de kernel bloqueados ──────────────────────────────────────────
     boot.blacklistedKernelModules = lib.mkForce [
       # Wireless com histórico de vulnerabilidades
-      "firewire-core" "firewire-ohci" "firewire-sbp2"
+      "firewire-core"
+      "firewire-ohci"
+      "firewire-sbp2"
       # Filesystems desnecessários
-      "cramfs" "freevxfs" "jffs2" "hfs" "hfsplus" "udf"
+      "cramfs"
+      "freevxfs"
+      "jffs2"
+      "hfs"
+      "hfsplus"
+      "udf"
       # Protocolos raramente usados e com superfície de ataque
-      "dccp" "sctp" "rds" "tipc" "n-hdlc" "ax25" "netrom"
-      "x25" "rose" "decnet" "econet" "af_802154" "ipx"
-      "appletalk" "psnap" "p8023" "p8022" "can" "atm"
+      "dccp"
+      "sctp"
+      "rds"
+      "tipc"
+      "n-hdlc"
+      "ax25"
+      "netrom"
+      "x25"
+      "rose"
+      "decnet"
+      "econet"
+      "af_802154"
+      "ipx"
+      "appletalk"
+      "psnap"
+      "p8023"
+      "p8022"
+      "can"
+      "atm"
       # Hardware não utilizado
-      "bluetooth" "btusb"
+      "bluetooth"
+      "btusb"
     ];
 
     # ── Browser: Tor Browser por padrão ──────────────────────────────────────
@@ -76,7 +100,10 @@
     # ── Firewall: nega tudo por padrão, whitelist explícita ───────────────────
     networking.firewall = {
       enable = lib.mkForce true;
-      allowedTCPPorts = lib.mkForce [ 9050 9150 ]; # Tor only
+      allowedTCPPorts = lib.mkForce [
+        9050
+        9150
+      ]; # Tor only
       allowedUDPPorts = lib.mkForce [ ];
       logRefusedConnections = true;
     };

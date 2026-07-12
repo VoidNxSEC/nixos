@@ -329,55 +329,55 @@ in
 
   config = lib.mkIf config.kernelcore.shell.aliases.rebuildHelpers.enable {
 
-  # Install helper scripts
-  environment.systemPackages = [
-    nixosRebuildScript
-    quickRebuild
-    generationsScript
-    cleanupScript
-  ];
+    # Install helper scripts
+    environment.systemPackages = [
+      nixosRebuildScript
+      quickRebuild
+      generationsScript
+      cleanupScript
+    ];
 
-  # Enhanced aliases
-  environment.shellAliases = {
-    # Main rebuild command
-    "rebuild" = "rebuild";
-    "rb" = "rb"; # Quick alias
+    # Enhanced aliases
+    environment.shellAliases = {
+      # Main rebuild command
+      "rebuild" = "rebuild";
+      "rb" = "rb"; # Quick alias
 
-    # Specific rebuild modes
-    "rebuild-safe" = "rebuild switch safe";
-    "rebuild-test" = "rebuild test";
-    "rebuild-boot" = "rebuild boot";
-    "rebuild-trace" = "rebuild trace";
-    "rebuild-check" = "rebuild check";
+      # Specific rebuild modes
+      "rebuild-safe" = "rebuild switch safe";
+      "rebuild-test" = "rebuild test";
+      "rebuild-boot" = "rebuild boot";
+      "rebuild-trace" = "rebuild trace";
+      "rebuild-check" = "rebuild check";
 
-    # Generation management
-    "gens" = "generations";
-    "rollback" = "sudo nixos-rebuild switch --rollback";
+      # Generation management
+      "gens" = "generations";
+      "rollback" = "sudo nixos-rebuild switch --rollback";
 
-    # Cleanup
-    "cleanup" = "nixos-cleanup";
+      # Cleanup
+      "cleanup" = "nixos-cleanup";
 
-    # Quick info
-    "nix-size" = "du -sh /nix/store";
-  };
+      # Quick info
+      "nix-size" = "du -sh /nix/store";
+    };
 
-  # Shell init - add welcome message
-  programs.bash.interactiveShellInit = ''
-    # NixOS rebuild helper hint (only show once per session)
-    if [ -z "$NIXOS_REBUILD_HINT_SHOWN" ]; then
-      echo -e "\033[0;36mℹ️  NixOS helpers available: \033[1;37mrebuild\033[0m, \033[1;37mrb\033[0m, \033[1;37mgens\033[0m, \033[1;37mcleanup\033[0m"
-      echo -e "\033[0;36m   Type '\033[1;37mrebuild --help\033[0;36m' for usage\033[0m"
-      export NIXOS_REBUILD_HINT_SHOWN=1
-    fi
-  '';
+    # Shell init - add welcome message
+    programs.bash.interactiveShellInit = ''
+      # NixOS rebuild helper hint (only show once per session)
+      if [ -z "$NIXOS_REBUILD_HINT_SHOWN" ]; then
+        echo -e "\033[0;36mℹ️  NixOS helpers available: \033[1;37mrebuild\033[0m, \033[1;37mrb\033[0m, \033[1;37mgens\033[0m, \033[1;37mcleanup\033[0m"
+        echo -e "\033[0;36m   Type '\033[1;37mrebuild --help\033[0;36m' for usage\033[0m"
+        export NIXOS_REBUILD_HINT_SHOWN=1
+      fi
+    '';
 
-  programs.zsh.interactiveShellInit = ''
-    # NixOS rebuild helper hint (only show once per session)
-    if [ -z "$NIXOS_REBUILD_HINT_SHOWN" ]; then
-      echo -e "\033[0;36mℹ️  NixOS helpers available: \033[1;37mrebuild\033[0m, \033[1;37mrb\033[0m, \033[1;37mgens\033[0m, \033[1;37mcleanup\033[0m"
-      echo -e "\033[0;36m   Type '\033[1;37mrebuild --help\033[0;36m' for usage\033[0m"
-      export NIXOS_REBUILD_HINT_SHOWN=1
-    fi
-  '';
+    programs.zsh.interactiveShellInit = ''
+      # NixOS rebuild helper hint (only show once per session)
+      if [ -z "$NIXOS_REBUILD_HINT_SHOWN" ]; then
+        echo -e "\033[0;36mℹ️  NixOS helpers available: \033[1;37mrebuild\033[0m, \033[1;37mrb\033[0m, \033[1;37mgens\033[0m, \033[1;37mcleanup\033[0m"
+        echo -e "\033[0;36m   Type '\033[1;37mrebuild --help\033[0;36m' for usage\033[0m"
+        export NIXOS_REBUILD_HINT_SHOWN=1
+      fi
+    '';
   };
 }

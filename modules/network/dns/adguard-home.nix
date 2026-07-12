@@ -43,7 +43,7 @@ in
       default = [
         "https://dns.quad9.net/dns-query" # Quad9: malware-blocking + no logs
         "https://1.1.1.1/dns-query" # Cloudflare fallback
-        "9.9.9.9#dns.quad9.net"         # Quad9 — threat-blocking nativo
+        "9.9.9.9#dns.quad9.net" # Quad9 — threat-blocking nativo
         "149.112.112.112#dns.quad9.net"
       ];
       description = "Upstream DoH resolvers AdGuard forwards clean queries to.";
@@ -150,8 +150,7 @@ in
       # lib.optional returns [] or [value] — safe for list concatenation unlike mkIf
       allowedUDPPorts = lib.optional (cfg.dnsBindHost != "127.0.0.1") cfg.dnsPort;
       allowedTCPPorts =
-        lib.optional (cfg.dnsBindHost != "127.0.0.1") cfg.dnsPort
-        ++ lib.optional cfg.openWebUI cfg.webPort;
+        lib.optional (cfg.dnsBindHost != "127.0.0.1") cfg.dnsPort ++ lib.optional cfg.openWebUI cfg.webPort;
     };
 
     environment.systemPackages = with pkgs; [ adguardhome ];
