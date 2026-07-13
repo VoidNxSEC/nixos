@@ -70,7 +70,7 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: cachix/cachix-action@v16
+      - uses: cachix/cachix-action@v17
         if: ${{ github.event_name != 'pull_request' }}
         continue-on-error: true
         with:
