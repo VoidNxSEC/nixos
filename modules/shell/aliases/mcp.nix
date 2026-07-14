@@ -10,7 +10,7 @@
 # ============================================================
 # Helper aliases para trabalhar com MCP Knowledge System
 # Script principal: /etc/nixos/scripts/mcp-helper.sh
-# Documentação: /etc/nixos/docs/MCP-QUICK-REFERENCE.md
+# Documentação: /etc/nixos/docs/mcp/MCP-QUICK-REFERENCE.md
 
 {
   # Gate da Fase 4: config era incondicional; default true preserva o
@@ -98,7 +98,7 @@
       "mcphelp" = "bash /etc/nixos/scripts/mcp-helper.sh help";
 
       # Abrir documentação (requer editor)
-      "mcp-docs" = "cat /etc/nixos/docs/MCP-QUICK-REFERENCE.md";
+      "mcp-docs" = "cat /etc/nixos/docs/mcp/MCP-QUICK-REFERENCE.md";
 
       # ========================================
       # MCP Quick Access (atalhos ultra-curtos)

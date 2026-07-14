@@ -241,7 +241,13 @@
 
         # NOTE: Heavy builds (iso, vm, docker-app) removed from checks for performance
         # These are still available via packages: nix build .#iso, .#vm-image, .#image-app
-      };
+      }
+      # Integration tests (NixOS VM tests from tests/). Building them is
+      # heavy; CI evaluates with `nix flake check --no-build` and full runs
+      # are on demand: nix build .#checks.x86_64-linux.test-security
+      // nixpkgs.lib.mapAttrs' (name: test: nixpkgs.lib.nameValuePair "test-${name}" test) (
+        (import ./tests { inherit pkgs; }).integrationTests
+      );
 
       nixosConfigurations = {
         kernelcore = nixpkgs.lib.nixosSystem {

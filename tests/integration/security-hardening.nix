@@ -9,17 +9,17 @@ import "${pkgs.path}/nixos/tests/make-test-python.nix" (
   {
     name = "security-hardening";
 
-    meta = {
-      description = "Test security hardening modules";
-      maintainers = [ "kernelcore" ];
-    };
-
     nodes.machine =
       { config, pkgs, ... }:
       {
         imports = [
+          # modules/security/default.nix already includes hardening.nix
+          # (former sec/hardening.nix, merged during the topology refactor)
           ../../modules/security
-          ../../sec/hardening.nix
+          # Declares kernelcore.containers.podman.*, which the SOC module
+          # defines; the full modules/containers aggregator is not imported
+          # because docker-hub.nix needs the flake `inputs` specialArg.
+          ../../modules/containers/podman.nix
         ];
 
         # Minimal config for test

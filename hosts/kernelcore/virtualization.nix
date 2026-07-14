@@ -75,15 +75,6 @@
     };
   };
 
-  kernelcore.virtualization.vmctl-cli = {
-    enable = false;
-    vms.wazuh = {
-      image = "/var/lib/vm-images/wazuh.qcow2";
-      memory = "4G";
-      cpus = 2;
-    };
-  };
-
   kernelcore.containers = {
     docker.enable = false;
     podman = {

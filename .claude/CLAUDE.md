@@ -148,9 +148,10 @@ When working on multi-step tasks, use TodoWrite to track:
 ├── lib/
 │   ├── packages.nix         # Custom packages & images
 │   └── shells.nix           # Dev shells
-└── sec/
-    └── hardening.nix        # Final security overrides (highest priority)
+└── tests/                   # NixOS VM tests (flake checks: test-*)
 ```
+Full layout and conventions: see the root [CLAUDE.md](../CLAUDE.md) and
+docs/architecture/TOPOLOGY.md.
 
 ## Best Practices
 1. **Always validate before rebuild**: Run `nix flake check`
@@ -163,7 +164,7 @@ When working on multi-step tasks, use TodoWrite to track:
 
 ## Security Considerations
 - Security modules imported last (highest priority)
-- Use `mkForce` in `sec/hardening.nix` for final overrides
+- Use `mkForce` in `modules/security/hardening.nix` for final overrides
 - Secrets managed via sops-nix (encrypted in repo)
 - Immutable users (`users.mutableUsers = false`)
 - Minimal attack surface (blacklist unused kernel modules)

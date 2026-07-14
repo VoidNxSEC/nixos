@@ -44,7 +44,7 @@ with lib;
       "xt_tcpudp" # -p tcp / -p udp matching
       "xt_conntrack" # -m conntrack (stateful rules)
       "xt_state" # -m state (legacy syntax used by hardening rules)
-      "xt_recent" # -m recent (port-scan / rate-limit rules in sec/hardening.nix)
+      "xt_recent" # -m recent (port-scan / rate-limit rules in modules/security/hardening.nix)
       "xt_limit" # -m limit
       "xt_multiport" # -m multiport
       "xt_LOG" # -j LOG target
@@ -105,7 +105,7 @@ with lib;
       # Impede que exploits invoquem chamadas de socket que forcem o Kernel a carregar módulos ocultos.
       # ATENÇÃO OPERACIONAL: aplica imediatamente via activation script no próximo nixos-rebuild switch.
       # Após aplicado, nenhum módulo novo carrega até o próximo reboot — hotplug de hardware quebra.
-      # Para desabilitar: setar mkForce 0 em sec/hardening.nix.
+      # Para desabilitar: setar mkForce 0 em modules/security/hardening.nix.
       "kernel.modules_disabled" = mkForce 0;
 
       # kernel.unprivileged_userns_clone: removido — sysctl não existe no kernel 6.18+

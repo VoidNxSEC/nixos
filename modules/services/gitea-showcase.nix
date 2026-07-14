@@ -381,7 +381,7 @@ in
           	             ${optionalString cfg.autoMirror.enable "systemctl status gitea-mirror-showcases.timer"}
 
                     📖 Full Guide:
-                       /etc/nixos/docs/GITEA-SHOWCASE-DECLARATIVE-SETUP.md
+                       /etc/nixos/docs/guides/GITEA-SHOWCASE-DECLARATIVE-SETUP.md
 
                     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                     HELP

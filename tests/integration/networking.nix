@@ -5,16 +5,20 @@ import "${pkgs.path}/nixos/tests/make-test-python.nix" (
   {
     name = "networking";
 
-    meta = {
-      description = "Test network configuration and connectivity";
-      maintainers = [ "kernelcore" ];
-    };
-
     nodes = {
       machine =
         { config, pkgs, ... }:
         {
-          imports = [ ../../modules/network ];
+          imports = [
+            # Only the submodules this test exercises (DNS, resolver,
+            # firewall). The full modules/network aggregator pulls the
+            # tailscale proxy stack, which needs flake-level pieces
+            # (sops-nix options, `inputs` specialArg) that standalone
+            # VM tests don't have.
+            ../../modules/network/dns
+            ../../modules/network/dns-resolver.nix
+            ../../modules/network/security/firewall-zones.nix
+          ];
 
           boot.loader.grub.device = "/dev/vda";
           fileSystems."/" = {

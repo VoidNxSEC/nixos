@@ -18,7 +18,7 @@
     ./audio # Pipewire, video production
 
     # ═══════════════════════════════════════════════════════════
-    # SECURITY (imported early, overridden last via sec/hardening.nix)
+    # SECURITY (imported early, overridden last via modules/security/hardening.nix)
     # ═══════════════════════════════════════════════════════════
     ./security # Boot, kernel, network, SSH hardening, audit + SOC (security/soc/)
 

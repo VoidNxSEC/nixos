@@ -5,11 +5,6 @@ import "${pkgs.path}/nixos/tests/make-test-python.nix" (
   {
     name = "docker-services";
 
-    meta = {
-      description = "Test Docker container services";
-      maintainers = [ "kernelcore" ];
-    };
-
     nodes.machine =
       { config, pkgs, ... }:
       {

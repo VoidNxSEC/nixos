@@ -8,11 +8,20 @@ let
   # Import test helpers
   helpers = import ./lib/test-helpers.nix { inherit pkgs lib; };
 
-  # Import all integration tests
+  # Import all integration tests. Each file wraps make-test-python.nix,
+  # which returns a function { system, pkgs, ... } -> derivation — call it
+  # here so consumers (flake checks) get real derivations.
+  callTest =
+    path:
+    import path { inherit pkgs lib; } {
+      inherit pkgs;
+      inherit (pkgs.stdenv.hostPlatform) system;
+    };
+
   integrationTests = {
-    security = import ./integration/security-hardening.nix { inherit pkgs lib; };
-    docker = import ./integration/docker-services.nix { inherit pkgs lib; };
-    networking = import ./integration/networking.nix { inherit pkgs lib; };
+    security = callTest ./integration/security-hardening.nix;
+    docker = callTest ./integration/docker-services.nix;
+    networking = callTest ./integration/networking.nix;
   };
 
   # VM tests (lightweight variants)

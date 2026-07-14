@@ -205,9 +205,10 @@
       "laptop-defense-guide" = "cat /etc/nixos/docs/LAPTOP-DEFENSE-FRAMEWORK.md";
       "ldg" = "cat /etc/nixos/docs/LAPTOP-DEFENSE-FRAMEWORK.md";
 
-      # Show thermal hooks documentation
-      "rebuild-hooks-doc" = "cat /etc/nixos/docs/REBUILD-HOOKS.md";
-      "rhd" = "cat /etc/nixos/docs/REBUILD-HOOKS.md";
+      # Show thermal hooks documentation (hooks are covered by the framework
+      # guide; docs/REBUILD-HOOKS.md never existed — these were broken)
+      "rebuild-hooks-doc" = "cat /etc/nixos/docs/LAPTOP-DEFENSE-FRAMEWORK.md";
+      "rhd" = "cat /etc/nixos/docs/LAPTOP-DEFENSE-FRAMEWORK.md";
     };
 
     # ========================================
