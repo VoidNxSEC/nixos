@@ -18,7 +18,17 @@ import "${pkgs.path}/nixos/tests/make-test-python.nix" (
             ../../modules/network/dns
             ../../modules/network/dns-resolver.nix
             ../../modules/network/security/firewall-zones.nix
+            # Network-security sysctls asserted below (accept_redirects,
+            # rp_filter, ...) are defined here, not in the network modules.
+            ../../modules/security/kernel.nix
           ];
+
+          kernelcore.security.kernel.enable = true;
+
+          # kernel.nix defaults icmp_echo_ignore_all=1 (mkDefault); the
+          # connectivity subtests ping the machine itself, so allow echo
+          # replies here (same override k8s-lab uses).
+          boot.kernel.sysctl."net.ipv4.icmp_echo_ignore_all" = 0;
 
           boot.loader.grub.device = "/dev/vda";
           fileSystems."/" = {
@@ -29,6 +39,12 @@ import "${pkgs.path}/nixos/tests/make-test-python.nix" (
           networking.useDHCP = false;
           networking.interfaces.eth0.useDHCP = true;
           networking.hostName = "nx";
+
+          # `nft` in PATH for the firewall-rules subtest — the default
+          # NixOS firewall uses the nft-backed iptables, so its ruleset
+          # is inspectable via nftables (same approach as
+          # security-hardening.nix).
+          environment.systemPackages = [ pkgs.nftables ];
         };
     };
 
