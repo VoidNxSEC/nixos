@@ -33,6 +33,13 @@ import "${pkgs.path}/nixos/tests/make-test-python.nix" (
         networking.useDHCP = false;
         networking.interfaces.eth0.useDHCP = true;
         networking.hostName = "security-test";
+
+        # nft binary needed to inspect iptables-nft ruleset
+        # (kernel.nix pre-loads nf_tables; nftables pkg adds the CLI tool)
+        environment.systemPackages = [
+          pkgs.nftables
+          pkgs.dnslookup
+        ];
       };
 
     testScript = ''

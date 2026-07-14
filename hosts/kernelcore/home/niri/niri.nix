@@ -40,7 +40,7 @@ let
 in
 {
   home.packages = with pkgs; [
-    swww # wallpaper animado com transições
+    awww # wallpaper animado com transições
     swaylock
     swayidle
     grim

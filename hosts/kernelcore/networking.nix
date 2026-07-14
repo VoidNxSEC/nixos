@@ -97,6 +97,7 @@
       };
     };
 
+    vpn.tailscale-laptop.enable = false; # host é desktop; só desktop profile ativo
     vpn.tailscale.hostname = lib.mkForce "nx";
 
     security.firewall-zones = {

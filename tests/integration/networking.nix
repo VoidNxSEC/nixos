@@ -52,9 +52,9 @@ import "${pkgs.path}/nixos/tests/make-test-python.nix" (
           # Check resolver configuration
           machine.succeed("cat /etc/resolv.conf | grep -q nameserver")
 
-          # Test DNS resolution
-          machine.succeed("nslookup localhost")
-          machine.succeed("nslookup google.com || echo 'External DNS not available'")
+          # Test DNS resolution (getent uses NSS/glibc, always available)
+          machine.succeed("getent hosts localhost")
+          machine.succeed("getent hosts google.com || echo 'External DNS not available'")
 
       with subtest("DNS security settings"):
           # Check DNSSEC if enabled

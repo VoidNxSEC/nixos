@@ -193,11 +193,12 @@ in
       jq
     ];
 
-    # Enable IP forwarding if subnet router or exit node
+    # Enable IP forwarding if subnet router or exit node.
+    # Plain (non-mkDefault) assignment wins over kernel.nix's mkDefault 0;
+    # subnet routing requires ip_forward=1 and is not overridable by defaults.
     boot.kernel.sysctl = mkIf (cfg.enableSubnetRouter || cfg.exitNode) {
-      "net.ipv4.ip_forward" = mkDefault 1;
-      "net.ipv6.conf.all.forwarding" = mkDefault 1;
-      # Optimize for routing performance (use mkDefault to allow hardening override)
+      "net.ipv4.ip_forward" = 1;
+      "net.ipv6.conf.all.forwarding" = 1;
       "net.ipv4.conf.all.rp_filter" = mkDefault 2;
       "net.ipv4.conf.default.rp_filter" = mkDefault 2;
     };

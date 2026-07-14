@@ -177,7 +177,7 @@ in
   # PACKAGES
   # ============================================
   home.packages = with pkgs; [
-    swww # wallpaper animado (substitui swaybg, funciona com qualquer compositor)
+    awww # wallpaper animado (substitui swaybg, funciona com qualquer compositor)
     imagemagick
     curl
 
