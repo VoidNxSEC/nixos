@@ -86,6 +86,7 @@
     atop
     lsof
     tcpdump
+    nftables
     # wireshark # hash mismatch upstream — re-enable after nixpkgs fix
     # tshark # same source as wireshark (wireshark-cli) — hash mismatch upstream
     gemini-cli

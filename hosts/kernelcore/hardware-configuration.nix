@@ -33,21 +33,20 @@
   ];
   boot.extraModulePackages = [ ];
 
-  # Root filesystem via LUKS (correct UUIDs from nixos-generate-config)
   fileSystems."/" = {
-    device = "/dev/mapper/luks-8eb42765-659f-4565-ad7e-6d56984d5018";
+    device = "/dev/mapper/luks-faeac278-02a6-47c3-bf09-7800a44afdbb";
     fsType = "ext4";
   };
 
-  boot.initrd.luks.devices."luks-8eb42765-659f-4565-ad7e-6d56984d5018".device =
-    "/dev/disk/by-uuid/8eb42765-659f-4565-ad7e-6d56984d5018";
+  boot.initrd.luks.devices."luks-faeac278-02a6-47c3-bf09-7800a44afdbb".device =
+    "/dev/disk/by-uuid/faeac278-02a6-47c3-bf09-7800a44afdbb";
 
   # LUKS swap partition (available but unused — zram preferred over disk swap)
-  # boot.initrd.luks.devices."luks-3e48d8d8-0371-46f3-a981-43463a388a0d".device =
-  #   "/dev/disk/by-uuid/3e48d8d8-0371-46f3-a981-43463a388a0d";
+  # boot.initrd.luks.devices."luks-1cee1bf1-a159-4d91-b531-65437ce5c6b5".device =
+  #   "/dev/disk/by-uuid/1cee1bf1-a159-4d91-b531-65437ce5c6b5";
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/4D17-E804";
+    device = "/dev/disk/by-uuid/CCB7-13F0";
     fsType = "vfat";
     options = [
       "fmask=0077"
@@ -57,7 +56,7 @@
 
   # SWAP em disco desabilitado - usando apenas zram (7.7GB) + swapfile (4GB emergency)
   # Benefícios: Menor latência, menos I/O, maior durabilidade do SSD
-  # swapDevices = [{ device = "/dev/mapper/luks-3e48d8d8-0371-46f3-a981-43463a388a0d"; }];
+  # swapDevices = [{ device = "/dev/mapper/luks-1cee1bf1-a159-4d91-b531-65437ce5c6b5"; }];
   swapDevices = [ ];
 
   networking.useDHCP = lib.mkDefault true;

@@ -80,7 +80,7 @@ jobs:
               done)
           } > book-src/src/SUMMARY.md
 
-          nix run nixpkgs#mdbook -- build book-src --dest-dir ../book
+          nix run nixpkgs#mdbook -- build book-src --dest-dir "$GITHUB_WORKSPACE/book"
 
       - uses: actions/upload-pages-artifact@v4
         with:
