@@ -10,41 +10,49 @@
 # ============================================================
 
 {
-  environment.shellAliases = {
-    # Basic
-    "k" = "kubectl";
-    "k-get" = "kubectl get";
-    "k-describe" = "kubectl describe";
-    "k-delete" = "kubectl delete";
-    "k-apply" = "kubectl apply -f";
+  # Gate da Fase 4: config era incondicional; default true preserva o
+  # sistema como está e permite desligar por host/specialisation.
+  options.kernelcore.shell.aliases.kubectl.enable = lib.mkEnableOption "kubectl aliases" // {
+    default = true;
+  };
 
-    # Pods
-    "k-pods" = "kubectl get pods";
-    "k-pods-all" = "kubectl get pods --all-namespaces";
-    "k-pod-logs" = "kubectl logs -f";
-    "k-pod-exec" = "kubectl exec -it";
-    "k-pod-shell" = ''
-      f() { kubectl exec -it "$1" -- /bin/bash || kubectl exec -it "$1" -- /bin/sh; }; f
-    '';
+  config = lib.mkIf config.kernelcore.shell.aliases.kubectl.enable {
+    environment.shellAliases = {
+      # Basic
+      "k" = "kubectl";
+      "k-get" = "kubectl get";
+      "k-describe" = "kubectl describe";
+      "k-delete" = "kubectl delete";
+      "k-apply" = "kubectl apply -f";
 
-    # Services & Deployments
-    "k-svc" = "kubectl get services";
-    "k-deploy" = "kubectl get deployments";
-    "k-nodes" = "kubectl get nodes";
+      # Pods
+      "k-pods" = "kubectl get pods";
+      "k-pods-all" = "kubectl get pods --all-namespaces";
+      "k-pod-logs" = "kubectl logs -f";
+      "k-pod-exec" = "kubectl exec -it";
+      "k-pod-shell" = ''
+        f() { kubectl exec -it "$1" -- /bin/bash || kubectl exec -it "$1" -- /bin/sh; }; f
+      '';
 
-    # Port Forward
-    "k-port" = "kubectl port-forward";
+      # Services & Deployments
+      "k-svc" = "kubectl get services";
+      "k-deploy" = "kubectl get deployments";
+      "k-nodes" = "kubectl get nodes";
 
-    # Context
-    "k-ctx" = "kubectl config current-context";
-    "k-ctx-use" = "kubectl config use-context";
-    "k-ctx-list" = "kubectl config get-contexts";
+      # Port Forward
+      "k-port" = "kubectl port-forward";
 
-    # Namespace
-    "k-ns" = "kubectl config set-context --current --namespace";
+      # Context
+      "k-ctx" = "kubectl config current-context";
+      "k-ctx-use" = "kubectl config use-context";
+      "k-ctx-list" = "kubectl config get-contexts";
 
-    # Watch
-    "k-watch-pods" = "watch -n 2 kubectl get pods";
-    "k-watch-all" = "watch -n 2 kubectl get all";
+      # Namespace
+      "k-ns" = "kubectl config set-context --current --namespace";
+
+      # Watch
+      "k-watch-pods" = "watch -n 2 kubectl get pods";
+      "k-watch-all" = "watch -n 2 kubectl get all";
+    };
   };
 }

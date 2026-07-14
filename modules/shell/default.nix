@@ -16,7 +16,7 @@
   imports = [
     ./gpu-flags.nix
     ./aliases
-    ./training-logger.nix
+    ./training-logger
     ./cli-helpers.nix # rebuild, dbg, nix-debug, audit-system, lynis-report
     ./nix-ops.nix # unified system operations tool
     ./config-audit.nix # kernelcore.* cross-reference auditor

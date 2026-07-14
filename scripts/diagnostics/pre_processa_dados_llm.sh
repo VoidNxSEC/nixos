@@ -28,7 +28,7 @@ json_escape() {
 # Retorna um array JSON de objetos de processo
 get_processed_processes() {
     log_message "INFO" "Iniciando coleta e processamento de dados de processos."
-    local raw_process_output=$("/etc/nixos/scripts/monitora-processos-detalhado.sh" 2>&1)
+    local raw_process_output=$("/etc/nixos/scripts/diagnostics/monitora-processos-detalhado.sh" 2>&1)
     local process_json_entries=()
 
     # Usa grep para encontrar blocos que começam com "PID: " e awk para agrupar as linhas
@@ -90,7 +90,7 @@ get_processed_processes() {
 # Retorna um array JSON de objetos de conexão de rede
 get_processed_network() {
     log_message "INFO" "Iniciando coleta e processamento de dados de rede."
-    local raw_network_data=$("/etc/nixos/scripts/monitora-rede.sh" 2>&1)
+    local raw_network_data=$("/etc/nixos/scripts/diagnostics/monitora-rede.sh" 2>&1)
     local network_json_entries=()
 
     # Filtra as linhas de conexão (tcp ou udp) e processa
@@ -146,7 +146,7 @@ get_processed_network() {
 # Retorna um array JSON de objetos de log (já são JSON do journalctl)
 get_processed_security_logs() {
     log_message "INFO" "Iniciando coleta e processamento de logs de segurança."
-    local raw_log_data=$("/etc/nixos/scripts/monitora-logs-seguranca.sh" 2>&1)
+    local raw_log_data=$("/etc/nixos/scripts/diagnostics/monitora-logs-seguranca.sh" 2>&1)
     local log_json_lines=()
 
     # journalctl -o json produz uma linha JSON por log. Coletamos cada uma.
@@ -178,7 +178,7 @@ full_json="{"
 full_json+="\"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)\","
 
 # Coleta e processa status do sistema (CPU Temp, Load Avg)
-local cpu_temp=$(/etc/nixos/scripts/limpa-processos.sh --cpu-temp-only 2>/dev/null || echo "N/A")
+local cpu_temp=$(/etc/nixos/scripts/maintenance/limpa-processos.sh --cpu-temp-only 2>/dev/null || echo "N/A")
 local load_avg=$(uptime | awk -F'load average: ' '{print $2}' | awk '{print $1}' | tr -d ',' || echo "N/A")
 full_json+="\"system_status\": {\"cpu_temp\": \"$(json_escape "$cpu_temp")\", \"load_avg\": \"$(json_escape "$load_avg")\"},"
 

@@ -222,7 +222,7 @@ nix flake check
 sudo nixos-rebuild switch
 
 # Verify duplicates reduced
-/etc/nixos/scripts/analyze-package-versions.sh
+/etc/nixos/scripts/nix/analyze-package-versions.sh
 
 # Compare before/after
 diff /tmp/nix-version-analysis/duplicate-counts.txt \

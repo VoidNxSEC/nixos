@@ -22,6 +22,18 @@ Analysis reports, audits, and assessments
 ### [references/](./references/)
 Quick reference guides and cheatsheets
 
+### [runbooks/](./runbooks/)
+Emergency procedures, troubleshooting playbooks and recovery steps
+
+### [plans_and_reports/](./plans_and_reports/)
+Plans, TODOs, roadmaps and hand-off documents
+
+### [mcp/](./mcp/)
+Model Context Protocol server documentation
+
+### [system/](./system/)
+Host/system-level notes
+
 ### [archive/](./archive/)
 Deprecated or historical documentation
 

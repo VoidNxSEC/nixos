@@ -5,6 +5,11 @@
 [files]
 extend-exclude = [
   "flake.lock",
+  # Instalador binário auto-extraível (payload zip embutido) — src do
+  # derivation em modules/packages/hubstaff/default.nix, não é texto.
+  "modules/packages/hubstaff/Hubstaff-*.sh",
+  # Disassembly ACPI gerado por ferramenta (iasl) — não é texto de humano.
+  "hosts/kernelcore/acpi-fix/dsdt.dsl",
   "docs/archive/**",
   "secrets/**",
   "*.age",
@@ -28,3 +33,6 @@ nixos = "nixos"
 hyprland = "hyprland"
 waybar = "waybar"
 noice = "noice"
+# Português nos comentários — "Fase 4", "fase de migração" etc.
+fase = "fase"
+fases = "fases"

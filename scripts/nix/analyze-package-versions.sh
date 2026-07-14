@@ -304,7 +304,7 @@ After each phase:
 
 ```bash
 # Run version analysis again
-/etc/nixos/scripts/analyze-package-versions.sh
+/etc/nixos/scripts/nix/analyze-package-versions.sh
 
 # Compare results
 diff /tmp/nix-version-analysis/duplicate-counts.txt \

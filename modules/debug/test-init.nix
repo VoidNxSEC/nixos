@@ -9,67 +9,75 @@
 }:
 
 {
-  # Test configuration validation
-  system.build.testConfig = pkgs.writeShellScriptBin "test-nixos-config" ''
-    set -euo pipefail
+  # Gate da Fase 4: config era incondicional; default true preserva o
+  # sistema como está e permite desligar por host/specialisation.
+  options.kernelcore.debug.test-init.enable = lib.mkEnableOption "test init tooling" // {
+    default = true;
+  };
 
-    echo "🧪 Testing NixOS configuration..."
+  config = lib.mkIf config.kernelcore.debug.test-init.enable {
+    # Test configuration validation
+    system.build.testConfig = pkgs.writeShellScriptBin "test-nixos-config" ''
+      set -euo pipefail
 
-    # Validate flake syntax
-    echo "Validating flake syntax..."
-    nix flake check /etc/nixos --no-build
+      echo "🧪 Testing NixOS configuration..."
 
-    # Dry-run build to catch errors
-    echo "Performing dry-run build..."
-    nixos-rebuild dry-build --flake /etc/nixos#kernelcore
+      # Validate flake syntax
+      echo "Validating flake syntax..."
+      nix flake check /etc/nixos --no-build
 
-    # Check for potential issues
-    echo "Checking for common issues..."
+      # Dry-run build to catch errors
+      echo "Performing dry-run build..."
+      nixos-rebuild dry-build --flake /etc/nixos#kernelcore
 
-    # Check if all imports exist
-    echo "Verifying all module imports..."
-    find /etc/nixos -name "*.nix" -exec nix-instantiate --parse {} \; > /dev/null
+      # Check for potential issues
+      echo "Checking for common issues..."
 
-    echo "✅ Configuration test completed successfully!"
-  '';
+      # Check if all imports exist
+      echo "Verifying all module imports..."
+      find /etc/nixos -name "*.nix" -exec nix-instantiate --parse {} \; > /dev/null
 
-  # Safe testing environment
-  system.build.testVM = pkgs.writeShellScriptBin "test-nixos-vm" ''
-    set -euo pipefail
+      echo "✅ Configuration test completed successfully!"
+    '';
 
-    echo "🖥️  Building test VM..."
+    # Safe testing environment
+    system.build.testVM = pkgs.writeShellScriptBin "test-nixos-vm" ''
+      set -euo pipefail
 
-    # Build VM for testing
-    nixos-rebuild build-vm --flake /etc/nixos#kernelcore
+      echo "🖥️  Building test VM..."
 
-    echo "VM built successfully. Run ./result/bin/run-*-vm to test."
-    echo "Note: VM will use 2GB RAM by default"
-  '';
+      # Build VM for testing
+      nixos-rebuild build-vm --flake /etc/nixos#kernelcore
 
-  # Configuration backup before testing
-  system.build.backupConfig = pkgs.writeShellScriptBin "backup-nixos-config" ''
-    set -euo pipefail
+      echo "VM built successfully. Run ./result/bin/run-*-vm to test."
+      echo "Note: VM will use 2GB RAM by default"
+    '';
 
-    BACKUP_DIR="/var/lib/nixos-config-backups"
-    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    BACKUP_PATH="$BACKUP_DIR/config_$TIMESTAMP"
+    # Configuration backup before testing
+    system.build.backupConfig = pkgs.writeShellScriptBin "backup-nixos-config" ''
+      set -euo pipefail
 
-    echo "📦 Creating configuration backup..."
+      BACKUP_DIR="/var/lib/nixos-config-backups"
+      TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+      BACKUP_PATH="$BACKUP_DIR/config_$TIMESTAMP"
 
-    sudo mkdir -p "$BACKUP_DIR"
-    sudo cp -r /etc/nixos "$BACKUP_PATH"
+      echo "📦 Creating configuration backup..."
 
-    echo "✅ Configuration backed up to: $BACKUP_PATH"
+      sudo mkdir -p "$BACKUP_DIR"
+      sudo cp -r /etc/nixos "$BACKUP_PATH"
 
-    # Keep only last 10 backups
-    sudo find "$BACKUP_DIR" -maxdepth 1 -type d -name "config_*" | \
-      sort -r | tail -n +11 | xargs -r sudo rm -rf
-  '';
+      echo "✅ Configuration backed up to: $BACKUP_PATH"
 
-  # Add testing tools to system packages
-  environment.systemPackages = with pkgs; [
-    config.system.build.testConfig
-    config.system.build.testVM
-    config.system.build.backupConfig
-  ];
+      # Keep only last 10 backups
+      sudo find "$BACKUP_DIR" -maxdepth 1 -type d -name "config_*" | \
+        sort -r | tail -n +11 | xargs -r sudo rm -rf
+    '';
+
+    # Add testing tools to system packages
+    environment.systemPackages = with pkgs; [
+      config.system.build.testConfig
+      config.system.build.testVM
+      config.system.build.backupConfig
+    ];
+  };
 }

@@ -1118,7 +1118,7 @@ class SmartCommitOrchestrator:
             sys.exit(1)
 
     def _run_pipeline_check(self):
-        script = Path("./scripts/pipeline-check.sh")
+        script = Path("./scripts/git/pipeline-check.sh")
         if script.exists():
             log.info(f"{Colors.CYAN}🛡️  Running pre-commit pipeline...{Colors.ENDC}")
             try:

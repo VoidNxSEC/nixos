@@ -744,7 +744,7 @@ Report Date:  $(date +"%Y-%m-%d %H:%M:%S")
 Script Path:  $0
 
 To regenerate this report:
-  bash scripts/generate-architecture-tree.sh
+  bash scripts/nix/generate-architecture-tree.sh
 
 For more information:
   • Repository: $REPO_ROOT
@@ -970,7 +970,7 @@ $(generate_tree)
 To regenerate this report:
 
 \`\`\`bash
-bash scripts/generate-architecture-tree.sh
+bash scripts/nix/generate-architecture-tree.sh
 \`\`\`
 
 ---

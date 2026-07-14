@@ -78,7 +78,7 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Flake check (no build)
-        run: nix flake check --no-build
+        run: nix flake check --show-trace
 
       - name: Build light checks (mcp-server)
         run: nix build ".#checks.x86_64-linux.mcp-server"

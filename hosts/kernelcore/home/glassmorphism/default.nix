@@ -30,7 +30,7 @@ in
     ./colors.nix
     ./kitty.nix # NEW - Kitty terminal with glassmorphism theme
     ./wallpaper.nix # Wallpaper management com swww (animado, compositor-agnostic)
-    ./waybar.nix
+    ./waybar
     ./mako.nix
     ./wofi.nix
     ./hyprlock.nix

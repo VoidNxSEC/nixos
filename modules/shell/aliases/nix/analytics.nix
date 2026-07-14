@@ -351,21 +351,31 @@ let
 
 in
 {
-  environment.systemPackages = [
-    buildHistory
-    buildLogs
-    buildMonitor
-    generationsAdvanced
-  ];
+  # Gate da Fase 4: config era incondicional; default true preserva o
+  # sistema como está e permite desligar por host/specialisation.
+  options.kernelcore.shell.aliases.nix-analytics.enable =
+    lib.mkEnableOption "nix analytics aliases"
+    // {
+      default = true;
+    };
 
-  environment.shellAliases = {
-    "build-history" = "build-history";
-    "bh" = "build-history";
-    "build-logs" = "build-logs";
-    "bl" = "build-logs";
-    "build-monitor" = "build-monitor";
-    "bm" = "build-monitor";
-    "generations" = "generations";
-    "gens" = "generations";
+  config = lib.mkIf config.kernelcore.shell.aliases.nix-analytics.enable {
+    environment.systemPackages = [
+      buildHistory
+      buildLogs
+      buildMonitor
+      generationsAdvanced
+    ];
+
+    environment.shellAliases = {
+      "build-history" = "build-history";
+      "bh" = "build-history";
+      "build-logs" = "build-logs";
+      "bl" = "build-logs";
+      "build-monitor" = "build-monitor";
+      "bm" = "build-monitor";
+      "generations" = "generations";
+      "gens" = "generations";
+    };
   };
 }

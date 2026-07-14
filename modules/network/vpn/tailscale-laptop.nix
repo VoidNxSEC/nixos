@@ -11,87 +11,99 @@
   # Import base Tailscale module
   imports = [ ./tailscale.nix ];
 
-  # Laptop-specific Tailscale configuration
-  kernelcore.network.vpn.tailscale = {
-    enable = true;
+  # Gate da Fase 4: perfil era incondicional; default true preserva o sistema.
+  # Fase 5: laptop e desktop deveriam ser mutuamente exclusivos; enquanto
+  # ambos estiverem habilitados, tailscale-desktop.nix emite um warning de
+  # eval pedindo para desligar um dos perfis no host.
+  options.kernelcore.network.vpn.tailscale-laptop.enable =
+    lib.mkEnableOption "Tailscale laptop profile"
+    // {
+      default = true;
+    };
 
-    # Device Identity
-    hostname = "laptop-kernelcore"; # Nome bonito no Tailscale
+  config = lib.mkIf config.kernelcore.network.vpn.tailscale-laptop.enable {
+    # Laptop-specific Tailscale configuration
+    kernelcore.network.vpn.tailscale = {
+      enable = true;
 
-    # Network Mode: CLIENT
-    # Laptop aceita rotas mas NÃO compartilha rede local
-    # (Mobile device - rede muda frequentemente)
-    enableSubnetRouter = lib.mkForce false; # Force: override tailscale-services
-    advertiseRoutes = lib.mkForce [ ]; # Force: no routes to advertise
+      # Device Identity
+      hostname = "laptop-kernelcore"; # Nome bonito no Tailscale
 
-    # Accept routes from Desktop (home network)
-    acceptRoutes = lib.mkDefault true;
+      # Network Mode: CLIENT
+      # Laptop aceita rotas mas NÃO compartilha rede local
+      # (Mobile device - rede muda frequentemente)
+      enableSubnetRouter = lib.mkForce false; # Force: override tailscale-services
+      advertiseRoutes = lib.mkForce [ ]; # Force: no routes to advertise
 
-    # DNS Configuration
-    acceptDNS = true; # MagicDNS (usar hostnames)
-    enableMagicDNS = true;
+      # Accept routes from Desktop (home network)
+      acceptRoutes = lib.mkDefault true;
 
-    # SSH over Tailscale
-    enableSSH = true;
+      # DNS Configuration
+      acceptDNS = true; # MagicDNS (usar hostnames)
+      enableMagicDNS = true;
 
-    # Security
-    shieldsUp = false; # Allow connections from other devices
+      # SSH over Tailscale
+      enableSSH = true;
 
-    # Performance
-    enableConnectionPersistence = true;
-    reconnectTimeout = 30;
+      # Security
+      shieldsUp = false; # Allow connections from other devices
 
-    # Firewall
-    openFirewall = true;
-    trustedInterface = true;
+      # Performance
+      enableConnectionPersistence = true;
+      reconnectTimeout = 30;
 
-    # Auto-start on boot
-    autoStart = true;
+      # Firewall
+      openFirewall = true;
+      trustedInterface = true;
 
-    # Optional: Add tags for ACL management
-    tags = [
-      "tag:laptop"
-      "tag:dev"
-    ];
+      # Auto-start on boot
+      autoStart = true;
 
-    # Extra flags if needed
-    extraUpFlags = [
-      # Add any extra flags here
-      # Example: "--operator=kernelcore"
-    ];
-  };
+      # Optional: Add tags for ACL management
+      tags = [
+        "tag:laptop"
+        "tag:dev"
+      ];
 
-  # Laptop-specific environment
-  environment.shellAliases = {
-    # Quick access to desktop via Tailscale
-    ssh-desktop = lib.mkForce "ssh desktop-home"; # Prefer Tailscale host over LAN alias
+      # Extra flags if needed
+      extraUpFlags = [
+        # Add any extra flags here
+        # Example: "--operator=kernelcore"
+      ];
+    };
 
-    # Check if desktop is reachable
-    ping-desktop = "${pkgs.tailscale}/bin/tailscale ping desktop-home";
+    # Laptop-specific environment
+    environment.shellAliases = {
+      # Quick access to desktop via Tailscale
+      ssh-desktop = lib.mkForce "ssh desktop-home"; # Prefer Tailscale host over LAN alias
 
-    # Show all Tailscale devices
-    ts-devices = "${pkgs.tailscale}/bin/tailscale status --peers";
+      # Check if desktop is reachable
+      ping-desktop = "${pkgs.tailscale}/bin/tailscale ping desktop-home";
 
-    # Quick connect check
-    ts-check = ''
-      echo "🔍 Checking Tailscale connectivity..." && \
-      echo "" && \
-      echo "📱 This laptop:" && \
-      ${pkgs.tailscale}/bin/tailscale status | grep $(hostname) && \
-      echo "" && \
-      echo "🖥️  Available devices:" && \
-      ${pkgs.tailscale}/bin/tailscale status --peers | head -5
+      # Show all Tailscale devices
+      ts-devices = "${pkgs.tailscale}/bin/tailscale status --peers";
+
+      # Quick connect check
+      ts-check = ''
+        echo "🔍 Checking Tailscale connectivity..." && \
+        echo "" && \
+        echo "📱 This laptop:" && \
+        ${pkgs.tailscale}/bin/tailscale status | grep $(hostname) && \
+        echo "" && \
+        echo "🖥️  Available devices:" && \
+        ${pkgs.tailscale}/bin/tailscale status --peers | head -5
+      '';
+    };
+
+    # Helpful reminder on login
+    environment.interactiveShellInit = ''
+      # Show Tailscale status on shell start (only if connected)
+      if systemctl is-active --quiet tailscaled 2>/dev/null; then
+        TSIP=$(${pkgs.tailscale}/bin/tailscale ip -4 2>/dev/null || echo "")
+        if [ -n "$TSIP" ]; then
+          echo "🌐 Tailscale connected: $TSIP"
+        fi
+      fi
     '';
   };
-
-  # Helpful reminder on login
-  environment.interactiveShellInit = ''
-    # Show Tailscale status on shell start (only if connected)
-    if systemctl is-active --quiet tailscaled 2>/dev/null; then
-      TSIP=$(${pkgs.tailscale}/bin/tailscale ip -4 2>/dev/null || echo "")
-      if [ -n "$TSIP" ]; then
-        echo "🌐 Tailscale connected: $TSIP"
-      fi
-    fi
-  '';
 }

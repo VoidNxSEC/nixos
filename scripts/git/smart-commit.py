@@ -107,9 +107,9 @@ def generate_commit_message(diff, hint=None, issue_id=None):
 
 def verify_pipeline():
     print("🛡️  Running Pre-Commit Verification Pipeline...")
-    if os.path.exists("./scripts/pipeline-check.sh"):
+    if os.path.exists("./scripts/git/pipeline-check.sh"):
         try:
-            subprocess.run(["./scripts/pipeline-check.sh"], check=True)
+            subprocess.run(["./scripts/git/pipeline-check.sh"], check=True)
             print("✅ Pipeline verification passed.")
         except subprocess.CalledProcessError:
             print("❌ Pipeline verification failed. Fix issues before committing.")

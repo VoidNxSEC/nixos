@@ -10,33 +10,41 @@
 # ============================================================
 
 {
-  environment.shellAliases = {
-    # Basic (note: 'gc' is reserved for 'git commit', use 'gcloud' or 'gc-*' aliases)
-    "gc-config" = "gcloud config list";
-    "gc-projects" = "gcloud projects list";
-    "gc-set-project" = "gcloud config set project";
+  # Gate da Fase 4: config era incondicional; default true preserva o
+  # sistema como está e permite desligar por host/specialisation.
+  options.kernelcore.shell.aliases.gcloud.enable = lib.mkEnableOption "gcloud aliases" // {
+    default = true;
+  };
 
-    # Compute Engine
-    "gc-vms" = "gcloud compute instances list";
-    "gc-ssh" = "gcloud compute ssh";
-    "gc-start" = "gcloud compute instances start";
-    "gc-stop" = "gcloud compute instances stop";
+  config = lib.mkIf config.kernelcore.shell.aliases.gcloud.enable {
+    environment.shellAliases = {
+      # Basic (note: 'gc' is reserved for 'git commit', use 'gcloud' or 'gc-*' aliases)
+      "gc-config" = "gcloud config list";
+      "gc-projects" = "gcloud projects list";
+      "gc-set-project" = "gcloud config set project";
 
-    # Kubernetes Engine (GKE)
-    "gke-clusters" = "gcloud container clusters list";
-    "gke-get-creds" = "gcloud container clusters get-credentials";
+      # Compute Engine
+      "gc-vms" = "gcloud compute instances list";
+      "gc-ssh" = "gcloud compute ssh";
+      "gc-start" = "gcloud compute instances start";
+      "gc-stop" = "gcloud compute instances stop";
 
-    # Cloud Storage
-    "gs-list" = "gsutil ls";
-    "gs-cp" = "gsutil cp";
-    "gs-sync" = "gsutil -m rsync -r";
+      # Kubernetes Engine (GKE)
+      "gke-clusters" = "gcloud container clusters list";
+      "gke-get-creds" = "gcloud container clusters get-credentials";
 
-    # Logs
-    "gc-logs" = "gcloud logging read --limit 50";
-    "gc-logs-tail" = "gcloud logging tail";
+      # Cloud Storage
+      "gs-list" = "gsutil ls";
+      "gs-cp" = "gsutil cp";
+      "gs-sync" = "gsutil -m rsync -r";
 
-    # IAM
-    "gc-accounts" = "gcloud auth list";
-    "gc-switch" = "gcloud config set account";
+      # Logs
+      "gc-logs" = "gcloud logging read --limit 50";
+      "gc-logs-tail" = "gcloud logging tail";
+
+      # IAM
+      "gc-accounts" = "gcloud auth list";
+      "gc-switch" = "gcloud config set account";
+    };
   };
 }

@@ -12,83 +12,93 @@
 # ============================================================
 
 {
-  environment.shellAliases = {
-    # ──────────────────────────────────────────────────────
-    # BASIC COMPOSE OPERATIONS
-    # ──────────────────────────────────────────────────────
+  # Gate da Fase 4: config era incondicional; default true preserva o
+  # sistema como está e permite desligar por host/specialisation.
+  options.kernelcore.shell.aliases.docker-compose.enable =
+    lib.mkEnableOption "docker compose aliases"
+    // {
+      default = true;
+    };
 
-    "dc" = "docker compose";
-    "dc-up" = "docker compose up -d";
-    "dc-down" = "docker compose down";
-    "dc-restart" = "docker compose restart";
-    "dc-stop" = "docker compose stop";
-    "dc-start" = "docker compose start";
+  config = lib.mkIf config.kernelcore.shell.aliases.docker-compose.enable {
+    environment.shellAliases = {
+      # ──────────────────────────────────────────────────────
+      # BASIC COMPOSE OPERATIONS
+      # ──────────────────────────────────────────────────────
 
-    # ──────────────────────────────────────────────────────
-    # LOGS & MONITORING
-    # ──────────────────────────────────────────────────────
+      "dc" = "docker compose";
+      "dc-up" = "docker compose up -d";
+      "dc-down" = "docker compose down";
+      "dc-restart" = "docker compose restart";
+      "dc-stop" = "docker compose stop";
+      "dc-start" = "docker compose start";
 
-    "dc-logs" = "docker compose logs -f";
-    "dc-ps" = "docker compose ps";
-    "dc-top" = "docker compose top";
+      # ──────────────────────────────────────────────────────
+      # LOGS & MONITORING
+      # ──────────────────────────────────────────────────────
 
-    # ──────────────────────────────────────────────────────
-    # BUILD & REBUILD
-    # ──────────────────────────────────────────────────────
+      "dc-logs" = "docker compose logs -f";
+      "dc-ps" = "docker compose ps";
+      "dc-top" = "docker compose top";
 
-    "dc-build" = "docker compose build";
-    "dc-rebuild" = "docker compose up -d --build";
-    "dc-build-fresh" = "docker compose build --no-cache";
+      # ──────────────────────────────────────────────────────
+      # BUILD & REBUILD
+      # ──────────────────────────────────────────────────────
 
-    # ──────────────────────────────────────────────────────
-    # CLEANUP
-    # ──────────────────────────────────────────────────────
+      "dc-build" = "docker compose build";
+      "dc-rebuild" = "docker compose up -d --build";
+      "dc-build-fresh" = "docker compose build --no-cache";
 
-    "dc-clean" = "docker compose down -v --remove-orphans";
-    "dc-reset" = "docker compose down -v && docker compose up -d";
+      # ──────────────────────────────────────────────────────
+      # CLEANUP
+      # ──────────────────────────────────────────────────────
 
-    # ──────────────────────────────────────────────────────
-    # SPECIFIC SERVICES
-    # ──────────────────────────────────────────────────────
+      "dc-clean" = "docker compose down -v --remove-orphans";
+      "dc-reset" = "docker compose down -v && docker compose up -d";
 
-    # Execute command in service
-    "dc-exec" = "docker compose exec";
+      # ──────────────────────────────────────────────────────
+      # SPECIFIC SERVICES
+      # ──────────────────────────────────────────────────────
 
-    # Run one-off command
-    "dc-run" = "docker compose run --rm";
+      # Execute command in service
+      "dc-exec" = "docker compose exec";
 
-    # Shell in service
-    "dc-shell" = ''
-      f() { docker compose exec "$1" /bin/bash || docker compose exec "$1" /bin/sh; }; f
-    '';
+      # Run one-off command
+      "dc-run" = "docker compose run --rm";
 
-    # ──────────────────────────────────────────────────────
-    # MULTIPLE COMPOSE FILES
-    # ──────────────────────────────────────────────────────
+      # Shell in service
+      "dc-shell" = ''
+        f() { docker compose exec "$1" /bin/bash || docker compose exec "$1" /bin/sh; }; f
+      '';
 
-    # Use custom compose file
-    "dc-custom" = "docker compose -f";
+      # ──────────────────────────────────────────────────────
+      # MULTIPLE COMPOSE FILES
+      # ──────────────────────────────────────────────────────
 
-    # Use dev compose
-    "dc-dev" = "docker compose -f docker-compose.dev.yml";
+      # Use custom compose file
+      "dc-custom" = "docker compose -f";
 
-    # Use prod compose
-    "dc-prod" = "docker compose -f docker-compose.prod.yml";
+      # Use dev compose
+      "dc-dev" = "docker compose -f docker-compose.dev.yml";
 
-    # ──────────────────────────────────────────────────────
-    # STACK-SPECIFIC SHORTCUTS
-    # ──────────────────────────────────────────────────────
-    # Note: AI/ML aliases are defined in modules/shell/aliases/ai/
+      # Use prod compose
+      "dc-prod" = "docker compose -f docker-compose.prod.yml";
 
-    # Database stack
-    "db-up" = "docker compose -f docker-compose.db.yml up -d";
-    "db-down" = "docker compose -f docker-compose.db.yml down";
-    "db-logs" = "docker compose -f docker-compose.db.yml logs -f";
+      # ──────────────────────────────────────────────────────
+      # STACK-SPECIFIC SHORTCUTS
+      # ──────────────────────────────────────────────────────
+      # Note: AI/ML aliases are defined in modules/shell/aliases/ai/
 
-    # Master workspace stack with all compose profiles enabled
-    "master-up" =
-      "docker compose -f ${config.kernelcore.system.user.homeDir}/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full up -d --remove-orphans";
-    "master-down" =
-      "docker compose -f ${config.kernelcore.system.user.homeDir}/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full down --remove-orphans";
+      # Database stack
+      "db-up" = "docker compose -f docker-compose.db.yml up -d";
+      "db-down" = "docker compose -f docker-compose.db.yml down";
+      "db-logs" = "docker compose -f docker-compose.db.yml logs -f";
+
+      # Master workspace stack with all compose profiles enabled
+      "master-up" =
+        "docker compose -f ${config.kernelcore.system.user.homeDir}/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full up -d --remove-orphans";
+      "master-down" =
+        "docker compose -f ${config.kernelcore.system.user.homeDir}/master/docker-compose.yml --profile core --profile intelligence --profile observability --profile gpu --profile full down --remove-orphans";
+    };
   };
 }

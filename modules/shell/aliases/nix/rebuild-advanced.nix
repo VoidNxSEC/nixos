@@ -661,14 +661,24 @@ let
 
 in
 {
-  environment.systemPackages = [
-    nixosRebuildAdvanced
-    rebuildQuick
-  ];
+  # Gate da Fase 4: config era incondicional; default true preserva o
+  # sistema como está e permite desligar por host/specialisation.
+  options.kernelcore.shell.aliases.rebuild-advanced.enable =
+    lib.mkEnableOption "advanced rebuild UX"
+    // {
+      default = true;
+    };
 
-  # Override old rebuild command
-  environment.shellAliases = {
-    "rebuild" = "rebuild";
-    "rb" = "rb";
+  config = lib.mkIf config.kernelcore.shell.aliases.rebuild-advanced.enable {
+    environment.systemPackages = [
+      nixosRebuildAdvanced
+      rebuildQuick
+    ];
+
+    # Override old rebuild command
+    environment.shellAliases = {
+      "rebuild" = "rebuild";
+      "rb" = "rb";
+    };
   };
 }

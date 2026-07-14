@@ -10,7 +10,7 @@
 {
   imports = [
     ./vms.nix
-    ./vmctl.nix
+    ./vmctl
     ./vmctl-cli.nix # CLI declarativa de VMs QEMU (migrado de modules/programs/)
     ./macos-kvm.nix
   ];

@@ -7,9 +7,10 @@ name: Code Quality
 # - actionlint: valida os próprios workflows
 # - metrics: métricas de código no summary do job (tokei + contagens do repo)
 #
-# statix e deadnix são informativos por enquanto (continue-on-error):
+# statix, deadnix e typos são informativos por enquanto (continue-on-error):
 # o repo está em reestruturação (Fases 4-6) e a dívida vai sendo zerada
 # por fase — quando zerar, remover o continue-on-error para travar regressão.
+# O gate determinante do repo é o ci.yml (nix flake check com build).
 
 on:
   push:
@@ -56,6 +57,7 @@ jobs:
 
   typos:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v6
 

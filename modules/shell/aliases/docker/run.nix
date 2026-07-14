@@ -18,103 +18,111 @@ let
       or "--device=nvidia.com/gpu=all --ipc=host --ulimit stack=67108864 --shm-size=8g";
 in
 {
-  environment.shellAliases = {
-    # ──────────────────────────────────────────────────────
-    # BASIC DOCKER RUN
-    # ──────────────────────────────────────────────────────
+  # Gate da Fase 4: config era incondicional; default true preserva o
+  # sistema como está e permite desligar por host/specialisation.
+  options.kernelcore.shell.aliases.docker-run.enable = lib.mkEnableOption "docker run aliases" // {
+    default = true;
+  };
 
-    "d-run" = "docker run --rm -it";
-    "d-run-bg" = "docker run -d";
-    "d-run-clean" = "docker run --rm";
+  config = lib.mkIf config.kernelcore.shell.aliases.docker-run.enable {
+    environment.shellAliases = {
+      # ──────────────────────────────────────────────────────
+      # BASIC DOCKER RUN
+      # ──────────────────────────────────────────────────────
 
-    # ──────────────────────────────────────────────────────
-    # GPU-ENABLED RUN
-    # ──────────────────────────────────────────────────────
+      "d-run" = "docker run --rm -it";
+      "d-run-bg" = "docker run -d";
+      "d-run-clean" = "docker run --rm";
 
-    # Run with full GPU access
-    "d-run-gpu" = "docker run --rm -it ${gpuFlags}";
+      # ──────────────────────────────────────────────────────
+      # GPU-ENABLED RUN
+      # ──────────────────────────────────────────────────────
 
-    # Run GPU with workspace mounted
-    "d-run-gpu-work" = "docker run --rm -it ${gpuFlags} -v $(pwd):/workspace -w /workspace";
+      # Run with full GPU access
+      "d-run-gpu" = "docker run --rm -it ${gpuFlags}";
 
-    # Run GPU PyTorch interactive
-    "d-run-pytorch" = ''
-      docker run --rm -it ${gpuFlags} \
-        -v $(pwd):/workspace \
-        -w /workspace \
-        nvcr.io/nvidia/pytorch:25.09-py3 \
-        bash
-    '';
+      # Run GPU with workspace mounted
+      "d-run-gpu-work" = "docker run --rm -it ${gpuFlags} -v $(pwd):/workspace -w /workspace";
 
-    # ──────────────────────────────────────────────────────
-    # PORT MAPPING
-    # ──────────────────────────────────────────────────────
+      # Run GPU PyTorch interactive
+      "d-run-pytorch" = ''
+        docker run --rm -it ${gpuFlags} \
+          -v $(pwd):/workspace \
+          -w /workspace \
+          nvcr.io/nvidia/pytorch:25.09-py3 \
+          bash
+      '';
 
-    # Run with port 8080
-    "d-run-web" = "docker run --rm -it -p 8080:8080";
+      # ──────────────────────────────────────────────────────
+      # PORT MAPPING
+      # ──────────────────────────────────────────────────────
 
-    # Run Jupyter (8888)
-    "d-run-jupyter" = "docker run --rm -it -p 8888:8888";
+      # Run with port 8080
+      "d-run-web" = "docker run --rm -it -p 8080:8080";
 
-    # Run with custom port
-    "d-run-port" = ''
-      f() { docker run --rm -it -p "$1:$1"; }; f
-    '';
+      # Run Jupyter (8888)
+      "d-run-jupyter" = "docker run --rm -it -p 8888:8888";
 
-    # ──────────────────────────────────────────────────────
-    # VOLUME MOUNTS
-    # ──────────────────────────────────────────────────────
+      # Run with custom port
+      "d-run-port" = ''
+        f() { docker run --rm -it -p "$1:$1"; }; f
+      '';
 
-    # Run with current directory mounted
-    "d-run-here" = "docker run --rm -it -v $(pwd):/app -w /app";
+      # ──────────────────────────────────────────────────────
+      # VOLUME MOUNTS
+      # ──────────────────────────────────────────────────────
 
-    # Run with home directory mounted
-    "d-run-home" = "docker run --rm -it -v $HOME:/home/user";
+      # Run with current directory mounted
+      "d-run-here" = "docker run --rm -it -v $(pwd):/app -w /app";
 
-    # ──────────────────────────────────────────────────────
-    # QUICK ENVIRONMENTS
-    # ──────────────────────────────────────────────────────
+      # Run with home directory mounted
+      "d-run-home" = "docker run --rm -it -v $HOME:/home/user";
 
-    # Python 3.11 quick shell
-    "d-python" = "docker run --rm -it -v $(pwd):/app -w /app python:3.11 bash";
+      # ──────────────────────────────────────────────────────
+      # QUICK ENVIRONMENTS
+      # ──────────────────────────────────────────────────────
 
-    # Node.js 20 quick shell
-    "d-node" = "docker run --rm -it -v $(pwd):/app -w /app node:20 bash";
+      # Python 3.11 quick shell
+      "d-python" = "docker run --rm -it -v $(pwd):/app -w /app python:3.11 bash";
 
-    # Ubuntu latest quick shell
-    "d-ubuntu" = "docker run --rm -it ubuntu:latest bash";
+      # Node.js 20 quick shell
+      "d-node" = "docker run --rm -it -v $(pwd):/app -w /app node:20 bash";
 
-    # Alpine quick shell (minimal)
-    "d-alpine" = "docker run --rm -it alpine:latest sh";
+      # Ubuntu latest quick shell
+      "d-ubuntu" = "docker run --rm -it ubuntu:latest bash";
 
-    # ──────────────────────────────────────────────────────
-    # CONTAINER MANAGEMENT
-    # ──────────────────────────────────────────────────────
+      # Alpine quick shell (minimal)
+      "d-alpine" = "docker run --rm -it alpine:latest sh";
 
-    # List running containers (pretty)
-    "d-ps" = "docker ps --format 'table {{.Names}}\\t{{.Status}}\\t{{.Ports}}'";
+      # ──────────────────────────────────────────────────────
+      # CONTAINER MANAGEMENT
+      # ──────────────────────────────────────────────────────
 
-    # List all containers
-    "d-ps-all" = "docker ps -a --format 'table {{.Names}}\\t{{.Status}}\\t{{.Image}}'";
+      # List running containers (pretty)
+      "d-ps" = "docker ps --format 'table {{.Names}}\\t{{.Status}}\\t{{.Ports}}'";
 
-    # Stop all running containers
-    "d-stop-all" = "docker stop $(docker ps -q)";
+      # List all containers
+      "d-ps-all" = "docker ps -a --format 'table {{.Names}}\\t{{.Status}}\\t{{.Image}}'";
 
-    # Remove all stopped containers
-    "d-rm-stopped" = "docker container prune -f";
+      # Stop all running containers
+      "d-stop-all" = "docker stop $(docker ps -q)";
 
-    # Execute bash in running container
-    "d-exec" = "docker exec -it";
+      # Remove all stopped containers
+      "d-rm-stopped" = "docker container prune -f";
 
-    # Execute bash in running container
-    "d-shell" = ''
-      f() { docker exec -it "$1" /bin/bash || docker exec -it "$1" /bin/sh; }; f
-    '';
+      # Execute bash in running container
+      "d-exec" = "docker exec -it";
 
-    # View container logs
-    "d-logs" = "docker logs -f";
+      # Execute bash in running container
+      "d-shell" = ''
+        f() { docker exec -it "$1" /bin/bash || docker exec -it "$1" /bin/sh; }; f
+      '';
 
-    # Inspect container
-    "d-inspect" = "docker inspect";
+      # View container logs
+      "d-logs" = "docker logs -f";
+
+      # Inspect container
+      "d-inspect" = "docker inspect";
+    };
   };
 }
