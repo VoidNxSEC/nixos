@@ -82,7 +82,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # neoland and adr-ledger use local paths — add to flakes/personal.nix for your setup
     #neoland.url = "github:VoidNxSEC/neoland";
     #neoland.inputs.nixpkgs.follows = "nixpkgs";
 

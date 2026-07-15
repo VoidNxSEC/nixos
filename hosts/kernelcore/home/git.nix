@@ -31,7 +31,7 @@
     #   signByDefault = true;
     # };
     signing = {
-      key = "EC57E3FB66D01693";
+      key = "str";
       signByDefault = false;
     };
 
@@ -114,9 +114,9 @@
         contents = {
           core.fileMode = false;
           user = {
-            name = "VoidNxLabs";
-            email = "sec@voidnxlabs.com";
-            signingkey = "82FBA1A53A3FFA8B"; # VoidNxLabs <sec@voidnxlabs.com>
+            name = "str";
+            email = "str";
+            signingkey = "str";
           };
           # PENDENTE: remover após restaurar GPG backup
           commit.gpgsign = false;
@@ -128,9 +128,9 @@
         condition = "gitdir:~/github-legacy/";
         contents = {
           user = {
-            name = "marcosfpina";
-            email = "sec@voidnxlabs.com";
-            signingkey = "5606AB430E95F5AD"; # marcos (gh) <sec@voidnxlabs.com>
+            name = "str";
+            email = "str";
+            signingkey = "str"; # marcos (gh) <sec@voidnxlabs.com>
           };
         };
       }
@@ -139,9 +139,9 @@
         condition = "hasconfig:remote.*.url:git@gitlab.com:*";
         contents = {
           user = {
-            name = "kernelcore";
-            email = "kernelcore@voidnxlabs.com";
-            signingkey = "9FB7AA435F215D30"; # marcos (glab) <kernelcore@voidnxlabs.com>
+            name = "str";
+            email = "str";
+            signingkey = "str"; # marcos (glab) <kernelcore@voidnxlabs.com>
           };
         };
       }
