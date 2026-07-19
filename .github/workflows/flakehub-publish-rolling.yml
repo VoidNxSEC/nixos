@@ -3,6 +3,11 @@ on:
   push:
     branches:
       - "main"
+
+env:
+  FLAKEHUB_NAME: "VoidNxSEC/nixos"
+  FLAKEHUB_VISIBILITY: "public"
+
 jobs:
   flakehub-publish:
     runs-on: "ubuntu-latest"
@@ -16,7 +21,7 @@ jobs:
       - uses: "DeterminateSystems/determinate-nix-action@v3"
       - uses: "DeterminateSystems/flakehub-push@main"
         with:
-          name: "VoidNxSEC/nixos"
+          name: ${{ env.FLAKEHUB_NAME }}
           rolling: true
-          visibility: "public"
+          visibility: ${{ env.FLAKEHUB_VISIBILITY }}
           include-output-paths: true
