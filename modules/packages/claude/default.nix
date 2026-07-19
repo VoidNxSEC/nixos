@@ -20,7 +20,7 @@ let
   cfg = config.kernelcore.packages.claude;
 
   version = "2.1.195";
-  binaryHash = "sha256-gyPnASUGMUekR4uVd0XYNah+XnL/0luDjqmoQcA+ajc=";
+  binaryHash = "sha256-PAKRNvfIH1TtSjjp1S5lWq1TZDPbveUFGcjDG7ZGrRQ=";
 
   claude-code = pkgs.stdenv.mkDerivation {
     pname = "claude-code";
