@@ -82,7 +82,7 @@ jobs:
 
           nix run nixpkgs#mdbook -- build book-src --dest-dir "$GITHUB_WORKSPACE/book"
 
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: book
 
