@@ -1,16 +1,17 @@
-{ ... }:
+{ inputs, ... }:
 
 # ═══════════════════════════════════════════════════════════════
-# BLOCKCHAIN MODULE AGGREGATOR
+# LEDGER MODULE AGGREGATOR
 # ═══════════════════════════════════════════════════════════════
-# Purpose: Crypto development tools and intelligence pipelines
+# Purpose: ADR Ledger e infraestrutura de governança associada
+#
+# Os módulos do ledger NÃO são copiados para cá — vêm do flake
+# adr-ledger, que já os exporta como nixosModules. Ver ADR-0090.
 # ═══════════════════════════════════════════════════════════════
 
 {
   imports = [
-    ./algorand # Algorand / AlgoKit / PyTeal dev environment
-    ./chainscope.nix # CHAINSCOPE — Crypto intelligence pipeline (B300)
-    ./sops-secrets.nix # SOPS secrets for blockchain/web3 (Ethereum, RPC endpoints)
-    ./ledger # ADR Ledger — consumido do flake adr-ledger (ADR-0090)
+    inputs.adr-ledger.nixosModules.adr-ledger # sync + agents + ml (services.adr-ledger*)
+    ./facade.nix # superfície kernelcore.blockchain.ledger.*
   ];
 }
