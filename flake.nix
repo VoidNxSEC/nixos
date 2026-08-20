@@ -85,8 +85,8 @@
     #neoland.url = "github:VoidNxSEC/neoland";
     #neoland.inputs.nixpkgs.follows = "nixpkgs";
 
-    #adr-ledger.url = "github:VoidNxSEC/adr-ledger";
-    #adr-ledger.inputs.nixpkgs.follows = "nixpkgs";
+    adr-ledger.url = "github:VoidNxSEC/adr-ledger";
+    adr-ledger.inputs.nixpkgs.follows = "nixpkgs";
 
     # SpookNix
     spooknix = {
@@ -172,6 +172,7 @@
         nixpkgs.overlays = overlays;
         nixpkgs.config.allowUnfree = true;
       };
+      nixosModules.critical-agent-runtime = import ./modules/ml/agents/critical-runtime.nix;
 
       templates = {
         minimal = {
@@ -237,6 +238,9 @@
         '';
         # Package builds (relatively fast)
         mcp-server = self.packages.${system}.securellm-mcp;
+        critical-agent-runtime-policy = import ./tests/evaluation/critical-agent-runtime.nix {
+          inherit pkgs;
+        };
 
         # NOTE: Heavy builds (iso, vm, docker-app) removed from checks for performance
         # These are still available via packages: nix build .#iso, .#vm-image, .#image-app
@@ -275,13 +279,10 @@
             # ═══════════════════════════════════════════════════════════
             # inputs.niri.nixosModules.niri
 
-            # TODO: Isolate imports with default.nix file calling just ./hosts/kernelcore, and add the hosts/kernelcore/configuration.nix and hardware-configuration.nix files in default.nix imports, and remove the ./hosts/kernelcore/hardware-configuration.nix and ./hosts/kernelcore files from here
             # ═══════════════════════════════════════════════════════════
             # HOST-SPECIFIC CONFIGURATION
             # ═══════════════════════════════════════════════════════════
-            ./hosts/kernelcore/hardware-configuration.nix
             ./hosts/kernelcore
-            ./hosts/kernelcore/configuration.nix
 
             # ═══════════════════════════════════════════════════════════
             # ALL SYSTEM MODULES (auto-imported via modules/default.nix)
@@ -290,9 +291,6 @@
             self.nixosModules.default
             #MERCURYKEEP#            #inputs.mercury.nixosModules.batter
             #inputs.mercury.nixosModules.frosting
-
-            # NOTE: Feature flags and service configuration moved to:
-            #       ./hosts/kernelcore/configuration.nix (lines 400-427)
 
             # ═══════════════════════════════════════════════════════════
             # SOPS-NIX SECRETS MANAGEMENT
@@ -345,7 +343,6 @@
             {
               sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
             }
-            ./hosts/kernelcore
           ];
         };
 
